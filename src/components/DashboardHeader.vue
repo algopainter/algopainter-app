@@ -1,9 +1,9 @@
 <template>
   <q-toolbar class="q-pa-none">
-    <q-toolbar-title class="header text-bold text-black">
+    <q-toolbar-title class="header">
       {{ $route.meta.title }}
     </q-toolbar-title>
-    <nav class="nav-bar text-primary">
+    <nav class="q-pr-lg nav-bar text-primary">
       <div class="item">{{ $t('dashboard.myCollection' )}}</div>
       <div class="item">{{ $t('dashboard.auction' )}}</div>
       <div class="item">{{ $t('dashboard.create' )}}</div>
@@ -19,10 +19,6 @@ export default class DashboardHeader extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.header {
-  font-size: 1.8rem;
-}
-
 .nav-bar {
   display: flex;
 

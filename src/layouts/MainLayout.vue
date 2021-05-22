@@ -10,7 +10,7 @@
     >
       <side-bar />
     </q-drawer>
-    <q-page-container>
+    <q-page-container class="q-px-lg">
       <router-view />
     </q-page-container>
   </q-layout>

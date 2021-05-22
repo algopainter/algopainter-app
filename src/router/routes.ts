@@ -1,5 +1,7 @@
 import { RouteRecordRaw } from 'vue-router';
 
+import { i18n } from 'boot/i18n';
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -7,16 +9,16 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        component: () => import('pages/Index.vue'),
+        component: () => import('pages/dashboard/HomePage.vue'),
         meta: {
-          title: 'My Account',
+          title: i18n.global.t('dashboard.homePage.title'),
         },
       },
       {
         path: 'auctions',
-        component: () => import('pages/auctions/AuctionsList.vue'),
+        component: () => import('pages/dashboard/auctions/AuctionsList.vue'),
         meta: {
-          title: 'Auctions',
+          title: i18n.global.t('dashboard.auctions.title'),
         },
       },
     ],

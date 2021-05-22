@@ -4,6 +4,19 @@ import { createI18n } from 'vue-i18n';
 import messages from 'src/i18n';
 
 const i18n = createI18n({
+  numberFormats: {
+    'en-US': {
+      currency: {
+        style: 'currency',
+        currency: 'USD',
+        currencyDisplay: 'code',
+      },
+      percent: {
+        style: 'percent',
+        minimumFractionDigits: 0,
+      },
+    },
+  },
   locale: 'en-US',
   messages,
 });

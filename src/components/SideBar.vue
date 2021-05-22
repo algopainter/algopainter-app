@@ -8,7 +8,7 @@
         :style="{'mask-image': `url(${item.icon})`}"
         :is="item.to ? 'router-link' : 'div'"
         :to="item.to"
-        @click="item.onClick"
+        @click="item.to ? null : item.onClick"
       />
     </div>
   </div>

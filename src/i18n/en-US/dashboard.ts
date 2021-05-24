@@ -17,5 +17,14 @@ export default {
   },
   auctions: {
     title: 'Auctions',
+    hotBids: 'Hot Bids 🔥',
+    numberOfBids: '{numberOfBids} of {numberOfBids}',
+    highestBid: 'Highest Bid {highestBid}',
+    topSellers: {
+      top: 'Top {sellers}',
+      sellers: 'Sellers',
+    },
+    explore: 'Explore',
+    otherFilter: 'Other Filter',
   },
 };

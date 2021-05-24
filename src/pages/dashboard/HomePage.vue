@@ -3,7 +3,7 @@
     <div class="account-details q-pa-lg">
       <account-details />
     </div>
-    <div class="header">{{ $t('dashboard.homePage.myGallery')}}</div>
+    <div class="header">{{ $t('dashboard.homePage.myGallery') }}</div>
     <div>
       <user-gallery-overview />
     </div>

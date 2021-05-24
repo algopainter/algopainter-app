@@ -2,8 +2,8 @@
   <div>
     <div class="row q-col-gutter-xl items-center">
       <div class="col-12 col-sm-6 col-xl-8">
-        <div class="user-info flex items-center">
-          <div class="picture q-mr-lg">
+        <div class="user-info flex items-center q-col-gutter-lg">
+          <div class="picture">
             <q-img
               src="../../assets/placeholder-images/user.png"
               class="picture-content"
@@ -25,16 +25,18 @@
           </div>
         </div>
         <div class="row q-pt-lg q-col-gutter-md">
-          <div>
+          <div class="col-6 col-sm-auto">
             <algo-button
+              class="full-width"
               size="lg"
               color="primary"
             >
               {{ $t('dashboard.homePage.editAccount') }}
             </algo-button>
           </div>
-          <div>
+          <div class="col-6 col-sm-auto">
             <algo-button
+              class="full-width"
               size="lg"
               color="primary"
               outline
@@ -99,6 +101,11 @@ export default class AccountDetails extends Vue {
 
 <style lang="scss" scoped>
 .user-info {
+  @media (max-width: $breakpoint-xs-max) {
+    text-align: center;
+    justify-content: center;
+  }
+
   .picture-content {
     border-radius: 100rem;
     height: 230px;
@@ -112,7 +119,7 @@ export default class AccountDetails extends Vue {
     }
 
     .country-flag {
-      display: flex;
+      display: inline-flex;
       align-items: center;
 
       img {

@@ -1,5 +1,25 @@
 <template>
   <div>
+    <div class="art-header flex q-pb-sm">
+      <div class="users">
+        <q-avatar
+          v-for="person in art.importantPeople"
+          :key="person.id"
+          size="lg"
+          round
+        >
+          <img :src="person.picture" />
+          <q-tooltip>{{ person.name }}</q-tooltip>
+        </q-avatar>
+      </div>
+      <q-space />
+      <q-btn
+        color="primary"
+        flat
+        round
+        icon="mdi-dots-horizontal"
+      />
+    </div>
     <q-img
       class="art-image"
       src="../../../assets/placeholder-images/painting.jpg"
@@ -39,7 +59,7 @@
         </div>
       </div>
       <div class="sell-action">
-        {{ $t('dashboard.homePage.sell')}} <q-icon name="arrow_right_alt" />
+        {{ $t('dashboard.homePage.sell')}} <q-icon name="mdi-arrow-right" />
       </div>
     </div>
   </div>
@@ -69,6 +89,12 @@ export default class UserGalleryOverview extends Vue.with(Props) {
 </script>
 
 <style lang="scss" scoped>
+.users {
+  .q-avatar:not(:first-child) {
+    margin-left: -8px;
+  }
+}
+
 .art-image {
   border-radius: 5px;
   width: 300px;

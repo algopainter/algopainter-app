@@ -55,7 +55,19 @@ export default class UserGalleryOverview extends Vue {
         creators: 0.08,
         investors: 0.05,
       },
-      importantPeople: [],
+      importantPeople: [{
+        id: '1',
+        name: 'Billy Nguyen',
+        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+      }, {
+        id: '2',
+        name: 'Beverley Weaver',
+        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+      }, {
+        id: '3',
+        name: 'Leonard Ryan',
+        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+      }],
     },
     {
       id: '2',
@@ -67,7 +79,19 @@ export default class UserGalleryOverview extends Vue {
         creators: 0.08,
         investors: 0.05,
       },
-      importantPeople: [],
+      importantPeople: [{
+        id: '1',
+        name: 'Billy Nguyen',
+        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+      }, {
+        id: '2',
+        name: 'Beverley Weaver',
+        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+      }, {
+        id: '3',
+        name: 'Leonard Ryan',
+        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+      }],
     },
     {
       id: '3',
@@ -79,7 +103,19 @@ export default class UserGalleryOverview extends Vue {
         creators: 0.08,
         investors: 0.05,
       },
-      importantPeople: [],
+      importantPeople: [{
+        id: '1',
+        name: 'Billy Nguyen',
+        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+      }, {
+        id: '2',
+        name: 'Beverley Weaver',
+        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+      }, {
+        id: '3',
+        name: 'Leonard Ryan',
+        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+      }],
     },
   ];
 

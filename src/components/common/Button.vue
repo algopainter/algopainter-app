@@ -23,6 +23,6 @@ export default class Button extends Vue.with(Props) {
 <style lang="scss" scoped>
 .q-btn {
   border-radius: 12px;
-  min-width: 200px;
+  min-width: 180px;
 }
 </style>

@@ -32,7 +32,7 @@ export default class SideBar extends Vue {
       },
       {
         icon: require('../assets/icons/paint-board-and-brush.svg'),
-        to: '/new-paiting',
+        to: '/newpainting',
       },
       {
         icon: require('../assets/icons/auction.svg'),

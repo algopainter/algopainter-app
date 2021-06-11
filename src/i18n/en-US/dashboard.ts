@@ -15,6 +15,11 @@ export default {
     latestBids: 'Latest bids',
     seeAllBids: 'See all bids',
   },
+  newpainting: {
+    title: 'New Painting',
+    create: 'Create Your Art',
+  },
+
   auctions: {
     title: 'Auctions',
     hotBids: 'Hot Bids 🔥',

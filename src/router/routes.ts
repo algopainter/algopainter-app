@@ -21,6 +21,13 @@ const routes: RouteRecordRaw[] = [
           title: i18n.global.t('dashboard.auctions.title'),
         },
       },
+      {
+        path: 'newpainting',
+        component: () => import('src/pages/dashboard/newpaint/NewPainting.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.newpainting.title'),
+        },
+      },
     ],
   },
 

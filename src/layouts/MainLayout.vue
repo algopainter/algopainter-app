@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="q-py-lg bg-transparent">
+    <q-header reveal >
       <dashboard-header />
     </q-header>
 
@@ -32,3 +32,7 @@ export default class MainLayout extends Vue {
   leftDrawerOpen = true;
 }
 </script>
+
+<style scoped>
+
+</style>

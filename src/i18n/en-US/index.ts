@@ -1,4 +1,5 @@
 import dashboard from './dashboard';
+import createCollectible from './create.collectible';
 
 export default {
   common: {
@@ -7,4 +8,5 @@ export default {
     placeABid: 'PLACE A BID',
   },
   dashboard,
+  createCollectible,
 };

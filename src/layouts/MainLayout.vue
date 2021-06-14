@@ -32,7 +32,3 @@ export default class MainLayout extends Vue {
   leftDrawerOpen = true;
 }
 </script>
-
-<style scoped>
-
-</style>

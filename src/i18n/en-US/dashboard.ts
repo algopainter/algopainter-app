@@ -18,6 +18,14 @@ export default {
   newpainting: {
     title: 'New Painting',
     create: 'Create Your Art',
+    TypeAText: 'Type a text',
+    PaintOnWall: 'Hang the paint  on Wall?',
+    CoresAleatórias: 'Apply randon color inversion:',
+    CollorInversionProbability: 'Define the collor inversion probability',
+    YourInspiration: 'Your Inspiration',
+    trace: '/',
+    Genarate: 'Genarate Painting',
+
   },
 
   auctions: {

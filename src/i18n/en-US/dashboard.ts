@@ -15,17 +15,33 @@ export default {
     latestBids: 'Latest bids',
     seeAllBids: 'See all bids',
   },
-  newpainting: {
+  newPainting: {
     title: 'New Painting',
     create: 'Create Your Art',
-    TypeAText: 'Type a text',
+    TypeAText: 'Type a text:',
     PaintOnWall: 'Hang the paint  on Wall?',
     CoresAleatórias: 'Apply randon color inversion:',
     CollorInversionProbability: 'Define the collor inversion probability',
     YourInspiration: 'Your Inspiration',
     trace: '/',
     Genarate: 'Genarate Painting',
+    YesLabel: 'Yes',
+    NoLabel: 'No',
+    Random: 'Random',
+    Calm: 'Calm',
+    Colorfull: 'Colorfull blocks',
+    paths: 'Colorfull paths',
+    flows: 'Hot flows',
+    Galaxy: 'Galaxy',
+    Days: '5000 Days',
 
+  },
+  myPaint: {
+    title: 'My Amazing Paint',
+    sale: 'Put on sale',
+    Bidback: 'Bidback',
+    Creator: 'Royalties Creator:',
+    Investors: 'Royalties Investors',
   },
 
   auctions: {

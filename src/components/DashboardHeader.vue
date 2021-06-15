@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar class="menu">
+  <q-toolbar class="q-pa-none menu">
     <q-toolbar-title class="header">
       {{ $route.meta.title }}
     </q-toolbar-title>
@@ -20,14 +20,19 @@ export default class DashboardHeader extends Vue {
 
 <style lang="scss" scoped>
 .nav-bar {
+
   display: flex;
+
   .item {
+
     padding: 0 24px;
+
   }
 }
-.menu{
+.menu {
+
   background: white;
-  border: 6px solid white;
+
 }
 
 </style>

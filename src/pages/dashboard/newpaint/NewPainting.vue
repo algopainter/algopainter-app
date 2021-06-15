@@ -11,21 +11,21 @@
 
     <div class="col-xs-12 col-sm-6 ">
       <div class="header">
-        {{ $t('dashboard.newPainting.create') }}
+        {{ $t('dashboard.newPainting.Create') }}
       </div>
 
       <div class="q-mt-lg">
         <label>{{ $t('dashboard.newPainting.TypeAText') }}</label>
-        <q-input v-model="textType" v-bind:maxlength="limit"></q-input>
+        <q-input v-model="TextType" v-bind:maxlength="LetterLimit"/>
         <p class="justify-end text-right">
-          {{typed}}{{ $t('dashboard.newPainting.trace') }}{{remains}}
+          {{TypedLetters}}{{ $t('dashboard.newPainting.Trace') }}{{RestLetter}}
         </p>
         <div class="col-xs-6 col-sm-3 ">
           <span>{{ $t('dashboard.newPainting.PaintOnWall') }}</span>
           <div class="row">
-              <q-radio  v-model="hang" val="Yes"
+              <q-radio  v-model="RadioPaint" val="Yes"
                 :label="$t('dashboard.newPainting.YesLabel')"/>
-              <q-radio  v-model="hang" val="No"
+              <q-radio  v-model="RadioPaint" val="No"
               :label="$t('dashboard.newPainting.NoLabel')"/>
           </div>
         </div>
@@ -33,14 +33,15 @@
         <div>
           <span>{{ $t('dashboard.newPainting.CoresAleatórias') }}</span>
           <div class="row">
-              <q-radio v-model="range" val="yes"
+              <q-radio v-model="RadioCores" val="yes"
                 :label="$t('dashboard.newPainting.YesLabel')"/>
-              <q-radio v-model="range" val="no"
+              <q-radio v-model="RadioCores" val="no"
                 :label="$t('dashboard.newPainting.NoLabel')"/>
           </div>
-          <div v-if="range==='yes'" class="q-mt-md" >
+          <div v-if="RadioCores==='yes'" class="q-mt-md" >
             <p>{{ $t('dashboard.newPainting.CollorInversionProbability') }}</p>
-            <q-slider v-model="slider" color="primary" :min="0" :max="50"/>
+            <q-slider v-model="InversionProbability"
+            color="primary" :min="0" :max="50"/>
           </div>
         </div>
 
@@ -49,36 +50,36 @@
           <div class="row">
             <div class="col-xs-12 col-sm-6 items-center">
               <div class="col">
-                <q-radio  v-model="test" val="Random"
+                <q-radio  v-model="RadioInspiration" val="Random"
                 :label="$t('dashboard.newPainting.Random')"/>
               </div>
               <div class="col">
-                <q-radio  v-model="test" val="Calm"
+                <q-radio  v-model="RadioInspiration" val="Calm"
                 :label="$t('dashboard.newPainting.Calm')"/>
               </div>
               <div class="col">
-                <q-radio  v-model="test"
+                <q-radio  v-model="RadioInspiration"
                 val="Colorfull-blocks"
                 :label="$t('dashboard.newPainting.Colorfull')"/>
               </div>
               <div class="col">
-                <q-radio  v-model="test"
+                <q-radio  v-model="RadioInspiration"
                 val="Colorfull-paths"
-                :label="$t('dashboard.newPainting.paths')"/>
+                :label="$t('dashboard.newPainting.Paths')"/>
               </div>
             </div>
 
             <div class="col-xl-12 col-sm-2 items-center">
               <div class="col">
-                <q-radio  v-model="test" val="Hot-flows"
-                :label="$t('dashboard.newPainting.flows')"/>
+                <q-radio  v-model="RadioInspiration" val="Hot-flows"
+                :label="$t('dashboard.newPainting.Flows')"/>
               </div>
               <div class="col">
-                <q-radio  v-model="test" val="Galaxy"
+                <q-radio  v-model="RadioInspiration" val="Galaxy"
                 :label="$t('dashboard.newPainting.Galaxy')"/>
               </div>
               <div class="col">
-                <q-radio  v-model="test" val="5000-Days"
+                <q-radio  v-model="RadioInspiration" val="5000-Days"
                 :label="$t('dashboard.newPainting.Days')"/>
               </div>
             </div>
@@ -101,40 +102,51 @@
 import { Vue } from 'vue-class-component';
 
 export default class NewPainting extends Vue {
-  private textType: string = '';
-  private limit: number = 64;
-  private empty: number = 0;
-  private test: string = 'line';
-  private slider: number = 0;
-  private range: string = '';
-  private hang: string = 'line';
-  private icon: boolean = false;
+  private TextType: string = '';
+  private LetterLimit: number = 64;
+  private EmptySpace: number = 0;
+  private RadioInspiration: string = 'line';
+  private InversionProbability: number = 0;
+  private RadioCores: string = '';
+  private RadioPaint: string = 'line';
 
-  get remains (): number {
-    return this.limit - this.textType.length;
+  get RestLetter (): number {
+    return this.LetterLimit - this.TextType.length;
   }
 
-  get typed (): number {
-    return this.empty + this.textType.length;
+  get TypedLetters (): number {
+    return this.EmptySpace + this.TextType.length;
   }
 }
 </script>
 
 <style scoped>
-.typeText{
+.typeText {
+
   border: none;
+
   border-bottom: 1px solid black;
+
 }
-.typeText:focus{
+.typeText:focus {
+
   border-top: none;
+
 }
-.img{
+.img {
+
   height: 429px;
+
   width: 230px;
+
   border:none;
+
 }
-.span-label{
+.span-label {
+
   display: flex;
+
   align-items: center;
+
 }
 </style>

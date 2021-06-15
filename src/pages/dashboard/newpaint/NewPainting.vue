@@ -11,75 +11,75 @@
 
     <div class="col-xs-12 col-sm-6 ">
       <div class="header">
-        {{ $t('dashboard.newpainting.create') }}
+        {{ $t('dashboard.newPainting.create') }}
       </div>
 
       <div class="q-mt-lg">
-        <label>{{ $t('dashboard.newpainting.TypeAText') }}</label>
+        <label>{{ $t('dashboard.newPainting.TypeAText') }}</label>
         <q-input v-model="textType" v-bind:maxlength="limit"></q-input>
         <p class="justify-end text-right">
-          {{typed}}{{ $t('dashboard.newpainting.trace') }}{{remains}}
+          {{typed}}{{ $t('dashboard.newPainting.trace') }}{{remains}}
         </p>
         <div class="col-xs-6 col-sm-3 ">
-          <span>{{ $t('dashboard.newpainting.PaintOnWall') }}</span>
+          <span>{{ $t('dashboard.newPainting.PaintOnWall') }}</span>
           <div class="row">
               <q-radio  v-model="hang" val="Yes"
-                :label="$t('dashboard.newpainting.YesLabel')"/>
+                :label="$t('dashboard.newPainting.YesLabel')"/>
               <q-radio  v-model="hang" val="No"
-              :label="$t('dashboard.newpainting.NoLabel')"/>
+              :label="$t('dashboard.newPainting.NoLabel')"/>
           </div>
         </div>
 
         <div>
-          <span>{{ $t('dashboard.newpainting.CoresAleatórias') }}</span>
+          <span>{{ $t('dashboard.newPainting.CoresAleatórias') }}</span>
           <div class="row">
               <q-radio v-model="range" val="yes"
-                :label="$t('dashboard.newpainting.YesLabel')"/>
+                :label="$t('dashboard.newPainting.YesLabel')"/>
               <q-radio v-model="range" val="no"
-                :label="$t('dashboard.newpainting.NoLabel')"/>
+                :label="$t('dashboard.newPainting.NoLabel')"/>
           </div>
           <div v-if="range==='yes'" class="q-mt-md" >
-            <p>{{ $t('dashboard.newpainting.CollorInversionProbability') }}</p>
+            <p>{{ $t('dashboard.newPainting.CollorInversionProbability') }}</p>
             <q-slider v-model="slider" color="primary" :min="0" :max="50"/>
           </div>
         </div>
 
         <div class="q-mt-md">
-          <p>{{ $t('dashboard.newpainting.YourInspiration') }}</p>
+          <p>{{ $t('dashboard.newPainting.YourInspiration') }}</p>
           <div class="row">
             <div class="col-xs-12 col-sm-6 items-center">
               <div class="col">
                 <q-radio  v-model="test" val="Random"
-                :label="$t('dashboard.newpainting.Random')"/>
+                :label="$t('dashboard.newPainting.Random')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="test" val="Calm"
-                :label="$t('dashboard.newpainting.Calm')"/>
+                :label="$t('dashboard.newPainting.Calm')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="test"
                 val="Colorfull-blocks"
-                :label="$t('dashboard.newpainting.Colorfull')"/>
+                :label="$t('dashboard.newPainting.Colorfull')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="test"
                 val="Colorfull-paths"
-                :label="$t('dashboard.newpainting.paths')"/>
+                :label="$t('dashboard.newPainting.paths')"/>
               </div>
             </div>
 
             <div class="col-xl-12 col-sm-2 items-center">
               <div class="col">
                 <q-radio  v-model="test" val="Hot-flows"
-                :label="$t('dashboard.newpainting.flows')"/>
+                :label="$t('dashboard.newPainting.flows')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="test" val="Galaxy"
-                :label="$t('dashboard.newpainting.Galaxy')"/>
+                :label="$t('dashboard.newPainting.Galaxy')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="test" val="5000-Days"
-                :label="$t('dashboard.newpainting.Days')"/>
+                :label="$t('dashboard.newPainting.Days')"/>
               </div>
             </div>
           </div>

@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
         path: 'new-painting',
         component: () => import('src/pages/dashboard/newpaint/NewPainting.vue'),
         meta: {
-          title: i18n.global.t('dashboard.newpainting.title'),
+          title: i18n.global.t('dashboard.newPainting.title'),
         },
       },
     ],

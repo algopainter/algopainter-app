@@ -27,4 +27,7 @@ export default {
     explore: 'Explore',
     otherFilter: 'Other Filter',
   },
+  auctionsInfo: {
+    title: 'Auctions',
+  },
 };

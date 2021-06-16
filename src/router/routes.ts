@@ -21,6 +21,14 @@ const routes: RouteRecordRaw[] = [
           title: i18n.global.t('dashboard.auctions.title'),
         },
       },
+      {
+        path: 'auctionsInfo',
+        component: () => import('pages/dashboard/auctions/AuctionsInfo.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.auctionsInfo.title'),
+        },
+      },
+
     ],
   },
 

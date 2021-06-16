@@ -11,76 +11,76 @@
 
     <div class="col-xs-12 col-sm-6 ">
       <div class="header">
-        {{ $t('dashboard.newPainting.Create') }}
+        {{ $t('dashboard.newPainting.create') }}
       </div>
 
       <div class="q-mt-lg">
-        <label>{{ $t('dashboard.newPainting.TypeAText') }}</label>
+        <label>{{ $t('dashboard.newPainting.typeAText') }}</label>
         <q-input v-model="TextType" v-bind:maxlength="LetterLimit"/>
         <p class="justify-end text-right">
-          {{TypedLetters}}{{ $t('dashboard.newPainting.Trace') }}{{RestLetter}}
+          {{TypedLetters}}{{ $t('dashboard.newPainting.trace') }}{{RestLetter}}
         </p>
         <div class="col-xs-6 col-sm-3 ">
-          <span>{{ $t('dashboard.newPainting.PaintOnWall') }}</span>
+          <span>{{ $t('dashboard.newPainting.paintOnWall') }}</span>
           <div class="row">
               <q-radio  v-model="RadioPaint" val="Yes"
-                :label="$t('dashboard.newPainting.YesLabel')"/>
+                :label="$t('dashboard.newPainting.yesLabel')"/>
               <q-radio  v-model="RadioPaint" val="No"
-              :label="$t('dashboard.newPainting.NoLabel')"/>
+              :label="$t('dashboard.newPainting.noLabel')"/>
           </div>
         </div>
 
         <div>
-          <span>{{ $t('dashboard.newPainting.CoresAleatórias') }}</span>
+          <span>{{ $t('dashboard.newPainting.randomColors') }}</span>
           <div class="row">
               <q-radio v-model="RadioCores" val="yes"
-                :label="$t('dashboard.newPainting.YesLabel')"/>
+                :label="$t('dashboard.newPainting.yesLabel')"/>
               <q-radio v-model="RadioCores" val="no"
-                :label="$t('dashboard.newPainting.NoLabel')"/>
+                :label="$t('dashboard.newPainting.noLabel')"/>
           </div>
           <div v-if="RadioCores==='yes'" class="q-mt-md" >
-            <p>{{ $t('dashboard.newPainting.CollorInversionProbability') }}</p>
+            <p>{{ $t('dashboard.newPainting.collorInversionProbability') }}</p>
             <q-slider v-model="InversionProbability"
             color="primary" :min="0" :max="50"/>
           </div>
         </div>
 
         <div class="q-mt-md">
-          <p>{{ $t('dashboard.newPainting.YourInspiration') }}</p>
+          <p>{{ $t('dashboard.newPainting.yourInspiration') }}</p>
           <div class="row">
             <div class="col-xs-12 col-sm-6 items-center">
               <div class="col">
                 <q-radio  v-model="RadioInspiration" val="Random"
-                :label="$t('dashboard.newPainting.Random')"/>
+                :label="$t('dashboard.newPainting.random')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="RadioInspiration" val="Calm"
-                :label="$t('dashboard.newPainting.Calm')"/>
+                :label="$t('dashboard.newPainting.calm')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="RadioInspiration"
                 val="Colorfull-blocks"
-                :label="$t('dashboard.newPainting.Colorfull')"/>
+                :label="$t('dashboard.newPainting.colorfull')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="RadioInspiration"
                 val="Colorfull-paths"
-                :label="$t('dashboard.newPainting.Paths')"/>
+                :label="$t('dashboard.newPainting.paths')"/>
               </div>
             </div>
 
             <div class="col-xl-12 col-sm-2 items-center">
               <div class="col">
                 <q-radio  v-model="RadioInspiration" val="Hot-flows"
-                :label="$t('dashboard.newPainting.Flows')"/>
+                :label="$t('dashboard.newPainting.flows')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="RadioInspiration" val="Galaxy"
-                :label="$t('dashboard.newPainting.Galaxy')"/>
+                :label="$t('dashboard.newPainting.galaxy')"/>
               </div>
               <div class="col">
                 <q-radio  v-model="RadioInspiration" val="5000-Days"
-                :label="$t('dashboard.newPainting.Days')"/>
+                :label="$t('dashboard.newPainting.days')"/>
               </div>
             </div>
           </div>

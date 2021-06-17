@@ -35,6 +35,11 @@ export default class SideBar extends Vue {
         to: '/new-paiting',
       },
       {
+        icon: require('../assets/icons/magic-wand.svg'),
+        to: '/auctionsinfo',
+      },
+
+      {
         icon: require('../assets/icons/auction.svg'),
         to: '/auctions',
       },

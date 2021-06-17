@@ -10,6 +10,7 @@
           label="Auction Distribution"
           class="q-mt-none q-mb-sm"
           value="Auction Distribution"
+          no-caps
           
         />
         <q-img
@@ -29,20 +30,9 @@
             
           "
         >
-          <q-icon
-            style=""
-            class=""
-            color="primary"
-            size="sm"
-            name="mdi-heart-outline"
-          />
-          <q-icon
-            class=""
-            color="primary"
-            size="sm"
-            name="mdi-arrow-expand"
-            style=""
-          />
+         <q-btn icon="mdi-heart-outline" no-wrap color="primary" flat fab-mini padding="none"></q-btn> 
+          
+          <q-btn icon="mdi-arrow-expand" color="primary" flat fab-mini padding="none"></q-btn>
         </div>
       </div>
       <div
@@ -71,7 +61,7 @@
         </div>
 
         <div class="q-ml-sm">
-          <div class="" style="height:380px; width: 500px; margin-left: 20px">
+          <div class="" style="height:350px; width: 500px; margin-left: 20px">
             <q-tabs
               dense
               v-model="tab"
@@ -520,14 +510,14 @@
             </q-tab-panels>
           </div>
           <q-item>
-            <q-item-section class="">
-              <q-avatar class="" style="margin-left: 16px">
+            <q-item-section class="q-my-md column">
+              <q-avatar class="" style="margin-left: 37px">
                 <img src="https://randomuser.me/api/portraits/women/2.jpg" />
               </q-avatar>
             </q-item-section>
             <q-item-section class="col-10">
               <q-item-label
-                style="font-weight: bold; font-size: 18px; margin-left: 5px"
+                style="font-weight: bold; font-size: 18px; margin-left: 25px"
                 >Highest bid by
                 <spam style="color: #ff0080">MattPress</spam></q-item-label
               >
@@ -536,22 +526,21 @@
                   font-weight: bold;
                   font-size: 12px;
                   color: #00b412;
-                  margin-left: 5px;
+                  margin-left: 25px;
                 "
                 >5.00 USD</q-item-label
               >
             </q-item-section>
           </q-item>
-          <div class="q-mt-none q-ml-lg col-">
+          <div class="q-mt-none q-ml-lg row justify-center">
             <q-btn
               class=""
-              align="center"
               outline
-              style="color: #ff0080; font-weight: bold; width:200px;"
+              style="color: #ff0080; font-weight: bold; width:400px;"
               label="Place a Bid"
               color="primary"
               value="Place a Bid"
-              
+              no-caps
             />
           </div>
         </div>

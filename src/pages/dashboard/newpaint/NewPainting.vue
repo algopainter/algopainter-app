@@ -1,5 +1,8 @@
 <template>
-  <q-page id="new-painting" class="row q-pb-lg">
+  <q-page
+    id="new-painting"
+    class="row q-pb-lg"
+  >
     <div class="col-12 col-sm-6 q-pa-lg flex flex-center">
       <q-img
         src="../../../assets/images/hashly-gwei.svg"
@@ -14,8 +17,8 @@
         <div class="q-col-gutter-md">
           <div>
             <q-input
-              :label="$t('dashboard.newPainting.typeAText')"
               v-model="painting.text"
+              :label="$t('dashboard.newPainting.typeAText')"
               maxlength="55"
               counter
             />

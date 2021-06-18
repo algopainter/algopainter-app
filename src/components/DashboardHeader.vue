@@ -4,9 +4,15 @@
       {{ $route.meta.title }}
     </q-toolbar-title>
     <nav class="q-pr-lg nav-bar text-primary">
-      <div class="item">{{ $t('dashboard.myCollection' )}}</div>
-      <div class="item">{{ $t('dashboard.auction' )}}</div>
-      <div class="item">{{ $t('dashboard.create' )}}</div>
+      <div class="item">
+        {{ $t('dashboard.myCollection' ) }}
+      </div>
+      <div class="item">
+        {{ $t('dashboard.auction' ) }}
+      </div>
+      <div class="item">
+        {{ $t('dashboard.create' ) }}
+      </div>
     </nav>
   </q-toolbar>
 </template>

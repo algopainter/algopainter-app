@@ -1,7 +1,10 @@
 <template>
   <div class="row q-col-gutter-lg">
     <div class="col-12 col-lg-9 flex q-col-gutter-md">
-      <div v-for="item in galleryItems" :key="item.id">
+      <div
+        v-for="item in galleryItems"
+        :key="item.id"
+      >
         <gallery-item :art="item" />
       </div>
     </div>
@@ -10,7 +13,10 @@
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
       <div class="column q-col-gutter-md">
-        <div v-for="bid in bids" :key="bid.id">
+        <div
+          v-for="bid in bids"
+          :key="bid.id"
+        >
           <latest-bids-item :bid="bid" />
         </div>
       </div>

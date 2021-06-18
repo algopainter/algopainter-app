@@ -2,11 +2,11 @@
   <div class="side-bar q-pa-lg">
     <div class="content">
       <component
-        class="item"
+        :is="item.to ? 'router-link' : 'div'"
         v-for="item, index in items"
         :key="index"
+        class="item"
         :style="{'mask-image': `url(${item.icon})`}"
-        :is="item.to ? 'router-link' : 'div'"
         :to="item.to"
         @click="item.to ? null : item.onClick"
       />

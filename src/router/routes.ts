@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'new-painting',
-        component: () => import('src/pages/dashboard/newpaint/NewPainting.vue'),
+        component: () => import('pages/dashboard/newpaint/NewPainting.vue'),
         meta: {
           title: i18n.global.t('dashboard.newPainting.title'),
         },

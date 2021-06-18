@@ -24,7 +24,7 @@ interface SideBarItem {
 }
 
 export default class SideBar extends Vue {
-  get items (): SideBarItem[] {
+  get items(): SideBarItem[] {
     return [
       {
         icon: require('../assets/icons/home.svg'),
@@ -32,7 +32,7 @@ export default class SideBar extends Vue {
       },
       {
         icon: require('../assets/icons/paint-board-and-brush.svg'),
-        to: '/new-paiting',
+        to: '/new-painting',
       },
       {
         icon: require('../assets/icons/auction.svg'),

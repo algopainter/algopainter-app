@@ -100,6 +100,7 @@ module.exports = {
 
     'semi': ['warn', 'always'],
     'semi-style': 'warn',
+    'space-before-function-paren': ['warn', 'never'],
     'comma-dangle': ['warn', 'always-multiline'],
     'eol-last': ['warn', 'always'],
     'max-len': ['warn', { 'code': 80 }],

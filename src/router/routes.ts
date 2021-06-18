@@ -22,13 +22,20 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+      feature/auctions-info
         path: 'auctionsInfo',
         component: () => import('pages/dashboard/auctions/AuctionsInfo.vue'),
         meta: {
           title: i18n.global.t('dashboard.auctionsInfo.title'),
         },
       },
-
+        path: 'new-painting',
+        component: () => import('pages/dashboard/newpaint/NewPainting.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.newPainting.title'),
+        },
+      },
+      develop
     ],
   },
 

@@ -8,7 +8,7 @@
           size="lg"
           round
         >
-          <img :src="person.picture" />
+          <img :src="person.picture">
           <q-tooltip>{{ person.name }}</q-tooltip>
         </q-avatar>
       </div>
@@ -52,13 +52,13 @@
       </div>
       <div class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
-          <template v-slot:highestBid>
+          <template #highestBid>
             <b class="text-primary">{{ `${auction.highestBid}WETH` }}</b>
           </template>
         </i18n-t>
       </div>
       <div class="action">
-        {{ $t('common.placeABid')}} <q-icon name="mdi-arrow-right" />
+        {{ $t('common.placeABid') }} <q-icon name="mdi-arrow-right" />
       </div>
     </div>
   </div>

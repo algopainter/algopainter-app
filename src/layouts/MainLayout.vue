@@ -1,9 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="q-py-lg bg-transparent">
+    <q-header class="q-py-lg bg-white">
       <dashboard-header />
     </q-header>
-
     <q-drawer
       v-model="leftDrawerOpen"
       :width="120"

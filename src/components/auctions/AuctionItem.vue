@@ -125,16 +125,5 @@ export default class AuctionItem extends Vue.with(Props) {
   .highest-bid {
     font-size: 1.1rem;
   }
-
-  .action123 {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: $primary;
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.6;
-    }
-  }
 }
 </style>

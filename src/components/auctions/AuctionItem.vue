@@ -57,9 +57,13 @@
           </template>
         </i18n-t>
       </div>
-      <div class="action">
-        {{ $t('common.placeABid') }} <q-icon name="mdi-arrow-right" />
-      </div>
+      <q-btn
+        flat
+        color="primary"
+        :label="$t('common.placeABid')"
+        icon-right="mdi-arrow-right"
+        to="/auctions/123"
+      />
     </div>
   </div>
 </template>
@@ -120,17 +124,6 @@ export default class AuctionItem extends Vue.with(Props) {
 
   .highest-bid {
     font-size: 1.1rem;
-  }
-
-  .action {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: $primary;
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.6;
-    }
   }
 }
 </style>

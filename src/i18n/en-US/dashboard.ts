@@ -7,7 +7,7 @@ export default {
     editAccount: 'Edit Account',
     sendNewArt: 'Send New Art',
     collection: 'Collection',
-    buyAlgop: 'Buy $ALGOP',
+    buyAlgop: 'Buy $ALGOP  ',
     myGallery: 'My Gallery',
     pirs: 'PIRS:',
     pirsVal: '{creators} creators / {investors} investors',

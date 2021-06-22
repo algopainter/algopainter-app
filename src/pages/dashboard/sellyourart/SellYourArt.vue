@@ -20,8 +20,11 @@
         :label="$t('dashboard.sellYourArt.Timed')"
       />
     </div>
-    <div text-subtitle2 class="text-weight-bold q-ml-xl q-mt-xs">
-      {{$t( 'dashboard.sellYourArt.EnterPrice') }}
+    <div
+      text-subtitle2
+      class="text-weight-bold q-ml-xl q-mt-xs"
+    >
+      {{ $t( 'dashboard.sellYourArt.EnterPrice') }}
     </div>
   </q-page>
 </template>

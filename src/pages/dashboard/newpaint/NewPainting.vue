@@ -76,22 +76,16 @@
               </div>
             </div>
           </div>
-          <div class="col-12">
+          <div class="row justify-center">
             <algo-button
               class="btn justify-center q-py-md"
               type="submit"
               color="primary"
               :label="$t('dashboard.newPainting.generatePainting')"
-              @click="painting.isModal = true"
+              @click="isModalOpen = true"
             />
-            <q-dialog
-              ref="dialog"
-              v-model="painting.isModal"
-              @hide="onDialogHide"
-            >
-              <MyPaint />
-            </q-dialog>
           </div>
+          <my-paint v-model="isModalOpen" />
         </div>
       </div>
     </div>
@@ -103,13 +97,7 @@ import { Options, Vue } from 'vue-class-component';
 
 import AlgoButton from 'components/common/Button.vue';
 
-import Mypaint from './MyPaint.vue';
-
-import { QDialog } from 'quasar';
-
-@$q.dialog({
-  component: Mypaint,
-})
+import MyPaint from './MyPaint.vue';
 
 interface IPainting {
   text: string;
@@ -117,35 +105,19 @@ interface IPainting {
   applyRandomColors: boolean;
   inversionProbability: number;
   inspiration: string;
-  isModal: boolean;
 }
 
 @Options({
-  components: { AlgoButton, Mypaint },
+  components: { AlgoButton, MyPaint },
 })
 export default class NewPainting extends Vue {
+  isModalOpen: boolean = false;
   painting: IPainting = {
     text: '',
     paintOnWall: false,
     applyRandomColors: false,
     inversionProbability: 50,
-    inspiration: 'random',
-    isModal: false,
-  };
-
-  show() {
-    console.log('teste3333');
-    this.$refs.dialog.show();
-  }
-
-  hide() {
-    console.log('teste');
-    this.$refs.dialog.hide();
-  }
-
-  onDialogHide() {
-    console.log('test7777');
-    this.$emit('hide');
+    inspiration: '',
   }
 
   private : string = 'line';
@@ -181,10 +153,6 @@ export default class NewPainting extends Vue {
       },
     ];
   }
-
-  declare $refs:{
-    dialog: QDialog
-  };
 }
 </script>
 

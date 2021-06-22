@@ -26,6 +26,7 @@ export default {
     generatePainting: 'Generate Painting',
     yesLabel: 'Yes',
     noLabel: 'No',
+    requireText: 'All fields are mandatory',
     inspirations: {
       random: 'Random',
       calm: 'Calm',
@@ -37,11 +38,15 @@ export default {
     },
   },
   myPaint: {
-    title: 'My Amazing Paint',
-    sale: 'Put on sale',
+    title: 'My Amazing Paint',
+    description: 'Description:',
+    sale: 'Put on sale',
     bidback: 'Bidback',
-    creator: 'Royalties Creator:',
-    investors: 'Royalties Investors',
+    creator: 'Royalties Creator:',
+    investors: 'Royalties Investors:',
+    buttonRegister: 'Register',
+    buttonReload: 'Reload',
+    trace: '/',
   },
   auctions: {
     title: 'Auctions',

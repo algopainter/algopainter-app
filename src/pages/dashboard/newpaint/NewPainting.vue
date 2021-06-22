@@ -78,10 +78,19 @@
           </div>
           <div class="col-12">
             <algo-button
-              class="full-width q-py-md"
+              class="btn justify-center q-py-md"
+              type="submit"
               color="primary"
               :label="$t('dashboard.newPainting.generatePainting')"
+              @click="painting.isModal = true"
             />
+            <q-dialog
+              ref="dialog"
+              v-model="painting.isModal"
+              @hide="onDialogHide"
+            >
+              <MyPaint />
+            </q-dialog>
           </div>
         </div>
       </div>
@@ -94,16 +103,25 @@ import { Options, Vue } from 'vue-class-component';
 
 import AlgoButton from 'components/common/Button.vue';
 
+import Mypaint from './MyPaint.vue';
+
+import { QDialog } from 'quasar';
+
+@$q.dialog({
+  component: Mypaint,
+})
+
 interface IPainting {
   text: string;
   paintOnWall: boolean;
   applyRandomColors: boolean;
   inversionProbability: number;
   inspiration: string;
+  isModal: boolean;
 }
 
 @Options({
-  components: { AlgoButton },
+  components: { AlgoButton, Mypaint },
 })
 export default class NewPainting extends Vue {
   painting: IPainting = {
@@ -112,7 +130,23 @@ export default class NewPainting extends Vue {
     applyRandomColors: false,
     inversionProbability: 50,
     inspiration: 'random',
+    isModal: false,
   };
+
+  show() {
+    console.log('teste3333');
+    this.$refs.dialog.show();
+  }
+
+  hide() {
+    console.log('teste');
+    this.$refs.dialog.hide();
+  }
+
+  onDialogHide() {
+    console.log('test7777');
+    this.$emit('hide');
+  }
 
   private : string = 'line';
   get inspirationOptions() {
@@ -147,6 +181,10 @@ export default class NewPainting extends Vue {
       },
     ];
   }
+
+  declare $refs:{
+    dialog: QDialog
+  };
 }
 </script>
 
@@ -161,6 +199,9 @@ export default class NewPainting extends Vue {
   .span-label {
     display: flex;
     align-items: center;
+  }
+  .btn {
+    width: 50%;
   }
 }
 </style>

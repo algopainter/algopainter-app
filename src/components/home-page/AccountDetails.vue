@@ -72,6 +72,10 @@
             <algo-button
               size="lg"
               color="primary"
+              type="a"
+              href="https://exchange.pancakeswap.finance/#/
+              swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
+              target="_blank"
             >
               {{ $t('dashboard.homePage.buyAlgop') }}
             </algo-button>

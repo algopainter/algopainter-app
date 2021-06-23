@@ -9,6 +9,7 @@ export interface IArt {
   name: string;
   source: string;
   price: number;
+  keywords: string;
   bidBack: number;
   pirs: {
     creators: number;

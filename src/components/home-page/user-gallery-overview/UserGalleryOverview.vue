@@ -61,6 +61,7 @@ export default class UserGalleryOverview extends Vue {
         creators: 0.08,
         investors: 0.05,
       },
+      keywords: '#art',
       importantPeople: [{
         id: '1',
         name: 'Billy Nguyen',
@@ -81,6 +82,7 @@ export default class UserGalleryOverview extends Vue {
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
+      keywords: '#art',
       pirs: {
         creators: 0.08,
         investors: 0.05,
@@ -105,6 +107,7 @@ export default class UserGalleryOverview extends Vue {
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
+      keywords: '#art',
       pirs: {
         creators: 0.08,
         investors: 0.05,

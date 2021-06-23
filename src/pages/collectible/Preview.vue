@@ -31,6 +31,7 @@ export default class Preview extends Vue {
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
+      keywords: '#art',
       pirs: {
         creators: 0.08,
         investors: 0.05,

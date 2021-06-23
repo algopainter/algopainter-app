@@ -18,5 +18,64 @@ import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
 })
 export default class Auction extends Vue {
   showAuctionDistribution: boolean = false;
+
+  art: IArt = {
+    id: '1',
+    name: 'Abstract Art Bind Number 91',
+    source: 'placeholder',
+    price: 120,
+    bidBack: 0.1,
+    keywords: '#Art #Algopainter #Creation',
+    pirs: {
+      creators: 0.15,
+      investors: 0.05,
+    },
+    importantPeople: [
+      {
+        id: '1',
+        name: 'Billy Nguyen',
+        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+      },
+      {
+        id: '2',
+        name: 'Beverley Weaver',
+        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+      },
+      {
+        id: '3',
+        name: 'Leonard Ryan',
+        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+      },
+    ],
+  };
+
+  bids: IBid[] = [
+    {
+      id: '1',
+      art: this.art,
+      price: 200,
+      bidAt: moment(),
+    },
+    {
+      id: '2',
+      art: this.art,
+      price: 200,
+      bidAt: moment(),
+    },
+    {
+      id: '3',
+      art: this.art,
+      price: 200,
+      bidAt: moment(),
+    },
+  ];
+
+  auction: IAuctionItem = {
+    id: '1',
+    bids: this.bids,
+    art: this.art,
+    numberOfBids: 1,
+    highestBid: 300,
+  };
 }
 </script>

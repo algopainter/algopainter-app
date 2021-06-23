@@ -61,6 +61,7 @@ export default class UserGalleryOverview extends Vue {
         creators: 0.08,
         investors: 0.05,
       },
+      keywords: '#art',
       importantPeople: [{
         id: '1',
         name: 'Billy Nguyen',

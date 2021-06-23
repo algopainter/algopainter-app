@@ -4,7 +4,7 @@ import { QBtn } from 'quasar';
 
 class ImgButtonProps {
   imgSrc = prop<string>({ required: true })
-  cb = function (text: string, $event: null) { return $event; }
+  cb = function(text: string, $event: null) { return $event; }
 }
 
 @Options({
@@ -13,20 +13,26 @@ class ImgButtonProps {
 export default class ImageButton extends Vue.with(ImgButtonProps) {
   isDisabled = true;
 
-  toggle (event: any) {
+  toggle() {
     this.isDisabled = !this.isDisabled;
   }
 }
 </script>
 
 <template>
-  <q-btn v-bind="$props"
-         class="q-img-btn"
-         v-bind:icon="$props.imgSrc"
-         v-on:click="toggle($event)"
-         :class="{ disabled: isDisabled }"></q-btn>
-  <div class="q-img-btn-label"
-      :class="{ disabled: isDisabled }"><slot /></div>
+  <q-btn
+    v-bind="$props"
+    class="q-img-btn"
+    :icon="$props.imgSrc"
+    :class="{ disabled: isDisabled }"
+    @click="toggle()"
+  />
+  <div
+    class="q-img-btn-label"
+    :class="{ disabled: isDisabled }"
+  >
+    <slot />
+  </div>
 </template>
 
 <style lang="scss" scoped>

@@ -11,6 +11,11 @@
 import { Vue, Options } from 'vue-class-component';
 import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
 
+import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IArt } from 'src/models/IArt';
+import { IBid } from 'src/models/IBid';
+import moment from 'moment';
+
 @Options({
   components: {
     AuctionInfoChart,

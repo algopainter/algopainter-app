@@ -1,20 +1,10 @@
-<template>
-  <q-btn v-bind="$props"
-         class="q-img-btn"
-         v-bind:icon="$props.imgSrc"
-         v-on:click="toggle(), $props.cb($event)"
-         :class="{ disabled: isDisabled }"></q-btn>
-  <div class="q-img-btn-label"
-      :class="{ disabled: isDisabled }"><slot /></div>
-</template>
-
 <script lang="ts">
 import { Vue, Options, prop } from 'vue-class-component';
 import { QBtn } from 'quasar';
 
 class ImgButtonProps {
   imgSrc = prop<string>({ required: true })
-  cb = function ($event: null) { return $event; }
+  cb = function (text: string, $event: null) { return $event; }
 }
 
 @Options({
@@ -23,11 +13,21 @@ class ImgButtonProps {
 export default class ImageButton extends Vue.with(ImgButtonProps) {
   isDisabled = true;
 
-  toggle () {
+  toggle (event: any) {
     this.isDisabled = !this.isDisabled;
   }
 }
 </script>
+
+<template>
+  <q-btn v-bind="$props"
+         class="q-img-btn"
+         v-bind:icon="$props.imgSrc"
+         v-on:click="toggle($event)"
+         :class="{ disabled: isDisabled }"></q-btn>
+  <div class="q-img-btn-label"
+      :class="{ disabled: isDisabled }"><slot /></div>
+</template>
 
 <style lang="scss" scoped>
   .q-img-btn {
@@ -54,5 +54,9 @@ export default class ImageButton extends Vue.with(ImgButtonProps) {
   .q-img-btn .disabled {
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
     border: none;
+  }
+
+  .q-img-btn > .q-icon {
+    color: #000;
   }
 </style>

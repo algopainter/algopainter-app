@@ -1,6 +1,7 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
     <auction-info-chart
+      v-if="showAuctionDistribution"
       :values="[44, 100, 13, 33]"
     />
   </q-page>
@@ -16,5 +17,6 @@ import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
   },
 })
 export default class Auction extends Vue {
+  showAuctionDistribution: boolean = false;
 }
 </script>

@@ -1,6 +1,8 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
-    <div class="header">{{ $t('dashboard.auctions.hotBids') }}</div>
+    <div class="header">
+      {{ $t('dashboard.auctions.hotBids') }}
+    </div>
     <div class="flex q-col-gutter-md">
       <auction-item
         v-for="auction in auctions"
@@ -10,7 +12,7 @@
     </div>
     <div class="header q-pt-xl">
       <i18n-t keypath="dashboard.auctions.topSellers.top">
-        <template v-slot:sellers>
+        <template #sellers>
           <span class="text-primary">
             {{ $t('dashboard.auctions.topSellers.sellers') }}
           </span>
@@ -24,17 +26,21 @@
           :key="seller.id"
         >
           <div class="flex q-col-gutter-md items-center">
-            <div class="text-h6 text-bold">{{ index + 1 }}</div>
+            <div class="text-h6 text-bold">
+              {{ index + 1 }}
+            </div>
             <div>
               <q-avatar
                 round
                 size="64px"
               >
-                <img :src="seller.picture" />
+                <img :src="seller.picture">
               </q-avatar>
             </div>
             <div>
-              <div class="text-h5 text-bold">{{ seller.name }}</div>
+              <div class="text-h5 text-bold">
+                {{ seller.name }}
+              </div>
               <div>{{ `${seller.sellValue} ALGOP` }}</div>
             </div>
           </div>
@@ -42,7 +48,9 @@
       </div>
     </div>
     <div class="flex items-center">
-      <div class="header q-pr-xl">{{ $t('dashboard.auctions.explore') }}</div>
+      <div class="header q-pr-xl">
+        {{ $t('dashboard.auctions.explore') }}
+      </div>
       <div class="categories flex col-grow q-col-gutter-md">
         <div
           v-for="category in categories"

@@ -2,11 +2,11 @@
   <div class="side-bar q-pa-lg">
     <div class="content">
       <component
-        class="item"
+        :is="item.to ? 'router-link' : 'div'"
         v-for="item, index in items"
         :key="index"
+        class="item"
         :style="{'mask-image': `url(${item.icon})`}"
-        :is="item.to ? 'router-link' : 'div'"
         :to="item.to"
         @click="item.to ? null : item.onClick"
       />
@@ -24,7 +24,7 @@ interface SideBarItem {
 }
 
 export default class SideBar extends Vue {
-  get items (): SideBarItem[] {
+  get items(): SideBarItem[] {
     return [
       {
         icon: require('../assets/icons/home.svg'),
@@ -32,7 +32,11 @@ export default class SideBar extends Vue {
       },
       {
         icon: require('../assets/icons/paint-board-and-brush.svg'),
-        to: '/new-paiting',
+        to: '/new-painting',
+      },
+      {
+        icon: require('../assets/icons/magic-wand.svg'),
+        to: '/create-collectible',
       },
       {
         icon: require('../assets/icons/auction.svg'),

@@ -8,7 +8,7 @@
           size="lg"
           round
         >
-          <img :src="person.picture" />
+          <img :src="person.picture">
           <q-tooltip>{{ person.name }}</q-tooltip>
         </q-avatar>
       </div>
@@ -52,14 +52,18 @@
       </div>
       <div class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
-          <template v-slot:highestBid>
+          <template #highestBid>
             <b class="text-primary">{{ `${auction.highestBid}WETH` }}</b>
           </template>
         </i18n-t>
       </div>
-      <div class="action">
-        {{ $t('common.placeABid')}} <q-icon name="mdi-arrow-right" />
-      </div>
+      <q-btn
+        flat
+        color="primary"
+        :label="$t('common.placeABid')"
+        icon-right="mdi-arrow-right"
+        to="/auctions/123"
+      />
     </div>
   </div>
 </template>
@@ -120,17 +124,6 @@ export default class AuctionItem extends Vue.with(Props) {
 
   .highest-bid {
     font-size: 1.1rem;
-  }
-
-  .action {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: $primary;
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.6;
-    }
   }
 }
 </style>

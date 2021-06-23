@@ -22,6 +22,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'create-collectible',
+        component: () => import('src/pages/collectible/Index.vue'),
+        meta: {
+          title: i18n.global.t('createCollectible.title.main'),
+        },
+      },
+      {
         path: 'auctions/:id',
         component: () => import('pages/dashboard/auctions/Auction.vue'),
         meta: {

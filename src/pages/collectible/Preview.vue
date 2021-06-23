@@ -1,8 +1,13 @@
 <template>
-  <div class="text-h6">{{ $t('createCollectible.create.preview') }}</div>
+  <div class="text-h6">
+    {{ $t('createCollectible.create.preview') }}
+  </div>
   <div class="row">
     <div class="col ap-preview-box">
-      <auction-item :key="previewItem.id" :auction="previewItem" />
+      <auction-item
+        :key="previewItem.id"
+        :auction="previewItem"
+      />
     </div>
   </div>
 </template>

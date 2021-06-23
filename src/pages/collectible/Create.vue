@@ -1,9 +1,10 @@
 <template>
-    <div class="text-subtitle2">{{ $t('createCollectible.title.sub') }}</div>
-    <div class="row">
-      <div class="col">
-      </div>
-    </div>
+  <div class="text-subtitle2">
+    {{ $t('createCollectible.title.sub') }}
+  </div>
+  <div class="row">
+    <div class="col" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -16,7 +17,6 @@ import ImageButton from '../../components/common/ImageButton.vue';
   },
 })
 export default class Create extends Vue {
-  alert () {}
 }
 </script>
 

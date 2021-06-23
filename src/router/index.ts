@@ -17,7 +17,7 @@ import routes from './routes';
  * with the Router instance.
  */
 
-export default route<StateInterface>(function (/* { store, ssrContext } */) {
+export default route<StateInterface>(function(/* { store, ssrContext } */) {
   const createHistory =
     process.env.SERVER
       ? createMemoryHistory

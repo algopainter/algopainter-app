@@ -8,7 +8,7 @@
           size="lg"
           round
         >
-          <img :src="person.picture" />
+          <img :src="person.picture">
           <q-tooltip>{{ person.name }}</q-tooltip>
         </q-avatar>
       </div>
@@ -31,27 +31,27 @@
       <div class="q-py-sm">
         <div class="flex q-col-gutter-sm">
           <div class="price">
-            <img src="../../../assets/icons/coin.svg" />
+            <img src="../../../assets/icons/coin.svg">
             <div>{{ $n(art.price, 'currency') }}</div>
           </div>
           <div class="bid-back">
-            <img src="../../../assets/icons/return-on-investment.svg" />
+            <img src="../../../assets/icons/return-on-investment.svg">
             <div>
               {{ $n(art.bidBack, 'percent') }} {{ $t('common.bidBack') }}
             </div>
           </div>
         </div>
         <div class="pirs">
-          <img src="../../../assets/icons/return-on-investment.svg" />
+          <img src="../../../assets/icons/return-on-investment.svg">
           <div>
             <span class="label">
-              {{ $t('dashboard.homePage.pirs')}}
+              {{ $t('dashboard.homePage.pirs') }}
             </span>
             <i18n-t keypath="dashboard.homePage.pirsVal">
-              <template v-slot:creators>
+              <template #creators>
                 {{ $n(art.pirs.creators, 'percent') }}
               </template>
-              <template v-slot:investors>
+              <template #investors>
                 {{ $n(art.pirs.investors, 'percent') }}
               </template>
             </i18n-t>
@@ -59,7 +59,7 @@
         </div>
       </div>
       <div class="sell-action">
-        {{ $t('dashboard.homePage.sell')}} <q-icon name="mdi-arrow-right" />
+        {{ $t('dashboard.homePage.sell') }} <q-icon name="mdi-arrow-right" />
       </div>
     </div>
   </div>

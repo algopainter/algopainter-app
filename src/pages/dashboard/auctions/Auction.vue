@@ -15,6 +15,6 @@ import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
     AuctionInfoChart,
   },
 })
-export default class AuctionsList extends Vue {
+export default class Auction extends Vue {
 }
 </script>

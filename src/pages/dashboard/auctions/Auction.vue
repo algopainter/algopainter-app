@@ -15,6 +15,7 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IArt } from 'src/models/IArt';
 import { IBid } from 'src/models/IBid';
 import moment from 'moment';
+import { IUser } from 'src/models/IUser';
 
 @Options({
   components: {
@@ -23,6 +24,35 @@ import moment from 'moment';
 })
 export default class Auction extends Vue {
   showAuctionDistribution: boolean = false;
+
+  users: IUser[] = [
+    {
+      id: '1',
+      name: 'Alice',
+      email: 'alice.k@email.com',
+      age: '32 years',
+      country: 'CA',
+      interests: 'digital, fractal, urban, classic',
+      collections: 2,
+      wallet: {
+        algop: 9102,
+      },
+      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
+    },
+    {
+      id: '2',
+      name: 'Mike',
+      email: 'mike@email.com',
+      age: '21 years',
+      country: 'AR',
+      interests: 'classic',
+      collections: 7,
+      wallet: {
+        algop: 6421,
+      },
+      profilePhotoUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
+    },
+  ];
 
   art: IArt = {
     id: '1',

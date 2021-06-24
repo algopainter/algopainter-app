@@ -112,6 +112,7 @@ export default class AuctionsList extends Vue {
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
+      keywords: '#art',
       pirs: {
         creators: 0.08,
         investors: 0.05,
@@ -140,6 +141,7 @@ export default class AuctionsList extends Vue {
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
+      keywords: '#art',
       pirs: {
         creators: 0.08,
         investors: 0.05,
@@ -168,6 +170,7 @@ export default class AuctionsList extends Vue {
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
+      keywords: '#art',
       pirs: {
         creators: 0.08,
         investors: 0.05,
@@ -196,6 +199,7 @@ export default class AuctionsList extends Vue {
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
+      keywords: '#art',
       pirs: {
         creators: 0.08,
         investors: 0.05,

@@ -60,4 +60,11 @@ export default {
     explore: 'Explore',
     otherFilter: 'Other Filter',
   },
+  sellYourArt: {
+    title: 'Sell your Art',
+    putMarketplace: 'Put on marketplace',
+    FixedPrice: 'Fixed Price',
+    Timed: 'Timed Auction',
+    EnterPrice: 'Enter price to allow users instantly purchase your NFT',
+  },
 };

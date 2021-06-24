@@ -14,6 +14,30 @@
               src="../../../assets/placeholder-images/painting.jpg"
             />
           </div>
+          <div class="col-md-1">
+            <div
+              class="
+                auction-icons
+                col-12 col-md-1
+                text-center
+                q-pt-md
+                flex
+                q-gutter-md
+                justify-center
+              "
+            >
+              <div>
+                <q-icon
+                  color="primary"
+                  size="1.7rem"
+                  name="mdi-heart-outline"
+                />
+              </div>
+              <div>
+                <q-icon color="primary" size="1.7rem" name="mdi-arrow-expand" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="auction col-12 col-md-6">

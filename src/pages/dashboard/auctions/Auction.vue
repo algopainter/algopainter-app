@@ -87,18 +87,21 @@ export default class Auction extends Vue {
   bids: IBid[] = [
     {
       id: '1',
+      user: this.users[0],
       art: this.art,
       price: 200,
       bidAt: moment(),
     },
     {
       id: '2',
+      user: this.users[1],
       art: this.art,
       price: 200,
       bidAt: moment(),
     },
     {
       id: '3',
+      user: this.users[0],
       art: this.art,
       price: 200,
       bidAt: moment(),

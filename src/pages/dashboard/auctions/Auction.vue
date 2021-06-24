@@ -10,6 +10,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
+import AlgoButton from 'components/common/Button.vue';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IArt } from 'src/models/IArt';
@@ -20,6 +21,7 @@ import { IUser } from 'src/models/IUser';
 @Options({
   components: {
     AuctionInfoChart,
+    AlgoButton,
   },
 })
 export default class Auction extends Vue {

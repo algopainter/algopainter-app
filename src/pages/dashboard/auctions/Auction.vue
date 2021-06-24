@@ -1,5 +1,25 @@
 <template>
-  <q-page class="q-gutter-lg q-pb-lg">
+  <q-page class="q-page q-gutter-lg q-pb-lg">
+    <div class="row q-col-gutter-md">
+      <div class="col-12 col-md-6">
+        <div class="row">
+          <div class="col-md-11">
+            <div class="q-pb-md">
+              <algo-button color="primary" outline>
+                {{ $t('dashboard.auctionPage.auctionDistribution') }}
+              </algo-button>
+            </div>
+            <q-img
+              class="art-image"
+              src="../../../assets/placeholder-images/painting.jpg"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="auction col-12 col-md-6">
+
+      </div>
+    </div>
     <auction-info-chart
       v-if="showAuctionDistribution"
       :values="[44, 100, 13, 33]"

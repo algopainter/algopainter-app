@@ -9,4 +9,5 @@ export interface IUser {
   wallet: {
     algop: number;
   };
+  profilePhotoUrl?: string;
 }

@@ -60,4 +60,22 @@ export default {
     explore: 'Explore',
     otherFilter: 'Other Filter',
   },
+  auctionDetails: {
+    title: 'Auction',
+    auctionDistribution: 'Auction Distribution',
+    numberOfBids: '{numberOfBids} of {numberOfBids}',
+    highestBidBy: 'Highest bid by {highestBidBy}',
+    bidBackPercentage: '{bidBackPercentage} Bidback',
+    owner: {
+      owner: 'Owner',
+    },
+    creator: {
+      creator: 'Creator',
+      pirs: '{pirs} of sales will go to creator',
+    },
+    collection: {
+      collection: 'Collection',
+      pirs: '{pirs} of sales will go to investors',
+    },
+  },
 };

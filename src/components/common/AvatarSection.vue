@@ -35,17 +35,17 @@ class Props {
     type: String,
     required: true,
   });
-  
+
   title = prop({
     type: String,
     required: true,
   });
-  
+
   subTitle = prop({
     type: String,
     required: true,
   });
-  
+
   description = prop({
     type: String,
     required: false,

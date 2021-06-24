@@ -58,9 +58,15 @@
           </div>
         </div>
       </div>
-      <div class="sell-action">
-        {{ $t('dashboard.homePage.sell') }} <q-icon name="mdi-arrow-right" />
-      </div>
+      <q-btn
+        class="sell-action"
+        to="/sell-your-art"
+        flat
+        color="positive"
+      >
+        {{ $t('dashboard.homePage.sell') }}
+        <q-icon name="mdi-arrow-right" />
+      </q-btn>
     </div>
   </div>
 </template>

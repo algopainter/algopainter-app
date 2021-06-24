@@ -6,9 +6,9 @@
         <div class="header q-gutter-md">
           {{ $t('dashboard.sellYourArt.putMarketplace') }}
         </div>
-        <div class="row justify-start ">
+        <div class="row justify-start">
           <algo-button
-            class="btn-fixed-width q-mr-xs "
+            class="btn-fixed-width q-mr-xs"
             color="primary"
             outline
             :label="$t('dashboard.sellYourArt.FixedPrice')"
@@ -28,12 +28,14 @@
         </div>
       </div>
       <div>
+        <span class="text-bold">
+          {{ $t('dashboard.sellYourArt.price') }}
+        </span>
         <q-input
           v-model="text"
           type="number"
           color="grey-3"
           label-color="primary"
-          :label="$t('dashboard.sellYourArt.price')"
         >
           <template #append>
             <q-select
@@ -62,34 +64,37 @@
         </q-input>
         <div class="q-gutter-lg">
           <div class="row justify-start q-gutter-sm">
-            <q-select
-              v-model="investors"
-              class="select-width"
-              :options="royalties"
-              label="Investors Royalties:"
-            >
-              <template #append>
-                <q-btn
-                  round
-                  flat
-                  icon="%"
-                />
-              </template>
-            </q-select>
-            <q-select
-              v-model="creator"
-              class="select-width"
-              :options="royalties"
-              label="Creator Royalties:"
-            >
-              <template #append>
-                <q-btn
-                  round
-                  flat
-                  icon="%"
-                />
-              </template>
-            </q-select>
+            <div>
+              <span class="text-bold">
+                {{ $t('dashboard.sellYourArt.creatorRoyalties') }}
+              </span>
+              <q-select
+                v-model="investors"
+                class="select-width q-gutter-x-md"
+                :options="royalties"
+              >
+                <template #append>
+                  <q-btn flat>
+                    {{ $t('dashboard.sellYourArt.percent') }}
+                  </q-btn>
+                </template>
+              </q-select>
+            </div>
+            <div>
+              <span class="text-bold">
+                {{ $t('dashboard.sellYourArt.investorsRoyalties') }}</span>
+              <q-select
+                v-model="creator"
+                class="select-width"
+                :options="royalties"
+              >
+                <template #append>
+                  <q-btn flat>
+                    {{ $t('dashboard.sellYourArt.percent') }}
+                  </q-btn>
+                </template>
+              </q-select>
+            </div>
           </div>
           <div class="text-right q-mr-md">
             <p class="text-bold">
@@ -98,9 +103,7 @@
             <span>
               {{ $t('dashboard.sellYourArt.willReceive') }}
             </span>
-            <span
-              class="text-primary text-bold"
-            >
+            <span class="text-primary text-bold">
               {{ $t('dashboard.sellYourArt.ireceive') }}
             </span>
             <span class="text-primary text-bold">
@@ -118,7 +121,7 @@
               :label="$t('dashboard.sellYourArt.cancel')"
             />
             <algo-button
-              class="btn-fixed-width  q-ma-xs"
+              class="btn-fixed-width q-ma-xs"
               color="primary"
               outline
               :label="$t('dashboard.sellYourArt.register')"
@@ -144,8 +147,8 @@ import YouArt from 'components/sellYourArt/YouArt.vue';
   components: { AlgoButton, YouArt },
 })
 export default class sellYourArt extends Vue {
-  investors: number = 0;
-  creator: number = 0;
+  investors: null = null;
+  creator: null = null;
   coins: string = '';
   text: string = '';
   options = [

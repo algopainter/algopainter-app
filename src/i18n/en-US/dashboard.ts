@@ -70,6 +70,7 @@ export default {
     money: ' $69.00',
     cancel: 'Cancel',
     register: 'Register',
+    percent: '%',
   },
   youArt: {
     title: 'Your art',

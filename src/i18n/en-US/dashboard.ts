@@ -60,7 +60,7 @@ export default {
     explore: 'Explore',
     otherFilter: 'Other Filter',
   },
-  auctionDetails: {
+  auctionPage: {
     title: 'Auction',
     auctionDistribution: 'Auction Distribution',
     numberOfBids: '{numberOfBids} of {numberOfBids}',

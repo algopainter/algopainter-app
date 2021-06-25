@@ -6,7 +6,7 @@
     <div class="container col justify-center ">
       <div class="q-pa-xl">
         <q-img
-          src="../../assets/placeholder-images/painting.jpg"
+          src="~assets/placeholder-images/painting.jpg"
           class="img"
         />
         <div class="header q-pt-md">

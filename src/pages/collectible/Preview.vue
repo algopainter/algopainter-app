@@ -2,13 +2,8 @@
   <div class="text-h6">
     {{ $t('createCollectible.create.preview') }}
   </div>
-  <div class="row">
-    <div class="col ap-preview-box">
-      <auction-item
-        :key="previewItem.id"
-        :auction="previewItem"
-      />
-    </div>
+  <div class="ap-preview-box">
+    <auction-item :key="previewItem.id" :auction="previewItem" />
   </div>
 </template>
 
@@ -36,19 +31,23 @@ export default class Preview extends Vue {
         creators: 0.08,
         investors: 0.05,
       },
-      importantPeople: [{
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-      }, {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-      }, {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-      }],
+      importantPeople: [
+        {
+          id: '1',
+          name: 'Billy Nguyen',
+          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+        },
+        {
+          id: '2',
+          name: 'Beverley Weaver',
+          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+        },
+        {
+          id: '3',
+          name: 'Leonard Ryan',
+          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+        },
+      ],
     },
     numberOfBids: 1,
     highestBid: 300,
@@ -59,7 +58,7 @@ export default class Preview extends Vue {
 <style lang="scss" scoped>
 .ap-preview-box {
   padding: 25px 50px 25px 50px;
-  border: 2px dashed #F4538D;
+  border: 2px dashed #f4538d;
   box-sizing: border-box;
   border-radius: 10px;
 }

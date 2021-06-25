@@ -18,6 +18,7 @@ class ImgButtonProps {
 })
 export default class ImageButton extends Vue.with(ImgButtonProps) {
   loadIcon(): string {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return require('../../assets/' + this.$props.imgSrc);
   }
 

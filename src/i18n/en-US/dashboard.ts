@@ -67,4 +67,9 @@ export default {
     Timed: 'Timed Auction',
     EnterPrice: 'Enter price to allow users instantly purchase your NFT',
   },
+  youArt: {
+    title: 'Your art',
+    abstractName: 'Art Abstract Name',
+    of: '1 of 2',
+  },
 };

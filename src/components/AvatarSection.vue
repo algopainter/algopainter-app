@@ -32,19 +32,19 @@ import { Vue, prop } from 'vue-class-component';
 
 class Props {
   imageUrl = prop({
-    type: string,
+    type: String,
   });
 
   title = prop({
-    type: string,
+    type: String,
   });
 
   subTitle = prop({
-    type: string,
+    type: String,
   });
 
   description = prop({
-    type: string,
+    type: String,
   });
 }
 

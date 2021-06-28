@@ -11,7 +11,7 @@
           <q-item-label class="title q-mt-none">
             <slot name="title">{{ title }}</slot>
           </q-item-label>
-          <q-item-label class="subtitle" style="margin-top: 0px !important">
+          <q-item-label class="subtitle">
             <slot name="subTitle">
               {{ subTitle }}
             </slot></q-item-label

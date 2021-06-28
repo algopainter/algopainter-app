@@ -178,14 +178,14 @@ import moment from 'moment';
 import { IUser } from 'src/models/IUser';
 
 interface ITempUser {
-  id: String;
-  name: String;
-  profilePhotoUrl: String;
+  id: string;
+  name: string;
+  profilePhotoUrl: string;
 }
 
 interface ICollection {
-  name: String;
-  imageUrl: String;
+  name: string;
+  imageUrl: string;
 }
 
 @Options({

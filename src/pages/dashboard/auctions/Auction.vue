@@ -171,7 +171,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
-import AvatarSection from 'src/components/AvatarSection.vue';
 import AlgoAvatar from 'components/common/AlgoAvatar.vue';
 import AuctionBidAvatar from 'components/auctions/auction/AuctionBidAvatar.vue';
 import AuctionHighestBidAvatar from 'components/auctions/auction/AuctionHighestBidAvatar.vue';
@@ -197,7 +196,6 @@ interface ICollection {
 @Options({
   components: {
     AuctionInfoChart,
-    AvatarSection,
     AlgoButton,
     AuctionBidAvatar,
     AuctionHighestBidAvatar,

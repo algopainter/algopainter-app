@@ -17,7 +17,6 @@
           <div class="col-md-1">
             <div
               class="
-                auction-icons
                 col-12 col-md-1
                 text-center
                 q-pt-md
@@ -41,7 +40,119 @@
         </div>
       </div>
       <div class="auction col-12 col-md-6">
+        <div class="row q-col-gutter-lg q-pb-lg">
+          <div class="auction-details col-md-8">
+            <div class="name">
+              {{ auction.art.name }}
+            </div>
+            <div class="q-py-xs">
+              {{
+                $t('dashboard.auctionPage.saleNumber', {
+                  saleNumber: saleNumber,
+                  totalSales: totalSales,
+                })
+              }}
+            </div>
+            <div class="keywords">
+              {{ auction.art.keywords }}
+            </div>
+          </div>
+          <div class="bid-back col-md-4">
+            <span class="dot"></span>
+          </div>
+        </div>
+        <div>
+          <q-tabs
+            v-model="tab"
+            active-color="primary"
+            indicator-color="primary"
+            align="left"
+            :narrow-indicator="true"
+          >
+            <q-tab :ripple="false" no-caps name="info" label="Info" />
+            <q-tab :ripple="false" no-caps name="bids" label="Bids" />
+            <q-tab
+              :ripple="false"
+              no-caps
+              name="previous-owners"
+              :label="$t('dashboard.auctionPage.previousOwners')"
+            />
+            <q-tab :ripple="false" no-caps name="history" label="History" />
+          </q-tabs>
 
+          <q-tab-panels v-model="tab">
+            <q-tab-panel name="info" class="q-pa-sm">
+              <div class="q-pt-md">
+                <AlgoAvatar
+                  :title="$t('dashboard.auctionPage.owner')"
+                  :imageUrl="owner.profilePhotoUrl"
+                  :subTitle="owner.name"
+                />
+
+                <AlgoAvatar
+                  v-for="creator in creators"
+                  :title="$t(`dashboard.auctionPage.creator`)"
+                  :imageUrl="creator.profilePhotoUrl"
+                  :subTitle="creator.name"
+                  :description="
+                    $t('dashboard.auctionPage.pirsDestination', {
+                      pirs: $n(auction.art.pirs.creators, 'percent'),
+                      role: $t('dashboard.auctionPage.creators').toLowerCase(),
+                    })
+                  "
+                />
+
+                <q-separator class="q-pr-xl" spaced="md" color="primary" />
+
+                <AlgoAvatar
+                  class="q-py-md"
+                  :title="$t('dashboard.auctionPage.collection')"
+                  :imageUrl="collection.imageUrl"
+                  :subTitle="collection.name"
+                  :description="
+                    $t('dashboard.auctionPage.pirsDestination', {
+                      pirs: $n(auction.art.pirs.investors, 'percent'),
+                      role: $t('dashboard.auctionPage.investors').toLowerCase(),
+                    })
+                  "
+                />
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="bids" class="q-pa-sm">
+              <div class="q-pt-md">
+                <AuctionBidAvatar v-for="bid in bids" :bid="bid" />
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="previous-owners" class="q-pa-sm">
+              <div class="q-pt-md">
+                <AlgoAvatar
+                  v-for="oldOwner in oldOwners"
+                  :title="$t('dashboard.auctionPage.oldOwner')"
+                  :imageUrl="oldOwner.profilePhotoUrl"
+                  :subTitle="oldOwner.name"
+                />
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+
+          <div>
+            <div class="q-pt-md">
+              <AuctionHighestBidAvatar :bid="highestBid" />
+            </div>
+            <div class="q-pr-xl q-py-sm">
+              <algo-button
+                class="text-bold full-width"
+                size="lg"
+                color="primary"
+                outline
+              >
+                Place a Bid
+              </algo-button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <auction-info-chart
@@ -54,6 +165,10 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
+import AvatarSection from 'src/components/AvatarSection.vue';
+import AlgoAvatar from 'components/common/AlgoAvatar.vue';
+import AuctionBidAvatar from 'components/auctions/auction/AuctionBidAvatar.vue';
+import AuctionHighestBidAvatar from 'components/auctions/auction/AuctionHighestBidAvatar.vue';
 import AlgoButton from 'components/common/Button.vue';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
@@ -76,7 +191,11 @@ interface ICollection {
 @Options({
   components: {
     AuctionInfoChart,
+    AvatarSection,
     AlgoButton,
+    AuctionBidAvatar,
+    AuctionHighestBidAvatar,
+    AlgoAvatar,
   },
 })
 export default class Auction extends Vue {
@@ -244,5 +363,39 @@ export default class Auction extends Vue {
   max-width: 850px;
   height: auto;
   border-radius: 10px;
+}
+
+.auction {
+  border-left: 2px solid $primary;
+}
+
+.auction-details {
+  .name {
+    font-weight: bold;
+    font-size: 2rem;
+  }
+
+  .keywords {
+    font-size: 1.3rem;
+    color: #bdbdbd;
+  }
+}
+
+.bid {
+  .highest-bid {
+    font-size: 1rem;
+  }
+  .price {
+    color: $positive;
+    font-size: 1rem;
+  }
+}
+
+.dot {
+  height: 150px;
+  width: 150px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
 }
 </style>

@@ -103,7 +103,7 @@ module.exports = {
     'space-before-function-paren': ['warn', 'never'],
     'comma-dangle': ['warn', 'always-multiline'],
     'eol-last': ['warn', 'always'],
-    'max-len': ['warn', { 'code': 80 }],
+    'max-len': ['warn', { 'code': 160 }],
     'no-trailing-spaces': 'warn',
     'quotes': ['warn', 'single', { avoidEscape: true }],
 

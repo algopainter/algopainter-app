@@ -60,22 +60,26 @@ export default {
     explore: 'Explore',
     otherFilter: 'Other Filter',
   },
-  auctionDetails: {
-    title: 'Auction',
-    auctionDistribution: 'Auction Distribution',
-    numberOfBids: '{numberOfBids} of {numberOfBids}',
-    highestBidBy: 'Highest bid by {highestBidBy}',
-    bidBackPercentage: '{bidBackPercentage} Bidback',
-    owner: {
-      owner: 'Owner',
-    },
-    creator: {
-      creator: 'Creator',
-      pirs: '{pirs} of sales will go to creator',
-    },
-    collection: {
-      collection: 'Collection',
-      pirs: '{pirs} of sales will go to investors',
-    },
+  sellYourArt: {
+    title: 'Sell your Art',
+    putMarketplace: 'Put on marketplace',
+    FixedPrice: 'Fixed Price',
+    Timed: 'Timed Auction',
+    EnterPrice: 'Enter price to allow users instantly purchase your NFT',
+    price: 'Price',
+    creatorRoyalties: 'Creator Royalties:',
+    investorsRoyalties: 'Investors Royalties:',
+    service: 'Service fee 2.5%',
+    willReceive: 'You will receive ',
+    ireceive: ' 0.196 ',
+    money: ' $69.00',
+    cancel: 'Cancel',
+    register: 'Register',
+    percent: '%',
+  },
+  youArt: {
+    title: 'Your art',
+    abstractName: 'Art Abstract Name',
+    of: '1 of 2',
   },
 };

@@ -122,7 +122,11 @@
 
             <q-tab-panel name="bids" class="q-pa-sm">
               <div class="q-pt-md">
-                <AuctionBidAvatar v-for="bid in bids" :bid="bid" />
+                <AuctionBidAvatar
+                  v-for="bid in bids"
+                  :bid="bid"
+                  :key="bid.id"
+                />
               </div>
             </q-tab-panel>
 

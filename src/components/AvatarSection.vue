@@ -8,13 +8,13 @@
           </q-avatar>
         </q-item-section>
         <q-item-section>
-          <q-item-label class="title text-h6 text-bold q-mt-none">
+          <q-item-label class="title q-mt-none">
             <slot name="title">{{ title }}</slot>
           </q-item-label>
-          <q-item-label
-            class="subtitle text-bold text-primary"
-            style="margin-top: 0px !important"
-            >{{ subTitle }}</q-item-label
+          <q-item-label class="subtitle" style="margin-top: 0px !important">
+            <slot name="subTitle">
+              {{ subTitle }}
+            </slot></q-item-label
           >
         </q-item-section>
       </q-item>

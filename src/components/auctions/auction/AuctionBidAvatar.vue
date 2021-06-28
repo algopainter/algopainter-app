@@ -3,17 +3,17 @@
     class="q-py-md"
     :imageUrl="bid.user.profilePhotoUrl"
   >
-    <template v-slot:title>
+    <template #title>
       <div class="text-positive text-bold text-h6">
         {{ $n(bid.price, 'currency') }}
       </div>
     </template>
-    <template v-slot:subTitle>
+    <template #subTitle>
       <div class="text-primary text-bold">
         {{ bid.user.name }}
       </div>
     </template>
-    <template v-slot:description>
+    <template #description>
       <div>
         {{
           $t('dashboard.auctionPage.bidBackPercentage', {

@@ -3,16 +3,16 @@
     class="q-py-md"
     :imageUrl="bid.user.profilePhotoUrl"
   >
-    <template v-slot:title>
+    <template #title>
       <div class="text-bold">
         <i18n-t keypath="dashboard.auctionPage.highestBidBy">
-          <template v-slot:highestBidBy>
+          <template #highestBidBy>
             <span class="text-primary">{{ bid.user.name }}</span>
           </template>
         </i18n-t>
       </div>
     </template>
-    <template v-slot:subTitle>
+    <template #subTitle>
       <div class="price text-bold text-positive">
         {{ $n(bid.price, 'currency') }}
       </div>

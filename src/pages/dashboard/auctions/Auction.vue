@@ -62,6 +62,17 @@ import { IBid } from 'src/models/IBid';
 import moment from 'moment';
 import { IUser } from 'src/models/IUser';
 
+interface ITempUser {
+  id: String;
+  name: String;
+  profilePhotoUrl: String;
+}
+
+interface ICollection {
+  name: String;
+  imageUrl: String;
+}
+
 @Options({
   components: {
     AuctionInfoChart,
@@ -69,7 +80,15 @@ import { IUser } from 'src/models/IUser';
   },
 })
 export default class Auction extends Vue {
+  tab: String = 'info';
+
   showAuctionDistribution: boolean = false;
+
+  // MOCKING DATA
+
+  totalSales: Number = 12;
+
+  saleNumber: Number = 4;
 
   users: IUser[] = [
     {
@@ -99,6 +118,54 @@ export default class Auction extends Vue {
       profilePhotoUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
     },
   ];
+
+  owner: ITempUser = {
+    id: '4',
+    name: 'Dave',
+    profilePhotoUrl: 'https://randomuser.me/api/portraits/men/51.jpg',
+  };
+
+  creators: ITempUser[] = [
+    {
+      id: '1',
+      name: 'Michonne',
+      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
+    },
+    {
+      id: '2',
+      name: 'Jordan',
+      profilePhotoUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
+    },
+  ];
+
+  collection: ICollection = {
+    name: 'ArTbs',
+    imageUrl: 'http://localhost:8080/img/painting.jpg',
+  };
+
+  oldOwners: ITempUser[] = [
+    {
+      id: '10',
+      name: 'Dave',
+      profilePhotoUrl: 'https://randomuser.me/api/portraits/men/26.jpg',
+    },
+    {
+      id: '11',
+      name: 'Keyne',
+      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/26.jpg',
+    },
+    {
+      id: '12',
+      name: 'Alice',
+      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/41.jpg',
+    },
+  ];
+
+  highestBidUser: ITempUser = {
+    id: '590',
+    name: 'MattPress',
+    profilePhotoUrl: 'https://randomuser.me/api/portraits/women/73.jpg',
+  };
 
   art: IArt = {
     id: '1',
@@ -135,7 +202,7 @@ export default class Auction extends Vue {
       id: '1',
       user: this.users[0],
       art: this.art,
-      price: 4,
+      price: 5,
       bidAt: moment().subtract(5, 'hours'),
     },
     {
@@ -149,10 +216,18 @@ export default class Auction extends Vue {
       id: '3',
       user: this.users[0],
       art: this.art,
-      price: 5,
+      price: 4,
       bidAt: moment(),
     },
   ];
+
+  highestBid: IBid = {
+    id: '6',
+    user: this.highestBidUser as IUser,
+    art: this.art,
+    price: 120,
+    bidAt: moment().subtract(10, 'hours'),
+  };
 
   auction: IAuctionItem = {
     id: '1',

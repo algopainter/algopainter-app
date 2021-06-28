@@ -91,6 +91,7 @@
 
                 <AlgoAvatar
                   v-for="creator in creators"
+                  :key="creator.id"
                   :title="$t(`dashboard.auctionPage.creator`)"
                   :imageUrl="creator.profilePhotoUrl"
                   :subTitle="creator.name"
@@ -129,6 +130,7 @@
               <div class="q-pt-md">
                 <AlgoAvatar
                   v-for="oldOwner in oldOwners"
+                  :key="oldOwner.id"
                   :title="$t('dashboard.auctionPage.oldOwner')"
                   :imageUrl="oldOwner.profilePhotoUrl"
                   :subTitle="oldOwner.name"

@@ -1,29 +1,34 @@
 <template>
-  <div class="flex items-center">
-    <div class="items-center">
-      <q-item dense class="q-pa-none q-mr-xl">
-        <q-item-section side>
-          <q-avatar round size="56px">
-            <img :src="imageUrl" />
-          </q-avatar>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label class="title q-mt-none">
-            <slot name="title">{{ title }}</slot>
-          </q-item-label>
-          <q-item-label class="subtitle" style="margin-top: 0px !important">
-            <slot name="subTitle">
-              {{ subTitle }}
-            </slot></q-item-label
-          >
-        </q-item-section>
-      </q-item>
-    </div>
-    <slot name="description">
-      <div class="text-bold">
-        {{ description }}
+  <div class="q-py-md">
+    <div class="flex items-center">
+      <div class="items-center">
+        <q-item dense class="q-pa-none q-mr-xl">
+          <q-item-section side>
+            <q-avatar round size="56px">
+              <img :src="imageUrl" />
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="title q-mt-none text-h6 text-bold">
+              <slot name="title">{{ title }}</slot>
+            </q-item-label>
+            <q-item-label
+              class="subtitle text-bold text-primary"
+              style="margin-top: 0px !important"
+            >
+              <slot name="subTitle">
+                {{ subTitle }}
+              </slot></q-item-label
+            >
+          </q-item-section>
+        </q-item>
       </div>
-    </slot>
+      <slot name="description">
+        <div class="text-bold">
+          {{ description }}
+        </div>
+      </slot>
+    </div>
   </div>
 </template>
 
@@ -48,7 +53,7 @@ class Props {
   });
 }
 
-export default class AvatarSection extends Vue.with(Props) {}
+export default class AlgoAvatar extends Vue.with(Props) {}
 </script>
 
 <style lang="scss" scope>

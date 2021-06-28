@@ -199,15 +199,15 @@ interface ICollection {
   },
 })
 export default class Auction extends Vue {
-  tab: String = 'info';
+  tab: string = 'info';
 
   showAuctionDistribution: boolean = false;
 
   // MOCKING DATA
 
-  totalSales: Number = 12;
+  totalSales: number = 12;
 
-  saleNumber: Number = 4;
+  saleNumber: number = 4;
 
   users: IUser[] = [
     {

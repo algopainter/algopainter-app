@@ -8,9 +8,7 @@ class ImgButtonProps {
   imgWidth = prop<string>({ required: true });
   imgHeight = prop<string>({ required: true });
   isDisabled = prop<boolean>({ required: true });
-  cb = function(id: string) {
-    return id;
-  };
+  cb = prop<(id: string) => void>({ required: true });
 }
 
 @Options({

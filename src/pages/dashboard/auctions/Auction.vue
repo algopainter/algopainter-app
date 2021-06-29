@@ -214,7 +214,6 @@ interface ICollection {
   },
 })
 export default class Auction extends Vue {
-  
   isAuctionImageEnabled: boolean = true;
 
   isAuctionDistributionEnabled: boolean = false;
@@ -223,7 +222,7 @@ export default class Auction extends Vue {
     this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
   }
-  
+
   tab: string = 'info';
 
   // MOCKING DATA

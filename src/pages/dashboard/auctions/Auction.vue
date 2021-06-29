@@ -82,70 +82,74 @@
 
           <q-tab-panels v-model="tab">
             <q-tab-panel name="info" class="q-pa-sm">
-              <div class="q-pt-md">
-                <AlgoAvatar
-                  :title="$t('dashboard.auctionPage.owner')"
-                  :imageUrl="owner.profilePhotoUrl"
-                  :subTitle="owner.name"
-                />
-
-                <AlgoAvatar
-                  v-for="creator in creators"
-                  :key="creator.id"
-                  :title="$t(`dashboard.auctionPage.creator`)"
-                  :imageUrl="creator.profilePhotoUrl"
-                  :subTitle="creator.name"
-                  :description="
-                    $t('dashboard.auctionPage.pirsDestination', {
-                      pirs: $n(auction.art.pirs.creators, 'percent'),
-                      role: $t('dashboard.auctionPage.creators').toLowerCase(),
-                    })
-                  "
-                />
-
-                <q-separator class="q-pr-xl" spaced="md" color="primary" />
-
-                <AlgoAvatar
-                  class="q-py-md"
-                  :title="$t('dashboard.auctionPage.collection')"
-                  :imageUrl="collection.imageUrl"
-                  :subTitle="collection.name"
-                  :description="
-                    $t('dashboard.auctionPage.pirsDestination', {
-                      pirs: $n(auction.art.pirs.investors, 'percent'),
-                      role: $t('dashboard.auctionPage.investors').toLowerCase(),
-                    })
-                  "
-                />
-              </div>
+              <algo-avatar
+                class="q-py-md"
+                :title="$t('dashboard.auctionPage.owner')"
+                :imageUrl="owner.profilePhotoUrl"
+                :subTitle="owner.name"
+              />
+              <algo-avatar
+                class="q-py-md"
+                v-for="creator in creators"
+                :key="creator.id"
+                :title="$t(`dashboard.auctionPage.creator`)"
+                :imageUrl="creator.profilePhotoUrl"
+                :subTitle="creator.name"
+                :description="
+                  $t('dashboard.auctionPage.pirsDestination', {
+                    pirs: $n(auction.art.pirs.creators, 'percent'),
+                    role: $t('dashboard.auctionPage.creators').toLowerCase(),
+                  })
+                "
+              />
+              <q-separator class="q-pr-xl" spaced="md" color="primary" />
+              <algo-avatar
+                class="q-py-md"
+                :title="$t('dashboard.auctionPage.collection')"
+                :imageUrl="collection.imageUrl"
+                :subTitle="collection.name"
+                :description="
+                  $t('dashboard.auctionPage.pirsDestination', {
+                    pirs: $n(auction.art.pirs.investors, 'percent'),
+                    role: $t('dashboard.auctionPage.investors').toLowerCase(),
+                  })
+                "
+              />
             </q-tab-panel>
 
             <q-tab-panel name="bids" class="q-pa-sm">
-              <div class="q-pt-md">
-                <AuctionBidAvatar
-                  v-for="bid in bids"
-                  :bid="bid"
-                  :key="bid.id"
-                />
-              </div>
+              <bid-avatar
+                class="q-py-md"
+                v-for="bid in bids"
+                :bid="bid"
+                :key="bid.id"
+              />
             </q-tab-panel>
 
             <q-tab-panel name="previous-owners" class="q-pa-sm">
-              <div class="q-pt-md">
-                <AlgoAvatar
-                  v-for="oldOwner in oldOwners"
-                  :key="oldOwner.id"
-                  :title="$t('dashboard.auctionPage.oldOwner')"
-                  :imageUrl="oldOwner.profilePhotoUrl"
-                  :subTitle="oldOwner.name"
-                />
-              </div>
+              <algo-avatar
+                class="q-py-md"
+                v-for="oldOwner in oldOwners"
+                :key="oldOwner.id"
+                :title="$t('dashboard.auctionPage.oldOwner')"
+                :imageUrl="oldOwner.profilePhotoUrl"
+                :subTitle="oldOwner.name"
+              />
+            </q-tab-panel>
+
+            <q-tab-panel name="history" class="q-pa-sm">
+              <previous-bid-avatar
+                class="q-py-md"
+                v-for="bid in bids"
+                :bid="bid"
+                :key="bid.id"
+              />
             </q-tab-panel>
           </q-tab-panels>
 
           <div>
             <div class="q-pt-md">
-              <AuctionHighestBidAvatar :bid="highestBid" />
+              <highest-bid-avatar :bid="highestBid" />
             </div>
             <div class="q-pr-xl q-py-sm">
               <algo-button
@@ -172,8 +176,9 @@
 import { Vue, Options } from 'vue-class-component';
 import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
 import AlgoAvatar from 'components/common/AlgoAvatar.vue';
-import AuctionBidAvatar from 'components/auctions/auction/AuctionBidAvatar.vue';
-import AuctionHighestBidAvatar from 'components/auctions/auction/AuctionHighestBidAvatar.vue';
+import BidAvatar from 'components/auctions/auction/BidAvatar.vue';
+import HighestBidAvatar from 'components/auctions/auction/HighestBidAvatar.vue';
+import PreviousBidAvatar from 'components/auctions/auction/PreviousBidAvatar.vue';
 import AlgoButton from 'components/common/Button.vue';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
@@ -197,9 +202,10 @@ interface ICollection {
   components: {
     AuctionInfoChart,
     AlgoButton,
-    AuctionBidAvatar,
-    AuctionHighestBidAvatar,
+    BidAvatar,
+    HighestBidAvatar,
     AlgoAvatar,
+    PreviousBidAvatar,
   },
 })
 export default class Auction extends Vue {

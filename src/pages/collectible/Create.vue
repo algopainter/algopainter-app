@@ -28,7 +28,15 @@
   <div
     v-if="activeFormId === 'createWithArtist'"
     class="row"
-  />
+  >
+    <ia-artist
+      v-for="art in arts"
+      :key="art.id"
+      :img="art.img"
+      :name="art.name"
+      class="col-4 items-end"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -36,12 +44,15 @@ import { Vue, Options } from 'vue-class-component';
 import ImageButton from '../../components/common/ImageButton.vue';
 import CreateUpload from './CreateUpload.vue';
 import { IImageButton } from '../../models/IImageButton';
+import IaArtist from './IaArtist.vue';
 
 @Options({
   components: {
     ImageButton,
     CreateUpload,
+    IaArtist,
   },
+  emits: ['createWithArtistClick'],
 })
 export default class Create extends Vue {
   imageButtons: IImageButton[] = [
@@ -63,12 +74,34 @@ export default class Create extends Vue {
     },
   ];
 
+  arts = [
+    {
+      id: 1,
+      img: '/images/Hashly.svg',
+      name: 'Hashly Gwei',
+    },
+    {
+      id: 2,
+      img: '/images/Angelo.svg',
+      name: 'Angelo Fracthereum',
+    },
+    {
+      id: 3,
+      img: '/images/Claude.svg',
+      name: 'Claude Monero',
+    },
+  ];
+
   activeFormId: string | null = null;
 
   clickedButton(id: string): void {
     this.activeFormId = id;
     this.imageButtons = this.imageButtons.map((item) => {
-      if (item.id !== id) { item.isDisabled = true; } else { item.isDisabled = false; }
+      if (item.id !== id) {
+        item.isDisabled = true;
+      } else {
+        item.isDisabled = false;
+      }
       return item;
     });
   }
@@ -76,8 +109,8 @@ export default class Create extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .sub-title {
-    font-size: 22px;
-    margin-bottom: 15px;
-  }
+.sub-title {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
 </style>

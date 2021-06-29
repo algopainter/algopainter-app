@@ -43,7 +43,7 @@ class Props {
     AvatarSection,
   },
 })
-export default class AuctionBidAvatar extends Vue.with(Props) {
+export default class BidAvatar extends Vue.with(Props) {
 
 }
 </script>

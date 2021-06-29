@@ -1,7 +1,7 @@
 <template>
   <q-page class="row justify-between">
     <div class="col-12 col-sm-6 float-left">
-      <div class="q-pa-lg">
+      <div class="q-pa-md">
         <account-details />
         <div class="header q-gutter-md">
           {{ $t('dashboard.sellYourArt.putMarketplace') }}
@@ -9,129 +9,134 @@
         <div class="row justify-start">
           <algo-button
             class="btn-fixed-width q-mr-xs"
-            color="primary"
-            outline
+            :class="{ btn1: selectBtn == 1 }"
             :label="$t('dashboard.sellYourArt.FixedPrice')"
+            @click="selectBtn = 1"
           />
           <algo-button
             class="btn-fixed-width"
-            color="primary"
-            outline
+            :class="{ btn2: selectBtn == 2 }"
             :label="$t('dashboard.sellYourArt.Timed')"
+            @click="selectBtn = 2"
           />
         </div>
+      </div>
+      <div v-if="selectBtn === 1">
         <div
           text-subtitle2
-          class="text-weight-bold q-mt-xs q-gutter-md"
+          class="text-weight-bold q-mt-xs q-gutter-md q-px-md"
         >
           {{ $t('dashboard.sellYourArt.EnterPrice') }}
         </div>
-      </div>
-      <div>
-        <span class="text-bold">
-          {{ $t('dashboard.sellYourArt.price') }}
-        </span>
-        <q-input
-          v-model="text"
-          type="number"
-          color="grey-3"
-          label-color="primary"
-        >
-          <template #append>
-            <q-select
-              v-model="coins"
-              :options="options"
-            >
-              <template #option="scope">
-                <q-item
-                  v-bind="scope.itemProps"
-                  v-on="scope.itemEvents"
-                >
-                  <q-item-section avatar>
+        <div>
+          <span class="text-bold">
+            {{ $t('dashboard.sellYourArt.price') }}
+          </span>
+          <q-input
+            v-model="text"
+            type="number"
+            color="grey-3"
+            label-color="primary"
+          >
+            <template #append>
+              <q-select
+                v-model="coins"
+                :options="options"
+              >
+                <template #option="scope">
+                  <q-item
+                    v-bind="scope.itemProps"
+                    v-on="scope.itemEvents"
+                  >
                     <img
+                      class="q-mr-xs"
                       :src="scope.opt.img"
                     >
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>
-                      {{ scope.opt.label }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </template>
-        </q-input>
-        <div class="q-gutter-lg">
-          <div class="row justify-start q-gutter-sm">
-            <div>
-              <span class="text-bold">
-                {{ $t('dashboard.sellYourArt.creatorRoyalties') }}
+
+                    <q-item-section>
+                      <q-item-label>
+                        {{ scope.opt.label }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </template>
+          </q-input>
+          <div class="q-gutter-lg">
+            <div class="row justify-start q-gutter-sm">
+              <div>
+                <span class="text-bold">
+                  {{ $t('dashboard.sellYourArt.creatorRoyalties') }}
+                </span>
+                <q-select
+                  v-model="investors"
+                  class="select-width q-gutter-x-md"
+                  :options="royalties"
+                >
+                  <template #append>
+                    <q-btn flat>
+                      {{ $t('dashboard.sellYourArt.percent') }}
+                    </q-btn>
+                  </template>
+                </q-select>
+              </div>
+              <div>
+                <span class="text-bold">
+                  {{ $t('dashboard.sellYourArt.investorsRoyalties') }}</span>
+                <q-select
+                  v-model="creator"
+                  class="select-width"
+                  :options="royalties"
+                >
+                  <template #append>
+                    <q-btn flat>
+                      {{ $t('dashboard.sellYourArt.percent') }}
+                    </q-btn>
+                  </template>
+                </q-select>
+              </div>
+            </div>
+            <div class="text-right q-mr-md">
+              <p class="text-bold">
+                {{ $t('dashboard.sellYourArt.service') }}
+              </p>
+              <span>
+                {{ $t('dashboard.sellYourArt.willReceive') }}
               </span>
-              <q-select
-                v-model="investors"
-                class="select-width q-gutter-x-md"
-                :options="royalties"
-              >
-                <template #append>
-                  <q-btn flat>
-                    {{ $t('dashboard.sellYourArt.percent') }}
-                  </q-btn>
-                </template>
-              </q-select>
+              <span class="text-primary text-bold">
+                {{ $t('dashboard.sellYourArt.ireceive') }}
+              </span>
+              <span class="text-primary text-bold">
+                {{ coins.label }}
+              </span>
+              <span class="text-grey-5">
+                {{ $t('dashboard.sellYourArt.money') }}
+              </span>
             </div>
-            <div>
-              <span class="text-bold">
-                {{ $t('dashboard.sellYourArt.investorsRoyalties') }}</span>
-              <q-select
-                v-model="creator"
-                class="select-width"
-                :options="royalties"
-              >
-                <template #append>
-                  <q-btn flat>
-                    {{ $t('dashboard.sellYourArt.percent') }}
-                  </q-btn>
-                </template>
-              </q-select>
+            <div class="row justify-center">
+              <algo-button
+                class="btn-fixed-width q-ma-xs"
+                color="primary"
+                outline
+                :label="$t('dashboard.sellYourArt.cancel')"
+              />
+              <algo-button
+                class="btn-fixed-width q-ma-xs"
+                color="primary"
+                outline
+                :label="$t('dashboard.sellYourArt.register')"
+              />
             </div>
-          </div>
-          <div class="text-right q-mr-md">
-            <p class="text-bold">
-              {{ $t('dashboard.sellYourArt.service') }}
-            </p>
-            <span>
-              {{ $t('dashboard.sellYourArt.willReceive') }}
-            </span>
-            <span class="text-primary text-bold">
-              {{ $t('dashboard.sellYourArt.ireceive') }}
-            </span>
-            <span class="text-primary text-bold">
-              {{ coins.label }}
-            </span>
-            <span class="text-grey-5">
-              {{ $t('dashboard.sellYourArt.money') }}
-            </span>
-          </div>
-          <div class="row justify-center">
-            <algo-button
-              class="btn-fixed-width q-ma-xs"
-              color="primary"
-              outline
-              :label="$t('dashboard.sellYourArt.cancel')"
-            />
-            <algo-button
-              class="btn-fixed-width q-ma-xs"
-              color="primary"
-              outline
-              :label="$t('dashboard.sellYourArt.register')"
-            />
           </div>
         </div>
       </div>
+      <div v-if="selectBtn === 2">
+      <!-- page sell auction -->
+      </div>
     </div>
     <div class="float-right">
-      <you-art />
+      <your-art />
     </div>
   </q-page>
 </template>
@@ -141,36 +146,43 @@ import { Options, Vue } from 'vue-class-component';
 
 import AlgoButton from 'components/common/Button.vue';
 
-import YouArt from 'components/sellYourArt/YouArt.vue';
+import YourArt from 'src/components/sellYourArt/YourArt.vue';
 
 @Options({
-  components: { AlgoButton, YouArt },
+  components: { AlgoButton, YourArt },
 })
 export default class sellYourArt extends Vue {
   investors: null = null;
   creator: null = null;
   coins: string = '';
   text: string = '';
+  selectBtn: number = 1;
+
   options = [
     {
       value: '1',
-      label: 'BIN',
-      img: 'https://placeimg.com',
+      label: 'BTC',
+      img: './images/BTC.svg',
     },
     {
       value: '2',
       label: 'BNB',
-      img: '~assets/icons/BTC.svg',
+      img: './images/BNB.svg',
     },
     {
       value: '3',
       label: 'ALGOP',
-      img: 'https://randomuser.me/api/portraits/',
+      img: './images/ALGOP.svg',
     },
     {
       value: '4',
-      label: 'THE',
-      img: 'https://randomuser.me/api/portraits/',
+      label: 'ETH',
+      img: './images/ETH.svg',
+    },
+    {
+      value: '5',
+      label: 'DASH',
+      img: './images/DASH.svg',
     },
   ];
 
@@ -199,6 +211,16 @@ export default class sellYourArt extends Vue {
 .btn-fixed-width {
   width: 100px;
   height: 44px;
+  color: #f4538d;
+  border: 1px solid rgb(185, 185, 185);
+}
+.btn-fixed-width.btn1 {
+  border: 1px solid #f4538d;
+  color: #f4538d;
+}
+.btn-fixed-width.btn2 {
+  border: 1px solid #f4538d;
+  color: #f4538d;
 }
 
 .select-width {

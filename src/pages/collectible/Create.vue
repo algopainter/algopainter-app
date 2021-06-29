@@ -19,16 +19,28 @@
       </image-button>
     </div>
   </div>
+  <div
+    v-if="activeFormId === 'importFile'"
+    class="row q-mt-md"
+  >
+    <create-upload upload-label="createCollectible.create.importFile" />
+  </div>
+  <div
+    v-if="activeFormId === 'createWithArtist'"
+    class="row"
+  />
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import ImageButton from '../../components/common/ImageButton.vue';
+import CreateUpload from './CreateUpload.vue';
 import { IImageButton } from '../../models/IImageButton';
 
 @Options({
   components: {
     ImageButton,
+    CreateUpload,
   },
 })
 export default class Create extends Vue {
@@ -51,7 +63,10 @@ export default class Create extends Vue {
     },
   ];
 
+  activeFormId: string | null = null;
+
   clickedButton(id: string): void {
+    this.activeFormId = id;
     this.imageButtons = this.imageButtons.map((item) => {
       if (item.id !== id) { item.isDisabled = true; } else { item.isDisabled = false; }
       return item;

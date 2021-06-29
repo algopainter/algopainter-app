@@ -38,5 +38,5 @@ class Props {
     AvatarSection,
   },
 })
-export default class AuctionHighestBidAvatar extends Vue.with(Props) {}
+export default class HighestBidAvatar extends Vue.with(Props) {}
 </script>

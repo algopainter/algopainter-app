@@ -162,27 +162,27 @@ export default class sellYourArt extends Vue {
     {
       value: '1',
       label: 'BTC',
-      img: './images/BTC.svg',
+      img: '/images/BTC.svg',
     },
     {
       value: '2',
       label: 'BNB',
-      img: './images/BNB.svg',
+      img: '/images/BNB.svg',
     },
     {
       value: '3',
       label: 'ALGOP',
-      img: './images/ALGOP.svg',
+      img: '/images/ALGOP.svg',
     },
     {
       value: '4',
       label: 'ETH',
-      img: './images/ETH.svg',
+      img: '/images/ETH.svg',
     },
     {
       value: '5',
       label: 'DASH',
-      img: './images/DASH.svg',
+      img: '/images/DASH.svg',
     },
   ];
 

@@ -5,13 +5,22 @@
         <div class="row">
           <div class="col-md-11">
             <div class="q-pb-md">
-              <algo-button color="primary" outline>
+              <algo-button
+                color="primary"
+                outline
+                @click="auctionDistributionBtnClicked()"
+              >
                 {{ $t('dashboard.auctionPage.auctionDistribution') }}
               </algo-button>
             </div>
             <q-img
+              v-if="isAuctionImageEnabled"
               class="art-image"
               src="../../../assets/placeholder-images/painting.jpg"
+            />
+            <auction-info-chart
+              v-if="isAuctionDistributionEnabled"
+              :values="[44, 100, 13, 33]"
             />
           </div>
           <div class="col-md-1">
@@ -165,10 +174,6 @@
         </div>
       </div>
     </div>
-    <auction-info-chart
-      v-if="showAuctionDistribution"
-      :values="[44, 100, 13, 33]"
-    />
   </q-page>
 </template>
 
@@ -209,9 +214,17 @@ interface ICollection {
   },
 })
 export default class Auction extends Vue {
-  tab: string = 'info';
+  
+  isAuctionImageEnabled: boolean = true;
 
-  showAuctionDistribution: boolean = false;
+  isAuctionDistributionEnabled: boolean = false;
+
+  auctionDistributionBtnClicked() {
+    this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
+    this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
+  }
+  
+  tab: string = 'info';
 
   // MOCKING DATA
 

@@ -1,12 +1,12 @@
 <template>
   <div class="col-4 text-center">
     <q-btn
-      @click="active($props.name)"
       :class="{
         'btn-border': true,
         off: isOff,
         on: !isOff,
       }"
+      @click="active($props.name)"
     >
       <q-img
         class="img"
@@ -26,36 +26,39 @@ class Props {
     type: String,
     required: true,
   });
+
   img = prop({
     type: String,
     required: true,
   });
+
   name = prop({
     type: String,
     required: true,
   });
+
   title = prop({
     type: String,
     required: true,
   });
+
   isOff = prop({
     type: Boolean,
     required: true,
   });
-  isBorda = prop<(id: string) => void>({
-    required: true
-  });
 
+  isBorda = prop<(id: string) => void>({
+    required: true,
+  });
 }
 @Options({
   components: {},
 })
 export default class IaArtist extends Vue.with(Props) {
   active(id: string) {
-    console.log("funcionaa!!")
+    console.log('funcionaa!!');
     this.$props.isBorda(id);
   }
-
 }
 </script>
 

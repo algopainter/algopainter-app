@@ -9,4 +9,7 @@ export default {
     preview: 'Preview',
     uploadLabel: 'Upload File',
   },
+  selectAi: {
+    title: 'Select Ai Artist',
+  },
 };

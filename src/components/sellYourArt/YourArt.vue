@@ -22,7 +22,7 @@
 <script lang="ts">
 import { Vue } from 'vue-class-component';
 
-export default class YouArt extends Vue {
+export default class YourArt extends Vue {
 
 }
 

@@ -6,6 +6,7 @@
     <div
       v-for="imgBtn in imageButtons"
       :key="imgBtn.id"
+      @click="infoIdBtn(imgBtn.id)"
     >
       <image-button
         :id="imgBtn.id"
@@ -24,12 +25,18 @@
     class="row q-mt-md"
   >
     <create-upload upload-label="createCollectible.create.importFile" />
+    <div
+      class="col fixed-right q-preview"
+    >
+      <preview :id-btn="idBtn" />
+    </div>
   </div>
   <div
     v-if="activeFormId === 'createWithArtist'"
     class="col q-mt-md"
   >
     <div>
+      <preview :id-btn="idBtn" />
       <p class="text-bold text-subtitle2">
         {{ $t('createCollectible.selectAi.title') }}
       </p>
@@ -41,7 +48,7 @@
         :img="art.img"
         :name="art.name"
         :is-off="art.isOff"
-        :is-borda="clickImg"
+        :is-border="clickImg"
         class="col-4"
         @click="setCurrentArtist(art.id)"
       />
@@ -66,6 +73,7 @@ import ImageButton from '../../components/common/ImageButton.vue';
 import CreateUpload from './CreateUpload.vue';
 import { IImageButton } from '../../models/IImageButton';
 import IaArtist from './IaArtist.vue';
+import Preview from './Preview.vue';
 
 interface IAiArtist {
   id: number;
@@ -82,6 +90,7 @@ interface IAiArtist {
     ImageButton,
     CreateUpload,
     IaArtist,
+    Preview,
   },
   emits: ['createWithArtistClick'],
 })
@@ -151,7 +160,12 @@ export default class Create extends Vue {
 
   activeFormId: string | null = null;
 
-  detalImg: string | null = null;
+  idBtn: string | null = null;
+
+  infoIdBtn(id: string): void {
+    this.idBtn = id;
+    console.log(this.idBtn);
+  }
 
   clickedButton(id: string): void {
     this.activeFormId = id;
@@ -166,7 +180,6 @@ export default class Create extends Vue {
   }
 
   clickImg(name: string): void {
-    this.detalImg = name;
     this.arts = this.arts.map((item) => {
       if (item.name !== name) {
         item.isOff = true;
@@ -186,5 +199,8 @@ export default class Create extends Vue {
 }
 .text-bold {
   font-size: 16px;
+}
+.q-preview {
+  margin: 120px 50px;
 }
 </style>

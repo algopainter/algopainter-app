@@ -3,7 +3,7 @@
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-6">
         <div class="row">
-          <div class="col-md-11">
+          <div class="col-11 col-md-11">
             <div class="q-pb-md">
               <algo-button
                 color="primary"
@@ -23,7 +23,7 @@
               :values="[44, 100, 13, 33]"
             />
           </div>
-          <div class="col-md-1">
+          <div class="col-1 col-md-1">
             <div
               class="
                 col-12 col-md-1
@@ -78,15 +78,34 @@
             align="left"
             :narrow-indicator="true"
           >
-            <q-tab :ripple="false" no-caps name="info" label="Info" />
-            <q-tab :ripple="false" no-caps name="bids" label="Bids" />
             <q-tab
+              class="tab"
+              :ripple="false"
+              no-caps
+              name="info"
+              label="Info"
+            />
+            <q-tab
+              class="tab"
+              :ripple="false"
+              no-caps
+              name="bids"
+              label="Bids"
+            />
+            <q-tab
+              class="tab"
               :ripple="false"
               no-caps
               name="previous-owners"
               :label="$t('dashboard.auctionPage.previousOwners')"
             />
-            <q-tab :ripple="false" no-caps name="history" label="History" />
+            <q-tab
+              class="tab"
+              :ripple="false"
+              no-caps
+              name="history"
+              label="History"
+            />
           </q-tabs>
 
           <q-tab-panels v-model="tab">
@@ -222,6 +241,9 @@ export default class Auction extends Vue {
     this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  distributionSVG: string = require('../../../assets/icons/chart-distribution.svg');
 
   tab: string = 'info';
 

@@ -9,6 +9,7 @@ export default {
     createWithArtist: 'Create with an AlgoPainter',
     preview: 'Preview',
     uploadLabel: 'Upload File',
+    previewText: 'Upload file to preview your NFT Collectible',
   },
   selectAi: {
     title: 'Select Ai Artist',

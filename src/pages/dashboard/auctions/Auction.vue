@@ -179,10 +179,10 @@
           </q-tab-panels>
 
           <div>
-            <div class="q-pt-md">
+            <div class="q-pa-sm">
               <highest-bid-avatar :bid="highestBid" />
             </div>
-            <div class="q-pr-xl q-py-sm">
+            <div class="q-py-sm">
               <algo-button
                 class="text-bold full-width"
                 size="lg"

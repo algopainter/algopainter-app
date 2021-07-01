@@ -41,7 +41,8 @@
                 <q-icon
                   color="primary"
                   size="1.7rem"
-                  name="mdi-heart-outline"
+                  :name="isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'"
+                  @click="favoriteAuction"
                 />
               </div>
               <div>
@@ -240,9 +241,15 @@ export default class Auction extends Vue {
 
   isAuctionDistributionEnabled: boolean = false;
 
+  isAuctionFavorite: boolean = false;
+
   auctionDistributionBtnClicked() {
     this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
+  }
+
+  favoriteAuction() {
+    this.isAuctionFavorite = !this.isAuctionFavorite;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

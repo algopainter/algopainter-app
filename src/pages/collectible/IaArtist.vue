@@ -44,7 +44,7 @@ class Props {
     required: true,
   });
 
-  isBorda = prop<(id: string) => void>({
+  isBorder = prop<(id: string) => void>({
     required: true,
   });
 }
@@ -53,7 +53,7 @@ class Props {
 })
 export default class IaArtist extends Vue.with(Props) {
   active(id: string) {
-    this.$props.isBorda(id);
+    this.$props.isBorder(id);
   }
 }
 </script>

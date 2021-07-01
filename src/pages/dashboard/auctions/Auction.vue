@@ -11,7 +11,9 @@
                 outline
                 @click="auctionDistributionBtnClicked()"
               >
-                {{ $t('dashboard.auctionPage.auctionDistribution') }}
+                <div class="q-pl-sm">
+                  {{ $t('dashboard.auctionPage.auctionDistribution') }}
+                </div>
               </algo-button>
             </div>
             <q-img

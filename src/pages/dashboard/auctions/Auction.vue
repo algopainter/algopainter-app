@@ -69,8 +69,8 @@
               {{ auction.art.keywords }}
             </div>
           </div>
-          <div class="bid-back col-md-4">
-            <span class="dot"></span>
+          <div class="col-md-4 bidback-image">
+            <q-img src="../../../assets/icons/bidback.svg" />
           </div>
         </div>
         <div>
@@ -410,6 +410,12 @@ export default class Auction extends Vue {
   max-width: 850px;
   height: auto;
   border-radius: 10px;
+}
+
+.bidback-image {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
 }
 
 .auction {

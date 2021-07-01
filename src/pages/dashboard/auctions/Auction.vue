@@ -443,12 +443,4 @@ export default class Auction extends Vue {
     font-size: 1rem;
   }
 }
-
-.dot {
-  height: 150px;
-  width: 150px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-}
 </style>

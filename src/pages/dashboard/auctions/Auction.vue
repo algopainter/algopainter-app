@@ -6,6 +6,7 @@
           <div class="col-11 col-md-11">
             <div class="q-pb-md">
               <algo-button
+                :icon="'img:' + distributionSVG"
                 color="primary"
                 outline
                 @click="auctionDistributionBtnClicked()"

@@ -1,10 +1,7 @@
 <template>
   <div class="row items-start">
     <div class="col">
-      <create />
-    </div>
-    <div class="col q-preview-wrapper">
-      <preview />
+      <create @artistSettled="generatePreview" />
     </div>
   </div>
 </template>
@@ -21,7 +18,11 @@ import Preview from './Preview.vue';
   },
 })
 export default class Index extends Vue {
-
+  generatePreview() {
+  // aqui, posso mudar o estado de algum atributo da classe
+  // e então, atualizar o componente preview
+  // Index vai orquestrando....
+  }
 }
 </script>
 

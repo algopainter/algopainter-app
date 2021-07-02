@@ -14,4 +14,7 @@ export default {
       putOnSaleLabel: 'Put on sale',
     },
   },
+  selectAi: {
+    title: 'Select Ai Artist',
+  },
 };

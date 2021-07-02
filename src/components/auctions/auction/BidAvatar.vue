@@ -4,17 +4,22 @@
     :imageUrl="bid.user.profilePhotoUrl"
   >
     <template #title>
-      <div class="text-bold">
-        <i18n-t keypath="dashboard.auctionPage.highestBidBy">
-          <template #highestBidBy>
-            <span class="text-primary">{{ bid.user.name }}</span>
-          </template>
-        </i18n-t>
+      <div class="text-positive text-bold text-h6">
+        {{ $n(bid.price, 'currency') }}
       </div>
     </template>
     <template #subTitle>
-      <div class="price text-bold text-positive">
-        {{ $n(bid.price, 'currency') }}
+      <div class="text-primary text-bold">
+        {{ bid.user.name }}
+      </div>
+    </template>
+    <template #description>
+      <div>
+        {{
+          $t('dashboard.auctionPage.bidBackPercentage', {
+            bidBackPercentage: $n(bid.art.bidBack, 'percent'),
+          })
+        }}
       </div>
     </template>
   </avatar-section>
@@ -38,5 +43,7 @@ class Props {
     AvatarSection,
   },
 })
-export default class AuctionHighestBidAvatar extends Vue.with(Props) {}
+export default class BidAvatar extends Vue.with(Props) {
+
+}
 </script>

@@ -7,7 +7,12 @@ export default {
     importFile: 'Import your file',
     createWithArtist: 'Create with an AlgoPainter',
     preview: 'Preview',
-    uploadLabel: 'Upload File',
+    fields: {
+      uploadLabel: 'Upload File',
+      titleLabel: 'Title',
+      descriptionLabel: 'Description',
+      putOnSaleLabel: 'Put on sale',
+    },
   },
   selectAi: {
     title: 'Select Ai Artist',

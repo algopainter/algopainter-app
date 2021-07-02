@@ -27,57 +27,50 @@ export default class ImageButton extends Vue.with(ImgButtonProps) {
 </script>
 
 <template>
-  <div class="q-img-button-wrapper">
-    <q-btn
-      v-bind="$props"
-      :class="{
-        'q-img-btn': true,
-        off: isDisabled,
-        on: !isDisabled,
-      }"
-      @click="toggle($props.id)"
-    >
-      <div
-        :class="{
-          'q-masked-icon': true,
-          off: isDisabled,
-          on: !isDisabled,
-        }"
-        :style="{
-          'mask-image': `url(${loadIcon()})`,
-          width: $props.imgWidth,
-          height: $props.imgHeight,
-        }"
-      />
-    </q-btn>
+  <q-btn
+    v-bind="$props"
+    :class="{
+      'q-img-btn': true,
+      'full-width': true,
+      off: isDisabled,
+      on: !isDisabled,
+    }"
+    @click="toggle($props.id)"
+  >
     <div
       :class="{
-        'q-img-btn-label': true,
+        'q-masked-icon': true,
         off: isDisabled,
         on: !isDisabled,
       }"
-    >
-      <slot />
-    </div>
+      :style="{
+        'mask-image': `url(${loadIcon()})`,
+        width: $props.imgWidth,
+        height: $props.imgHeight,
+      }"
+    />
+  </q-btn>
+  <div
+    :class="{
+      'q-img-btn-label': true,
+      off: isDisabled,
+      on: !isDisabled,
+    }"
+  >
+    <slot />
   </div>
 </template>
 
 <style lang="scss" scoped>
-.q-img-button-wrapper {
-  width: 340px;
-}
-
 .q-img-btn {
   border-radius: 12px;
-  max-width: 340px;
-  width: 100vh;
   height: 150px;
   box-sizing: border-box;
   border-radius: 10px;
 }
 
 .q-img-btn.on {
-  border: 2px solid #F4538D;
+  border: 2px solid #f4538d;
 }
 
 .q-img-btn.off {
@@ -89,11 +82,11 @@ export default class ImageButton extends Vue.with(ImgButtonProps) {
 }
 
 .q-masked-icon.on {
-  background-color: #F4538D;
+  background-color: #f4538d;
 }
 
 .q-masked-icon.off {
-  background-color: #C4C4C4;
+  background-color: #c4c4c4;
 }
 
 .q-img-btn-label {

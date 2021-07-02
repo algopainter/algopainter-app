@@ -41,7 +41,8 @@
                 <q-icon
                   color="primary"
                   size="1.7rem"
-                  name="mdi-heart-outline"
+                  :name="isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'"
+                  @click="favoriteAuction"
                 />
               </div>
               <div>
@@ -179,10 +180,10 @@
           </q-tab-panels>
 
           <div>
-            <div class="q-pt-md">
+            <div class="q-pa-sm">
               <highest-bid-avatar :bid="highestBid" />
             </div>
-            <div class="q-pr-xl q-py-sm">
+            <div class="q-py-sm">
               <algo-button
                 class="text-bold full-width"
                 size="lg"
@@ -240,9 +241,15 @@ export default class Auction extends Vue {
 
   isAuctionDistributionEnabled: boolean = false;
 
+  isAuctionFavorite: boolean = false;
+
   auctionDistributionBtnClicked() {
     this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
+  }
+
+  favoriteAuction() {
+    this.isAuctionFavorite = !this.isAuctionFavorite;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

@@ -3,7 +3,11 @@
     {{ $t('createCollectible.title.sub') }}
   </div>
   <div class="row q-col-gutter-md">
-    <div v-for="imgBtn in imageButtons" :key="imgBtn.id" class="col">
+    <div
+      v-for="imgBtn in imageButtons"
+      :key="imgBtn.id"
+      class="col"
+    >
       <image-button
         :id="imgBtn.id"
         :img-src="imgBtn.imgSrc"
@@ -16,8 +20,19 @@
       </image-button>
     </div>
   </div>
-  <div v-if="activeFormId === 'importFile'" class="q-mt-md">
-    <create-upload title-maxlength="255" description-maxlength="255" />
+  <div
+    v-if="activeFormId === 'importFile'"
+    class="q-mt-md"
+  >
+    <create-upload
+      title-maxlength="255"
+      description-maxlength="255"
+    />
+    <div
+      class="col fixed-right q-preview"
+    >
+      <preview />
+    </div>
   </div>
   <div
     v-if="activeFormId === 'createWithArtist'"
@@ -52,7 +67,10 @@
       </p>
     </div>
   </div>
-  <div v-if="activeFormId === 'createWithArtist'" class="row" />
+  <div
+    v-if="activeFormId === 'createWithArtist'"
+    class="row"
+  />
 </template>
 
 <script lang="ts">
@@ -61,6 +79,7 @@ import ImageButton from '../../components/common/ImageButton.vue';
 import CreateUpload from './CreateUpload.vue';
 import { IImageButton } from '../../models/IImageButton';
 import IaArtist from './IaArtist.vue';
+import Preview from './Preview.vue';
 
 interface IAiArtist {
   id: number;
@@ -77,6 +96,7 @@ interface IAiArtist {
     ImageButton,
     CreateUpload,
     IaArtist,
+    Preview,
   },
   emits: ['createWithArtistClick'],
 })
@@ -181,6 +201,9 @@ export default class Create extends Vue {
 }
 .text-bold {
   font-size: 16px;
+}
+.q-preview {
+  margin: 120px 50px;
 }
 
 </style>

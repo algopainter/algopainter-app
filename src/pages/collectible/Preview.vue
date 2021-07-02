@@ -2,26 +2,17 @@
   <div class="text-h6">
     {{ $t('createCollectible.create.preview') }}
   </div>
-  <div class="ap-preview-box" v-if="$props.item">
-    <auction-item :key="$props.item.id" :auction="$props.item" />
+  <div class="row text-h6 ap-preview-box justify-center items-center">
+    <p class="text-center">
+      {{ $t('createCollectible.create.previewText') }}
+    </p>
   </div>
 </template>
 
 <script lang="ts">
-import { IAuctionItem } from 'src/models/IAuctionItem';
-import { Vue, Options, prop } from 'vue-class-component';
-import { AuctionItem } from 'components/auctions';
+import { Vue } from 'vue-class-component';
 
-class PropsTypes {
-  item = prop<IAuctionItem>({ required: true });
-}
-
-@Options({
-  components: {
-    AuctionItem,
-  },
-})
-export default class Preview extends Vue.with(PropsTypes) {}
+export default class Preview extends Vue {}
 </script>
 
 <style lang="scss" scoped>
@@ -30,6 +21,8 @@ export default class Preview extends Vue.with(PropsTypes) {}
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
   box-sizing: border-box;
+  height: 60vh;
+  width: 30vw;
   border-radius: 10px;
 }
 </style>

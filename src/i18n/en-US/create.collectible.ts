@@ -8,6 +8,7 @@ export default {
     importFile: 'Import your file',
     createWithArtist: 'Create with an AlgoPainter',
     preview: 'Preview',
+    previewText: 'Upload file to preview your NFT Collectible',
     fields: {
       uploadLabel: 'Upload File',
       titleLabel: 'Title',

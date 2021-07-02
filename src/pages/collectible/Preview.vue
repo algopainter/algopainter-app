@@ -22,7 +22,7 @@ export default class Preview extends Vue {}
   border: 2px dashed #f4538d;
   box-sizing: border-box;
   height: 60vh;
-  width: 30vw;
+  width: 400px;
   border-radius: 10px;
 }
 </style>

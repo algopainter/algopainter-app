@@ -198,7 +198,7 @@
                 color="primary"
                 outline
               >
-                Place a Bid
+                {{ $t('dashboard.auctionPage.placeBid') }}
               </algo-button>
             </div>
           </div>

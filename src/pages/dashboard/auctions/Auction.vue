@@ -3,14 +3,17 @@
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-6">
         <div class="row">
-          <div class="col-md-11">
+          <div class="col-11 col-md-11">
             <div class="q-pb-md">
               <algo-button
+                :icon="'img:' + distributionSVG"
                 color="primary"
                 outline
                 @click="auctionDistributionBtnClicked()"
               >
-                {{ $t('dashboard.auctionPage.auctionDistribution') }}
+                <div class="q-pl-sm">
+                  {{ $t('dashboard.auctionPage.auctionDistribution') }}
+                </div>
               </algo-button>
             </div>
             <q-img
@@ -23,7 +26,7 @@
               :values="[44, 100, 13, 33]"
             />
           </div>
-          <div class="col-md-1">
+          <div class="col-1 col-md-1">
             <div
               class="
                 col-12 col-md-1
@@ -66,8 +69,8 @@
               {{ auction.art.keywords }}
             </div>
           </div>
-          <div class="bid-back col-md-4">
-            <span class="dot"></span>
+          <div class="col-md-4 bidback-image">
+            <q-img src="../../../assets/icons/bidback.svg" />
           </div>
         </div>
         <div>
@@ -78,15 +81,34 @@
             align="left"
             :narrow-indicator="true"
           >
-            <q-tab :ripple="false" no-caps name="info" label="Info" />
-            <q-tab :ripple="false" no-caps name="bids" label="Bids" />
             <q-tab
+              class="tab"
+              :ripple="false"
+              no-caps
+              name="info"
+              label="Info"
+            />
+            <q-tab
+              class="tab"
+              :ripple="false"
+              no-caps
+              name="bids"
+              label="Bids"
+            />
+            <q-tab
+              class="tab"
               :ripple="false"
               no-caps
               name="previous-owners"
               :label="$t('dashboard.auctionPage.previousOwners')"
             />
-            <q-tab :ripple="false" no-caps name="history" label="History" />
+            <q-tab
+              class="tab"
+              :ripple="false"
+              no-caps
+              name="history"
+              label="History"
+            />
           </q-tabs>
 
           <q-tab-panels v-model="tab">
@@ -222,6 +244,9 @@ export default class Auction extends Vue {
     this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  distributionSVG: string = require('../../../assets/icons/chart-distribution.svg');
 
   tab: string = 'info';
 
@@ -387,6 +412,12 @@ export default class Auction extends Vue {
   border-radius: 10px;
 }
 
+.bidback-image {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+}
+
 .auction {
   border-left: 2px solid $primary;
 }
@@ -411,13 +442,5 @@ export default class Auction extends Vue {
     color: $positive;
     font-size: 1rem;
   }
-}
-
-.dot {
-  height: 150px;
-  width: 150px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
 }
 </style>

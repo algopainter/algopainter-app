@@ -8,6 +8,7 @@ export default {
     importFile: 'Import your file',
     createWithArtist: 'Create with an AlgoPainter',
     preview: 'Preview',
+    example: 'Example',
     previewText: 'Upload file to preview your NFT Collectible',
     fields: {
       uploadLabel: 'Upload File',
@@ -15,6 +16,12 @@ export default {
       descriptionLabel: 'Description',
       putOnSaleLabel: 'Put on sale',
     },
+    exampleText: 'Sample art by the artist',
+    batchPrince: 'BATCH PRICE',
+    algoP: '($ALGOP)',
+    remaining: 'REMAINING',
+    minted: 'MINTED',
+    goToArtist: ' Go to Artist',
   },
   selectAi: {
     title: 'Select Ai Artist',

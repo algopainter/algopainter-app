@@ -3,10 +3,7 @@
     {{ $t('createCollectible.title.sub') }}
   </div>
   <div class="row q-col-gutter-md">
-    <div
-      v-for="imgBtn in imageButtons"
-      :key="imgBtn.id"
-    >
+    <div v-for="imgBtn in imageButtons" :key="imgBtn.id" class="col">
       <image-button
         :id="imgBtn.id"
         :img-src="imgBtn.imgSrc"
@@ -19,16 +16,10 @@
       </image-button>
     </div>
   </div>
-  <div
-    v-if="activeFormId === 'importFile'"
-    class="row q-mt-md"
-  >
-    <create-upload upload-label="createCollectible.create.importFile" />
+  <div v-if="activeFormId === 'importFile'" class="q-mt-md">
+    <create-upload title-maxlength="255" description-maxlength="255" />
   </div>
-  <div
-    v-if="activeFormId === 'createWithArtist'"
-    class="row"
-  />
+  <div v-if="activeFormId === 'createWithArtist'" class="row" />
 </template>
 
 <script lang="ts">
@@ -68,7 +59,11 @@ export default class Create extends Vue {
   clickedButton(id: string): void {
     this.activeFormId = id;
     this.imageButtons = this.imageButtons.map((item) => {
-      if (item.id !== id) { item.isDisabled = true; } else { item.isDisabled = false; }
+      if (item.id !== id) {
+        item.isDisabled = true;
+      } else {
+        item.isDisabled = false;
+      }
       return item;
     });
   }
@@ -76,8 +71,8 @@ export default class Create extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .sub-title {
-    font-size: 22px;
-    margin-bottom: 15px;
-  }
+.sub-title {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
 </style>

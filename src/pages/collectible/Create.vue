@@ -55,6 +55,16 @@
         @click="setCurrentArtist(art.id)"
       />
     </div>
+    <div
+      class="col fixed-right q-preview"
+    >
+      <example
+        :example-img="currentArtist.exampleImg"
+        :batch-prince="currentArtist.batchPrince"
+        :remaining="currentArtist.remaining"
+        :minted="currentArtist.minted"
+      />
+    </div>
     <div>
       <p class="text-h6 text-weight-bold">
         {{ $t(currentArtist.title) }}
@@ -67,10 +77,6 @@
       </p>
     </div>
   </div>
-  <div
-    v-if="activeFormId === 'createWithArtist'"
-    class="row"
-  />
 </template>
 
 <script lang="ts">
@@ -80,6 +86,7 @@ import CreateUpload from './CreateUpload.vue';
 import { IImageButton } from '../../models/IImageButton';
 import IaArtist from './IaArtist.vue';
 import Preview from './Preview.vue';
+import Example from './Example.vue';
 
 interface IAiArtist {
   id: number;
@@ -89,6 +96,10 @@ interface IAiArtist {
   isOff?: boolean;
   text1: string;
   text2: string;
+  exampleImg: string;
+  batchPrince: string;
+  remaining: string;
+  minted: string;
 }
 
 @Options({
@@ -97,6 +108,7 @@ interface IAiArtist {
     CreateUpload,
     IaArtist,
     Preview,
+    Example,
   },
   emits: ['createWithArtistClick'],
 })
@@ -127,6 +139,10 @@ export default class Create extends Vue {
     img: '',
     text1: '',
     text2: '',
+    exampleImg: '',
+    batchPrince: '-',
+    remaining: '-',
+    minted: '-',
   };
 
   setCurrentArtist(id: number) {
@@ -139,27 +155,39 @@ export default class Create extends Vue {
       id: 1,
       img: '/images/Hashly.svg',
       name: 'Hashly Gwei',
+      exampleImg: '/images/Hashly.Art.svg',
       title: 'createCollectible.selectAi.titleHashly',
       text1: 'createCollectible.selectAi.textHashly1',
       text2: 'createCollectible.selectAi.textHashly2',
+      batchPrince: '600',
+      remaining: '580',
+      minted: '420',
       isOff: true,
     },
     {
       id: 2,
       img: '/images/Angelo.svg',
       name: 'Angelo Fracthereum',
+      exampleImg: '/images/Angelo.Art.svg',
       title: 'createCollectible.selectAi.titleAngelo',
       text1: 'createCollectible.selectAi.textAngelo1',
       text2: '',
+      batchPrince: '-',
+      remaining: '-',
+      minted: '-',
       isOff: true,
     },
     {
       id: 3,
       img: '/images/Claude.svg',
       name: 'Claude Monero',
+      exampleImg: '/images/Claude.Art.svg',
       title: 'createCollectible.selectAi.titleClaude',
       text1: 'createCollectible.selectAi.textClaude1',
       text2: 'createCollectible.selectAi.textClaude2',
+      batchPrince: '-',
+      remaining: '-',
+      minted: '-',
       isOff: true,
     },
   ];

@@ -41,46 +41,43 @@
         </div>
         <div class="q-pa-md">
           <p>{{ $t('dashboard.myPaint.bidback') }}</p>
-          <q-input
+          <q-select
             v-model="paint.bidback"
-            type="number"
-            min="0"
-            max="99"
-            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+            :options="royalties"
           >
             <template #append>
-              <q-icon name="%" />
+              <q-btn flat>
+                {{ $t('dashboard.myPaint.percent') }}
+              </q-btn>
             </template>
-          </q-input>
+          </q-select>
         </div>
         <div class="row">
           <div class="col-xs-12 col-sm-6 items-center q-pa-md">
             <p>{{ $t('dashboard.myPaint.creator') }}</p>
-            <q-input
+            <q-select
               v-model="paint.royalties"
-              type="number"
-              min="0"
-              max="99"
-              onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+              :options="royalties"
             >
               <template #append>
-                <q-icon name="%" />
+                <q-btn flat>
+                  {{ $t('dashboard.myPaint.percent') }}
+                </q-btn>
               </template>
-            </q-input>
+            </q-select>
           </div>
           <div class="col-xs-12 col-sm-6 items-center q-pa-md">
             <p>{{ $t('dashboard.myPaint.investors') }}</p>
-            <q-input
+            <q-select
               v-model="paint.investors"
-              type="number"
-              min="0"
-              max="99"
-              onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+              :options="royalties"
             >
               <template #append>
-                <q-icon name="%" />
+                <q-btn flat>
+                  {{ $t('dashboard.myPaint.percent') }}
+                </q-btn>
               </template>
-            </q-input>
+            </q-select>
           </div>
         </div>
         <div class="row justify-evenly q-gutter-xs">
@@ -152,11 +149,29 @@ export default class MyPaint extends Vue {
     this.$emit('hide');
   }
 
-   declare $refs:{
+  declare $refs: {
     dialog: QDialog;
   };
-}
 
+  royalties = [
+    {
+      value: 0,
+      label: '0',
+    },
+    {
+      value: 2.5,
+      label: '2.5',
+    },
+    {
+      value: 5,
+      label: '5',
+    },
+    {
+      value: 10,
+      label: '10',
+    },
+  ];
+}
 </script>
 <style scoped>
 .row {

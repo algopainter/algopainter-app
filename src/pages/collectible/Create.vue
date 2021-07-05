@@ -63,6 +63,7 @@
         :batch-prince="currentArtist.batchPrince"
         :remaining="currentArtist.remaining"
         :minted="currentArtist.minted"
+        :btn-link="currentArtist.btnLink"
       />
     </div>
     <div>
@@ -100,6 +101,7 @@ interface IAiArtist {
   batchPrince: string;
   remaining: string;
   minted: string;
+  btnLink: string;
 }
 
 @Options({
@@ -143,6 +145,7 @@ export default class Create extends Vue {
     batchPrince: '-',
     remaining: '-',
     minted: '-',
+    btnLink: '',
   };
 
   setCurrentArtist(id: number) {
@@ -163,6 +166,7 @@ export default class Create extends Vue {
       remaining: '580',
       minted: '420',
       isOff: true,
+      btnLink: './new-painting',
     },
     {
       id: 2,
@@ -176,6 +180,7 @@ export default class Create extends Vue {
       remaining: '-',
       minted: '-',
       isOff: true,
+      btnLink: '',
     },
     {
       id: 3,
@@ -189,6 +194,7 @@ export default class Create extends Vue {
       remaining: '-',
       minted: '-',
       isOff: true,
+      btnLink: '',
     },
   ];
 

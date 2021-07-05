@@ -26,7 +26,9 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   previewImage(e: Event) {
     const newLocal = (<HTMLInputElement>e.target).files;
-    const file = newLocal[0];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const newLocala = newLocal!;
+    const file = newLocala[0];
     if (file) {
       this.imageData = URL.createObjectURL(file);
     } else {

@@ -58,11 +58,19 @@
       </section>
     </div>
     <algo-button
+      v-if="btnLink == ''"
       class="full-width"
       color="primary"
       disable
-      outline
       :label="$t('createCollectible.create.goToArtist')"
+      :to="btnLink"
+    />
+    <algo-button
+      v-else
+      class="full-width"
+      color="primary"
+      :label="$t('createCollectible.create.goToArtist')"
+      :to="btnLink"
     />
   </div>
 </template>
@@ -95,6 +103,11 @@ class Props {
     type: String,
     required: true,
   });
+
+  btnLink= prop({
+    type: String,
+    required: true,
+  })
 }
 
 @Options({

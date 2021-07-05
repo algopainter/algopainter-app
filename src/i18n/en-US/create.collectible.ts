@@ -10,6 +10,8 @@ export default {
     preview: 'Preview',
     example: 'Example',
     previewText: 'Upload file to preview your NFT Collectible',
+    import: 'Choose File',
+    descriFile: 'PNG, JPG or SVG. Max 100mb.',
     fields: {
       uploadLabel: 'Upload File',
       titleLabel: 'Title',

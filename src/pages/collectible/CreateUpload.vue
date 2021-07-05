@@ -14,7 +14,6 @@ interface FormData {
   title: string;
   description: string;
   putOnSale: boolean;
-  img: string;
 }
 
 @Options({
@@ -23,16 +22,27 @@ interface FormData {
   },
 })
 export default class CreateUpload extends Vue.with(PropsTypes) {
+  imageData: string | null = null;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  imgPreview(img: string) {
-    this.$emit('preview-img', this.formData.img);
+  previewImage(e: Event) {
+    const newLocal = (<HTMLInputElement>e.target).files;
+    const file = newLocal[0];
+    if (file) {
+      this.imageData = URL.createObjectURL(file);
+    } else {
+      this.imageData = null;
+    }
+    console.log(this.imageData);
+  }
+
+  fechar() {
+    this.imageData = null;
   }
 
   formData: FormData = {
     title: '',
     description: '',
     putOnSale: false,
-    img: '',
   };
 }
 </script>
@@ -45,9 +55,27 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
           {{ $t('createCollectible.create.fields.uploadLabel') }}
         </div>
         <div class="col q-upload-box">
-          <p class="text-bold text-center align-center">
+          <p
+            v-if="imageData === null"
+            class="text-bold text-center align-center"
+          >
             {{ $t('createCollectible.create.descriFile') }}
           </p>
+          <div
+            v-else
+            class="row items-center justify-center q-mb-md"
+          >
+            <img
+              :src="imageData"
+              class="img "
+            >
+            <q-btn
+              icon="highlight_off"
+              class="btn"
+              @click="fechar"
+            />
+          </div>
+
           <div class="row justify-center">
             <label
               for="imagem"
@@ -58,6 +86,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
               id="imagem"
               type="file"
               name="imagem"
+              @change="previewImage"
             >
           </div>
         </div>
@@ -108,16 +137,16 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   height: 15rem;
 }
 
-.q-upload-box{
+.q-upload-box {
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
   box-sizing: border-box;
   border-radius: 10px;
   height: auto;
 }
-.file{
+.file {
   width: 200px;
-  background:#f4538d;
+  background: #f4538d;
 }
 
 .q-upload-label {
@@ -128,20 +157,30 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   line-height: 24px;
 }
 
-input[type="file"] {
- display: none;
+input[type='file'] {
+  display: none;
 }
-.labelFile{
+.labelFile {
   padding: 10px 5px;
   width: 250px;
-  background:#f4538d;
-  display:block;
+  background: #f4538d;
+  display: block;
   border-radius: 10px;
   align-items: center;
   text-align: center;
   font-size: 20px;
   cursor: pointer;
-  color:aliceblue;
+  color: aliceblue;
+}
+.img{
+  width:400px;
+  height:400px;
+}
+.btn{
+  border:none;
+  position: absolute;
+  top: 30px;
+  right: 8px;
 }
 </style>
 

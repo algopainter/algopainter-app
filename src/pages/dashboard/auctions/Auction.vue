@@ -1,9 +1,9 @@
 <template>
   <q-page class="q-page q-gutter-lg q-pb-lg">
-    <div class="row q-col-gutter-md">
+    <div class="row q-col-gutter-sm">
       <div class="col-12 col-md-6">
         <div class="row">
-          <div class="col-11 col-md-11">
+          <div class="col-12 col-md-11">
             <div class="q-pb-md">
               <algo-button
                 :icon="'img:' + distributionSVG"
@@ -26,9 +26,8 @@
               :values="[44, 100, 13, 33]"
             />
           </div>
-          <div v-if="isAuctionImageEnabled" class="col-12 col-md-1">
-            <div class="col-12 col-md-1">
-              <div class="icons text-center flex justify-center">
+            <div v-if="isAuctionImageEnabled" class="col-12 col-md-1">
+              <div class="icons text-center justify-center">
                 <div class="favorite">
                   <div>
                     <q-icon
@@ -47,14 +46,9 @@
                       $t('dashboard.auctionPage.liked')
                     }}</span>
                   </div>
-                </div>
-                <div class="expand">
-                  <q-icon
-                    color="primary"
-                    size="1.7rem"
-                    name="mdi-arrow-expand"
-                  />
-                </div>
+              </div>
+              <div class="expand">
+                <q-icon color="primary" size="1.7rem" name="mdi-arrow-expand" />
               </div>
             </div>
           </div>
@@ -204,6 +198,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </q-page>
 </template>

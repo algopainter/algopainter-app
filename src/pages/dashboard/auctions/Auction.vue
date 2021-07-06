@@ -69,14 +69,6 @@
             <div class="name">
               {{ auction.art.name }}
             </div>
-            <div class="q-py-xs">
-              {{
-                $t('dashboard.auctionPage.saleNumber', {
-                  saleNumber: saleNumber,
-                  totalSales: totalSales,
-                })
-              }}
-            </div>
             <div class="keywords">
               {{ auction.art.keywords }}
             </div>

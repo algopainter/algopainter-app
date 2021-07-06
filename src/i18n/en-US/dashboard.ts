@@ -99,5 +99,7 @@ export default {
     creators: 'Creators',
     collection: 'Collection',
     investors: 'Investors',
+    liked: 'Liked!!',
+    placeBid: 'Place a Bid',
   },
 };

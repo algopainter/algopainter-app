@@ -36,4 +36,7 @@ export default {
     textClaude1: 'Choose two images of your choice and create a new unique and limited work of art.',
     textClaude2: 'Our artist uniquely creates a work of art with the characteristics of the images sent. Endless possibilities to create, register and sell your works.',
   },
+  selectAi: {
+    title: 'Select Ai Artist',
+  },
 };

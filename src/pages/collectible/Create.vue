@@ -111,6 +111,7 @@ interface IAiArtist {
     IaArtist,
     Preview,
     Example,
+
   },
   emits: ['createWithArtistClick'],
 })
@@ -154,6 +155,7 @@ export default class Create extends Vue {
   }
 
   arts: IAiArtist[] = [
+
     {
       id: 1,
       img: '/images/Hashly.svg',
@@ -236,6 +238,7 @@ export default class Create extends Vue {
 .text-bold {
   font-size: 16px;
 }
+
 .q-preview {
   margin: 90px 50px;
 }

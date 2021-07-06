@@ -226,6 +226,9 @@ interface ICollection {
     AlgoAvatar,
     PreviousBidAvatar,
   },
+  watch: {
+    isAuctionFavorite: ['postFavoriteAuction', 'incrementFavoriteCounter'],
+  },
 })
 export default class Auction extends Vue {
   isAuctionImageEnabled: boolean = true;

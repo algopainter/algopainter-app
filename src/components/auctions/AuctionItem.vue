@@ -42,7 +42,7 @@
                     {{ favoriteCounter }}
                   </div>
                   <span
-                    :class="{ press: isAuctionFavorite } q-pl-none"
+                    :class="{ press: isAuctionFavorite } "
                   >{{ $t('dashboard.auctionPage.liked') }}</span>
                 </div>
               </div>
@@ -200,7 +200,8 @@ span {
   font-weight: 400;
 }
 span.press {
-  bottom: 35px;
+  bottom: 40px;
+  left: -7px;
   font-size: 14px;
   visibility: visible;
   animation: fade 1s;

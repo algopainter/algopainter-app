@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center">
     <div class="items-center">
-      <q-item dense class="q-pa-none q-mr-xl">
+      <q-item dense class="q-pa-none">
         <q-item-section side>
           <q-avatar round size="56px">
             <img :src="imageUrl" />
@@ -19,11 +19,13 @@
         </q-item-section>
       </q-item>
     </div>
+    <q-space />
     <slot name="description">
       <div class="text-bold">
         {{ description }}
       </div>
     </slot>
+    <q-space />
   </div>
 </template>
 

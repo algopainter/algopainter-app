@@ -55,6 +55,11 @@
                       $t('dashboard.auctionPage.liked')
                     }}</span>
                   </div>
+                <div class="items-center">
+                  <p class="text-primary">
+                    {{ favoriteCounter }}
+                  </p>
+                </div>
               </div>
               <div class="expand">
                 <q-icon color="primary" size="1.7rem" name="mdi-arrow-expand" />
@@ -260,16 +265,26 @@ export default class Auction extends Vue {
     this.isAuctionFavorite = !this.isAuctionFavorite;
   }
 
+  // WATCHER METHODS
+  incrementFavoriteCounter() {
+    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
+  }
+
+  postFavoriteAuction(value: boolean) {
+    // POST users/id/auctions/auctionID/favorite?favorite=value;
+    return value;
+  }
+
+  // MOCKING DATA
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   distributionSVG: string = require('../../../assets/icons/chart-distribution.svg');
 
   tab: string = 'info';
 
-  // MOCKING DATA
-
-  totalSales: number = 12;
-
-  saleNumber: number = 4;
+  favoriteCounter = parseInt(
+    (Math.random() * 100 * (Math.random() * 100)).toString(),
+  );
 
   users: IUser[] = [
     {

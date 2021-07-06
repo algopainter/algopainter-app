@@ -77,6 +77,10 @@
       </p>
     </div>
   </div>
+<<<<<<< HEAD
+=======
+  <div v-if="activeFormId === 'createWithArtist'" class="row" />
+>>>>>>> eb2039452970644c79a90f68956e774e57791d2a
 </template>
 
 <script lang="ts">
@@ -230,8 +234,11 @@ export default class Create extends Vue {
 .text-bold {
   font-size: 16px;
 }
+<<<<<<< HEAD
 .q-preview {
   margin: 120px 50px;
 }
 
+=======
+>>>>>>> eb2039452970644c79a90f68956e774e57791d2a
 </style>

@@ -175,6 +175,7 @@
             <div class="q-pa-sm">
               <highest-bid-avatar :bid="highestBid" />
             </div>
+            <div>
             <div class="q-py-sm">
               <algo-button
                 class="text-bold full-width"

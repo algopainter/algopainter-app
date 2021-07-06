@@ -122,7 +122,7 @@ export default class Example extends Vue.with(Props) {}
 .ap-preview-box {
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
-  height: 60vh;
+  height: 400px;
   width: 400px;
   box-sizing: border-box;
   border-radius: 10px;

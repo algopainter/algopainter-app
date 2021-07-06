@@ -29,7 +29,7 @@
               v-if="isAuctionImageEnabled"
               width="100%"
               class="art-image"
-              src="../../../assets/placeholder-images/painting.jpg"
+              src="https://placeimg.com/645/645/nature?t=0.7498161248496579"
             />
             <auction-info-chart
               v-if="isAuctionDistributionEnabled"

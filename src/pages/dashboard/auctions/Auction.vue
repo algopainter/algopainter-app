@@ -159,17 +159,6 @@
               />
             </q-tab-panel>
 
-            <q-tab-panel name="previous-owners" class="q-pa-sm">
-              <algo-avatar
-                class="q-py-md"
-                v-for="oldOwner in oldOwners"
-                :key="oldOwner.id"
-                :title="$t('dashboard.auctionPage.oldOwner')"
-                :imageUrl="oldOwner.profilePhotoUrl"
-                :subTitle="oldOwner.name"
-              />
-            </q-tab-panel>
-
             <q-tab-panel name="history" class="q-pa-sm">
               <previous-bid-avatar
                 class="q-py-md"

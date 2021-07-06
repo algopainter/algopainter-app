@@ -27,11 +27,12 @@
     <create-upload
       title-maxlength="255"
       description-maxlength="255"
+      @preview-evento="eventPreview"
     />
     <div
       class="col fixed-right q-preview"
     >
-      <preview />
+      <preview :image-preview="imageData" />
     </div>
   </div>
   <div
@@ -110,9 +111,10 @@ interface IAiArtist {
     Preview,
     Example,
   },
-  emits: ['createWithArtistClick'],
+  emits: ['createWithArtistClick', 'eventPreview'],
 })
 export default class Create extends Vue {
+  imageData: string | null = null;
   imageButtons: IImageButton[] = [
     {
       id: 'importFile',
@@ -218,6 +220,12 @@ export default class Create extends Vue {
       }
       return item;
     });
+  }
+
+  eventPreview(play: string|null) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    this.imageData = play;
+    console.log(this.imageData);
   }
 }
 </script>

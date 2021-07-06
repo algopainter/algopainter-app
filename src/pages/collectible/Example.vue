@@ -5,7 +5,7 @@
       v-if="exampleImg === '' "
       class="row text-h6 ap-preview-box justify-center items-center"
     >
-      <p class="text-center">
+      <p class="text-center textSample">
         {{ $t('createCollectible.create.exampleText') }}
       </p>
     </section>
@@ -122,13 +122,17 @@ export default class Example extends Vue.with(Props) {}
 .ap-preview-box {
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
-  height: 400px;
+  height: 350px;
   width: 400px;
   box-sizing: border-box;
   border-radius: 10px;
 }
 
 span, p {
-    font-size: 15px;
+  font-size: 13px;
+}
+
+.textSample {
+  font-size: 20px;
 }
 </style>

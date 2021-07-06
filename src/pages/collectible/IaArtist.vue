@@ -1,21 +1,23 @@
 <template>
-  <div class="col-4 text-center">
-    <q-btn
-      :class="{
-        'btn-border': true,
-        off: isOff,
-        on: !isOff,
-      }"
-      @click="active($props.name)"
-    >
-      <q-img
-        class="img"
-        :src="img"
-      />
-    </q-btn>
-    <p class="q-mt-md text-bold">
-      {{ name }}
-    </p>
+  <div class="">
+    <div class="col-4 text-center">
+      <q-btn
+        :class="{
+          'btn-border': true,
+          off: isOff,
+          on: !isOff,
+        }"
+        @click="active($props.name)"
+      >
+        <q-img
+          class="img"
+          :src="img"
+        />
+      </q-btn>
+      <p class="q-mt-md text-bold">
+        {{ name }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -37,11 +39,6 @@ class Props {
     required: true,
   });
 
-  title = prop({
-    type: String,
-    required: true,
-  });
-
   isOff = prop({
     type: Boolean,
     required: true,
@@ -56,7 +53,6 @@ class Props {
 })
 export default class IaArtist extends Vue.with(Props) {
   active(id: string) {
-    console.log('funcionaa!!');
     this.$props.isBorda(id);
   }
 }

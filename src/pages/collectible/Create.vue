@@ -3,7 +3,11 @@
     {{ $t('createCollectible.title.sub') }}
   </div>
   <div class="row q-col-gutter-md">
-    <div v-for="imgBtn in imageButtons" :key="imgBtn.id" class="col">
+    <div
+      v-for="imgBtn in imageButtons"
+      :key="imgBtn.id"
+      class="col"
+    >
       <image-button
         :id="imgBtn.id"
         :img-src="imgBtn.imgSrc"
@@ -16,8 +20,19 @@
       </image-button>
     </div>
   </div>
-  <div v-if="activeFormId === 'importFile'" class="q-mt-md">
-    <create-upload title-maxlength="255" description-maxlength="255" />
+  <div
+    v-if="activeFormId === 'importFile'"
+    class="q-mt-md"
+  >
+    <create-upload
+      title-maxlength="255"
+      description-maxlength="255"
+    />
+    <div
+      class="col fixed-right q-preview"
+    >
+      <preview />
+    </div>
   </div>
   <div
     v-if="activeFormId === 'createWithArtist'"
@@ -34,15 +49,28 @@
         :key="art.id"
         :img="art.img"
         :name="art.name"
-        :arts-width="art.artsWidth"
-        :arts-height="art.artsHeight"
         :is-off="art.isOff"
         :is-borda="clickImg"
         class="col-4"
+        @click="setCurrentArtist(art.id)"
       />
     </div>
+    <div>
+      <p class="text-h6 text-weight-bold">
+        {{ $t(currentArtist.title) }}
+      </p>
+      <p class="text-weight-medium">
+        {{ $t(currentArtist.text1) }}
+      </p>
+      <p class="text-weight-medium">
+        {{ $t(currentArtist.text2) }}
+      </p>
+    </div>
   </div>
-  <div v-if="activeFormId === 'createWithArtist'" class="row" />
+  <div
+    v-if="activeFormId === 'createWithArtist'"
+    class="row"
+  />
 </template>
 
 <script lang="ts">
@@ -51,12 +79,24 @@ import ImageButton from '../../components/common/ImageButton.vue';
 import CreateUpload from './CreateUpload.vue';
 import { IImageButton } from '../../models/IImageButton';
 import IaArtist from './IaArtist.vue';
+import Preview from './Preview.vue';
+
+interface IAiArtist {
+  id: number;
+  name: string;
+  title: string;
+  img: string;
+  isOff?: boolean;
+  text1: string;
+  text2: string;
+}
 
 @Options({
   components: {
     ImageButton,
     CreateUpload,
     IaArtist,
+    Preview,
   },
   emits: ['createWithArtistClick'],
 })
@@ -80,29 +120,46 @@ export default class Create extends Vue {
     },
   ];
 
-  arts = [
+  currentArtist: IAiArtist = {
+    id: 0,
+    name: '',
+    title: '',
+    img: '',
+    text1: '',
+    text2: '',
+  };
+
+  setCurrentArtist(id: number) {
+    this.currentArtist = this.arts.filter((art) => (art.id === id))[0];
+    this.$emit('artistSettled');
+  }
+
+  arts: IAiArtist[] = [
     {
       id: 1,
       img: '/images/Hashly.svg',
       name: 'Hashly Gwei',
-      artsWidth: '150px',
-      artsHeight: '264px',
+      title: 'createCollectible.selectAi.titleHashly',
+      text1: 'createCollectible.selectAi.textHashly1',
+      text2: 'createCollectible.selectAi.textHashly2',
       isOff: true,
     },
     {
       id: 2,
       img: '/images/Angelo.svg',
       name: 'Angelo Fracthereum',
-      artsWidth: '150px',
-      artsHeight: '264px',
+      title: 'createCollectible.selectAi.titleAngelo',
+      text1: 'createCollectible.selectAi.textAngelo1',
+      text2: '',
       isOff: true,
     },
     {
       id: 3,
       img: '/images/Claude.svg',
       name: 'Claude Monero',
-      artsWidth: '150px',
-      artsHeight: '264px',
+      title: 'createCollectible.selectAi.titleClaude',
+      text1: 'createCollectible.selectAi.textClaude1',
+      text2: 'createCollectible.selectAi.textClaude2',
       isOff: true,
     },
   ];
@@ -145,4 +202,8 @@ export default class Create extends Vue {
 .text-bold {
   font-size: 16px;
 }
+.q-preview {
+  margin: 120px 50px;
+}
+
 </style>

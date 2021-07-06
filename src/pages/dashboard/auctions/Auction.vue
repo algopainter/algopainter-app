@@ -400,9 +400,6 @@ export default class Auction extends Vue {
 </script>
 <style lang="scss" scoped>
 .art-image {
-  width: 100%;
-  max-width: 850px;
-  height: auto;
   border-radius: 10px;
 }
 

@@ -3,16 +3,30 @@
     {{ $t('createCollectible.create.preview') }}
   </div>
   <div class="row text-h6 ap-preview-box justify-center items-center">
-    <p class="text-center">
-      {{ $t('createCollectible.create.previewText') }}
-    </p>
+    <div class="col">
+      <p
+        v-if="imagePreview === null"
+        class="text-center"
+      >
+        {{ $t('createCollectible.create.previewText') }}
+      </p>
+      <div v-else>
+        <q-img :src="imagePreview" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Vue, prop } from 'vue-class-component';
+class Props {
+ imagePreview = prop({
+   type: String,
+   required: true,
+ })
+}
 
-export default class Preview extends Vue {}
+export default class Preview extends Vue.with(Props) {}
 </script>
 
 <style lang="scss" scoped>

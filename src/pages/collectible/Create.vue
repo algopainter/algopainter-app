@@ -34,22 +34,12 @@
         :key="art.id"
         :img="art.img"
         :name="art.name"
+        :arts-width="art.artsWidth"
+        :arts-height="art.artsHeight"
         :is-off="art.isOff"
         :is-borda="clickImg"
         class="col-4"
-        @click="setCurrentArtist(art.id)"
       />
-    </div>
-    <div>
-      <p class="text-h6 text-weight-bold">
-        {{ $t(currentArtist.title) }}
-      </p>
-      <p class="text-weight-medium">
-        {{ $t(currentArtist.text1) }}
-      </p>
-      <p class="text-weight-medium">
-        {{ $t(currentArtist.text2) }}
-      </p>
     </div>
   </div>
   <div v-if="activeFormId === 'createWithArtist'" class="row" />
@@ -61,16 +51,6 @@ import ImageButton from '../../components/common/ImageButton.vue';
 import CreateUpload from './CreateUpload.vue';
 import { IImageButton } from '../../models/IImageButton';
 import IaArtist from './IaArtist.vue';
-
-interface IAiArtist {
-  id: number;
-  name: string;
-  title: string;
-  img: string;
-  isOff?: boolean;
-  text1: string;
-  text2: string;
-}
 
 @Options({
   components: {
@@ -100,46 +80,29 @@ export default class Create extends Vue {
     },
   ];
 
-  currentArtist: IAiArtist = {
-    id: 0,
-    name: '',
-    title: '',
-    img: '',
-    text1: '',
-    text2: '',
-  };
-
-  setCurrentArtist(id: number) {
-    this.currentArtist = this.arts.filter((art) => (art.id === id))[0];
-    this.$emit('artistSettled');
-  }
-
-  arts: IAiArtist[] = [
+  arts = [
     {
       id: 1,
       img: '/images/Hashly.svg',
       name: 'Hashly Gwei',
-      title: 'createCollectible.selectAi.titleHashly',
-      text1: 'createCollectible.selectAi.textHashly1',
-      text2: 'createCollectible.selectAi.textHashly2',
+      artsWidth: '150px',
+      artsHeight: '264px',
       isOff: true,
     },
     {
       id: 2,
       img: '/images/Angelo.svg',
       name: 'Angelo Fracthereum',
-      title: 'createCollectible.selectAi.titleAngelo',
-      text1: 'createCollectible.selectAi.textAngelo1',
-      text2: '',
+      artsWidth: '150px',
+      artsHeight: '264px',
       isOff: true,
     },
     {
       id: 3,
       img: '/images/Claude.svg',
       name: 'Claude Monero',
-      title: 'createCollectible.selectAi.titleClaude',
-      text1: 'createCollectible.selectAi.textClaude1',
-      text2: 'createCollectible.selectAi.textClaude2',
+      artsWidth: '150px',
+      artsHeight: '264px',
       isOff: true,
     },
   ];

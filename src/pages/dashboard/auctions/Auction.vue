@@ -27,12 +27,14 @@
             </div>
             <q-img
               v-if="isAuctionImageEnabled"
+              width="100%"
               class="art-image"
               src="../../../assets/placeholder-images/painting.jpg"
             />
             <auction-info-chart
               v-if="isAuctionDistributionEnabled"
               :values="[44, 100, 13, 33]"
+              width="100%"
             />
           </div>
             <div v-if="isAuctionImageEnabled" class="col-12 col-md-1">

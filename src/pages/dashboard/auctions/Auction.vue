@@ -108,13 +108,6 @@
               class="tab"
               :ripple="false"
               no-caps
-              name="previous-owners"
-              :label="$t('dashboard.auctionPage.previousOwners')"
-            />
-            <q-tab
-              class="tab"
-              :ripple="false"
-              no-caps
               name="history"
               label="History"
             />

@@ -473,8 +473,8 @@ export default class Auction extends Vue {
     font-weight: 400;
   }
   span.press {
-    bottom: 35px;
-    font-size: 14px;
+    bottom: 31px;
+    font-size: 13px;
     visibility: visible;
     animation: fade 1s;
   }

@@ -5,7 +5,7 @@
       v-if="exampleImg === '' "
       class="row text-h6 ap-preview-box justify-center items-center"
     >
-      <p class="text-center">
+      <p class="text-center textSample">
         {{ $t('createCollectible.create.exampleText') }}
       </p>
     </section>
@@ -21,7 +21,7 @@
 
     <div class="row justify-between">
       <section>
-        <p class="text-center text-bold">
+        <p class="text-center text-bold q-ma-none">
           {{ batchPrince }}
         </p>
         <q-icon
@@ -35,7 +35,7 @@
         </p>
       </section>
       <section>
-        <p class="text-center text-bold">
+        <p class="text-center text-bold q-ma-none">
           {{ remaining }}
         </p>
         <q-icon
@@ -46,7 +46,7 @@
         <span>{{ $t('createCollectible.create.remaining') }}</span>
       </section>
       <section>
-        <p class="text-center text-bold">
+        <p class="text-center text-bold q-ma-none">
           {{ minted }}
         </p>
         <q-icon
@@ -58,11 +58,19 @@
       </section>
     </div>
     <algo-button
+      v-if="btnLink == ''"
       class="full-width"
       color="primary"
       disable
-      outline
       :label="$t('createCollectible.create.goToArtist')"
+      :to="btnLink"
+    />
+    <algo-button
+      v-else
+      class="full-width"
+      color="primary"
+      :label="$t('createCollectible.create.goToArtist')"
+      :to="btnLink"
     />
   </div>
 </template>
@@ -95,6 +103,11 @@ class Props {
     type: String,
     required: true,
   });
+
+  btnLink= prop({
+    type: String,
+    required: true,
+  })
 }
 
 @Options({
@@ -109,13 +122,17 @@ export default class Example extends Vue.with(Props) {}
 .ap-preview-box {
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
-  height: 60vh;
+  height: 350px;
   width: 400px;
   box-sizing: border-box;
   border-radius: 10px;
 }
 
 span, p {
-    font-size: 15px;
+  font-size: 13px;
+}
+
+.textSample {
+  font-size: 20px;
 }
 </style>

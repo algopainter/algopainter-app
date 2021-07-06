@@ -39,6 +39,11 @@ class Props {
     required: true,
   });
 
+  title = prop({
+    type: String,
+    required: true,
+  });
+
   isOff = prop({
     type: Boolean,
     required: true,
@@ -60,6 +65,7 @@ export default class IaArtist extends Vue.with(Props) {
 
 <style scoped>
 .img {
+  padding: 10px 50px;
   width: 150px;
   height: 264px;
   cursor: pointer;

@@ -90,6 +90,8 @@ export default {
     highestBidBy: 'Highest bid by {highestBidBy}',
     bidBackPercentage: '{bidBackPercentage} Bidback',
     pirsDestination: '{pirs} of sales will go to {role}',
+    previousBid: 'Offered {bidPrice} for {bidAtInDays} days ago',
+    previousBidBy: 'by {name}',
     owner: 'Owner',
     oldOwner: 'Old Owner',
     previousOwners: 'Previous Owners',
@@ -97,5 +99,7 @@ export default {
     creators: 'Creators',
     collection: 'Collection',
     investors: 'Investors',
+    liked: 'Liked!!',
+    placeBid: 'Place a Bid',
   },
 };

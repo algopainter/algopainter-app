@@ -34,7 +34,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     } else {
       this.imageData = null;
     }
-    console.log(this.imageData);
+    this.$emit('preview-evento', this.imageData);
   }
 
   fechar() {

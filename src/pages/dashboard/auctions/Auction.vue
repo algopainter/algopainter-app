@@ -312,35 +312,12 @@ export default class Auction extends Vue {
       name: 'Michonne',
       profilePhotoUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
     },
-    {
-      id: '2',
-      name: 'Jordan',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
-    },
   ];
 
   collection: ICollection = {
     name: 'ArTbs',
-    imageUrl: 'http://localhost:8080/img/painting.jpg',
+    imageUrl: 'https://placeimg.com/500/300/nature?t=0.7498161248496573',
   };
-
-  oldOwners: ITempUser[] = [
-    {
-      id: '10',
-      name: 'Dave',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/men/26.jpg',
-    },
-    {
-      id: '11',
-      name: 'Keyne',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/26.jpg',
-    },
-    {
-      id: '12',
-      name: 'Alice',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/41.jpg',
-    },
-  ];
 
   highestBidUser: ITempUser = {
     id: '590',

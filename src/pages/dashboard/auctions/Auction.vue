@@ -6,6 +6,7 @@
           <div class="col-12 col-md-11">
             <div class="q-pb-md">
               <algo-button
+                v-if="isAuctionImageEnabled"
                 :icon="'img:' + distributionSVG"
                 color="primary"
                 outline
@@ -14,6 +15,14 @@
                 <div class="q-pl-sm">
                   {{ $t('dashboard.auctionPage.auctionDistribution') }}
                 </div>
+              </algo-button>
+              <algo-button
+                v-if="isAuctionDistributionEnabled"
+                color="primary"
+                outline
+                @click="auctionDistributionBtnClicked()"
+              >
+                {{ $t('dashboard.auctionPage.auction') }}
               </algo-button>
             </div>
             <q-img
@@ -247,6 +256,10 @@ export default class Auction extends Vue {
   isAuctionFavorite: boolean = false;
 
   auctionDistributionBtnClicked() {
+    this.toggleAuctionDistribution();
+  }
+
+  toggleAuctionDistribution() {
     this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
   }

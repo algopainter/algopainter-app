@@ -237,7 +237,7 @@ export default class Create extends Vue {
   font-size: 16px;
 }
 .q-preview {
-  margin: 120px 50px;
+  margin: 90px 50px;
 }
 
 </style>

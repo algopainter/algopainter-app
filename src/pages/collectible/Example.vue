@@ -21,7 +21,7 @@
 
     <div class="row justify-between">
       <section>
-        <p class="text-center text-bold">
+        <p class="text-center text-bold q-ma-none">
           {{ batchPrince }}
         </p>
         <q-icon
@@ -35,7 +35,7 @@
         </p>
       </section>
       <section>
-        <p class="text-center text-bold">
+        <p class="text-center text-bold q-ma-none">
           {{ remaining }}
         </p>
         <q-icon
@@ -46,7 +46,7 @@
         <span>{{ $t('createCollectible.create.remaining') }}</span>
       </section>
       <section>
-        <p class="text-center text-bold">
+        <p class="text-center text-bold q-ma-none">
           {{ minted }}
         </p>
         <q-icon

@@ -37,26 +37,29 @@
               width="100%"
             />
           </div>
-            <div v-if="isAuctionImageEnabled" class="col-12 col-md-1">
-              <div class="icons text-center justify-center">
-                <div class="favorite">
-                  <div>
-                    <q-icon
-                      color="primary"
-                      size="1.7rem"
-                      :name="
-                        isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
-                      "
-                      :class="{
-                        press: isAuctionFavorite,
-                        shake: isAuctionFavorite,
-                      }"
-                      @click="favoriteAuction"
-                    />
-                    <span :class="{ press: isAuctionFavorite }">{{
-                      $t('dashboard.auctionPage.liked')
-                    }}</span>
-                  </div>
+          <div
+            v-if="isAuctionImageEnabled"
+            class="col-12 col-md-1"
+          >
+            <div class="icons text-center justify-center">
+              <div class="favorite">
+                <div>
+                  <q-icon
+                    color="primary"
+                    size="1.7rem"
+                    :name="
+                      isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
+                    "
+                    :class="{
+                      press: isAuctionFavorite,
+                      shake: isAuctionFavorite,
+                    }"
+                    @click="favoriteAuction"
+                  />
+                  <span :class="{ press: isAuctionFavorite }">{{
+                    $t('dashboard.auctionPage.liked')
+                  }}</span>
+                </div>
                 <div class="items-center">
                   <p class="text-primary">
                     {{ favoriteCounter }}
@@ -64,7 +67,11 @@
                 </div>
               </div>
               <div class="expand">
-                <q-icon color="primary" size="1.7rem" name="mdi-arrow-expand" />
+                <q-icon
+                  color="primary"
+                  size="1.7rem"
+                  name="mdi-arrow-expand"
+                />
               </div>
             </div>
           </div>
@@ -116,20 +123,23 @@
           </q-tabs>
 
           <q-tab-panels v-model="tab">
-            <q-tab-panel name="info" class="q-pa-sm">
+            <q-tab-panel
+              name="info"
+              class="q-pa-sm"
+            >
               <algo-avatar
                 class="q-py-md"
                 :title="$t('dashboard.auctionPage.owner')"
-                :imageUrl="owner.profilePhotoUrl"
-                :subTitle="owner.name"
+                :image-url="owner.profilePhotoUrl"
+                :sub-title="owner.name"
               />
               <algo-avatar
-                class="q-py-md"
                 v-for="creator in creators"
                 :key="creator.id"
+                class="q-py-md"
                 :title="$t(`dashboard.auctionPage.creator`)"
-                :imageUrl="creator.profilePhotoUrl"
-                :subTitle="creator.name"
+                :image-url="creator.profilePhotoUrl"
+                :sub-title="creator.name"
                 :description="
                   $t('dashboard.auctionPage.pirsDestination', {
                     pirs: $n(auction.art.pirs.creators, 'percent'),
@@ -137,12 +147,16 @@
                   })
                 "
               />
-              <q-separator class="q-pr-xl" spaced="md" color="primary" />
+              <q-separator
+                class="q-pr-xl"
+                spaced="md"
+                color="primary"
+              />
               <algo-avatar
                 class="q-py-md"
                 :title="$t('dashboard.auctionPage.collection')"
-                :imageUrl="collection.imageUrl"
-                :subTitle="collection.name"
+                :image-url="collection.imageUrl"
+                :sub-title="collection.name"
                 :description="
                   $t('dashboard.auctionPage.pirsDestination', {
                     pirs: $n(auction.art.pirs.investors, 'percent'),
@@ -152,21 +166,27 @@
               />
             </q-tab-panel>
 
-            <q-tab-panel name="bids" class="q-pa-sm">
+            <q-tab-panel
+              name="bids"
+              class="q-pa-sm"
+            >
               <bid-avatar
-                class="q-py-md"
                 v-for="bid in bids"
-                :bid="bid"
                 :key="bid.id"
+                class="q-py-md"
+                :bid="bid"
               />
             </q-tab-panel>
 
-            <q-tab-panel name="history" class="q-pa-sm">
+            <q-tab-panel
+              name="history"
+              class="q-pa-sm"
+            >
               <previous-bid-avatar
-                class="q-py-md"
                 v-for="bid in bids"
-                :bid="bid"
                 :key="bid.id"
+                class="q-py-md"
+                :bid="bid"
               />
             </q-tab-panel>
           </q-tab-panels>
@@ -176,20 +196,20 @@
               <highest-bid-avatar :bid="highestBid" />
             </div>
             <div>
-            <div class="q-py-sm">
-              <algo-button
-                class="text-bold full-width"
-                size="lg"
-                color="primary"
-                outline
-              >
-                {{ $t('dashboard.auctionPage.placeBid') }}
-              </algo-button>
+              <div class="q-py-sm">
+                <algo-button
+                  class="text-bold full-width"
+                  size="lg"
+                  color="primary"
+                  outline
+                >
+                  Place a Bid
+                </algo-button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   </q-page>
 </template>

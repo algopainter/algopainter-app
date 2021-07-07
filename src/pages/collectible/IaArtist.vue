@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div class="col-4 text-center">
       <q-btn
         :class="{
@@ -60,14 +60,13 @@ export default class IaArtist extends Vue.with(Props) {
 
 <style scoped>
 .img {
-  padding: 10px 50px;
   width: 150px;
   height: 264px;
   cursor: pointer;
 }
 
 .btn-border {
-  padding: 21px 56px;
+  padding: 21px 30px;
   border-radius: 10px;
 }
 

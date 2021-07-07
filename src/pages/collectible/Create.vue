@@ -238,10 +238,7 @@ export default class Create extends Vue {
 .text-bold {
   font-size: 16px;
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> 01110c24ffd61ec5b584c6243a2b0ef070fa5325
 .q-preview {
   margin: 90px 50px;
 }

@@ -11,7 +11,6 @@
 </template>
 
 <script lang="ts">
-import { ApexOptions } from 'apexcharts';
 import { Vue, Options, prop } from 'vue-class-component';
 import VueApexCharts from 'vue3-apexcharts';
 
@@ -39,5 +38,6 @@ class Props {
     VueApexCharts,
   },
 })
+
 export default class PieChart extends Vue.with(Props) {}
 </script>

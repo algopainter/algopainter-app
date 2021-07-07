@@ -72,10 +72,10 @@
         {{ $t(currentArtist.title) }}
       </p>
       <p class="text-weight-medium">
-        {{ $t(currentArtist.text1) }}
+        {{ $t(currentArtist.textSubtitle) }}
       </p>
       <p class="text-weight-medium">
-        {{ $t(currentArtist.text2) }}
+        {{ $t(currentArtist.textBody) }}
       </p>
     </div>
   </div>
@@ -96,8 +96,8 @@ interface IAiArtist {
   title: string;
   img: string;
   isOff?: boolean;
-  text1: string;
-  text2: string;
+  textSubtitle: string;
+  textBody: string;
   exampleImg: string;
   batchPrince: string;
   remaining: string;
@@ -142,8 +142,8 @@ export default class Create extends Vue {
     name: '',
     title: '',
     img: '',
-    text1: '',
-    text2: '',
+    textSubtitle: '',
+    textBody: '',
     exampleImg: '',
     batchPrince: '-',
     remaining: '-',
@@ -164,8 +164,8 @@ export default class Create extends Vue {
       name: 'Hashly Gwei',
       exampleImg: '/images/Hashly.Art.svg',
       title: 'createCollectible.selectAi.titleHashly',
-      text1: 'createCollectible.selectAi.textHashly1',
-      text2: 'createCollectible.selectAi.textHashly2',
+      textSubtitle: 'createCollectible.selectAi.textHashly1',
+      textBody: 'createCollectible.selectAi.textHashly2',
       batchPrince: '600',
       remaining: '580',
       minted: '420',
@@ -178,8 +178,8 @@ export default class Create extends Vue {
       name: 'Angelo Fracthereum',
       exampleImg: '/images/Angelo.Art.svg',
       title: 'createCollectible.selectAi.titleAngelo',
-      text1: 'createCollectible.selectAi.textAngelo1',
-      text2: '',
+      textSubtitle: 'createCollectible.selectAi.textAngelo1',
+      textBody: '',
       batchPrince: '-',
       remaining: '-',
       minted: '-',
@@ -192,8 +192,8 @@ export default class Create extends Vue {
       name: 'Claude Monero',
       exampleImg: '/images/Claude.Art.svg',
       title: 'createCollectible.selectAi.titleClaude',
-      text1: 'createCollectible.selectAi.textClaude1',
-      text2: 'createCollectible.selectAi.textClaude2',
+      textSubtitle: 'createCollectible.selectAi.textClaude1',
+      textBody: 'createCollectible.selectAi.textClaude2',
       batchPrince: '-',
       remaining: '-',
       minted: '-',

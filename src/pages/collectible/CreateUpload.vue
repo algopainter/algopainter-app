@@ -117,15 +117,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
       />
     </div>
   </div>
-  <div class="row">
-    <div class="col">
-      <q-toggle
-        v-model="formData.putOnSale"
-        :label="$t('createCollectible.create.fields.putOnSaleLabel')"
-        left-label
-      />
-    </div>
-  </div>
 </template>
 
 <style lang="scss" scoped>

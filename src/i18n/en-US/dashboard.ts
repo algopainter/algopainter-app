@@ -85,6 +85,7 @@ export default {
   },
   auctionPage: {
     title: 'Auction',
+    auction: 'Auction',
     auctionDistribution: 'Auction Distribution',
     saleNumber: 'Sale {saleNumber} of {totalSales}',
     highestBidBy: 'Highest bid by {highestBidBy}',

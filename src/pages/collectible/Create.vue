@@ -3,7 +3,11 @@
     {{ $t('createCollectible.title.sub') }}
   </div>
   <div class="row q-col-gutter-md">
-    <div v-for="imgBtn in imageButtons" :key="imgBtn.id" class="col">
+    <div
+      v-for="imgBtn in imageButtons"
+      :key="imgBtn.id"
+      class="col"
+    >
       <image-button
         :id="imgBtn.id"
         :img-src="imgBtn.imgSrc"
@@ -16,8 +20,20 @@
       </image-button>
     </div>
   </div>
-  <div v-if="activeFormId === 'importFile'" class="q-mt-md">
-    <create-upload title-maxlength="255" description-maxlength="255" />
+  <div
+    v-if="activeFormId === 'importFile'"
+    class="q-mt-md"
+  >
+    <create-upload
+      title-maxlength="255"
+      description-maxlength="255"
+      @preview-evento="eventPreview"
+    />
+    <div
+      class="col fixed-right q-preview"
+    >
+      <preview :image-preview="imageData" />
+    </div>
   </div>
   <div
     v-if="activeFormId === 'createWithArtist'"
@@ -34,15 +50,35 @@
         :key="art.id"
         :img="art.img"
         :name="art.name"
-        :arts-width="art.artsWidth"
-        :arts-height="art.artsHeight"
         :is-off="art.isOff"
         :is-borda="clickImg"
         class="col-4"
+        @click="setCurrentArtist(art.id)"
       />
     </div>
+    <div
+      class="col fixed-right q-preview"
+    >
+      <example
+        :example-img="currentArtist.exampleImg"
+        :batch-prince="currentArtist.batchPrince"
+        :remaining="currentArtist.remaining"
+        :minted="currentArtist.minted"
+        :btn-link="currentArtist.btnLink"
+      />
+    </div>
+    <div>
+      <p class="text-h6 text-weight-bold">
+        {{ $t(currentArtist.title) }}
+      </p>
+      <p class="text-weight-medium">
+        {{ $t(currentArtist.text1) }}
+      </p>
+      <p class="text-weight-medium">
+        {{ $t(currentArtist.text2) }}
+      </p>
+    </div>
   </div>
-  <div v-if="activeFormId === 'createWithArtist'" class="row" />
 </template>
 
 <script lang="ts">
@@ -51,16 +87,37 @@ import ImageButton from '../../components/common/ImageButton.vue';
 import CreateUpload from './CreateUpload.vue';
 import { IImageButton } from '../../models/IImageButton';
 import IaArtist from './IaArtist.vue';
+import Preview from './Preview.vue';
+import Example from './Example.vue';
+
+interface IAiArtist {
+  id: number;
+  name: string;
+  title: string;
+  img: string;
+  isOff?: boolean;
+  text1: string;
+  text2: string;
+  exampleImg: string;
+  batchPrince: string;
+  remaining: string;
+  minted: string;
+  btnLink: string;
+}
 
 @Options({
   components: {
     ImageButton,
     CreateUpload,
     IaArtist,
+    Preview,
+    Example,
+
   },
-  emits: ['createWithArtistClick'],
+  emits: ['createWithArtistClick', 'eventPreview'],
 })
 export default class Create extends Vue {
+  imageData: string | null = null;
   imageButtons: IImageButton[] = [
     {
       id: 'importFile',
@@ -80,30 +137,68 @@ export default class Create extends Vue {
     },
   ];
 
-  arts = [
+  currentArtist: IAiArtist = {
+    id: 0,
+    name: '',
+    title: '',
+    img: '',
+    text1: '',
+    text2: '',
+    exampleImg: '',
+    batchPrince: '-',
+    remaining: '-',
+    minted: '-',
+    btnLink: '',
+  };
+
+  setCurrentArtist(id: number) {
+    this.currentArtist = this.arts.filter((art) => (art.id === id))[0];
+    this.$emit('artistSettled');
+  }
+
+  arts: IAiArtist[] = [
+
     {
       id: 1,
       img: '/images/Hashly.svg',
       name: 'Hashly Gwei',
-      artsWidth: '150px',
-      artsHeight: '264px',
+      exampleImg: '/images/Hashly.Art.svg',
+      title: 'createCollectible.selectAi.titleHashly',
+      text1: 'createCollectible.selectAi.textHashly1',
+      text2: 'createCollectible.selectAi.textHashly2',
+      batchPrince: '600',
+      remaining: '580',
+      minted: '420',
       isOff: true,
+      btnLink: './new-painting',
     },
     {
       id: 2,
       img: '/images/Angelo.svg',
       name: 'Angelo Fracthereum',
-      artsWidth: '150px',
-      artsHeight: '264px',
+      exampleImg: '/images/Angelo.Art.svg',
+      title: 'createCollectible.selectAi.titleAngelo',
+      text1: 'createCollectible.selectAi.textAngelo1',
+      text2: '',
+      batchPrince: '-',
+      remaining: '-',
+      minted: '-',
       isOff: true,
+      btnLink: '',
     },
     {
       id: 3,
       img: '/images/Claude.svg',
       name: 'Claude Monero',
-      artsWidth: '150px',
-      artsHeight: '264px',
+      exampleImg: '/images/Claude.Art.svg',
+      title: 'createCollectible.selectAi.titleClaude',
+      text1: 'createCollectible.selectAi.textClaude1',
+      text2: 'createCollectible.selectAi.textClaude2',
+      batchPrince: '-',
+      remaining: '-',
+      minted: '-',
       isOff: true,
+      btnLink: '',
     },
   ];
 
@@ -134,6 +229,12 @@ export default class Create extends Vue {
       return item;
     });
   }
+
+  eventPreview(play: string|null) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    this.imageData = play;
+    console.log(this.imageData);
+  }
 }
 </script>
 
@@ -145,4 +246,8 @@ export default class Create extends Vue {
 .text-bold {
   font-size: 16px;
 }
+.q-preview {
+  margin: 90px 50px;
+}
+
 </style>

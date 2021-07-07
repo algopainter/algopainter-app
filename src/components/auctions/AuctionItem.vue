@@ -15,11 +15,30 @@
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
         <div>
-          <q-icon
-            color="primary"
-            size="sm"
-            name="mdi-dots-horizontal"
-          />
+          <q-btn-dropdown
+            class="btn-dropdown"
+            dropdown-icon="mdi-dots-horizontal"
+          >
+            <q-list>
+              <q-item
+                v-for="opçoesredes in socialNetworks"
+                :key="opçoesredes.value"
+                v-close-popup
+                clickable
+              >
+                <q-item-section>
+                  <q-item-label>
+                    <q-icon
+                      color="primary"
+                      size="sm"
+                      :name="opçoesredes.name"
+                    />
+                    {{ opçoesredes.label }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
@@ -103,6 +122,9 @@ class Props {
   });
 }
 
+interface Ioptions {
+  socialNetworks: string;
+}
 @Options({
   components: {
     AlgoButton,
@@ -131,10 +153,49 @@ export default class AuctionItem extends Vue.with(Props) {
   favoriteCounter: number = parseInt(
     (Math.random() * 100).toString(),
   );
+
+  options: Ioptions = {
+    socialNetworks: '',
+  }
+
+  socialNetworks = [
+    {
+      value: 0,
+      label: 'Facebook',
+      name: 'facebook',
+    },
+    {
+      value: 1,
+      label: 'Instagran',
+      name: 'mdi-instagram',
+    },
+    {
+      value: 0,
+      label: 'Twitter',
+      name: 'mdi-twitter',
+    },
+    {
+      value: 0,
+      label: 'Telegram',
+      name: 'mdi-telegram',
+    },
+    {
+      value: 0,
+      label: 'E-mail',
+      name: 'mdi-email',
+    },
+  ]
 }
 </script>
 
 <style lang="scss" scoped>
+.btn-dropdown{
+  color: #f4538d;
+}
+.btn-dropdown:before{
+  box-shadow: none;
+  border: none;
+}
 .users {
   .q-avatar:not(:first-child) {
     margin-left: -8px;

@@ -1,11 +1,12 @@
 <template>
   <q-page class="q-page q-gutter-lg q-pb-lg">
-    <div class="row q-col-gutter-md">
+    <div class="row q-col-gutter-sm">
       <div class="col-12 col-md-6">
         <div class="row">
-          <div class="col-11 col-md-11">
+          <div class="col-12 col-md-11">
             <div class="q-pb-md">
               <algo-button
+                v-if="isAuctionImageEnabled"
                 :icon="'img:' + distributionSVG"
                 color="primary"
                 outline
@@ -15,46 +16,62 @@
                   {{ $t('dashboard.auctionPage.auctionDistribution') }}
                 </div>
               </algo-button>
+              <algo-button
+                v-if="isAuctionDistributionEnabled"
+                color="primary"
+                outline
+                @click="auctionDistributionBtnClicked()"
+              >
+                {{ $t('dashboard.auctionPage.auction') }}
+              </algo-button>
             </div>
             <q-img
               v-if="isAuctionImageEnabled"
+              width="100%"
               class="art-image"
-              src="../../../assets/placeholder-images/painting.jpg"
+              src="https://placeimg.com/645/645/nature?t=0.7498161248496579"
             />
             <auction-info-chart
               v-if="isAuctionDistributionEnabled"
               :values="[44, 100, 13, 33]"
+              width="100%"
             />
           </div>
-          <div v-if="isAuctionImageEnabled" class="col-12 col-md-1">
-            <div class="col-12 col-md-1">
-              <div class="icons text-center flex justify-center">
-                <div class="favorite">
-                  <div>
-                    <q-icon
-                      color="primary"
-                      size="1.7rem"
-                      :name="
-                        isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
-                      "
-                      :class="{
-                        press: isAuctionFavorite,
-                        shake: isAuctionFavorite,
-                      }"
-                      @click="favoriteAuction"
-                    />
-                    <span :class="{ press: isAuctionFavorite }">{{
-                      $t('dashboard.auctionPage.liked')
-                    }}</span>
-                  </div>
-                </div>
-                <div class="expand">
+          <div
+            v-if="isAuctionImageEnabled"
+            class="col-12 col-md-1"
+          >
+            <div class="icons text-center justify-center">
+              <div class="favorite">
+                <div>
                   <q-icon
                     color="primary"
                     size="1.7rem"
-                    name="mdi-arrow-expand"
+                    :name="
+                      isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
+                    "
+                    :class="{
+                      press: isAuctionFavorite,
+                      shake: isAuctionFavorite,
+                    }"
+                    @click="favoriteAuction"
                   />
+                  <span :class="{ press: isAuctionFavorite }">{{
+                    $t('dashboard.auctionPage.liked')
+                  }}</span>
                 </div>
+                <div class="items-center">
+                  <p class="text-primary">
+                    {{ favoriteCounter }}
+                  </p>
+                </div>
+              </div>
+              <div class="expand">
+                <q-icon
+                  color="primary"
+                  size="1.7rem"
+                  name="mdi-arrow-expand"
+                />
               </div>
             </div>
           </div>
@@ -65,14 +82,6 @@
           <div class="auction-details col-md-8">
             <div class="name">
               {{ auction.art.name }}
-            </div>
-            <div class="q-py-xs">
-              {{
-                $t('dashboard.auctionPage.saleNumber', {
-                  saleNumber: saleNumber,
-                  totalSales: totalSales,
-                })
-              }}
             </div>
             <div class="keywords">
               {{ auction.art.keywords }}
@@ -108,33 +117,29 @@
               class="tab"
               :ripple="false"
               no-caps
-              name="previous-owners"
-              :label="$t('dashboard.auctionPage.previousOwners')"
-            />
-            <q-tab
-              class="tab"
-              :ripple="false"
-              no-caps
               name="history"
               label="History"
             />
           </q-tabs>
 
           <q-tab-panels v-model="tab">
-            <q-tab-panel name="info" class="q-pa-sm">
+            <q-tab-panel
+              name="info"
+              class="q-pa-sm"
+            >
               <algo-avatar
                 class="q-py-md"
                 :title="$t('dashboard.auctionPage.owner')"
-                :imageUrl="owner.profilePhotoUrl"
-                :subTitle="owner.name"
+                :image-url="owner.profilePhotoUrl"
+                :sub-title="owner.name"
               />
               <algo-avatar
-                class="q-py-md"
                 v-for="creator in creators"
                 :key="creator.id"
+                class="q-py-md"
                 :title="$t(`dashboard.auctionPage.creator`)"
-                :imageUrl="creator.profilePhotoUrl"
-                :subTitle="creator.name"
+                :image-url="creator.profilePhotoUrl"
+                :sub-title="creator.name"
                 :description="
                   $t('dashboard.auctionPage.pirsDestination', {
                     pirs: $n(auction.art.pirs.creators, 'percent'),
@@ -142,12 +147,16 @@
                   })
                 "
               />
-              <q-separator class="q-pr-xl" spaced="md" color="primary" />
+              <q-separator
+                class="q-pr-xl"
+                spaced="md"
+                color="primary"
+              />
               <algo-avatar
                 class="q-py-md"
                 :title="$t('dashboard.auctionPage.collection')"
-                :imageUrl="collection.imageUrl"
-                :subTitle="collection.name"
+                :image-url="collection.imageUrl"
+                :sub-title="collection.name"
                 :description="
                   $t('dashboard.auctionPage.pirsDestination', {
                     pirs: $n(auction.art.pirs.investors, 'percent'),
@@ -157,32 +166,27 @@
               />
             </q-tab-panel>
 
-            <q-tab-panel name="bids" class="q-pa-sm">
+            <q-tab-panel
+              name="bids"
+              class="q-pa-sm"
+            >
               <bid-avatar
-                class="q-py-md"
                 v-for="bid in bids"
-                :bid="bid"
                 :key="bid.id"
-              />
-            </q-tab-panel>
-
-            <q-tab-panel name="previous-owners" class="q-pa-sm">
-              <algo-avatar
                 class="q-py-md"
-                v-for="oldOwner in oldOwners"
-                :key="oldOwner.id"
-                :title="$t('dashboard.auctionPage.oldOwner')"
-                :imageUrl="oldOwner.profilePhotoUrl"
-                :subTitle="oldOwner.name"
+                :bid="bid"
               />
             </q-tab-panel>
 
-            <q-tab-panel name="history" class="q-pa-sm">
+            <q-tab-panel
+              name="history"
+              class="q-pa-sm"
+            >
               <previous-bid-avatar
-                class="q-py-md"
                 v-for="bid in bids"
-                :bid="bid"
                 :key="bid.id"
+                class="q-py-md"
+                :bid="bid"
               />
             </q-tab-panel>
           </q-tab-panels>
@@ -191,15 +195,17 @@
             <div class="q-pa-sm">
               <highest-bid-avatar :bid="highestBid" />
             </div>
-            <div class="q-py-sm">
-              <algo-button
-                class="text-bold full-width"
-                size="lg"
-                color="primary"
-                outline
-              >
-                {{ $t('dashboard.auctionPage.placeBid') }}
-              </algo-button>
+            <div>
+              <div class="q-py-sm">
+                <algo-button
+                  class="text-bold full-width"
+                  size="lg"
+                  color="primary"
+                  outline
+                >
+                  Place a Bid
+                </algo-button>
+              </div>
             </div>
           </div>
         </div>
@@ -243,6 +249,9 @@ interface ICollection {
     AlgoAvatar,
     PreviousBidAvatar,
   },
+  watch: {
+    isAuctionFavorite: ['postFavoriteAuction', 'incrementFavoriteCounter'],
+  },
 })
 export default class Auction extends Vue {
   isAuctionImageEnabled: boolean = true;
@@ -252,6 +261,10 @@ export default class Auction extends Vue {
   isAuctionFavorite: boolean = false;
 
   auctionDistributionBtnClicked() {
+    this.toggleAuctionDistribution();
+  }
+
+  toggleAuctionDistribution() {
     this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
   }
@@ -260,16 +273,26 @@ export default class Auction extends Vue {
     this.isAuctionFavorite = !this.isAuctionFavorite;
   }
 
+  // WATCHER METHODS
+  incrementFavoriteCounter() {
+    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
+  }
+
+  postFavoriteAuction(value: boolean) {
+    // POST users/id/auctions/auctionID/favorite?favorite=value;
+    return value;
+  }
+
+  // MOCKING DATA
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   distributionSVG: string = require('../../../assets/icons/chart-distribution.svg');
 
   tab: string = 'info';
 
-  // MOCKING DATA
-
-  totalSales: number = 12;
-
-  saleNumber: number = 4;
+  favoriteCounter = parseInt(
+    (Math.random() * 100 * (Math.random() * 100)).toString(),
+  );
 
   users: IUser[] = [
     {
@@ -312,35 +335,12 @@ export default class Auction extends Vue {
       name: 'Michonne',
       profilePhotoUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
     },
-    {
-      id: '2',
-      name: 'Jordan',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
-    },
   ];
 
   collection: ICollection = {
     name: 'ArTbs',
-    imageUrl: 'http://localhost:8080/img/painting.jpg',
+    imageUrl: 'https://placeimg.com/500/300/nature?t=0.7498161248496573',
   };
-
-  oldOwners: ITempUser[] = [
-    {
-      id: '10',
-      name: 'Dave',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/men/26.jpg',
-    },
-    {
-      id: '11',
-      name: 'Keyne',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/26.jpg',
-    },
-    {
-      id: '12',
-      name: 'Alice',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/41.jpg',
-    },
-  ];
 
   highestBidUser: ITempUser = {
     id: '590',
@@ -421,9 +421,6 @@ export default class Auction extends Vue {
 </script>
 <style lang="scss" scoped>
 .art-image {
-  width: 100%;
-  max-width: 850px;
-  height: auto;
   border-radius: 10px;
 }
 
@@ -494,8 +491,8 @@ export default class Auction extends Vue {
     font-weight: 400;
   }
   span.press {
-    bottom: 35px;
-    font-size: 14px;
+    bottom: 31px;
+    font-size: 13px;
     visibility: visible;
     animation: fade 1s;
   }

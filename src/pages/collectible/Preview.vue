@@ -2,26 +2,31 @@
   <div class="text-h6">
     {{ $t('createCollectible.create.preview') }}
   </div>
-  <div class="ap-preview-box" v-if="$props.item">
-    <auction-item :key="$props.item.id" :auction="$props.item" />
+  <div class="row text-h6 ap-preview-box justify-center items-center">
+    <div class="col">
+      <p
+        v-if="imagePreview === null"
+        class="text-center"
+      >
+        {{ $t('createCollectible.create.previewText') }}
+      </p>
+      <div v-else>
+        <q-img :src="imagePreview" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { IAuctionItem } from 'src/models/IAuctionItem';
-import { Vue, Options, prop } from 'vue-class-component';
-import { AuctionItem } from 'components/auctions';
-
-class PropsTypes {
-  item = prop<IAuctionItem>({ required: true });
+import { Vue, prop } from 'vue-class-component';
+class Props {
+ imagePreview = prop({
+   type: String,
+   required: true,
+ })
 }
 
-@Options({
-  components: {
-    AuctionItem,
-  },
-})
-export default class Preview extends Vue.with(PropsTypes) {}
+export default class Preview extends Vue.with(Props) {}
 </script>
 
 <style lang="scss" scoped>
@@ -30,6 +35,8 @@ export default class Preview extends Vue.with(PropsTypes) {}
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
   box-sizing: border-box;
+  height: 350px;
+  width: 400px;
   border-radius: 10px;
 }
 </style>

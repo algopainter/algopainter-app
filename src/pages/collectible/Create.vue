@@ -28,7 +28,7 @@
       title-maxlength="255"
       description-maxlength="255"
       @preview-evento="eventPreview"
-      @fechar="eventeClose"
+      @close="eventeClose"
     />
     <div
       class="col fixed-right q-preview"

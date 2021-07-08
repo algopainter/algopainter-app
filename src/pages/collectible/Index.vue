@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-evenly: $q.screen.md $q.screen.xl justify-center">
+  <div class="row justify-evenly">
     <create class="q-ma-sm" />
   </div>
 </template>

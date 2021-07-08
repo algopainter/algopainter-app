@@ -1,5 +1,5 @@
 <template>
-  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+  <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
     <div class="text-subtitle2 sub-title">
       {{ $t('createCollectible.title.sub') }}
     </div>
@@ -42,7 +42,7 @@
           {{ $t('createCollectible.selectAi.title') }}
         </p>
       </div>
-      <div class="row">
+      <div class="row justify-center q-col-gutter-md">
         <ia-artist
           v-for="art in arts"
           :key="art.id"
@@ -50,7 +50,6 @@
           :name="art.name"
           :is-off="art.isOff"
           :is-borda="clickImg"
-          class="col-4"
           @click="setCurrentArtist(art.id)"
         />
       </div>
@@ -255,7 +254,7 @@ export default class Create extends Vue {
   font-size: 16px;
 }
 .q-preview {
-  margin: 5px 50px;
+  margin: 0 2vw;
 }
 
 </style>

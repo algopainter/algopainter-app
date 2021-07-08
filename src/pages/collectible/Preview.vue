@@ -1,5 +1,5 @@
 <template>
-  <div :hidden="$q.screen.lt.lg">
+  <div :hidden="$q.screen.lt.md">
     <div class="text-h6">
       {{ $t('createCollectible.create.preview') }}
     </div>

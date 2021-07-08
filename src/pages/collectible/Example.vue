@@ -1,5 +1,5 @@
 <template>
-  <div class="text-h6">
+  <div class="text-h6 ">
     {{ $t('createCollectible.create.example') }}
     <section
       v-if="exampleImg === '' "

@@ -1,9 +1,9 @@
 <template>
-  <div class="col-lg-6 col-md-6 col-xs-12">
+  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
     <div class="text-subtitle2 sub-title">
       {{ $t('createCollectible.title.sub') }}
     </div>
-    <div class="row q-col-gutter-md">
+    <div class="row q-gutter-md">
       <div
         v-for="imgBtn in imageButtons"
         :key="imgBtn.id"
@@ -23,13 +23,15 @@
     </div>
     <div
       v-if="activeFormId === 'importFile'"
-      class="q-mt-md"
+      class="col q-mt-md"
     >
-      <create-upload
-        title-maxlength="255"
-        description-maxlength="255"
-        @preview-evento="eventPreview"
-      />
+      <div class="col">
+        <create-upload
+          title-maxlength="255"
+          description-maxlength="255"
+          @preview-evento="eventPreview"
+        />
+      </div>
     </div>
     <div
       v-if="activeFormId === 'createWithArtist'"
@@ -65,7 +67,7 @@
       </div>
     </div>
   </div>
-  <div>
+  <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
     <div
       v-if="activeFormId === 'importFile'"
       class="col q-preview"
@@ -253,8 +255,7 @@ export default class Create extends Vue {
   font-size: 16px;
 }
 .q-preview {
-  margin: 5px 150px;
-  height: 100%;
+  margin: 5px 50px;
 }
 
 </style>

@@ -51,7 +51,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
 
 <template>
   <div class="row">
-    <div class="col">
+    <div class="col ">
       <div class="q-upload-wrapper">
         <div class="q-upload-label">
           {{ $t('createCollectible.create.fields.uploadLabel') }}
@@ -164,19 +164,19 @@ input[type='file'] {
 }
 .labelFile {
   padding: 10px 5px;
-  width: 250px;
+  width: 50%;
   background: #f4538d;
   display: block;
   border-radius: 10px;
   align-items: center;
   text-align: center;
-  font-size: 20px;
+  font-size: 15px;
   cursor: pointer;
   color: aliceblue;
 }
 .img{
-  width:400px;
-  height:400px;
+  width:50%;
+  height:50%;
 }
 .btn{
   border:none;

@@ -1,6 +1,6 @@
 <template>
-  <div class="row justify-center">
-    <create />
+  <div class="row justify-evenly: $q.screen.md $q.screen.xl justify-center">
+    <create class="q-ma-sm" />
   </div>
 </template>
 
@@ -20,5 +20,9 @@ export default class Index extends Vue {}
 .q-preview-wrapper {
   max-width: 400px;
   min-width: 400px;
+}
+
+.margin {
+  margin: 25px 25px;
 }
 </style>

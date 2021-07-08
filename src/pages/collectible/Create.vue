@@ -1,63 +1,80 @@
 <template>
-  <div class="text-subtitle2 sub-title">
-    {{ $t('createCollectible.title.sub') }}
-  </div>
-  <div class="row q-col-gutter-md">
-    <div
-      v-for="imgBtn in imageButtons"
-      :key="imgBtn.id"
-      class="col"
-    >
-      <image-button
-        :id="imgBtn.id"
-        :img-src="imgBtn.imgSrc"
-        :img-width="imgBtn.imgWidth"
-        :img-height="imgBtn.imgHeight"
-        :is-disabled="imgBtn.isDisabled"
-        :cb="clickedButton"
+  <div class="col-lg-6 col-md-6 col-xs-12">
+    <div class="text-subtitle2 sub-title">
+      {{ $t('createCollectible.title.sub') }}
+    </div>
+    <div class="row q-col-gutter-md">
+      <div
+        v-for="imgBtn in imageButtons"
+        :key="imgBtn.id"
+        class="col"
       >
-        {{ $t(imgBtn.labelKey) }}
-      </image-button>
+        <image-button
+          :id="imgBtn.id"
+          :img-src="imgBtn.imgSrc"
+          :img-width="imgBtn.imgWidth"
+          :img-height="imgBtn.imgHeight"
+          :is-disabled="imgBtn.isDisabled"
+          :cb="clickedButton"
+        >
+          {{ $t(imgBtn.labelKey) }}
+        </image-button>
+      </div>
     </div>
-  </div>
-  <div
-    v-if="activeFormId === 'importFile'"
-    class="q-mt-md"
-  >
-    <create-upload
-      title-maxlength="255"
-      description-maxlength="255"
-      @preview-evento="eventPreview"
-    />
     <div
-      class="col fixed-right q-preview"
+      v-if="activeFormId === 'importFile'"
+      class="q-mt-md"
     >
-      <preview :image-preview="imageData" />
-    </div>
-  </div>
-  <div
-    v-if="activeFormId === 'createWithArtist'"
-    class="col q-mt-md"
-  >
-    <div>
-      <p class="text-bold text-subtitle2">
-        {{ $t('createCollectible.selectAi.title') }}
-      </p>
-    </div>
-    <div class="row">
-      <ia-artist
-        v-for="art in arts"
-        :key="art.id"
-        :img="art.img"
-        :name="art.name"
-        :is-off="art.isOff"
-        :is-borda="clickImg"
-        class="col-4"
-        @click="setCurrentArtist(art.id)"
+      <create-upload
+        title-maxlength="255"
+        description-maxlength="255"
+        @preview-evento="eventPreview"
       />
     </div>
     <div
-      class="col fixed-right q-preview"
+      v-if="activeFormId === 'createWithArtist'"
+      class="col q-mt-md"
+    >
+      <div>
+        <p class="text-bold text-subtitle2">
+          {{ $t('createCollectible.selectAi.title') }}
+        </p>
+      </div>
+      <div class="row">
+        <ia-artist
+          v-for="art in arts"
+          :key="art.id"
+          :img="art.img"
+          :name="art.name"
+          :is-off="art.isOff"
+          :is-borda="clickImg"
+          class="col-4"
+          @click="setCurrentArtist(art.id)"
+        />
+      </div>
+      <div>
+        <p class="text-h6 text-weight-bold">
+          {{ $t(currentArtist.title) }}
+        </p>
+        <p class="text-weight-medium">
+          {{ $t(currentArtist.text1) }}
+        </p>
+        <p class="text-weight-medium">
+          {{ $t(currentArtist.text2) }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div
+      v-if="activeFormId === 'importFile'"
+      class="col q-preview"
+    >
+      <preview :image-preview="imageData" />
+    </div>
+    <div
+      v-if="activeFormId === 'createWithArtist'"
+      class="col q-preview"
     >
       <example
         :example-img="currentArtist.exampleImg"
@@ -66,17 +83,6 @@
         :minted="currentArtist.minted"
         :btn-link="currentArtist.btnLink"
       />
-    </div>
-    <div>
-      <p class="text-h6 text-weight-bold">
-        {{ $t(currentArtist.title) }}
-      </p>
-      <p class="text-weight-medium">
-        {{ $t(currentArtist.text1) }}
-      </p>
-      <p class="text-weight-medium">
-        {{ $t(currentArtist.text2) }}
-      </p>
     </div>
   </div>
 </template>
@@ -247,7 +253,8 @@ export default class Create extends Vue {
   font-size: 16px;
 }
 .q-preview {
-  margin: 90px 50px;
+  margin: 5px 150px;
+  height: 100%;
 }
 
 </style>

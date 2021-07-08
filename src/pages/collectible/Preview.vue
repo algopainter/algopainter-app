@@ -1,17 +1,19 @@
 <template>
-  <div class="text-h6">
-    {{ $t('createCollectible.create.preview') }}
-  </div>
-  <div class="row text-h6 ap-preview-box justify-center items-center">
-    <div class="col">
-      <p
-        v-if="imagePreview === null"
-        class="text-center"
-      >
-        {{ $t('createCollectible.create.previewText') }}
-      </p>
-      <div v-else>
-        <q-img :src="imagePreview" />
+  <div :hidden="$q.screen.lt.lg">
+    <div class="text-h6">
+      {{ $t('createCollectible.create.preview') }}
+    </div>
+    <div class="row text-h6 ap-preview-box justify-center items-center">
+      <div class="col">
+        <p
+          v-if="imagePreview === null"
+          class="text-center"
+        >
+          {{ $t('createCollectible.create.previewText') }}
+        </p>
+        <div v-else>
+          <q-img :src="imagePreview" />
+        </div>
       </div>
     </div>
   </div>
@@ -39,4 +41,5 @@ export default class Preview extends Vue.with(Props) {}
   width: 400px;
   border-radius: 10px;
 }
+
 </style>

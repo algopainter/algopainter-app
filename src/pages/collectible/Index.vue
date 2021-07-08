@@ -1,8 +1,6 @@
 <template>
-  <div class="row justify-between">
-    <div class="col-lg-6 col-md-7 col-xs-12">
-      <create />
-    </div>
+  <div class="row justify-center">
+    <create />
   </div>
 </template>
 

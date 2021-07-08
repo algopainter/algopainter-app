@@ -11,6 +11,7 @@
     </q-drawer>
     <q-page-container class="q-px-lg">
       <router-view />
+      <connect-your-wallet />
     </q-page-container>
   </q-layout>
 </template>
@@ -20,11 +21,13 @@ import { Vue, Options } from 'vue-class-component';
 
 import DashboardHeader from 'components/DashboardHeader.vue';
 import SideBar from 'components/SideBar.vue';
+import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
 
 @Options({
   components: {
     DashboardHeader,
     SideBar,
+    ConnectYourWallet,
   },
 })
 export default class MainLayout extends Vue {

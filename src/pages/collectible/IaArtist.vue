@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <div class="col-4 text-center">
+  <div class="">
+    <div
+      class="text-center"
+    >
       <q-btn
+        class="q-px-xs"
         :class="{
           'btn-border': true,
           off: isOff,
@@ -65,14 +68,11 @@ export default class IaArtist extends Vue.with(Props) {
 
 <style scoped>
 .img {
-  padding: 10px 50px;
-  width: 150px;
-  height: 264px;
-  cursor: pointer;
+  width: 130px;
+  height: 250px;
 }
 
 .btn-border {
-  padding: 21px 30px;
   border-radius: 10px;
 }
 

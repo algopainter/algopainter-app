@@ -40,7 +40,7 @@ export default class Preview extends Vue.with(Props) {
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
   box-sizing: border-box;
-  height: 90%;
+  height: 100%;
   width: 400px;
   border-radius: 10px;
 }

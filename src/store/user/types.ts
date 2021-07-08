@@ -1,0 +1,69 @@
+import { GetterTree } from 'vuex';
+import { StateInterface } from '..';
+
+export interface UserStateInterface {
+  isConnected: boolean;
+  account?: string;
+  error?: Error;
+}
+
+export interface UserRootGetters extends GetterTree<UserStateInterface, StateInterface> {
+  account: () => string;
+}
+
+interface RequestArguments {
+  readonly method: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  readonly params?: readonly unknown[] | object;
+}
+
+interface ProviderMessage {
+  readonly type: string;
+  readonly data: unknown;
+}
+
+export interface ProviderRpcError extends Error {
+  message: string;
+  code: number;
+  data?: unknown;
+}
+
+interface ProviderConnectInfo {
+  readonly chainId: string;
+}
+
+export interface EthereumEvent {
+  connect: ProviderConnectInfo;
+  disconnect: ProviderRpcError;
+  accountsChanged: Array<string>;
+  chainChanged: string;
+  message: ProviderMessage;
+}
+
+type EventKeys = keyof EthereumEvent;
+type EventHandler<K extends EventKeys> = (event: EthereumEvent[K]) => void;
+
+export interface Ethereumish {
+  autoRefreshOnNetworkChange: boolean;
+  chainId: string;
+  isMetaMask?: boolean;
+  isStatus?: boolean;
+  networkVersion: string;
+  selectedAddress: unknown;
+  isConnected: () => boolean;
+
+  on<K extends EventKeys>(event: K, eventHandler: EventHandler<K>): void;
+  enable(): Promise<never>;
+  request: (request: {
+    method: string;
+    params?: Array<never>;
+  }) => Promise<never>;
+  /**
+   * @deprecated
+   */
+  send?: (
+    request: { method: string; params?: Array<never> },
+    callback: (error: never, response: never) => void
+  ) => void;
+  sendAsync: (request: RequestArguments) => Promise<unknown>;
+}

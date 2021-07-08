@@ -11,7 +11,10 @@
         {{ $t('createCollectible.create.previewText') }}
       </p>
       <div v-else>
-        <q-img :src="imagePreview" />
+        <q-img
+          :src="imagePreview"
+          class="img"
+        />
       </div>
     </div>
   </div>
@@ -26,7 +29,9 @@ class Props {
  })
 }
 
-export default class Preview extends Vue.with(Props) {}
+export default class Preview extends Vue.with(Props) {
+
+}
 </script>
 
 <style lang="scss" scoped>
@@ -35,8 +40,12 @@ export default class Preview extends Vue.with(Props) {}
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
   box-sizing: border-box;
-  height: 350px;
+  height: 90%;
   width: 400px;
   border-radius: 10px;
+}
+.img{
+  width: 100%;
+  height: 20%;
 }
 </style>

@@ -28,11 +28,14 @@
       title-maxlength="255"
       description-maxlength="255"
       @preview-evento="eventPreview"
+      @fechar="eventeClose"
     />
     <div
       class="col fixed-right q-preview"
     >
-      <preview :image-preview="imageData" />
+      <preview
+        :image-preview="imageData"
+      />
     </div>
   </div>
   <div
@@ -114,7 +117,7 @@ interface IAiArtist {
     Example,
 
   },
-  emits: ['createWithArtistClick', 'eventPreview'],
+  emits: ['createWithArtistClick', 'eventPreview', 'eventeClose'],
 })
 export default class Create extends Vue {
   imageData: string | null = null;
@@ -234,6 +237,10 @@ export default class Create extends Vue {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.imageData = play;
     console.log(this.imageData);
+  }
+
+  eventeClose(play: string|null) {
+    this.imageData = play;
   }
 }
 </script>

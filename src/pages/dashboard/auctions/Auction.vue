@@ -445,6 +445,11 @@ export default class Auction extends Vue {
   }
 }
 
+.highest-bid {
+  background-color: $primary;
+  border-radius: 12px;
+}
+
 .icons {
   i {
     cursor: pointer;

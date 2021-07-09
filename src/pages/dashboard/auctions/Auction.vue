@@ -122,6 +122,10 @@
             />
           </q-tabs>
 
+          <div class="q-my-md q-mx-sm q-py-xs q-px-md highest-bid">
+            <highest-bid-avatar :bid="highestBid" />
+          </div>
+
           <q-tab-panels v-model="tab">
             <q-tab-panel
               name="info"
@@ -191,23 +195,17 @@
               />
             </q-tab-panel>
           </q-tab-panels>
-
-          <div>
-            <div class="q-pa-sm">
-              <highest-bid-avatar :bid="highestBid" />
-            </div>
-            <div>
-              <div class="q-py-sm">
-                <algo-button
-                  class="text-bold full-width"
-                  size="lg"
-                  color="primary"
-                  outline
-                >
-                  Place a Bid
-                </algo-button>
-              </div>
-            </div>
+        </div>
+        <div>
+          <div class="q-py-sm">
+            <algo-button
+              class="text-bold full-width"
+              size="lg"
+              color="primary"
+              outline
+            >
+              {{ $t('dashboard.auctionPage.placeABid') }}
+            </algo-button>
           </div>
         </div>
       </div>

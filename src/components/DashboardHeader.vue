@@ -14,7 +14,7 @@
         {{ $t('dashboard.create') }}
       </div>
       <div class="item" @click="connectYourWalletClicked">
-        {{ $t('dashboard.connectYourWallet').toLowerCase() }}
+        {{ $t('dashboard.connectToYourWallet').toLowerCase() }}
       </div>
     </nav>
   </q-toolbar>

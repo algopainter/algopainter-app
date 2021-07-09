@@ -1,10 +1,29 @@
 <template>
   <q-dialog ref="dialog" persistent @hide="onDialogHide">
-    <q-card class="q-dialog-plugin">
-      <q-card-actions align="right">
-        <q-btn color="primary" label="Metamask" @click="connectToWallet" />
-        <q-btn color="primary" label="WalletConnect" @click="connectToWallet" />
-      </q-card-actions>
+    <q-card class="q-dialog-plugin q-pa-md">
+      <q-card-section class="row q-col-gutter-xl">
+        <div class="text-h6">
+          {{ $t('dashboard.connectToYourWallet') }}
+        </div>
+      </q-card-section>
+      <q-card-section class="row q-col-gutter-xl q-pa-lg items-center">
+        <div class="flex justify-center col-6">
+          <q-img
+            class="wallet"
+            src="/images/metamask.png"
+            @click="connectToWallet"
+          />
+          <div>{{ $t('dashboard.metaMask') }}</div>
+        </div>
+        <div class="flex justify-center col-6">
+          <q-img
+            class="wallet"
+            src="/images/walletconnect.png"
+            @click="connectToWallet"
+          />
+          <div>{{ $t('dashboard.walletConnect') }}</div>
+        </div>
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
@@ -49,8 +68,13 @@ export default class ConnectYourWallet extends Vue {
       },
       (error) => {
         console.log(error);
-      },
+      }
     );
   }
 }
 </script>
+<style scoped>
+.wallet {
+  cursor: pointer;
+}
+</style>

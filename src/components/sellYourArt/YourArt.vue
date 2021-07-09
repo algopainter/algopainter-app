@@ -31,10 +31,14 @@ export default class YourArt extends Vue {
 <style lang="scss" scoped>
 .img{
     width: 100%;
+    max-width: 300px;
+    max-height: 300px;
     border-radius: 3%;
 }
 .container{
     border: 2px dashed #F4538D;
     width: 100%;
+    max-width: 400px;
+    max-height: 450px;
 }
 </style>

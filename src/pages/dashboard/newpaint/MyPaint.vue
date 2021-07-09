@@ -97,9 +97,11 @@
               color="primary"
               type="submit"
               outline
+              @click="OpenModal = true"
             >
               {{ $t('dashboard.myPaint.buttonRegister') }}
             </algo-button>
+            <mint-modal v-model="OpenModal" />
           </div>
         </div>
       </div>
@@ -109,6 +111,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
+import MintModal from '../../collectible/MintModal.vue';
 import { QDialog } from 'quasar';
 
 interface ICreatePaint {
@@ -121,10 +124,12 @@ interface ICreatePaint {
 @Options({
   components: {
     AlgoButton,
+    MintModal,
   },
 })
 export default class MyPaint extends Vue {
   private isSale: boolean = true;
+  OpenModal: boolean = false;
 
   paint: ICreatePaint = {
     descriptionPaint: '',

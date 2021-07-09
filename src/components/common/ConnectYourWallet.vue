@@ -7,19 +7,21 @@
         </div>
       </q-card-section>
       <q-card-section class="row q-col-gutter-xl q-pa-lg items-center">
-        <div class="col-6">
+        <div class="flex justify-center col-6">
           <q-img
             class="wallet"
             src="/images/metamask.png"
             @click="connectToWallet"
           />
+          <div>{{ $t('dashboard.metaMask') }}</div>
         </div>
-        <div class="col-6">
+        <div class="flex justify-center col-6">
           <q-img
             class="wallet"
             src="/images/walletconnect.png"
             @click="connectToWallet"
           />
+          <div>{{ $t('dashboard.walletConnect') }}</div>
         </div>
       </q-card-section>
     </q-card>

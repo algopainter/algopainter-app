@@ -3,6 +3,8 @@ export default {
   auction: 'auction',
   create: 'create',
   connectToYourWallet: 'Connect to your wallet',
+  walletConnect: 'WalletConnect',
+  metaMask: 'MetaMask',
   homePage: {
     title: 'My Account',
     editAccount: 'Edit Account',

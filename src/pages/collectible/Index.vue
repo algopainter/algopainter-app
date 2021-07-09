@@ -1,8 +1,6 @@
 <template>
-  <div class="row justify-between">
-    <div class="col-lg-6 col-md-7 col-xs-12">
-      <create />
-    </div>
+  <div class="row justify-evenly">
+    <create class="q-ma-sm" />
   </div>
 </template>
 
@@ -22,5 +20,9 @@ export default class Index extends Vue {}
 .q-preview-wrapper {
   max-width: 400px;
   min-width: 400px;
+}
+
+.margin {
+  margin: 25px 25px;
 }
 </style>

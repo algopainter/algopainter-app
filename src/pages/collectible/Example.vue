@@ -1,5 +1,5 @@
 <template>
-  <div class="text-h6">
+  <div class="col-12 text-h6 ">
     {{ $t('createCollectible.create.example') }}
     <section
       v-if="exampleImg === '' "
@@ -59,7 +59,7 @@
     </div>
     <algo-button
       v-if="btnLink == ''"
-      class="full-width"
+      class="btnLink"
       color="primary"
       disable
       :label="$t('createCollectible.create.goToArtist')"
@@ -67,7 +67,7 @@
     />
     <algo-button
       v-else
-      class="full-width"
+      class="btnLink"
       color="primary"
       :label="$t('createCollectible.create.goToArtist')"
       :to="btnLink"
@@ -122,17 +122,27 @@ export default class Example extends Vue.with(Props) {}
 .ap-preview-box {
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
-  height: 350px;
-  width: 400px;
+  min-height: 450px;
+  max-height: 550px;
+  height: 100%;
   box-sizing: border-box;
   border-radius: 10px;
 }
 
 span, p {
-  font-size: 13px;
+  font-size: 0.7rem;
 }
 
 .textSample {
-  font-size: 20px;
+  font-size: 1.3rem;
+}
+
+.btnLink {
+ width: 100%
+}
+
+.img {
+  width: 100%;
+  height: 20%;
 }
 </style>

@@ -1,20 +1,22 @@
 <template>
-  <div class="text-h6">
-    {{ $t('createCollectible.create.preview') }}
-  </div>
-  <div class="row text-h6 ap-preview-box justify-center items-center">
-    <div class="col">
-      <p
-        v-if="imagePreview === null"
-        class="text-center"
-      >
-        {{ $t('createCollectible.create.previewText') }}
-      </p>
-      <div v-else>
-        <q-img
-          :src="imagePreview"
-          class="img"
-        />
+  <div :hidden="$q.screen.lt.md">
+    <div class="text-h6">
+      {{ $t('createCollectible.create.preview') }}
+    </div>
+    <div class="row text-h6 ap-preview-box justify-center items-center">
+      <div class="col">
+        <p
+          v-if="imagePreview === null"
+          class="text-center"
+        >
+          {{ $t('createCollectible.create.previewText') }}
+        </p>
+        <div v-else>
+          <q-img
+            :src="imagePreview"
+            class="img"
+          />
+        </div>
       </div>
     </div>
   </div>

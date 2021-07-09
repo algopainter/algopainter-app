@@ -423,12 +423,6 @@ export default class Auction extends Vue {
   border-radius: 10px;
 }
 
-.bidback-image {
-  width: 100%;
-  max-width: 180px;
-  height: auto;
-}
-
 .auction {
   border-left: 2px solid $primary;
 }

@@ -197,12 +197,14 @@
           </q-tab-panels>
         </div>
         <div>
+          <q-input v-if="showBidInput" v-model="bidInput" label="Place a Bid" />
           <div class="q-py-sm">
             <algo-button
               class="text-bold full-width"
               size="lg"
               color="primary"
               outline
+              @click="placeBidClicked"
             >
               {{ $t('dashboard.auctionPage.placeABid') }}
             </algo-button>
@@ -258,6 +260,12 @@ export default class Auction extends Vue {
   isAuctionDistributionEnabled: boolean = false;
 
   isAuctionFavorite: boolean = false;
+
+  showBidInput: boolean = false;
+
+  placeBidClicked() {
+    this.showBidInput = !this.showBidInput;
+  }
 
   auctionDistributionBtnClicked() {
     this.toggleAuctionDistribution();

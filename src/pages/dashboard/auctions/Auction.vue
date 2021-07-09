@@ -77,8 +77,8 @@
           </div>
         </div>
       </div>
-      <div class="auction col-12 col-md-6">
-        <div class="row q-col-gutter-lg q-pb-lg">
+      <div class="column justify-between auction q-pl-lg col-12 col-md-5">
+        <div class="row">
           <div class="auction-details col-md-8">
             <div class="name">
               {{ auction.art.name }}

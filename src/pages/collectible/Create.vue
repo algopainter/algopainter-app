@@ -28,7 +28,7 @@
       title-maxlength="255"
       description-maxlength="255"
       @preview-evento="eventPreview"
-      @close="eventeClose"
+      @close="eventClose"
     />
     <div
       class="col fixed-right q-preview"
@@ -117,7 +117,7 @@ interface IAiArtist {
     Example,
 
   },
-  emits: ['createWithArtistClick', 'eventPreview', 'eventeClose'],
+  emits: ['createWithArtistClick', 'eventPreview', 'eventClose'],
 })
 export default class Create extends Vue {
   imageData: string | null = null;
@@ -239,7 +239,7 @@ export default class Create extends Vue {
     console.log(this.imageData);
   }
 
-  eventeClose(play: string|null) {
+  eventClose(play: string|null) {
     this.imageData = play;
   }
 }

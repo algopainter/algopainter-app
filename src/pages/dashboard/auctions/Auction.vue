@@ -77,8 +77,8 @@
           </div>
         </div>
       </div>
-      <div class="auction col-12 col-md-6">
-        <div class="row q-col-gutter-lg q-pb-lg">
+      <div class="column justify-between auction q-pl-lg col-12 col-md-5">
+        <div class="row">
           <div class="auction-details col-md-8">
             <div class="name">
               {{ auction.art.name }}
@@ -87,8 +87,8 @@
               {{ auction.art.keywords }}
             </div>
           </div>
-          <div class="col-md-4 bidback-image">
-            <q-img src="../../../assets/icons/bidback.svg" />
+          <div class="col-md-4">
+            <q-img width="150px" src="../../../assets/icons/bidback.svg" />
           </div>
         </div>
         <div>
@@ -122,6 +122,10 @@
             />
           </q-tabs>
 
+          <div class="q-my-md q-mx-sm q-py-xs q-px-md highest-bid">
+            <highest-bid-avatar :bid="highestBid" />
+          </div>
+
           <q-tab-panels v-model="tab">
             <q-tab-panel
               name="info"
@@ -151,6 +155,7 @@
                 class="q-pr-xl"
                 spaced="md"
                 color="primary"
+                size="2px"
               />
               <algo-avatar
                 class="q-py-md"
@@ -190,23 +195,19 @@
               />
             </q-tab-panel>
           </q-tab-panels>
-
-          <div>
-            <div class="q-pa-sm">
-              <highest-bid-avatar :bid="highestBid" />
-            </div>
-            <div>
-              <div class="q-py-sm">
-                <algo-button
-                  class="text-bold full-width"
-                  size="lg"
-                  color="primary"
-                  outline
-                >
-                  Place a Bid
-                </algo-button>
-              </div>
-            </div>
+        </div>
+        <div>
+          <q-input v-if="showBidInput" v-model="bidInput" label="Place a Bid" />
+          <div class="q-py-sm">
+            <algo-button
+              class="text-bold full-width"
+              size="lg"
+              color="primary"
+              outline
+              @click="placeBidClicked"
+            >
+              {{ $t('dashboard.auctionPage.placeABid') }}
+            </algo-button>
           </div>
         </div>
       </div>
@@ -259,6 +260,12 @@ export default class Auction extends Vue {
   isAuctionDistributionEnabled: boolean = false;
 
   isAuctionFavorite: boolean = false;
+
+  showBidInput: boolean = false;
+
+  placeBidClicked() {
+    this.showBidInput = !this.showBidInput;
+  }
 
   auctionDistributionBtnClicked() {
     this.toggleAuctionDistribution();
@@ -424,12 +431,6 @@ export default class Auction extends Vue {
   border-radius: 10px;
 }
 
-.bidback-image {
-  width: 100%;
-  max-width: 180px;
-  height: auto;
-}
-
 .auction {
   border-left: 2px solid $primary;
 }
@@ -446,15 +447,11 @@ export default class Auction extends Vue {
   }
 }
 
-.bid {
-  .highest-bid {
-    font-size: 1rem;
-  }
-  .price {
-    color: $positive;
-    font-size: 1rem;
-  }
+.highest-bid {
+  background-color: $primary;
+  border-radius: 12px;
 }
+
 .icons {
   i {
     cursor: pointer;

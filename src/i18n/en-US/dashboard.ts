@@ -2,6 +2,9 @@ export default {
   myCollection: 'my collection',
   auction: 'auction',
   create: 'create',
+  connectToYourWallet: 'Connect to your wallet',
+  walletConnect: 'WalletConnect',
+  metaMask: 'MetaMask',
   homePage: {
     title: 'My Account',
     editAccount: 'Edit Account',
@@ -100,6 +103,7 @@ export default {
     creators: 'Creators',
     collection: 'Collection',
     investors: 'Investors',
-    liked: 'Liked!!',
+    liked: 'Liked!',
+    placeABid: 'Place a Bid',
   },
 };

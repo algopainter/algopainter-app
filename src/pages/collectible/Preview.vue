@@ -1,20 +1,22 @@
 <template>
-  <div class="text-h6">
-    {{ $t('createCollectible.create.preview') }}
-  </div>
-  <div class="row text-h6 ap-preview-box justify-center items-center align-center">
-    <div class="col">
-      <p
-        v-if="imagePreview === null"
-        class="text-center"
-      >
-        {{ $t('createCollectible.create.previewText') }}
-      </p>
-      <div v-else>
-        <q-img
-          :src="imagePreview"
-          class="img"
-        />
+  <div :hidden="$q.screen.lt.md">
+    <div class="text-h6">
+      {{ $t('createCollectible.create.preview') }}
+    </div>
+    <div class="row text-h6 ap-preview-box justify-center items-center">
+      <div class="col">
+        <p
+          v-if="imagePreview === null"
+          class="text-center"
+        >
+          {{ $t('createCollectible.create.previewText') }}
+        </p>
+        <div v-else>
+          <q-img
+            :src="imagePreview"
+            class="img"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -60,7 +62,7 @@ OpenModal: boolean = false;
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
   box-sizing: border-box;
-  height: 90%;
+  height: 450px;
   width: 350px;
   border-radius: 10px;
 }

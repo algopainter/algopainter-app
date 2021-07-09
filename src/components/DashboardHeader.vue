@@ -5,22 +5,31 @@
     </q-toolbar-title>
     <nav class="q-pr-lg nav-bar text-primary">
       <div class="item">
-        {{ $t('dashboard.myCollection' ) }}
+        {{ $t('dashboard.myCollection') }}
       </div>
       <div class="item">
-        {{ $t('dashboard.auction' ) }}
+        {{ $t('dashboard.auction') }}
       </div>
       <div class="item">
-        {{ $t('dashboard.create' ) }}
+        {{ $t('dashboard.create') }}
+      </div>
+      <div class="item" @click="connectYourWalletClicked">
+        {{ $t('dashboard.connectToYourWallet').toLowerCase() }}
       </div>
     </nav>
   </q-toolbar>
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 
+@Options({
+  emits: ['connectYourWalletClicked'],
+})
 export default class DashboardHeader extends Vue {
+  connectYourWalletClicked() {
+    this.$emit('connectYourWalletClicked');
+  }
 }
 </script>
 

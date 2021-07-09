@@ -31,14 +31,6 @@
             counter
           />
         </div>
-        <div class="col-xs-12 col-sm-6 items-center q-px-md">
-          <span>{{ $t('dashboard.myPaint.sale') }}</span>
-          <q-toggle
-            v-model="isSale"
-            size="xl"
-            class="togglePut"
-          />
-        </div>
         <div class="q-pa-md">
           <p>{{ $t('dashboard.myPaint.bidback') }}</p>
           <q-select

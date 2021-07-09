@@ -5,6 +5,8 @@ import {
   Store as VuexStore,
   useStore as vuexUseStore,
 } from 'vuex';
+import { UserStateInterface } from './user/types';
+import user from './user';
 
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
@@ -24,6 +26,7 @@ export interface StateInterface {
   // Declared as unknown to avoid linting issue.
   // Best to strongly type as per the line above.
   example: unknown;
+  user: UserStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -41,6 +44,7 @@ export default store(function(/* { ssrContext } */) {
   const Store = createStore<StateInterface>({
     modules: {
       // example
+      user,
     },
 
     // enable strict mode (adds overhead!)

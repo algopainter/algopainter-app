@@ -1,14 +1,14 @@
 <template>
-  <q-page class="row justify-between">
-    <div class="col-12 col-sm-6 float-left">
+  <div class="row justify-center">
+    <div class="col-xs-12 col-sm-12 col-md-6">
       <div class="q-pa-md">
         <account-details />
         <div class="header q-gutter-md">
           {{ $t('dashboard.sellYourArt.putMarketplace') }}
         </div>
-        <div class="row justify-start">
+        <div class="row q-gutter-sm justify-center ">
           <algo-button
-            class="btn-fixed-width q-mr-xs"
+            class="btn-fixed-width"
             :class="{ btn1: selectBtn == 1 }"
             :label="$t('dashboard.sellYourArt.FixedPrice')"
             @click="selectBtn = 1"
@@ -63,8 +63,8 @@
               </q-select>
             </template>
           </q-input>
-          <div class="q-gutter-lg">
-            <div class="row justify-start q-gutter-sm">
+          <div>
+            <div class="row q-pa-xs">
               <div>
                 <span class="text-bold">
                   {{ $t('dashboard.sellYourArt.creatorRoyalties') }}
@@ -132,13 +132,13 @@
         </div>
       </div>
       <div v-if="selectBtn === 2">
-      <!-- page sell auction -->
+        <!-- page sell auction -->
       </div>
     </div>
-    <div class="float-right">
-      <your-art />
+    <div>
+      <your-art class="q-ma-sm" />
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script lang="ts">
@@ -214,10 +214,12 @@ export default class sellYourArt extends Vue {
   color: #f4538d;
   border: 1px solid rgb(185, 185, 185);
 }
+
 .btn-fixed-width.btn1 {
   border: 1px solid #f4538d;
   color: #f4538d;
 }
+
 .btn-fixed-width.btn2 {
   border: 1px solid #f4538d;
   color: #f4538d;

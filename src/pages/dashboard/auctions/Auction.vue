@@ -151,6 +151,7 @@
                 class="q-pr-xl"
                 spaced="md"
                 color="primary"
+                size="2px"
               />
               <algo-avatar
                 class="q-py-md"

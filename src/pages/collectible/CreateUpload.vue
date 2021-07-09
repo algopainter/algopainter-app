@@ -37,8 +37,9 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     this.$emit('preview-evento', this.imageData);
   }
 
-  fechar() {
+  close() {
     this.imageData = null;
+    this.$emit('close', this.imageData);
   }
 
   formData: FormData = {
@@ -74,7 +75,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
             <q-btn
               icon="highlight_off"
               class="btn"
-              @click="fechar"
+              @click="close"
             />
           </div>
 
@@ -114,15 +115,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         :label="$t('createCollectible.create.fields.descriptionLabel')"
         counter
         :maxlength="$props.descriptionMaxlength"
-      />
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <q-toggle
-        v-model="formData.putOnSale"
-        :label="$t('createCollectible.create.fields.putOnSaleLabel')"
-        left-label
       />
     </div>
   </div>

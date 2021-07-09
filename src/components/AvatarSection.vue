@@ -3,7 +3,7 @@
     <div class="items-center">
       <q-item dense class="q-pa-none">
         <q-item-section side>
-          <q-avatar round size="56px">
+          <q-avatar round :size="size">
             <img :src="imageUrl" />
           </q-avatar>
         </q-item-section>
@@ -47,6 +47,12 @@ class Props {
 
   description = prop({
     type: String,
+  });
+
+  size = prop({
+    type: String,
+    required: false,
+    default: '56px',
   });
 }
 

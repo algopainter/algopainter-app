@@ -7,14 +7,14 @@
         </div>
       </q-card-section>
       <q-card-section class="row q-col-gutter-xl q-pa-lg items-center">
-        <div class="col-12 col-md-6">
+        <div class="col-6">
           <q-img
             class="wallet"
             src="/images/metamask.png"
             @click="connectToWallet"
           />
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-6">
           <q-img
             class="wallet"
             src="/images/walletconnect.png"

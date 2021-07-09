@@ -87,8 +87,8 @@
               {{ auction.art.keywords }}
             </div>
           </div>
-          <div class="col-md-4 bidback-image">
-            <q-img src="../../../assets/icons/bidback.svg" />
+          <div class="col-md-4">
+            <q-img width="150px" src="../../../assets/icons/bidback.svg" />
           </div>
         </div>
         <div>

@@ -1,7 +1,7 @@
 <template>
   <q-dialog ref="dialog" persistent @hide="onDialogHide">
     <q-card class="q-dialog-plugin q-pa-md">
-      <q-card-section class="row q-col-gutter-xl items-center">
+      <q-card-section class="row q-col-gutter-xl">
         <div class="text-h6">
           {{ $t('dashboard.connectToYourWallet') }}
         </div>

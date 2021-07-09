@@ -2,7 +2,7 @@ export default {
   myCollection: 'my collection',
   auction: 'auction',
   create: 'create',
-  connectYourWallet: 'Connect your wallet',
+  connectToYourWallet: 'Connect to your wallet',
   homePage: {
     title: 'My Account',
     editAccount: 'Edit Account',

@@ -40,21 +40,21 @@
             :label="$t('dashboard.editProfile.email')"
           />
         </div>
-        <div class="responsive-input row q-col-gutter-x-md">
+        <div class="responsive-input row ">
           <q-input
             v-model="formFields.customProfile"
-            class="input col-sm-12 col-md-6"
+            class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
             prefix="algopainter.art/"
           />
           <q-input
-            v-model="formFields.customProfile"
-            class="input col-sm-12 col-md-6"
+            v-model="formFields.webSite"
+            class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.webSite')"
           />
         </div>
         <q-input
-          v-model="formFields.customProfile"
+          v-model="formFields.bio"
           outlined
           class="responsive-input q-col-gutter-x-md q-mt-md"
           type="textarea"
@@ -65,7 +65,7 @@
         </h5>
         <div class="responsive-input row q-col-gutter-x-md">
           <q-input
-            type=""
+            v-model="formFields.facebook"
             class="input col-sm-12 col-md-6"
           >
             <template #before>
@@ -76,7 +76,7 @@
             </template>
           </q-input>
           <q-input
-            type=""
+            v-model="formFields.twitter"
             class="input col-sm-12 col-md-6"
           >
             <template #before>
@@ -87,7 +87,7 @@
             </template>
           </q-input>
           <q-input
-            type=""
+            v-model="formFields.instagram"
             class="input col-sm-12 col-md-6"
           >
             <template #before>
@@ -98,7 +98,7 @@
             </template>
           </q-input>
           <q-input
-            type=""
+            v-model="formFields.gmail"
             class="input col-sm-12 col-md-6"
           >
             <template #before>
@@ -109,7 +109,7 @@
             </template>
           </q-input>
           <q-input
-            type=""
+            v-model="formFields.telegram"
             class="input col-sm-12 col-md-6"
           >
             <template #before>
@@ -145,6 +145,13 @@ interface IProfile {
   email?: string;
   customProfile?: string;
   img?: string| null;
+  webSite? : string;
+  bio?: string;
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  telegram?: string;
+  gmail?: string;
 }
 @Options({
   components: {
@@ -155,6 +162,7 @@ interface IProfile {
 
 export default class EditProfile extends Vue {
   formFields: IProfile = {
+    customProfile: ' ',
     img: '/images/do-utilizador (1).png',
   };
 
@@ -212,7 +220,7 @@ input[type='file'] {
 body.screen--xs, body.screen--sm{
   .responsive-input{
    width: 100%;
-   padding: 15px;
+   padding: 0 0 0 15px;
   }
   .input{
       width: 100%;

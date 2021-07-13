@@ -49,6 +49,13 @@ const routes: RouteRecordRaw[] = [
           title: i18n.global.t('dashboard.sellYourArt.title'),
         },
       },
+      {
+        path: 'edit-profile',
+        component: () => import('pages/edit-profile/EditProfile.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.editProfile.title'),
+        },
+      },
     ],
   },
 

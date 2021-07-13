@@ -106,4 +106,15 @@ export default {
     liked: 'Liked!',
     placeABid: 'Place a Bid',
   },
+  editProfile: {
+    title: 'Edit Profile',
+    name: 'Name:',
+    email: 'Email:',
+    custom: 'Custom',
+    webSite: 'Website ou portifolio',
+    bio: 'Bio:',
+    chooseFile: 'Choose File',
+    sMedia: 'Social media',
+    sChanges: 'Save changes',
+  },
 };

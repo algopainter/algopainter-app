@@ -29,7 +29,7 @@
         <create-upload
           title-maxlength="255"
           description-maxlength="255"
-          @close="eventeClose"
+          @close="eventClose"
           @preview-evento="eventPreview"
         />
       </div>
@@ -122,7 +122,7 @@ interface IAiArtist {
     Example,
 
   },
-  emits: ['createWithArtistClick', 'eventPreview', 'eventeClose'],
+  emits: ['createWithArtistClick', 'eventPreview', 'eventClose'],
 })
 export default class Create extends Vue {
   imageData: string | null = null;
@@ -244,7 +244,7 @@ export default class Create extends Vue {
     console.log(this.imageData);
   }
 
-  eventeClose(play: string|null) {
+  eventClose(play: string|null) {
     this.imageData = play;
   }
 }

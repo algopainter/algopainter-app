@@ -20,19 +20,39 @@
       </div>
     </div>
   </div>
+  <div class="row justify-center q-py-md q-mt-md">
+    <algo-button
+      type="submit"
+      color="primary"
+      :label="$t('createCollectible.create.btnCreate')"
+      @click="OpenModal = true"
+    />
+  </div>
+  <mint-modal
+    v-model="OpenModal"
+    :open-modal="OpenModal"
+  />
 </template>
 
 <script lang="ts">
-import { Vue, prop } from 'vue-class-component';
+import { Vue, prop, Options } from 'vue-class-component';
+import AlgoButton from 'components/common/Button.vue';
+import MintModal from './MintModal.vue';
 class Props {
  imagePreview = prop({
    type: String,
    required: true,
  })
 }
+@Options({
+  components: {
+    AlgoButton,
+    MintModal,
+  },
+})
 
 export default class Preview extends Vue.with(Props) {
-
+OpenModal: boolean = false;
 }
 </script>
 
@@ -42,12 +62,13 @@ export default class Preview extends Vue.with(Props) {
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
   box-sizing: border-box;
-  height: 100%;
-  width: 400px;
+  height: 450px;
+  width: 350px;
   border-radius: 10px;
 }
 .img{
-  width: 100%;
+  width: 95%;
   height: 20%;
 }
+
 </style>

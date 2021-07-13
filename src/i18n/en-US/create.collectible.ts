@@ -12,6 +12,7 @@ export default {
     previewText: 'Upload file to preview your NFT Collectible',
     import: 'Choose File',
     descriFile: 'PNG, JPG or SVG. Max 100mb.',
+    btnCreate: 'Create item',
     fields: {
       uploadLabel: 'Upload File',
       titleLabel: 'Title',
@@ -35,5 +36,10 @@ export default {
     titleClaude: 'Fractal Unique Art',
     textClaude1: 'Choose two images of your choice and create a new unique and limited work of art.',
     textClaude2: 'Our artist uniquely creates a work of art with the characteristics of the images sent. Endless possibilities to create, register and sell your works.',
+  },
+  mintModal: {
+    title: 'Mint',
+    description: 'Send transaction to create your NFT',
+    btnCancel: 'Cancel',
   },
 };

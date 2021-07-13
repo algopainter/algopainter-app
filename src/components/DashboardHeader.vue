@@ -4,27 +4,25 @@
       {{ $route.meta.title }}
     </q-toolbar-title>
     <nav class="q-pr-lg nav-bar text-primary">
-      <div class="item">
-        {{ $t('dashboard.myCollection') }}
-      </div>
-      <div class="item">
-        {{ $t('dashboard.auction') }}
-      </div>
-      <div class="item">
-        {{ $t('dashboard.create') }}
-      </div>
-      <div class="item" @click="connectYourWalletClicked">
-        {{ $t('dashboard.connectToYourWallet').toLowerCase() }}
-      </div>
+      <algo-button
+        :label="$t('dashboard.connectToYourWallet')"
+        color="primary"
+        outline
+        @click="connectYourWalletClicked"
+      />
     </nav>
   </q-toolbar>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import AlgoButton from 'components/common/Button.vue';
 
 @Options({
   emits: ['connectYourWalletClicked'],
+  components: {
+    AlgoButton,
+  },
 })
 export default class DashboardHeader extends Vue {
   connectYourWalletClicked() {
@@ -39,6 +37,7 @@ export default class DashboardHeader extends Vue {
 
   .item {
     padding: 0 24px;
+    cursor: pointer;
   }
 }
 </style>

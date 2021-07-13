@@ -4,7 +4,7 @@
       {{ $t('createCollectible.create.preview') }}
     </div>
     <div class="row text-h6 ap-preview-box justify-center items-center">
-      <div class="col">
+      <div class="col q-mt-lg">
         <p
           v-if="imagePreview === null"
           class="text-center"

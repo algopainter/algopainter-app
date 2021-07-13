@@ -31,23 +31,14 @@
           </div>
         </div>
         <div class="row q-pt-lg q-col-gutter-md">
-          <div class="col-6 col-sm-auto">
+          <div class="col-6 col-sm-auto btn-edit">
             <algo-button
-              class="full-width"
+              class="full-width btn-edit"
               size="lg"
               color="primary"
+              to="/edit-profile"
             >
               {{ $t('dashboard.homePage.editAccount') }}
-            </algo-button>
-          </div>
-          <div class="col-6 col-sm-auto">
-            <algo-button
-              class="full-width"
-              size="lg"
-              color="primary"
-              outline
-            >
-              {{ $t('dashboard.homePage.sendNewArt') }}
             </algo-button>
           </div>
         </div>
@@ -143,5 +134,10 @@ export default class AccountDetails extends Vue {
       }
     }
   }
+}
+.btn-edit{
+   @media (max-width: $breakpoint-xs-max){
+    width: 100%;
+   }
 }
 </style>

@@ -39,10 +39,6 @@ export default class SideBar extends Vue {
         to: '/create-collectible',
       },
       {
-        icon: require('../assets/icons/auction.svg'),
-        to: '/auctions',
-      },
-      {
         icon: require('../assets/icons/logout.svg'),
         onClick: () => ({}),
       },

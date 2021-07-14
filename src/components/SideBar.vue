@@ -10,13 +10,11 @@
         :is="item.to ? 'router-link' : 'div'"
         v-for="item, index in items"
         :key="index"
-        :src="item.img"
         class="item"
         :style="{'mask-image': `url(${item.icon})`}"
         :to="item.to"
         @click="item.to ? null : item.onClick"
       >
-        <q-img :src="item.img" />
         <q-tooltip
           anchor="center right"
           self="center left"

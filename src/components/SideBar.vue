@@ -48,14 +48,14 @@ export default class SideBar extends Vue {
         label: 'Home',
       },
       {
-        icon: require('../assets/icons/magic-wand.svg'),
-        to: '/create-collectible',
-        label: 'Create collectible',
+        icon: require('../assets/icons/my-gallery.svg'),
+        to: '/my-gallery',
+        label: 'My Gallery',
       },
       {
-        icon: require('../assets/icons/auction.svg'),
-        to: '/auctions',
-        label: 'Auctions',
+        icon: require('../assets/icons/paint-board-and-brush.svg'),
+        to: '/create-collectible',
+        label: 'Create collectible',
       },
     ];
   }

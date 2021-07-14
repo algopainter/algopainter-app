@@ -10,19 +10,35 @@
         :auction="auction"
       />
     </div>
-    <div class="header q-pt-xl">
-      <i18n-t keypath="dashboard.auctions.topSellers.top">
-        <template #sellers>
-          <span class="text-primary">
-            {{ $t('dashboard.auctions.topSellers.sellers') }}
-          </span>
-        </template>
-      </i18n-t>
+    <div class="row q-pt-xl">
+      <div class="header">
+        <i18n-t keypath="dashboard.auctions.topSellers.top">
+          <template #sellers>
+            <span class="text-primary">
+              {{ currentOptionsTop.label }}
+            </span>
+          </template>
+        </i18n-t>
+      </div>
+      <div>
+        <q-select
+          v-model="currentOptionsTop"
+          hide-selected
+          class="text-primary"
+          borderless
+          :options="optionsTop"
+          behavior="menu"
+          dense
+        />
+      </div>
     </div>
-    <div class="top-sellers q-pb-xl">
+    <div
+      v-if="currentOptionsTop.id == 1"
+      class="top-sellers q-pb-xl"
+    >
       <div class="flex q-col-gutter-xl">
         <div
-          v-for="seller, index in topSellers"
+          v-for="seller, index in buyTopSellers"
           :key="seller.id"
         >
           <div class="flex q-col-gutter-md items-center">
@@ -41,7 +57,38 @@
               <div class="text-h5 text-bold">
                 {{ seller.name }}
               </div>
-              <div>{{ `${seller.sellValue} ALGOP` }}</div>
+              <div>{{ ` $${seller.sellValue}` }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="currentOptionsTop.id == 2"
+      class="top-sellers q-pb-xl"
+    >
+      <div class="flex q-col-gutter-xl">
+        <div
+          v-for="seller, index in sellTopSellers"
+          :key="seller.id"
+        >
+          <div class="flex q-col-gutter-md items-center">
+            <div class="text-h6 text-bold">
+              {{ index + 1 }}
+            </div>
+            <div>
+              <q-avatar
+                round
+                size="64px"
+              >
+                <img :src="seller.picture">
+              </q-avatar>
+            </div>
+            <div>
+              <div class="text-h5 text-bold">
+                {{ seller.name }}
+              </div>
+              <div>{{ `$${seller.sellValue}` }}</div>
             </div>
           </div>
         </div>
@@ -90,11 +137,8 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
 import { IAuctionItem } from 'src/models/IAuctionItem';
-import {
-  AuctionItem,
-} from 'components/auctions';
+import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
 
 @Options({
@@ -222,31 +266,58 @@ export default class AuctionsList extends Vue {
     highestBid: 300,
   }];
 
-  topSellers: unknown[] = [{
+  buyTopSellers: unknown[] = [{
     id: '1',
     name: 'Amy',
-    sellValue: 3450,
+    sellValue: '3,450',
     picture: 'https://randomuser.me/api/portraits/women/73.jpg',
   }, {
     id: '2',
     name: 'Roland',
-    sellValue: 3450,
+    sellValue: '3,050',
     picture: 'https://randomuser.me/api/portraits/men/51.jpg',
   }, {
     id: '3',
     name: 'Leona',
-    sellValue: 3450,
+    sellValue: '2,650',
     picture: 'https://randomuser.me/api/portraits/women/77.jpg',
   }, {
     id: '4',
     name: 'Perry',
-    sellValue: 3450,
+    sellValue: '2,450',
     picture: 'https://randomuser.me/api/portraits/men/77.jpg',
   }, {
     id: '5',
     name: 'Kylie',
-    sellValue: 3450,
+    sellValue: '2,150',
     picture: 'https://randomuser.me/api/portraits/women/44.jpg',
+  }];
+
+  sellTopSellers: unknown[] = [{
+    id: '1',
+    name: 'Jess',
+    sellValue: '10,450',
+    picture: 'https://randomuser.me/api/portraits/women/50.jpg',
+  }, {
+    id: '2',
+    name: 'Fergus',
+    sellValue: '8,450',
+    picture: 'https://randomuser.me/api/portraits/men/30.jpg',
+  }, {
+    id: '3',
+    name: 'Vif',
+    sellValue: '6,450',
+    picture: 'https://randomuser.me/api/portraits/women/20.jpg',
+  }, {
+    id: '4',
+    name: 'Therry',
+    sellValue: '5,450',
+    picture: 'https://randomuser.me/api/portraits/men/10.jpg',
+  }, {
+    id: '5',
+    name: 'Kyle',
+    sellValue: '5,250',
+    picture: 'https://randomuser.me/api/portraits/women/66.jpg',
   }];
 
   categories: unknown[] = [{
@@ -268,6 +339,22 @@ export default class AuctionsList extends Vue {
     id: '6',
     label: 'Fractal',
   }];
+
+  optionsTop: unknown[] = [
+    {
+      id: 1,
+      label: 'Sellers',
+    },
+    {
+      id: 2,
+      label: 'Buyers',
+    },
+  ]
+
+  currentOptionsTop: unknown = {
+    id: 1,
+    label: 'Sellers',
+  }
 }
 </script>
 

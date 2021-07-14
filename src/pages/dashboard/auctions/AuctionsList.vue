@@ -14,7 +14,15 @@
       <i18n-t keypath="dashboard.auctions.topSellers.top">
         <template #sellers>
           <span class="text-primary">
-            {{ $t('dashboard.auctions.topSellers.sellers') }}
+            {{ currentOptionsTop.label }}
+            <q-select
+              v-model="currentOptionsTop"
+              hide-selected
+              style="width:70px"
+              class="text-primary"
+              borderless
+              :options="optionsTop"
+            />
           </span>
         </template>
       </i18n-t>
@@ -90,11 +98,8 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
 import { IAuctionItem } from 'src/models/IAuctionItem';
-import {
-  AuctionItem,
-} from 'components/auctions';
+import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
 
 @Options({
@@ -268,6 +273,22 @@ export default class AuctionsList extends Vue {
     id: '6',
     label: 'Fractal',
   }];
+
+  optionsTop: unknown[] = [
+    {
+      id: 1,
+      label: 'Sellers',
+    },
+    {
+      id: 2,
+      label: 'Buyers',
+    },
+  ]
+
+  currentOptionsTop: unknown = {
+    id: 1,
+    label: 'Sellers',
+  }
 }
 </script>
 

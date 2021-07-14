@@ -10,22 +10,27 @@
         :auction="auction"
       />
     </div>
-    <div class="header q-pt-xl">
-      <i18n-t keypath="dashboard.auctions.topSellers.top">
-        <template #sellers>
-          <span class="text-primary">
-            {{ currentOptionsTop.label }}
-            <q-select
-              v-model="currentOptionsTop"
-              hide-selected
-              style="width:70px"
-              class="text-primary"
-              borderless
-              :options="optionsTop"
-            />
-          </span>
-        </template>
-      </i18n-t>
+    <div class="row q-pt-xl">
+      <div class="header">
+        <i18n-t keypath="dashboard.auctions.topSellers.top">
+          <template #sellers>
+            <span class="text-primary">
+              {{ currentOptionsTop.label }}
+            </span>
+          </template>
+        </i18n-t>
+      </div>
+      <div>
+        <q-select
+          v-model="currentOptionsTop"
+          hide-selected
+          class="text-primary"
+          borderless
+          :options="optionsTop"
+          behavior="menu"
+          dense
+        />
+      </div>
     </div>
     <div class="top-sellers q-pb-xl">
       <div class="flex q-col-gutter-xl">

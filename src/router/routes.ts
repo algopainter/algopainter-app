@@ -9,17 +9,11 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        component: () => import('pages/dashboard/HomePage.vue'),
-        meta: {
-          title: i18n.global.t('dashboard.homePage.title'),
-        },
+        component: () => import('pages/dashboard/auctions/AuctionsList.vue'),
       },
       {
         path: 'auctions',
         component: () => import('pages/dashboard/auctions/AuctionsList.vue'),
-        meta: {
-          title: i18n.global.t('dashboard.auctions.title'),
-        },
       },
       {
         path: 'create-collectible',
@@ -40,6 +34,13 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/newpaint/NewPainting.vue'),
         meta: {
           title: i18n.global.t('dashboard.newPainting.title'),
+        },
+      },
+      {
+        path: 'my-gallery',
+        component: () => import('pages/dashboard/HomePage.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.homePage.title'),
         },
       },
       {

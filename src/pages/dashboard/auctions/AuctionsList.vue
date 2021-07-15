@@ -10,16 +10,32 @@
         :auction="auction"
       />
     </div>
-    <div class="header q-pt-xl">
-      <i18n-t keypath="dashboard.auctions.topSellers.top">
-        <template #sellers>
-          <span class="text-primary">
-            {{ $t('dashboard.auctions.topSellers.sellers') }}
-          </span>
-        </template>
-      </i18n-t>
+    <div class="row q-pt-xl">
+      <div class="header">
+        <i18n-t keypath="dashboard.auctions.topSellers.top">
+          <template #sellers>
+            <span class="text-primary">
+              {{ currentOptionsTop.label }}
+            </span>
+          </template>
+        </i18n-t>
+      </div>
+      <div>
+        <q-select
+          v-model="currentOptionsTop"
+          hide-selected
+          class="text-primary"
+          borderless
+          :options="optionsTop"
+          behavior="menu"
+          dense
+        />
+      </div>
     </div>
-    <div class="top-sellers q-pb-xl">
+    <div
+      v-if="currentOptionsTop.id == 1"
+      class="top-sellers q-pb-xl"
+    >
       <div class="flex q-col-gutter-xl">
         <div v-for="(seller, index) in topSellers" :key="seller.id">
           <div class="flex q-col-gutter-md items-center">
@@ -35,7 +51,38 @@
               <div class="text-h5 text-bold">
                 {{ seller.name }}
               </div>
-              <div>{{ `${seller.sellValue} ALGOP` }}</div>
+              <div>{{ ` $${seller.sellValue}` }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="currentOptionsTop.id == 2"
+      class="top-sellers q-pb-xl"
+    >
+      <div class="flex q-col-gutter-xl">
+        <div
+          v-for="seller, index in sellTopSellers"
+          :key="seller.id"
+        >
+          <div class="flex q-col-gutter-md items-center">
+            <div class="text-h6 text-bold">
+              {{ index + 1 }}
+            </div>
+            <div>
+              <q-avatar
+                round
+                size="64px"
+              >
+                <img :src="seller.picture">
+              </q-avatar>
+            </div>
+            <div>
+              <div class="text-h5 text-bold">
+                {{ seller.name }}
+              </div>
+              <div>{{ `$${seller.sellValue}` }}</div>
             </div>
           </div>
         </div>
@@ -76,7 +123,6 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';

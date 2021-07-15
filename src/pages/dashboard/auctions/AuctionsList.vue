@@ -57,7 +57,7 @@
               <div class="text-h5 text-bold">
                 {{ seller.name }}
               </div>
-              <div>{{ ` $${seller.sellValue}` }}</div>
+              <div>{{ $n(seller.sellValue, 'currency',) }}</div>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@
               <div class="text-h5 text-bold">
                 {{ seller.name }}
               </div>
-              <div>{{ `$${seller.sellValue}` }}</div>
+              <div>{{ $n(seller.sellValue, 'currency') }}</div>
             </div>
           </div>
         </div>

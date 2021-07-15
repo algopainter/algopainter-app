@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
         path: 'auctions/:id',
         component: () => import('pages/dashboard/auctions/Auction.vue'),
         meta: {
-          title: i18n.global.t('dashboard.auctions.title'),
+          title: i18n.global.t('dashboard.dashboard.collectiblesGallery'),
         },
       },
       {
@@ -54,6 +54,13 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/edit-profile/EditProfile.vue'),
         meta: {
           title: i18n.global.t('dashboard.editProfile.title'),
+        },
+      },
+      {
+        path: 'gallery',
+        component: () => import('src/pages/collectible/CollectiblesGallery.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.gallery.title'),
         },
       },
     ],

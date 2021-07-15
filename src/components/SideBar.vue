@@ -1,6 +1,11 @@
+/* eslint-disable vue/valid-v-for */
 <template>
   <div class="side-bar q-pa-lg">
     <div class="content">
+      <q-img
+        src="../assets/icons/ALGOP.svg"
+        class="icon q-ml-sm q-mt-md"
+      />
       <component
         :is="item.to ? 'router-link' : 'div'"
         v-for="item, index in items"
@@ -9,7 +14,16 @@
         :style="{'mask-image': `url(${item.icon})`}"
         :to="item.to"
         @click="item.to ? null : item.onClick"
-      />
+      >
+        <q-tooltip
+          anchor="center right"
+          self="center left"
+          class="bg-primary"
+          :offset="[10, 10]"
+        >
+          <span>{{ item.label }}</span>
+        </q-tooltip>
+      </component>
     </div>
   </div>
 </template>
@@ -19,7 +33,9 @@ import { Vue } from 'vue-class-component';
 
 interface SideBarItem {
   icon: unknown;
+  img?: string;
   to?: string;
+  label?: string;
   onClick?: () => unknown;
 }
 
@@ -29,22 +45,17 @@ export default class SideBar extends Vue {
       {
         icon: require('../assets/icons/home.svg'),
         to: '/',
+        label: 'Home',
+      },
+      {
+        icon: require('../assets/icons/my-gallery.svg'),
+        to: '/my-gallery',
+        label: 'My Gallery',
       },
       {
         icon: require('../assets/icons/paint-board-and-brush.svg'),
-        to: '/new-painting',
-      },
-      {
-        icon: require('../assets/icons/magic-wand.svg'),
         to: '/create-collectible',
-      },
-      {
-        icon: require('../assets/icons/auction.svg'),
-        to: '/auctions',
-      },
-      {
-        icon: require('../assets/icons/logout.svg'),
-        onClick: () => ({}),
+        label: 'Create collectible',
       },
     ];
   }
@@ -57,6 +68,9 @@ export default class SideBar extends Vue {
     background: #f4528d;
     display: block;
     border-radius: 20px;
+  }
+  .icon{
+    width: 80%;
   }
 
   .item {

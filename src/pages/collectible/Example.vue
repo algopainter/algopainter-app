@@ -57,14 +57,13 @@
         <span>{{ $t('createCollectible.create.minted') }}</span>
       </section>
     </div>
-    <algo-button
+    <p
       v-if="btnLink == ''"
-      class="btnLink"
-      color="primary"
-      disable
-      :label="$t('createCollectible.create.goToArtist')"
+      class="text-center text-bold textComing"
       :to="btnLink"
-    />
+    >
+      {{ $t('createCollectible.create.comingSoon') }}
+    </p>
     <algo-button
       v-else
       class="btnLink"
@@ -131,6 +130,10 @@ export default class Example extends Vue.with(Props) {}
 
 span, p {
   font-size: 0.7rem;
+}
+.textComing{
+  font-size:1.5rem;
+  color: #f4538d;
 }
 
 .textSample {

@@ -9,12 +9,6 @@
     <div>
       <user-gallery-overview />
     </div>
-    <div class="header gallery">
-      {{ $t('dashboard.homePage.collectiblesGallery') }}
-    </div>
-    <div>
-      <home-page-gallery />
-    </div>
   </q-page>
 </template>
 
@@ -25,15 +19,11 @@ import {
   AccountDetails,
   UserGalleryOverview,
 } from 'components/home-page';
-import {
-  HomePageGallery,
-} from 'components/gallery';
 
 @Options({
   components: {
     AccountDetails,
     UserGalleryOverview,
-    HomePageGallery,
   },
 })
 export default class HomePage extends Vue {
@@ -44,9 +34,5 @@ export default class HomePage extends Vue {
 .account-details {
   border: 2px dashed $primary;
   border-radius: 20px;
-}
-
-.header.gallery{
-  padding-bottom: 1rem;
 }
 </style>

@@ -37,14 +37,20 @@
       class="top-sellers q-pb-xl"
     >
       <div class="flex q-col-gutter-xl">
-        <div v-for="(seller, index) in topSellers" :key="seller.id">
+        <div
+          v-for="seller, index in buyTopSellers"
+          :key="seller.id"
+        >
           <div class="flex q-col-gutter-md items-center">
             <div class="text-h6 text-bold">
               {{ index + 1 }}
             </div>
             <div>
-              <q-avatar round size="64px">
-                <img :src="seller.picture" />
+              <q-avatar
+                round
+                size="64px"
+              >
+                <img :src="seller.picture">
               </q-avatar>
             </div>
             <div>
@@ -93,8 +99,16 @@
         {{ $t('dashboard.auctions.explore') }}
       </div>
       <div class="categories flex col-grow q-col-gutter-md">
-        <div v-for="category in categories" :key="category.id">
-          <algo-button class="category" size="lg" color="primary" outline>
+        <div
+          v-for="category in categories"
+          :key="category.id"
+        >
+          <algo-button
+            class="category"
+            size="lg"
+            color="primary"
+            outline
+          >
             {{ category.label }}
           </algo-button>
         </div>
@@ -118,6 +132,12 @@
         :auction="auction"
       />
     </div>
+    <div class="header gallery">
+      {{ $t('dashboard.homePage.collectiblesGallery') }}
+    </div>
+    <div>
+      <home-page-gallery />
+    </div>
   </q-page>
 </template>
 
@@ -126,217 +146,234 @@ import { Vue, Options } from 'vue-class-component';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
+import {
+  HomePageGallery,
+} from 'components/gallery';
 
 @Options({
   components: {
     AuctionItem,
     AlgoButton,
+    HomePageGallery,
   },
 })
 export default class AuctionsList extends Vue {
-  auctions: IAuctionItem[] = [
-    {
+  auctions: IAuctionItem[] = [{
+    id: '1',
+    art: {
       id: '1',
-      art: {
-        id: '1',
-        name: 'Art Abstract Name',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          },
-        ],
+      name: 'Art Abstract Name',
+      source: 'placeholder',
+      price: 120,
+      bidBack: 0.1,
+      keywords: '#art',
+      pirs: {
+        creators: 0.08,
+        investors: 0.05,
       },
-      numberOfBids: 1,
-      highestBid: 300,
-    },
-    {
-      id: '2',
-      art: {
+      importantPeople: [{
         id: '1',
-        name: 'Art Abstract Name',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          },
-        ],
-      },
-      numberOfBids: 1,
-      highestBid: 300,
+        name: 'Billy Nguyen',
+        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+      }, {
+        id: '2',
+        name: 'Beverley Weaver',
+        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+      }, {
+        id: '3',
+        name: 'Leonard Ryan',
+        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+      }],
     },
-    {
-      id: '3',
-      art: {
+    numberOfBids: 1,
+    highestBid: 300,
+  }, {
+    id: '2',
+    art: {
+      id: '1',
+      name: 'Art Abstract Name',
+      source: 'placeholder',
+      price: 120,
+      bidBack: 0.1,
+      keywords: '#art',
+      pirs: {
+        creators: 0.08,
+        investors: 0.05,
+      },
+      importantPeople: [{
         id: '1',
-        name: 'Art Abstract Name',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          },
-        ],
-      },
-      numberOfBids: 1,
-      highestBid: 300,
+        name: 'Billy Nguyen',
+        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+      }, {
+        id: '2',
+        name: 'Beverley Weaver',
+        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+      }, {
+        id: '3',
+        name: 'Leonard Ryan',
+        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+      }],
     },
-    {
-      id: '4',
-      art: {
+    numberOfBids: 1,
+    highestBid: 300,
+  }, {
+    id: '3',
+    art: {
+      id: '1',
+      name: 'Art Abstract Name',
+      source: 'placeholder',
+      price: 120,
+      bidBack: 0.1,
+      keywords: '#art',
+      pirs: {
+        creators: 0.08,
+        investors: 0.05,
+      },
+      importantPeople: [{
         id: '1',
-        name: 'Art Abstract Name',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          },
-        ],
-      },
-      numberOfBids: 1,
-      highestBid: 300,
+        name: 'Billy Nguyen',
+        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+      }, {
+        id: '2',
+        name: 'Beverley Weaver',
+        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+      }, {
+        id: '3',
+        name: 'Leonard Ryan',
+        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+      }],
     },
-  ];
+    numberOfBids: 1,
+    highestBid: 300,
+  }, {
+    id: '4',
+    art: {
+      id: '1',
+      name: 'Art Abstract Name',
+      source: 'placeholder',
+      price: 120,
+      bidBack: 0.1,
+      keywords: '#art',
+      pirs: {
+        creators: 0.08,
+        investors: 0.05,
+      },
+      importantPeople: [{
+        id: '1',
+        name: 'Billy Nguyen',
+        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+      }, {
+        id: '2',
+        name: 'Beverley Weaver',
+        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+      }, {
+        id: '3',
+        name: 'Leonard Ryan',
+        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+      }],
+    },
+    numberOfBids: 1,
+    highestBid: 300,
+  }];
 
-  topSellers: unknown[] = [
-    {
-      id: '1',
-      name: 'Amy',
-      sellValue: 3450,
-      picture: 'https://randomuser.me/api/portraits/women/73.jpg',
-    },
-    {
-      id: '2',
-      name: 'Roland',
-      sellValue: 3450,
-      picture: 'https://randomuser.me/api/portraits/men/51.jpg',
-    },
-    {
-      id: '3',
-      name: 'Leona',
-      sellValue: 3450,
-      picture: 'https://randomuser.me/api/portraits/women/77.jpg',
-    },
-    {
-      id: '4',
-      name: 'Perry',
-      sellValue: 3450,
-      picture: 'https://randomuser.me/api/portraits/men/77.jpg',
-    },
-    {
-      id: '5',
-      name: 'Kylie',
-      sellValue: 3450,
-      picture: 'https://randomuser.me/api/portraits/women/44.jpg',
-    },
-  ];
+  buyTopSellers: unknown[] = [{
+    id: '1',
+    name: 'Amy',
+    sellValue: '3,450',
+    picture: 'https://randomuser.me/api/portraits/women/73.jpg',
+  }, {
+    id: '2',
+    name: 'Roland',
+    sellValue: '3,050',
+    picture: 'https://randomuser.me/api/portraits/men/51.jpg',
+  }, {
+    id: '3',
+    name: 'Leona',
+    sellValue: '2,650',
+    picture: 'https://randomuser.me/api/portraits/women/77.jpg',
+  }, {
+    id: '4',
+    name: 'Perry',
+    sellValue: '2,450',
+    picture: 'https://randomuser.me/api/portraits/men/77.jpg',
+  }, {
+    id: '5',
+    name: 'Kylie',
+    sellValue: '2,150',
+    picture: 'https://randomuser.me/api/portraits/women/44.jpg',
+  }];
 
-  categories: unknown[] = [
+  sellTopSellers: unknown[] = [{
+    id: '1',
+    name: 'Jess',
+    sellValue: '10,450',
+    picture: 'https://randomuser.me/api/portraits/women/50.jpg',
+  }, {
+    id: '2',
+    name: 'Fergus',
+    sellValue: '8,450',
+    picture: 'https://randomuser.me/api/portraits/men/30.jpg',
+  }, {
+    id: '3',
+    name: 'Vif',
+    sellValue: '6,450',
+    picture: 'https://randomuser.me/api/portraits/women/20.jpg',
+  }, {
+    id: '4',
+    name: 'Therry',
+    sellValue: '5,450',
+    picture: 'https://randomuser.me/api/portraits/men/10.jpg',
+  }, {
+    id: '5',
+    name: 'Kyle',
+    sellValue: '5,250',
+    picture: 'https://randomuser.me/api/portraits/women/66.jpg',
+  }];
+
+  categories: unknown[] = [{
+    id: '1',
+    label: 'Digital',
+  }, {
+    id: '2',
+    label: 'Photo',
+  }, {
+    id: '3',
+    label: 'Classic',
+  }, {
+    id: '4',
+    label: 'Modern',
+  }, {
+    id: '5',
+    label: 'Abstract',
+  }, {
+    id: '6',
+    label: 'Fractal',
+  }];
+
+  optionsTop: unknown[] = [
     {
-      id: '1',
-      label: 'Digital',
+      id: 1,
+      label: 'Sellers',
     },
     {
-      id: '2',
-      label: 'Photo',
+      id: 2,
+      label: 'Buyers',
     },
-    {
-      id: '3',
-      label: 'Classic',
-    },
-    {
-      id: '4',
-      label: 'Modern',
-    },
-    {
-      id: '5',
-      label: 'Abstract',
-    },
-    {
-      id: '6',
-      label: 'Fractal',
-    },
-  ];
+  ]
+
+  currentOptionsTop: unknown = {
+    id: 1,
+    label: 'Sellers',
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .category {
   font-weight: bold;
+}
+
+.header.gallery{
+  padding-bottom: 1rem;
 }
 </style>

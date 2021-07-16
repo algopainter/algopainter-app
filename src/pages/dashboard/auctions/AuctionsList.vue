@@ -159,7 +159,7 @@ export default class AuctionsList extends Vue {
   }, {
     id: '2',
     art: {
-      id: '1',
+      id: '2',
       name: 'Art Abstract Name',
       source: 'placeholder',
       price: 120,
@@ -188,7 +188,7 @@ export default class AuctionsList extends Vue {
   }, {
     id: '3',
     art: {
-      id: '1',
+      id: '3',
       name: 'Art Abstract Name',
       source: 'placeholder',
       price: 120,
@@ -217,7 +217,7 @@ export default class AuctionsList extends Vue {
   }, {
     id: '4',
     art: {
-      id: '1',
+      id: '4',
       name: 'Art Abstract Name',
       source: 'placeholder',
       price: 120,

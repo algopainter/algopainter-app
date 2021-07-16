@@ -22,6 +22,7 @@ export default {
     expressions: 'Expressions',
     monero: 'Monero',
     loadMore: 'Load More',
+    colon: ':',
   },
   newPainting: {
     title: 'New Painting',

@@ -16,7 +16,10 @@ export default class UploadBox extends Vue.with(PropsTypes) {}
     </div>
     <div class="row q-upload-box">
       <div class="col">
-        <q-uploader max-files="1" class="q-uploader-component-size" />
+        <q-uploader
+          max-files="1"
+          class="q-uploader-component-size"
+        />
       </div>
     </div>
   </div>

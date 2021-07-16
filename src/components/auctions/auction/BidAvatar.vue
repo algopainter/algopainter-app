@@ -1,7 +1,7 @@
 <template>
   <avatar-section
     class="q-py-md"
-    :imageUrl="bid.user.profilePhotoUrl"
+    :image-url="bid.user.profilePhotoUrl"
   >
     <template #title>
       <div class="text-positive text-bold text-h6">

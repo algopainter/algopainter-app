@@ -158,8 +158,8 @@ export default class AuctionItem extends Vue.with(Props) {
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
       Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
-      Twitter: 'https://twitter.com/intent/tweet?url=https://blissful-curran-2df6db.netlify.app/&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter',
-      Telegram: 'https://telegram.me/share/?url=https%3A%2F%2Fblissful-curran-2df6db.netlify.app%3F&title=Alogo%20painter%20I%20',
+      Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
+      Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
       Email: 'mailto:[]?subject=AlgoPainter',
     };
     console.log(socialMedia);

@@ -22,7 +22,8 @@
     </div>
     <div
       v-if="currentCollection === 1"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
@@ -31,7 +32,8 @@
     </div>
     <div
       v-if="currentCollection === 2"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
@@ -40,7 +42,8 @@
     </div>
     <div
       v-if="currentCollection === 3"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
@@ -115,7 +118,7 @@ export default class HomePageGallery extends Vue {
       id: '2',
       description: 'Dreaming with your eyes open',
       art: {
-        id: '1',
+        id: '2',
         name: '#25 Virtual Reality',
         source: 'placeholder',
         price: 120,
@@ -148,7 +151,7 @@ export default class HomePageGallery extends Vue {
       id: '3',
       description: 'Dreaming with your eyes open',
       art: {
-        id: '1',
+        id: '3',
         name: '#25 Virtual Reality',
         source: 'placeholder',
         price: 120,
@@ -181,7 +184,7 @@ export default class HomePageGallery extends Vue {
       id: '4',
       description: 'Dreaming with your eyes open',
       art: {
-        id: '1',
+        id: '4',
         name: '#25 Virtual Reality',
         source: 'placeholder',
         price: 120,
@@ -214,7 +217,7 @@ export default class HomePageGallery extends Vue {
       id: '5',
       description: 'Dreaming with your eyes open',
       art: {
-        id: '1',
+        id: '5',
         name: '#25 Virtual Reality',
         source: 'placeholder',
         price: 120,
@@ -247,7 +250,7 @@ export default class HomePageGallery extends Vue {
       id: '6',
       description: 'Dreaming with your eyes open',
       art: {
-        id: '1',
+        id: '6',
         name: '#25 Virtual Reality',
         source: 'placeholder',
         price: 120,
@@ -280,7 +283,7 @@ export default class HomePageGallery extends Vue {
       id: '7',
       description: 'Dreaming with your eyes open',
       art: {
-        id: '1',
+        id: '7',
         name: '#25 Virtual Reality',
         source: 'placeholder',
         price: 120,
@@ -313,7 +316,7 @@ export default class HomePageGallery extends Vue {
       id: '8',
       description: 'Dreaming with your eyes open',
       art: {
-        id: '1',
+        id: '8',
         name: '#25 Virtual Reality',
         source: 'placeholder',
         price: 120,

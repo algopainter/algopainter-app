@@ -94,37 +94,6 @@
         </div>
       </div>
     </div>
-    <div class="flex items-center">
-      <div class="header q-pr-xl">
-        {{ $t('dashboard.auctions.explore') }}
-      </div>
-      <div class="categories flex col-grow q-col-gutter-md">
-        <div
-          v-for="category in categories"
-          :key="category.id"
-        >
-          <algo-button
-            class="category"
-            size="lg"
-            color="primary"
-            outline
-          >
-            {{ category.label }}
-          </algo-button>
-        </div>
-        <q-space />
-        <div>
-          <algo-button
-            class="category"
-            size="lg"
-            color="primary"
-            outline
-            icon-right="mdi-filter-outline"
-            :label="$t('dashboard.auctions.otherFilter')"
-          />
-        </div>
-      </div>
-    </div>
     <div class="explore-results flex q-col-gutter-md">
       <auction-item
         v-for="auction in auctions"

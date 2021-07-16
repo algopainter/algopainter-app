@@ -57,7 +57,7 @@
               <div class="text-h5 text-bold">
                 {{ seller.name }}
               </div>
-              <div>{{ ` $${seller.sellValue}` }}</div>
+              <div>{{ $n(seller.sellValue, 'currency',) }}</div>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@
               <div class="text-h5 text-bold">
                 {{ seller.name }}
               </div>
-              <div>{{ `$${seller.sellValue}` }}</div>
+              <div>{{ $n(seller.sellValue, 'currency') }}</div>
             </div>
           </div>
         </div>
@@ -269,54 +269,54 @@ export default class AuctionsList extends Vue {
   buyTopSellers: unknown[] = [{
     id: '1',
     name: 'Amy',
-    sellValue: '3,450',
+    sellValue: 10000,
     picture: 'https://randomuser.me/api/portraits/women/73.jpg',
   }, {
     id: '2',
     name: 'Roland',
-    sellValue: '3,050',
+    sellValue: 3050,
     picture: 'https://randomuser.me/api/portraits/men/51.jpg',
   }, {
     id: '3',
     name: 'Leona',
-    sellValue: '2,650',
+    sellValue: 2650,
     picture: 'https://randomuser.me/api/portraits/women/77.jpg',
   }, {
     id: '4',
     name: 'Perry',
-    sellValue: '2,450',
+    sellValue: 2450,
     picture: 'https://randomuser.me/api/portraits/men/77.jpg',
   }, {
     id: '5',
     name: 'Kylie',
-    sellValue: '2,150',
+    sellValue: 2150,
     picture: 'https://randomuser.me/api/portraits/women/44.jpg',
   }];
 
   sellTopSellers: unknown[] = [{
     id: '1',
     name: 'Jess',
-    sellValue: '10,450',
+    sellValue: 11450,
     picture: 'https://randomuser.me/api/portraits/women/50.jpg',
   }, {
     id: '2',
     name: 'Fergus',
-    sellValue: '8,450',
+    sellValue: 8450,
     picture: 'https://randomuser.me/api/portraits/men/30.jpg',
   }, {
     id: '3',
     name: 'Vif',
-    sellValue: '6,450',
+    sellValue: 6450,
     picture: 'https://randomuser.me/api/portraits/women/20.jpg',
   }, {
     id: '4',
     name: 'Therry',
-    sellValue: '5,450',
+    sellValue: 5450,
     picture: 'https://randomuser.me/api/portraits/men/10.jpg',
   }, {
     id: '5',
     name: 'Kyle',
-    sellValue: '5,250',
+    sellValue: 5250,
     picture: 'https://randomuser.me/api/portraits/women/66.jpg',
   }];
 

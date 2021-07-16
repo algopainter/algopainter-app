@@ -132,6 +132,12 @@
         :auction="auction"
       />
     </div>
+    <div class="header gallery">
+      {{ $t('dashboard.homePage.collectiblesGallery') }}
+    </div>
+    <div>
+      <home-page-gallery />
+    </div>
   </q-page>
 </template>
 
@@ -140,11 +146,15 @@ import { Vue, Options } from 'vue-class-component';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
+import {
+  HomePageGallery,
+} from 'components/gallery';
 
 @Options({
   components: {
     AuctionItem,
     AlgoButton,
+    HomePageGallery,
   },
 })
 export default class AuctionsList extends Vue {
@@ -361,5 +371,9 @@ export default class AuctionsList extends Vue {
 <style lang="scss" scoped>
 .category {
   font-weight: bold;
+}
+
+.header.gallery{
+  padding-bottom: 1rem;
 }
 </style>

@@ -17,6 +17,11 @@ export default {
     sell: 'SELL',
     latestBids: 'Latest bids',
     seeAllBids: 'See all bids',
+    collectiblesGallery: 'Collectibles Gallery',
+    gwei: 'Gwei',
+    expressions: 'Expressions',
+    monero: 'Monero',
+    loadMore: 'Load More',
   },
   newPainting: {
     title: 'New Painting',
@@ -116,5 +121,13 @@ export default {
     chooseFile: 'Choose File',
     sMedia: 'Social media',
     sChanges: 'Save changes',
+  },
+  gallery: {
+    title: 'Collectibles Gallery',
+    gwei: 'Gwei',
+    expressions: 'Expressions',
+    monero: 'Monero',
+    myPainting: 'My Painting',
+    newPainting: 'New Painting',
   },
 };

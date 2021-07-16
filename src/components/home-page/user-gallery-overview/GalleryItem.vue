@@ -19,19 +19,20 @@
       >
         <q-list>
           <q-item
-            v-for="opçoesredes in socialNetworks"
-            :key="opçoesredes.value"
+            v-for="opcoesredes in socialNetworks"
+            :key="opcoesredes.value"
             v-close-popup
             clickable
+            @click="share(art.id, opcoesredes.label)"
           >
             <q-item-section>
               <q-item-label>
                 <q-icon
                   color="primary"
                   size="sm"
-                  :name="opçoesredes.name"
+                  :name="opcoesredes.name"
                 />
-                {{ opçoesredes.label }}
+                {{ opcoesredes.label }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -115,16 +116,24 @@ options: Ioptions = {
   socialNetworks: '',
 }
 
+share(id: string, socialMedia: string) {
+  const urlsShared: {[index: string]:string} = {
+    Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
+    Twitter: 'https://twitter.com/intent/tweet?url=https://blissful-curran-2df6db.netlify.app/&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter',
+    Telegram: 'https://telegram.me/share/?url=https%3A%2F%2Fblissful-curran-2df6db.netlify.app%3F&title=Alogo%20painter%20I%20',
+    Email: 'mailto:[]?subject=AlgoPainter',
+  };
+  console.log(socialMedia);
+  const linkElement = document.createElement('a');
+  linkElement.href = urlsShared[socialMedia];
+  window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
+}
+
 socialNetworks = [
   {
     value: 0,
     label: 'Facebook',
     name: 'facebook',
-  },
-  {
-    value: 1,
-    label: 'Instagran',
-    name: 'mdi-instagram',
   },
   {
     value: 0,
@@ -138,7 +147,7 @@ socialNetworks = [
   },
   {
     value: 0,
-    label: 'E-mail',
+    label: 'Email',
     name: 'mdi-email',
   },
 ]
@@ -148,6 +157,10 @@ socialNetworks = [
 <style lang="scss" scoped>
 .btn-dropdown{
   color: #f4538d;
+}
+.link-sharer{
+  text-decoration: none;
+ color: black;
 }
 .btn-dropdown:before{
   box-shadow: none;

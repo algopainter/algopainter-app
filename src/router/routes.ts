@@ -57,6 +57,13 @@ const routes: RouteRecordRaw[] = [
           title: i18n.global.t('dashboard.editProfile.title'),
         },
       },
+      {
+        path: 'gallery',
+        component: () => import('src/pages/collectible/CollectiblesGallery.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.gallery.title'),
+        },
+      },
     ],
   },
 

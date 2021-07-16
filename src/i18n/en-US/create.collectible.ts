@@ -25,6 +25,7 @@ export default {
     remaining: 'REMAINING',
     minted: 'MINTED',
     goToArtist: ' Go to Artist',
+    comingSoon: 'Coming Soon',
   },
   selectAi: {
     title: 'Select An Artist',

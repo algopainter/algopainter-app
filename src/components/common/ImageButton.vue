@@ -99,10 +99,10 @@ export default class ImageButton extends Vue.with(ImgButtonProps) {
 }
 
 .q-img-btn-label.on {
-  color: #000000;
+  color: #f4538d;
 }
 
 .q-img-btn-label.off {
-  color: #f4538d;
+  color: #000000;
 }
 </style>

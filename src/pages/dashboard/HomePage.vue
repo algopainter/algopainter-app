@@ -15,7 +15,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import { HomePageGallery } from 'components/gallery';
-import AuctionsList from 'pages/dashboard/auctions/AuctionsList.vue';
+import AuctionsList from 'src/components/auctions/AuctionsList.vue';
 
 @Options({
   components: {

@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'auctions',
-        component: () => import('pages/dashboard/auctions/AuctionsList.vue'),
+        component: () => import('src/components/auctions/AuctionsList.vue'),
       },
       {
         path: 'create-collectible',

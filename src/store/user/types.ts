@@ -1,14 +1,7 @@
-import { GetterTree } from 'vuex';
-import { StateInterface } from '..';
-
 export interface UserStateInterface {
   isConnected: boolean;
   account?: string;
   error?: Error;
-}
-
-export interface UserRootGetters extends GetterTree<UserStateInterface, StateInterface> {
-  account: () => string;
 }
 
 interface RequestArguments {

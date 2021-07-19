@@ -77,6 +77,7 @@ div {
   height: 40px;
   margin: 0 auto;
   position: relative;
+  cursor: pointer;
 }
 @keyframes fade {
   0% {

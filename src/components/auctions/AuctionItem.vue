@@ -136,9 +136,20 @@ interface Ioptions {
 })
 export default class AuctionItem extends Vue.with(Props) {
   isAuctionFavorite: boolean = false;
+  wallerConnected: boolean = false;
+
+  walletConnected() {
+    if (this.$store.getters) {
+      this.wallerConnected = true;
+    }
+  }
 
   favoriteAuction() {
-    this.isAuctionFavorite = !this.isAuctionFavorite;
+    if (this.wallerConnected) {
+      this.isAuctionFavorite = !this.isAuctionFavorite;
+    } else {
+      this.isAuctionFavorite = false;
+    }
   }
 
   incrementCounter() {

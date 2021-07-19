@@ -39,33 +39,10 @@
           </div>
           <div
             v-if="isAuctionImageEnabled"
-            class="col-12 col-md-1"
+            class="col-12 col-md-1 q-my-md"
           >
+            <LikeAnimation />
             <div class="icons text-center justify-center">
-              <div class="favorite">
-                <div>
-                  <q-icon
-                    color="primary"
-                    size="1.7rem"
-                    :name="
-                      isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
-                    "
-                    :class="{
-                      press: isAuctionFavorite,
-                      shake: isAuctionFavorite,
-                    }"
-                    @click="favoriteAuction"
-                  />
-                  <span :class="{ press: isAuctionFavorite }">{{
-                    $t('dashboard.auctionPage.liked')
-                  }}</span>
-                </div>
-                <div class="items-center">
-                  <p class="text-primary">
-                    {{ favoriteCounter }}
-                  </p>
-                </div>
-              </div>
               <div class="expand">
                 <q-icon
                   color="primary"
@@ -88,7 +65,10 @@
             </div>
           </div>
           <div class="col-md-4">
-            <q-img width="150px" src="../../../assets/icons/bidback.svg" />
+            <q-img
+              width="150px"
+              src="../../../assets/icons/bidback.svg"
+            />
           </div>
         </div>
         <div>
@@ -197,7 +177,11 @@
           </q-tab-panels>
         </div>
         <div>
-          <q-input v-if="showBidInput" v-model="bidInput" label="Place a Bid" />
+          <q-input
+            v-if="showBidInput"
+            v-model="bidInput"
+            label="Place a Bid"
+          />
           <div class="q-py-sm">
             <algo-button
               class="text-bold full-width"
@@ -223,6 +207,7 @@ import BidAvatar from 'components/auctions/auction/BidAvatar.vue';
 import HighestBidAvatar from 'components/auctions/auction/HighestBidAvatar.vue';
 import PreviousBidAvatar from 'components/auctions/auction/PreviousBidAvatar.vue';
 import AlgoButton from 'components/common/Button.vue';
+import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IArt } from 'src/models/IArt';
@@ -249,17 +234,14 @@ interface ICollection {
     HighestBidAvatar,
     AlgoAvatar,
     PreviousBidAvatar,
+    LikeAnimation,
   },
-  watch: {
-    isAuctionFavorite: ['postFavoriteAuction', 'incrementFavoriteCounter'],
-  },
+
 })
 export default class Auction extends Vue {
   isAuctionImageEnabled: boolean = true;
 
   isAuctionDistributionEnabled: boolean = false;
-
-  isAuctionFavorite: boolean = false;
 
   showBidInput: boolean = false;
 
@@ -276,30 +258,12 @@ export default class Auction extends Vue {
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
   }
 
-  favoriteAuction() {
-    this.isAuctionFavorite = !this.isAuctionFavorite;
-  }
-
-  // WATCHER METHODS
-  incrementFavoriteCounter() {
-    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
-  }
-
-  postFavoriteAuction(value: boolean) {
-    // POST users/id/auctions/auctionID/favorite?favorite=value;
-    return value;
-  }
-
   // MOCKING DATA
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   distributionSVG: string = require('../../../assets/icons/chart-distribution.svg');
 
   tab: string = 'info';
-
-  favoriteCounter = parseInt(
-    (Math.random() * 100 * (Math.random() * 100)).toString(),
-  );
 
   users: IUser[] = [
     {
@@ -456,55 +420,6 @@ export default class Auction extends Vue {
   i {
     cursor: pointer;
     margin: 10px 12px 8px;
-  }
-}
-.favorite {
-  div {
-    height: 40px;
-    margin: 0 auto;
-    position: relative;
-  }
-  @keyframes fade {
-    0% {
-      color: rgba(255, 255, 255, 0);
-    }
-    50% {
-      color: $primary;
-    }
-    100% {
-      color: rgba(255, 255, 255, 0);
-    }
-  }
-  span {
-    position: absolute;
-    bottom: 70px;
-    left: 0;
-    right: 0;
-    visibility: hidden;
-    transition: 0.6s;
-    z-index: -2;
-    font-size: 3px;
-    color: transparent;
-    font-weight: 400;
-  }
-  span.press {
-    bottom: 31px;
-    font-size: 13px;
-    visibility: visible;
-    animation: fade 1s;
-  }
-  .shake {
-    animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-  }
-
-  @keyframes shake {
-    40%,
-    60% {
-      transform: translate3d(0, -5px, 0);
-    }
   }
 }
 </style>

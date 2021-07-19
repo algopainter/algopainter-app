@@ -43,30 +43,7 @@
         </div>
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
-            <div class="icons text-center flex justify-center">
-              <div class="favorite">
-                <div>
-                  <q-icon
-                    color="primary"
-                    size="1.7rem"
-                    :name="
-                      isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
-                    "
-                    :class="{
-                      press: isAuctionFavorite,
-                      shake: isAuctionFavorite,
-                    }"
-                    @click="favoriteAuction"
-                  />
-                  <div class="text-primary">
-                    {{ favoriteCounter }}
-                  </div>
-                  <span
-                    :class="{ press: isAuctionFavorite } "
-                  >{{ $t('dashboard.auctionPage.liked') }}</span>
-                </div>
-              </div>
-            </div>
+            <LikeAnimation />
           </div>
         </div>
       </div>
@@ -92,6 +69,7 @@ import { Vue, Options, prop } from 'vue-class-component';
 
 import { IGallery } from 'src/models/IGallery';
 import AlgoButton from 'components/common/Button.vue';
+import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 
 class Props {
   galleryItem = prop({
@@ -106,31 +84,11 @@ interface Ioptions {
 @Options({
   components: {
     AlgoButton,
-  },
-  watch: {
-    isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
+    LikeAnimation,
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
   isAuctionFavorite: boolean = false;
-
-  favoriteAuction() {
-    this.isAuctionFavorite = !this.isAuctionFavorite;
-  }
-
-  incrementCounter() {
-    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
-  }
-
-  postFavoriteAuction() {
-  // post http request
-    return true;
-  }
-
-  // FAKE DATA
-  favoriteCounter: number = parseInt(
-    (Math.random() * 100).toString(),
-  );
 
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {

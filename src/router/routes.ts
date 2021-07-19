@@ -38,7 +38,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'my-gallery',
-        component: () => import('pages/dashboard/HomePage.vue'),
+        component: () => import('pages/dashboard/gallery/MyGallery.vue'),
         meta: {
           title: i18n.global.t('dashboard.homePage.title'),
         },

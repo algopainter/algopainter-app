@@ -1,7 +1,7 @@
-export interface UserStateInterface {
-  isConnected: boolean;
-  account?: string;
-  error?: Error;
+
+export interface NetworkInfo {
+  id: number;
+  type: string;
 }
 
 interface RequestArguments {
@@ -59,6 +59,13 @@ export interface Ethereumish {
     callback: (error: never, response: never) => void
   ) => void;
   sendAsync: (request: RequestArguments) => Promise<unknown>;
+}
+
+export interface UserStateInterface {
+  isConnected: boolean;
+  account?: string;
+  error?: Error;
+  networkInfo?: NetworkInfo;
 }
 
 export interface IWeb3Provider {

@@ -37,7 +37,8 @@
     </div>
     <div
       v-if="currentCollection === 1"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
@@ -46,7 +47,8 @@
     </div>
     <div
       v-if="currentCollection === 2"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
@@ -55,7 +57,8 @@
     </div>
     <div
       v-if="currentCollection === 3"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"

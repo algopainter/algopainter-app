@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { UserStateInterface } from './types';
+import { UserStateInterface, NetworkInfo } from './types';
 
 const mutation: MutationTree<UserStateInterface> = {
   setIsConnected(state: UserStateInterface, payload: boolean) {
@@ -10,6 +10,9 @@ const mutation: MutationTree<UserStateInterface> = {
   },
   setError(state: UserStateInterface, payload: Error) {
     state.error = payload;
+  },
+  setNetworkInfo(state: UserStateInterface, payload?: NetworkInfo) {
+    state.networkInfo = payload;
   },
 };
 

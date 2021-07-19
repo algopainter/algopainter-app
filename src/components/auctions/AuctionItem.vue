@@ -56,7 +56,7 @@
                       press: isAuctionFavorite,
                       shake: isAuctionFavorite,
                     }"
-                    @click="favoriteAuction"
+                    @click="walletConnected(); favoriteAuction()"
                   />
                   <div class="text-primary">
                     {{ favoriteCounter }}
@@ -139,7 +139,8 @@ export default class AuctionItem extends Vue.with(Props) {
   wallerConnected: boolean = false;
 
   walletConnected() {
-    if (this.$store.getters) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (this.$store.getters['user/isConnected']) {
       this.wallerConnected = true;
     }
   }

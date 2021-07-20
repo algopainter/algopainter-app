@@ -9,11 +9,11 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        component: () => import('pages/dashboard/auctions/AuctionsList.vue'),
+        component: () => import('pages/dashboard/HomePage.vue'),
       },
       {
         path: 'auctions',
-        component: () => import('pages/dashboard/auctions/AuctionsList.vue'),
+        component: () => import('src/components/auctions/AuctionsList.vue'),
       },
       {
         path: 'create-collectible',
@@ -38,7 +38,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'my-gallery',
-        component: () => import('pages/dashboard/HomePage.vue'),
+        component: () => import('pages/dashboard/gallery/MyGallery.vue'),
         meta: {
           title: i18n.global.t('dashboard.homePage.title'),
         },

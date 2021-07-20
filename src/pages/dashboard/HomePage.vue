@@ -1,38 +1,39 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
-    <div class="account-details q-pa-lg">
-      <account-details />
+    <div>
+      <auctions-list />
     </div>
-    <div class="header">
-      {{ $t('dashboard.homePage.myGallery') }}
+    <div class="header gallery">
+      {{ $t('dashboard.homePage.collectiblesGallery') }}
     </div>
     <div>
-      <user-gallery-overview />
+      <home-page-gallery />
     </div>
   </q-page>
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
-import {
-  AccountDetails,
-  UserGalleryOverview,
-} from 'components/home-page';
+import { HomePageGallery } from 'components/gallery';
+import AuctionsList from 'src/components/auctions/AuctionsList.vue';
 
 @Options({
   components: {
-    AccountDetails,
-    UserGalleryOverview,
+    HomePageGallery,
+    AuctionsList,
   },
 })
 export default class HomePage extends Vue {
+
 }
 </script>
 
 <style lang="scss" scoped>
-.account-details {
-  border: 2px dashed $primary;
-  border-radius: 20px;
+.category {
+  font-weight: bold;
+}
+
+.header.gallery{
+  padding-bottom: 1rem;
 }
 </style>

@@ -1,0 +1,131 @@
+<template>
+  <div>
+    <algo-button
+      :label="
+        $t('dashboard.tokenBalance', {
+          amount: balance,
+          token: 'ALGOP',
+        })
+      "
+      color="primary"
+      outline
+      class="text-bold"
+    >
+      <q-menu>
+        <div class="q-pa-md">
+          <div class="text-bold q-mb-md">{{ formatedAccount() }}</div>
+          <q-list>
+            <q-item v-ripple class="q-pl-none">
+              <q-item-section avatar>
+                <q-avatar>
+                  <img src="http://localhost:8080/img/ALGOP.svg" />
+                </q-avatar>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label caption>
+                  {{ $t('dashboard.balance') }}
+                </q-item-label>
+                <q-item-label class="text-bold">
+                  {{
+                    $t('dashboard.tokenBalance', {
+                      amount: balance,
+                      token: 'ALGOP',
+                    })
+                  }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item class="q-pl-none">
+              <q-item-section>
+                <div class="flex">
+                  <div
+                    @click="goToProfilePage"
+                    class="text-bold cursor-pointer"
+                  >
+                    {{ $t('dashboard.editProfileTerm') }}
+                  </div>
+                </div>
+              </q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item class="q-pa-none q-pt-md">
+              <q-item-section>
+                <algo-button
+                  :label="
+                    $t('dashboard.buyToken', {
+                      token: 'ALGOP',
+                    })
+                  "
+                  color="primary"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </q-menu>
+    </algo-button>
+  </div>
+</template>
+
+<script lang="ts">
+import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
+import AlgoButton from 'components/common/Button.vue';
+import { Options, Vue } from 'vue-class-component';
+
+@Options({
+  components: {
+    AlgoButton,
+  },
+  computed: {
+    isConnected: false,
+    accountAddress: '',
+  },
+  watch: {
+    isConnected: ['setAccountBalance'],
+    accountAddress: ['setAccountBalance'],
+  },
+})
+export default class ProfileDropdownButton extends Vue {
+  balance: string = '';
+
+  get isConnected() {
+    return this.$store.state.user.isConnected;
+  }
+
+  get accountAddress() {
+    return this.$store.state.user.account;
+  }
+
+  mounted() {
+    this.setAccountBalance();
+  }
+
+  setAccountBalance() {
+    if (this.isConnected) {
+      void this.fetchAccountBalance();
+    }
+  }
+
+  formatedAccount() {
+    const a = this.accountAddress as string;
+    const splited = a.split('');
+    return splited.slice(0, 11).join('') + '...' + splited.slice(-4).join('');
+  }
+
+  async goToProfilePage() {
+    await this.$router.push('/edit-profile');
+  }
+
+  async fetchAccountBalance() {
+    const algopainter = new AlgoPainterTokenProxy(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.$store.getters['user/networkInfo']
+    );
+    this.balance = (await algopainter.balanceOf(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.$store.getters['user/account']
+    )) as string;
+  }
+}
+</script>

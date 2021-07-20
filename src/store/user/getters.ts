@@ -1,6 +1,6 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '..';
-import { UserStateInterface } from './types';
+import { UserStateInterface, NetworkInfo } from './types';
 
 const getters: GetterTree<UserStateInterface, StateInterface> = {
   account(state: UserStateInterface): string|undefined {
@@ -11,6 +11,9 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
   },
   error(state: UserStateInterface): Error|undefined {
     return state.error;
+  },
+  networkInfo(state: UserStateInterface): NetworkInfo|undefined {
+    return state.networkInfo;
   },
 };
 

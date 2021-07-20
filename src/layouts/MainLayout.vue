@@ -3,23 +3,16 @@
     <q-header class="q-py-lg bg-white">
       <dashboard-header
         :leftDrawerOpen="leftDrawerOpen"
-        @connectYourWalletClicked="refreshModal"
+        @connectYourWalletClicked="showModal = true"
         @openDrawer="openDrawer"
       />
     </q-header>
-    <q-drawer
-      v-model="leftDrawerOpen"
-      :width="120"
-      :breakpoint="768"
-    >
+    <q-drawer v-model="leftDrawerOpen" :width="120" :breakpoint="768">
       <side-bar />
     </q-drawer>
     <q-page-container class="q-px-lg">
       <router-view />
-      <connect-your-wallet
-        v-if="showModal"
-        @connected="refreshModal"
-      />
+      <connect-your-wallet v-if="showModal" />
     </q-page-container>
   </q-layout>
 </template>
@@ -36,6 +29,12 @@ import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
     DashboardHeader,
     SideBar,
     ConnectYourWallet,
+  },
+  watch: {
+    isConnected: ['refreshModal'],
+  },
+  computed: {
+    isConnected: false,
   },
 })
 export default class MainLayout extends Vue {
@@ -57,17 +56,12 @@ export default class MainLayout extends Vue {
     this.leftDrawerOpen = true;
   }
 
-  isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (this.$store.getters['user/isConnected']) {
-      return true;
-    }
-    return false;
+  get isConnected() {
+    return this.$store.state.user.isConnected;
   }
 
   refreshModal() {
-    this.showModal = !this.isConnected();
-    console.log('user state : ', this.$store.state.user);
+    this.showModal = !this.isConnected;
   }
 }
 </script>

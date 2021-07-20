@@ -5,6 +5,10 @@ export default {
   connectToYourWallet: 'Connect wallet',
   walletConnect: 'WalletConnect',
   metaMask: 'MetaMask',
+  tokenBalance: '{amount} {token}',
+  buyToken: 'buy {token}',
+  editProfileTerm: 'Edit Profile',
+  balance: 'Balance',
   homePage: {
     title: 'My Account',
     editAccount: 'Edit Account',

@@ -11,9 +11,9 @@
             "
             :class="{
               press: isAuctionFavorite,
-              shake: isAuctionFavorite,
+              shake: isAuctionFavorite
             }"
-            @click="walletConnected(); favoriteAuction()"
+            @click="walletConnected(); favoriteAuction(); favoriteClicked()"
           />
           <div class="text-primary">
             {{ favoriteCounter }}
@@ -38,21 +38,26 @@ import { Vue, Options } from 'vue-class-component';
 
 export default class LikeAnimation extends Vue {
   isAuctionFavorite: boolean = false;
-  wallerConnected: boolean = false;
+  digitalWalletConnected: boolean = false;
 
   walletConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (this.$store.getters['user/isConnected']) {
-      this.wallerConnected = true;
+      this.digitalWalletConnected = true;
     }
   }
 
   favoriteAuction() {
-    if (this.wallerConnected) {
+    if (this.digitalWalletConnected) {
       this.isAuctionFavorite = !this.isAuctionFavorite;
     } else {
       this.isAuctionFavorite = false;
     }
+  }
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+    console.log('LikeAnimation');
   }
 
   incrementCounter() {

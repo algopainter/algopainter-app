@@ -5,7 +5,10 @@
         v-for="item in galleryItems"
         :key="item.id"
       >
-        <gallery-item :art="item" />
+        <gallery-item
+          :art="item"
+          @favoriteClicked="favoriteClicked"
+        />
       </div>
     </div>
     <div class="col-12 col-lg-3">
@@ -50,6 +53,10 @@ import LatestBidsItem from './LatestBidsItem.vue';
   },
 })
 export default class UserGalleryOverview extends Vue {
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
+
   galleryItems: IArt[] = [
     {
       id: '1',

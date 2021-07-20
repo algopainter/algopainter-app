@@ -43,7 +43,9 @@
         </div>
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
-            <LikeAnimation />
+            <LikeAnimation
+              @favoriteClicked="favoriteClicked"
+            />
           </div>
         </div>
       </div>
@@ -100,6 +102,11 @@ export default class GalleryItem extends Vue.with(Props) {
     const linkElement = document.createElement('a');
     linkElement.href = (urlsShared[socialMedia]);
     window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
+  }
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+    console.log('GalleryItem');
   }
 
   options: Ioptions = {

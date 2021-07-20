@@ -42,7 +42,9 @@
           </q-btn-dropdown>
         </div>
         <div class="col-12 col-md-1">
-          <LikeAnimation />
+          <LikeAnimation
+            @favoriteClicked="favoriteClicked()"
+          />
         </div>
       </div>
     </div>
@@ -110,6 +112,9 @@ interface Ioptions {
   watch: {
     isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
   },
+  emits: [
+    'favoriteClicked',
+  ],
 })
 export default class AuctionItem extends Vue.with(Props) {
   share(id: string, socialMedia: string) {
@@ -123,6 +128,10 @@ export default class AuctionItem extends Vue.with(Props) {
     const linkElement = document.createElement('a');
     linkElement.href = (urlsShared[socialMedia]);
     window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
+  }
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
   }
 
   options: Ioptions = {

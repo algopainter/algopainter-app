@@ -8,6 +8,7 @@
         v-for="auction in auctions"
         :key="auction.id"
         :auction="auction"
+        @favoriteClicked="favoriteClicked()"
       />
     </div>
     <div class="row q-pt-xl">
@@ -99,6 +100,7 @@
         v-for="auction in auctions"
         :key="auction.id"
         :auction="auction"
+        @favoriteClicked="favoriteClicked"
       />
     </div>
     <div class="header gallery">
@@ -127,6 +129,10 @@ import {
   },
 })
 export default class AuctionsList extends Vue {
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
+
   auctions: IAuctionItem[] = [{
     id: '1',
     art: {

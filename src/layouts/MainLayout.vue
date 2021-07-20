@@ -10,8 +10,13 @@
       <side-bar />
     </q-drawer>
     <q-page-container class="q-px-lg">
-      <router-view />
-      <connect-your-wallet v-if="showModal" @connected="refreshModal" />
+      <router-view
+        @favoriteClicked="refreshModal"
+      />
+      <connect-your-wallet
+        v-if="showModal"
+        @connected="refreshModal"
+      />
     </q-page-container>
   </q-layout>
 </template>

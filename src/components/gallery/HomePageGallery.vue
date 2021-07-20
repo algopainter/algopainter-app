@@ -28,6 +28,7 @@
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
         :gallery-item="galleryItem"
+        @favoriteClicked="favoriteClicked"
       />
     </div>
     <div
@@ -38,6 +39,7 @@
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
         :gallery-item="galleryItem"
+        @favoriteClicked="favoriteClicked"
       />
     </div>
     <div
@@ -48,6 +50,7 @@
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
         :gallery-item="galleryItem"
+        @favoriteClicked="favoriteClicked"
       />
     </div>
     <div class="footer">
@@ -79,6 +82,10 @@ import AlgoButton from 'components/common/Button.vue';
 })
 export default class HomePageGallery extends Vue {
   currentCollection: number = 1;
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
 
   gallery: IGallery[] = [
     {

@@ -41,7 +41,9 @@
             v-if="isAuctionImageEnabled"
             class="col-12 col-md-1 q-my-md"
           >
-            <LikeAnimation />
+            <LikeAnimation
+              @favoriteClicked="favoriteClicked"
+            />
             <div class="icons text-center justify-center">
               <div class="expand">
                 <q-icon
@@ -256,6 +258,10 @@ export default class Auction extends Vue {
   toggleAuctionDistribution() {
     this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
     this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
+  }
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
   }
 
   // MOCKING DATA

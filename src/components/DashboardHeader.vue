@@ -23,10 +23,17 @@ import AlgoButton from 'components/common/Button.vue';
   components: {
     AlgoButton,
   },
+  computed: {
+    isConnected: false,
+  },
 })
 export default class DashboardHeader extends Vue {
   connectYourWalletClicked() {
     this.$emit('connectYourWalletClicked');
+  }
+
+  get isConnected() {
+    return this.$store.state.user.isConnected;
   }
 }
 </script>

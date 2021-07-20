@@ -110,6 +110,7 @@ export default {
     investors: 'Investors',
     liked: 'Liked!',
     placeABid: 'Place a Bid',
+    btnView: 'View Art',
   },
   editProfile: {
     title: 'Edit Profile',
@@ -129,5 +130,14 @@ export default {
     monero: 'Monero',
     myPainting: 'My Painting',
     newPainting: 'New Painting',
+  },
+  viewArt: {
+    title: 'Your Art',
+    goGallery: 'Go to Gallery',
+    details: 'Details',
+    algoPainter: 'AlgoPainter',
+    owner: 'Owner',
+    description: 'Description',
+    btnCreatepainter: ' I want to create a painting like that!',
   },
 };

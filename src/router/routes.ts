@@ -30,6 +30,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'collections/:id',
+        component: () => import('pages/dashboard/viewarts/ViewArt.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.viewArt.title'),
+        },
+      },
+      {
         path: 'new-painting',
         component: () => import('pages/dashboard/newpaint/NewPainting.vue'),
         meta: {

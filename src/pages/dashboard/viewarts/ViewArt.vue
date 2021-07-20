@@ -33,11 +33,17 @@
       class="row"
     >
       <div class="col-xs-12 col-sm-6 col-md-6">
+        <div class="float-right">
+          <ShareArtIcons
+            :art="galleryItems.id"
+          />
+        </div>
         <div class="column items-center">
           <q-img
             class="img"
             src="../../../assets/placeholder-images/painting.jpg"
           />
+
           <algo-button
             color="primary"
             class="q-my-md"
@@ -47,12 +53,6 @@
         </div>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-4">
-        <div class=" float-right">
-          <ShareArtIcons
-            class="row items-right"
-            :art="galleryItems.art"
-          />
-        </div>
         <div class="column items-center">
           <div class="col">
             <p class="text-bold text-h5">

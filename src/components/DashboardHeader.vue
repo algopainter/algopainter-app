@@ -4,7 +4,9 @@
       {{ $route.meta.title }}
     </q-toolbar-title>
     <nav class="q-pr-lg nav-bar text-primary">
+      <profile-info-button v-if="isConnected" />
       <algo-button
+        v-else
         :label="$t('dashboard.connectToYourWallet')"
         color="primary"
         outline
@@ -17,11 +19,13 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
+import ProfileInfoButton from 'components/common/ProfileInfoButton.vue';
 
 @Options({
   emits: ['connectYourWalletClicked'],
   components: {
     AlgoButton,
+    ProfileInfoButton,
   },
   computed: {
     isConnected: false,

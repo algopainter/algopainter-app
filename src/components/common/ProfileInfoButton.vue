@@ -18,7 +18,7 @@
             <q-item v-ripple class="q-pl-none">
               <q-item-section avatar>
                 <q-avatar>
-                  <img src="http://localhost:8080/img/ALGOP.svg" />
+                  <img src="/images/ALGOP.svg" />
                 </q-avatar>
               </q-item-section>
               <q-item-section>

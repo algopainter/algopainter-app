@@ -25,7 +25,7 @@
 <script lang="ts">
 import { Options, Vue, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-import ProfileDropdownButton from 'components/common/ProfileInfoButton.vue';
+import ProfileDropdownButton from 'components/common/ProfileDropdownButton.vue';
 
 class Props {
   leftDrawerOpen = prop({

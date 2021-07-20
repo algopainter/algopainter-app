@@ -28,7 +28,7 @@
                 <q-item-label class="text-bold">
                   {{
                     $t('dashboard.tokenBalance', {
-                      amount: balance,
+                      amount: formatAccountBalance(),
                       token: 'ALGOP',
                     })
                   }}
@@ -111,6 +111,10 @@ export default class ProfileDropdownButton extends Vue {
     const a = this.accountAddress as string;
     const splited = a.split('');
     return splited.slice(0, 11).join('') + '...' + splited.slice(-4).join('');
+  }
+
+  formatAccountBalance() {
+    return parseInt(this.balance);
   }
 
   async goToProfilePage() {

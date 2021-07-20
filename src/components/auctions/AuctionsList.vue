@@ -134,14 +134,19 @@ export default class AuctionsList extends Vue {
         id: '1',
         name: 'Billy Nguyen',
         picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-      }, {
+        accountable: 'Collection',
+      },
+      {
         id: '2',
         name: 'Beverley Weaver',
         picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-      }, {
+        accountable: 'Owner',
+      },
+      {
         id: '3',
         name: 'Leonard Ryan',
         picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+        accountable: 'Creator',
       }],
     },
     numberOfBids: 1,
@@ -163,14 +168,19 @@ export default class AuctionsList extends Vue {
         id: '1',
         name: 'Billy Nguyen',
         picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-      }, {
+        accountable: 'Collection',
+      },
+      {
         id: '2',
         name: 'Beverley Weaver',
         picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-      }, {
+        accountable: 'Owner',
+      },
+      {
         id: '3',
         name: 'Leonard Ryan',
         picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+        accountable: 'Creator',
       }],
     },
     numberOfBids: 1,
@@ -192,14 +202,19 @@ export default class AuctionsList extends Vue {
         id: '1',
         name: 'Billy Nguyen',
         picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-      }, {
+        accountable: 'Collection',
+      },
+      {
         id: '2',
         name: 'Beverley Weaver',
         picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-      }, {
+        accountable: 'Owner',
+      },
+      {
         id: '3',
         name: 'Leonard Ryan',
         picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+        accountable: 'Creator',
       }],
     },
     numberOfBids: 1,
@@ -221,14 +236,19 @@ export default class AuctionsList extends Vue {
         id: '1',
         name: 'Billy Nguyen',
         picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-      }, {
+        accountable: 'Collection',
+      },
+      {
         id: '2',
         name: 'Beverley Weaver',
         picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-      }, {
+        accountable: 'Owner',
+      },
+      {
         id: '3',
         name: 'Leonard Ryan',
         picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+        accountable: 'Creator',
       }],
     },
     numberOfBids: 1,

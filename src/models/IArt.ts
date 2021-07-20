@@ -2,6 +2,7 @@ interface Person {
   id: string;
   name: string;
   picture: string;
+  accountable: string;
 }
 
 export interface IArt {

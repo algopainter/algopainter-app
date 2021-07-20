@@ -37,7 +37,8 @@
     </div>
     <div
       v-if="currentCollection === 1"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
@@ -46,7 +47,8 @@
     </div>
     <div
       v-if="currentCollection === 2"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
@@ -55,7 +57,8 @@
     </div>
     <div
       v-if="currentCollection === 3"
-      class="flex q-col-gutter-md">
+      class="flex q-col-gutter-md"
+    >
       <gallery-item
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
@@ -119,16 +122,19 @@ export default class Gallery extends Vue {
             id: '1',
             name: 'Billy Nguyen',
             picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+            accountable: 'Collection',
           },
           {
             id: '2',
             name: 'Beverley Weaver',
             picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+            accountable: 'Owner',
           },
           {
             id: '3',
             name: 'Leonard Ryan',
             picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+            accountable: 'Creator',
           },
         ],
       },
@@ -152,16 +158,19 @@ export default class Gallery extends Vue {
             id: '1',
             name: 'Billy Nguyen',
             picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+            accountable: 'Collection',
           },
           {
             id: '2',
             name: 'Beverley Weaver',
             picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+            accountable: 'Owner',
           },
           {
             id: '3',
             name: 'Leonard Ryan',
             picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+            accountable: 'Creator',
           },
         ],
       },
@@ -185,16 +194,19 @@ export default class Gallery extends Vue {
             id: '1',
             name: 'Billy Nguyen',
             picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+            accountable: 'Collection',
           },
           {
             id: '2',
             name: 'Beverley Weaver',
             picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+            accountable: 'Owner',
           },
           {
             id: '3',
             name: 'Leonard Ryan',
             picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+            accountable: 'Creator',
           },
         ],
       },
@@ -218,16 +230,19 @@ export default class Gallery extends Vue {
             id: '1',
             name: 'Billy Nguyen',
             picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+            accountable: 'Collection',
           },
           {
             id: '2',
             name: 'Beverley Weaver',
             picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+            accountable: 'Owner',
           },
           {
             id: '3',
             name: 'Leonard Ryan',
             picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+            accountable: 'Creator',
           },
         ],
       },
@@ -251,16 +266,19 @@ export default class Gallery extends Vue {
             id: '1',
             name: 'Billy Nguyen',
             picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+            accountable: 'Collection',
           },
           {
             id: '2',
             name: 'Beverley Weaver',
             picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+            accountable: 'Owner',
           },
           {
             id: '3',
             name: 'Leonard Ryan',
             picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+            accountable: 'Creator',
           },
         ],
       },
@@ -284,16 +302,19 @@ export default class Gallery extends Vue {
             id: '1',
             name: 'Billy Nguyen',
             picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+            accountable: 'Collection',
           },
           {
             id: '2',
             name: 'Beverley Weaver',
             picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+            accountable: 'Owner',
           },
           {
             id: '3',
             name: 'Leonard Ryan',
             picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+            accountable: 'Creator',
           },
         ],
       },
@@ -317,16 +338,19 @@ export default class Gallery extends Vue {
             id: '1',
             name: 'Billy Nguyen',
             picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+            accountable: 'Collection',
           },
           {
             id: '2',
             name: 'Beverley Weaver',
             picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+            accountable: 'Owner',
           },
           {
             id: '3',
             name: 'Leonard Ryan',
             picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+            accountable: 'Creator',
           },
         ],
       },
@@ -350,16 +374,19 @@ export default class Gallery extends Vue {
             id: '1',
             name: 'Billy Nguyen',
             picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+            accountable: 'Collection',
           },
           {
             id: '2',
             name: 'Beverley Weaver',
             picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+            accountable: 'Owner',
           },
           {
             id: '3',
             name: 'Leonard Ryan',
             picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+            accountable: 'Creator',
           },
         ],
       },

@@ -9,7 +9,11 @@
           round
         >
           <img :src="person.picture">
-          <q-tooltip>{{ person.name }}</q-tooltip>
+          <q-tooltip
+            class="bg-primary"
+          >
+            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+          </q-tooltip>
         </q-avatar>
       </div>
       <q-space />

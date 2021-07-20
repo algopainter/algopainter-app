@@ -1,5 +1,5 @@
 <template>
-  <avatar-section :imageUrl="imageUrl">
+  <avatar-section :image-url="imageUrl">
     <template #title>
       <div class="text-bold text-h6">
         {{ title }}

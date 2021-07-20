@@ -1,7 +1,7 @@
 <template>
   <avatar-section
     class="q-py-md"
-    :imageUrl="bid.user.profilePhotoUrl"
+    :image-url="bid.user.profilePhotoUrl"
     size="68px"
   >
     <template #title>

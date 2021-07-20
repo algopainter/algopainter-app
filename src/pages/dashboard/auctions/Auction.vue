@@ -88,7 +88,10 @@
             </div>
           </div>
           <div class="col-md-4">
-            <q-img width="150px" src="../../../assets/icons/bidback.svg" />
+            <q-img
+              width="150px"
+              src="../../../assets/icons/bidback.svg"
+            />
           </div>
         </div>
         <div>
@@ -197,7 +200,11 @@
           </q-tab-panels>
         </div>
         <div>
-          <q-input v-if="showBidInput" v-model="bidInput" label="Place a Bid" />
+          <q-input
+            v-if="showBidInput"
+            v-model="bidInput"
+            label="Place a Bid"
+          />
           <div class="q-py-sm">
             <algo-button
               class="text-bold full-width"
@@ -359,6 +366,8 @@ export default class Auction extends Vue {
     id: '1',
     name: 'Abstract Art Bind Number 91',
     source: 'placeholder',
+    owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
+    algopainter: 'Hashley Gwei',
     price: 120,
     bidBack: 0.1,
     keywords: '#Art #Algopainter #Creation',

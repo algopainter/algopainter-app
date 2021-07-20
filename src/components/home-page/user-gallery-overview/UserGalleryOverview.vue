@@ -54,6 +54,8 @@ export default class UserGalleryOverview extends Vue {
     {
       id: '1',
       name: 'Art Abstract Name',
+      algopainter: 'Hashley Gwei',
+      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
@@ -79,6 +81,8 @@ export default class UserGalleryOverview extends Vue {
     {
       id: '2',
       name: 'Art Abstract Name',
+      algopainter: 'Hashley Gwei',
+      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,
@@ -104,6 +108,8 @@ export default class UserGalleryOverview extends Vue {
     {
       id: '3',
       name: 'Art Abstract Name',
+      algopainter: 'Hashley Gwei',
+      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
       source: 'placeholder',
       price: 120,
       bidBack: 0.1,

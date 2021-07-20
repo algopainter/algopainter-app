@@ -14,33 +14,7 @@
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <div>
-          <q-btn-dropdown
-            class="btn-dropdown"
-            dropdown-icon="mdi-dots-horizontal"
-          >
-            <q-list>
-              <q-item
-                v-for="opcoesredes in socialNetworks"
-                :key="opcoesredes.value"
-                v-close-popup
-                clickable
-                @click="share(auction.art.id, opcoesredes.label)"
-              >
-                <q-item-section>
-                  <q-item-label>
-                    <q-icon
-                      color="primary"
-                      size="sm"
-                      :name="opcoesredes.name"
-                    />
-                    {{ opcoesredes.label }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </div>
+        <ShareArtIcons :art="auction.art" />
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
             <div class="icons text-center flex justify-center">
@@ -103,7 +77,7 @@
         color="primary"
         :label="$t('common.placeABid')"
         icon-right="mdi-arrow-right"
-        to="/auctions/123"
+        :to="`/auctions/${auction.id}`"
       />
     </div>
   </div>
@@ -115,6 +89,7 @@ import { Vue, Options, prop } from 'vue-class-component';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
+import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 
 class Props {
   auction = prop({
@@ -123,12 +98,10 @@ class Props {
   });
 }
 
-interface Ioptions {
-  socialNetworks: string;
-}
 @Options({
   components: {
     AlgoButton,
+    ShareArtIcons,
   },
   watch: {
     isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
@@ -154,61 +127,10 @@ export default class AuctionItem extends Vue.with(Props) {
   favoriteCounter: number = parseInt(
     (Math.random() * 100).toString(),
   );
-
-  share(id: string, socialMedia: string) {
-    const urlsShared: {[index: string]:string} = {
-      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
-      Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
-      Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
-      Email: 'mailto:[]?subject=AlgoPainter',
-    };
-    console.log(socialMedia);
-    const linkElement = document.createElement('a');
-    linkElement.href = (urlsShared[socialMedia]);
-    window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
-  }
-
-  options: Ioptions = {
-    socialNetworks: '',
-  }
-
-  socialNetworks = [
-    {
-      value: 0,
-      label: 'Facebook',
-      name: 'facebook',
-    },
-    {
-      value: 0,
-      label: 'Twitter',
-      name: 'mdi-twitter',
-    },
-    {
-      value: 0,
-      label: 'Telegram',
-      name: 'mdi-telegram',
-    },
-    {
-      value: 0,
-      label: 'Email',
-      name: 'mdi-email',
-    },
-  ]
 }
 </script>
 
 <style lang="scss" scoped>
-.btn-dropdown{
-  color: #f4538d;
-}
-.link-sharer{
-  text-decoration: none;
- color: black;
-}
-.btn-dropdown:before{
-  box-shadow: none;
-  border: none;
-}
 .users {
   .q-avatar:not(:first-child) {
     margin-left: -8px;

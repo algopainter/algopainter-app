@@ -125,7 +125,8 @@ export default class ProfileDropdownButton extends Vue {
     this.balance = (await algopainter.balanceOf(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.$store.getters['user/account']
-    )) as string;
+      )) as string
+    ).toString();
   }
 }
 </script>

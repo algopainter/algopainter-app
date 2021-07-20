@@ -4,7 +4,7 @@
       {{ $route.meta.title }}
     </q-toolbar-title>
     <nav class="q-pr-lg nav-bar text-primary">
-      <profile-info-button v-if="isConnected" />
+      <profile-dropdown-button v-if="isConnected" />
       <algo-button
         v-else
         :label="$t('dashboard.connectToYourWallet')"

@@ -25,4 +25,8 @@ export default class AlgoPainterTokenProxy {
       contractAddress,
     );
   }
+
+  async balanceOf(address: string) {
+    return this.algoPainter.methods.balanceOf(address).call();
+  }
 }

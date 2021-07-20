@@ -19,13 +19,13 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-import ProfileInfoButton from 'components/common/ProfileInfoButton.vue';
+import ProfileDropdownButton from 'components/common/ProfileInfoButton.vue';
 
 @Options({
   emits: ['connectYourWalletClicked'],
   components: {
     AlgoButton,
-    ProfileInfoButton,
+    ProfileDropdownButton,
   },
   computed: {
     isConnected: false,

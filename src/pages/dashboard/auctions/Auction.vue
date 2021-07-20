@@ -314,7 +314,6 @@ export default class Auction extends Vue {
       name: 'Alice',
       email: 'alice.k@email.com',
       age: '32 years',
-      country: 'CA',
       interests: 'digital, fractal, urban, classic',
       collections: 2,
       wallet: {
@@ -327,7 +326,6 @@ export default class Auction extends Vue {
       name: 'Mike',
       email: 'mike@email.com',
       age: '21 years',
-      country: 'AR',
       interests: 'classic',
       collections: 7,
       wallet: {

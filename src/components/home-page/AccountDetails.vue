@@ -19,12 +19,6 @@
             <div class="details">
               {{ user.age }}
             </div>
-            <div class="details country-flag">
-              <img
-                src="https://lipis.github.io/flag-icon-css/flags/4x3/gb.svg"
-              >
-              {{ user.country }}
-            </div>
             <div class="details text-grey-5">
               {{ user.interests }}
             </div>
@@ -94,7 +88,6 @@ export default class AccountDetails extends Vue {
     name: 'Natasha',
     email: 'natasha.k@gmail.com',
     age: '27 years',
-    country: 'UK',
     interests: 'abstract, modern, digital, fractal, urban, classic',
     collections: 8,
     wallet: {

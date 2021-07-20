@@ -94,49 +94,12 @@
         </div>
       </div>
     </div>
-    <div class="flex items-center">
-      <div class="header q-pr-xl">
-        {{ $t('dashboard.auctions.explore') }}
-      </div>
-      <div class="categories flex col-grow q-col-gutter-md">
-        <div
-          v-for="category in categories"
-          :key="category.id"
-        >
-          <algo-button
-            class="category"
-            size="lg"
-            color="primary"
-            outline
-          >
-            {{ category.label }}
-          </algo-button>
-        </div>
-        <q-space />
-        <div>
-          <algo-button
-            class="category"
-            size="lg"
-            color="primary"
-            outline
-            icon-right="mdi-filter-outline"
-            :label="$t('dashboard.auctions.otherFilter')"
-          />
-        </div>
-      </div>
-    </div>
     <div class="explore-results flex q-col-gutter-md">
       <auction-item
         v-for="auction in auctions"
         :key="auction.id"
         :auction="auction"
       />
-    </div>
-    <div class="header gallery">
-      {{ $t('dashboard.homePage.collectiblesGallery') }}
-    </div>
-    <div>
-      <home-page-gallery />
     </div>
   </q-page>
 </template>
@@ -146,15 +109,11 @@ import { Vue, Options } from 'vue-class-component';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
-import {
-  HomePageGallery,
-} from 'components/gallery';
 
 @Options({
   components: {
     AuctionItem,
     AlgoButton,
-    HomePageGallery,
   },
 })
 export default class AuctionsList extends Vue {
@@ -195,7 +154,7 @@ export default class AuctionsList extends Vue {
   }, {
     id: '2',
     art: {
-      id: '1',
+      id: '2',
       name: 'Art Abstract Name',
       source: 'placeholder',
       price: 120,
@@ -229,7 +188,7 @@ export default class AuctionsList extends Vue {
   }, {
     id: '3',
     art: {
-      id: '1',
+      id: '3',
       name: 'Art Abstract Name',
       source: 'placeholder',
       price: 120,
@@ -263,7 +222,7 @@ export default class AuctionsList extends Vue {
   }, {
     id: '4',
     art: {
-      id: '1',
+      id: '4',
       name: 'Art Abstract Name',
       source: 'placeholder',
       price: 120,

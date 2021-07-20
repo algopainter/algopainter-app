@@ -1,11 +1,16 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="q-py-lg bg-white">
-      <dashboard-header @connectYourWalletClicked="refreshModal" />
+      <dashboard-header
+        :leftDrawerOpen="leftDrawerOpen"
+        @connectYourWalletClicked="refreshModal"
+        @openDrawer="openDrawer"
+      />
     </q-header>
     <q-drawer
       v-model="leftDrawerOpen"
       :width="120"
+      :breakpoint="768"
     >
       <side-bar />
     </q-drawer>
@@ -34,9 +39,23 @@ import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
   },
 })
 export default class MainLayout extends Vue {
-  leftDrawerOpen = true;
+  leftDrawerOpen: boolean = false;
+
+  beforeMount() {
+    if (window.innerWidth <= 768) {
+      this.leftDrawerOpen = false;
+    } else {
+      this.leftDrawerOpen = true;
+      // enquanto leftDrawerOpen for true, quero o display do button como hidden
+    }
+  }
 
   showModal: boolean = false;
+
+  openDrawer() {
+    // console.log(this.leftDrawerOpen);
+    this.leftDrawerOpen = true;
+  }
 
   isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

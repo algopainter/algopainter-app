@@ -1,12 +1,7 @@
 <template>
   <div>
     <algo-button
-      :label="
-        $t('dashboard.tokenBalance', {
-          amount: balance,
-          token: 'ALGOP',
-        })
-      "
+      :label="formatedAccount()"
       color="primary"
       outline
       class="text-bold"

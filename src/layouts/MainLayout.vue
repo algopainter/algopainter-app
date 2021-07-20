@@ -1,17 +1,18 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="q-py-lg bg-white">
-      <dashboard-header @connectYourWalletClicked="refreshModal" />
+      <dashboard-header
+        @connectYourWalletClicked="showModal = true"
+      />
     </q-header>
-    <q-drawer
-      v-model="leftDrawerOpen"
-      :width="120"
-    >
+    <q-drawer v-model="leftDrawerOpen" :width="120">
       <side-bar />
     </q-drawer>
     <q-page-container class="q-px-lg">
       <router-view />
-      <connect-your-wallet v-if="showModal" @connected="refreshModal" />
+      <connect-your-wallet
+        v-if="showModal"
+      />
     </q-page-container>
   </q-layout>
 </template>
@@ -29,23 +30,24 @@ import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
     SideBar,
     ConnectYourWallet,
   },
+  watch: {
+    isConnected: ['refreshModal'],
+  },
+  computed: {
+    isConnected: false,
+  },
 })
 export default class MainLayout extends Vue {
   leftDrawerOpen = true;
 
   showModal: boolean = false;
 
-  isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (this.$store.getters['user/isConnected']) {
-      return true;
-    }
-    return false;
+  get isConnected() {
+    return this.$store.state.user.isConnected;
   }
 
   refreshModal() {
-    this.showModal = !this.isConnected();
-    console.log('user state : ', this.$store.state.user);
+    this.showModal = !this.isConnected;
   }
 }
 </script>

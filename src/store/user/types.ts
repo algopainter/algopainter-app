@@ -25,7 +25,7 @@ interface ProviderConnectInfo {
   readonly chainId: string;
 }
 
-export interface EthereumEvent {
+interface EthereumEvent {
   connect: ProviderConnectInfo;
   disconnect: ProviderRpcError;
   accountsChanged: Array<string>;

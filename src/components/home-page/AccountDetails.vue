@@ -52,9 +52,17 @@
               {{ $t('common.coinSymbol') }}
             </div>
             <div
-              class="text-h3 text-bold algop"
+              class="text-h3 text-bold q-py-md"
             >
               {{ formatAccountBalance() }}
+              <q-tooltip
+                anchor="top middle"
+                self="top middle"
+                class="bg-primary"
+                :offset="[7, 7]"
+              >
+                {{ $t(`dashboard.algop`) }} {{ balance }}
+              </q-tooltip>
             </div>
             <algo-button
               size="lg"
@@ -103,7 +111,7 @@ export default class AccountDetails extends Vue {
     collections: 8,
   };
 
-  balance: string = '';
+  balance: string = '1212.953216854';
 
   get isConnected() {
     return this.$store.state.user.account;
@@ -126,9 +134,6 @@ export default class AccountDetails extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.algop{
-  
-}
 .user-info {
   @media (max-width: $breakpoint-xs-max) {
     text-align: center;

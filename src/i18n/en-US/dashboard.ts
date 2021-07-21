@@ -9,6 +9,7 @@ export default {
   buyToken: 'buy {token}',
   editProfileTerm: 'Edit Profile',
   balance: 'Balance',
+  algop: '$ALGOP',
   homePage: {
     title: 'My Account',
     editAccount: 'Edit Account',

@@ -111,6 +111,13 @@ export default class ProfileDropdownButton extends Vue {
     return splited.slice(0, 11).join('') + '...' + splited.slice(-4).join('');
   }
 
+  /**
+   * input/output example
+   *
+   * Input: 6679.690202143615462628
+   * Output: 6679.69...
+   *
+   */
   formatAccountBalance() {
     const [integerPart, decimalPart] = this.balance.toString().split('.');
     if (!decimalPart) {
@@ -132,8 +139,7 @@ export default class ProfileDropdownButton extends Vue {
     this.balance = (await algopainter.balanceOf(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.$store.getters['user/account']
-      )) as string
-    ).toString();
+    )) as number;
   }
 }
 </script>

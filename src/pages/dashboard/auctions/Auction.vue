@@ -366,6 +366,8 @@ export default class Auction extends Vue {
     id: '1',
     name: 'Abstract Art Bind Number 91',
     source: 'placeholder',
+    owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
+    algopainter: 'Hashley Gwei',
     price: 120,
     bidBack: 0.1,
     keywords: '#Art #Algopainter #Creation',

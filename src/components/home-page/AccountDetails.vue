@@ -77,12 +77,11 @@ import { Vue, Options } from 'vue-class-component';
 import { IUser } from 'src/models/IUser';
 import AlgoButton from '../common/Button.vue';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
-import ProfileDropdownButton from '../common/ProfileDropdownButton.vue';
 
 @Options({
   components: {
     AlgoButton,
-    ProfileDropdownButton,
+    
   },
   computed: {
     isConnected: false,

@@ -1,12 +1,7 @@
 <template>
   <div>
     <algo-button
-      :label="
-        $t('dashboard.tokenBalance', {
-          amount: balance,
-          token: 'ALGOP',
-        })
-      "
+      :label="formatedAccount()"
       color="primary"
       outline
       class="text-bold"
@@ -28,7 +23,7 @@
                 <q-item-label class="text-bold">
                   {{
                     $t('dashboard.tokenBalance', {
-                      amount: balance,
+                      amount: formatAccountBalance(),
                       token: 'ALGOP',
                     })
                   }}
@@ -54,10 +49,13 @@
                 <algo-button
                   :label="
                     $t('dashboard.buyToken', {
-                      token: 'ALGOP',
+                      token: '$ALGOP',
                     })
                   "
+                  type="a"
                   color="primary"
+                  href="https://exchange.pancakeswap.finance/#/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
+                  target="_blank"
                 />
               </q-item-section>
             </q-item>
@@ -87,7 +85,7 @@ import { Options, Vue } from 'vue-class-component';
   },
 })
 export default class ProfileDropdownButton extends Vue {
-  balance: string = '';
+  balance: number = 0;
 
   get isConnected() {
     return this.$store.state.user.isConnected;
@@ -113,6 +111,22 @@ export default class ProfileDropdownButton extends Vue {
     return splited.slice(0, 11).join('') + '...' + splited.slice(-4).join('');
   }
 
+  /**
+   * input/output example
+   *
+   * Input: 6679.690202143615462628
+   * Output: 6679.69...
+   *
+   */
+  formatAccountBalance() {
+    const [integerPart, decimalPart] = this.balance.toString().split('.');
+    if (!decimalPart) {
+      return integerPart;
+    }
+    const slicedDecimal: string = decimalPart.slice(0, 2);
+    return [integerPart, slicedDecimal + '...'].join('.');
+  }
+
   async goToProfilePage() {
     await this.$router.push('/edit-profile');
   }
@@ -125,7 +139,7 @@ export default class ProfileDropdownButton extends Vue {
     this.balance = (await algopainter.balanceOf(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.$store.getters['user/account']
-    )) as string;
+    )) as number;
   }
 }
 </script>

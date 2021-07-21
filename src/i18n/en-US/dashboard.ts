@@ -6,7 +6,7 @@ export default {
   walletConnect: 'WalletConnect',
   metaMask: 'MetaMask',
   tokenBalance: '{amount} {token}',
-  buyToken: 'buy {token}',
+  buyToken: 'Buy {token}',
   editProfileTerm: 'Edit Profile',
   balance: 'Balance',
   homePage: {

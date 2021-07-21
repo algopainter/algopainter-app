@@ -51,7 +51,10 @@
             <div class="text-h3 text-bold">
               {{ $t('common.coinSymbol') }}
             </div>
-            <div class="text-h1 text-bold q-py-xl">
+            <div
+              v-if="isConnected"
+              class="text-h1 text-bold q-py-xl"
+            >
               {{ balance }}
             </div>
             <algo-button
@@ -76,12 +79,11 @@ import { Vue, Options } from 'vue-class-component';
 
 import { IUser } from 'src/models/IUser';
 import AlgoButton from '../common/Button.vue';
-import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
+import { fetchAccountBalance } from 'src/helpers/user';
 
 @Options({
   components: {
     AlgoButton,
-    
   },
   computed: {
     isConnected: false,
@@ -104,27 +106,13 @@ export default class AccountDetails extends Vue {
 
   balance: string = '';
 
-  get accountAddress() {
+  get isConnected() {
     return this.$store.state.user.account;
   }
 
-  mounted() {
-    this.setAccountBalance();
-  }
-
-  setAccountBalance() {
-    void this.fetchAccountBalance();
-  }
-
-  async fetchAccountBalance() {
-    const algopainter = new AlgoPainterTokenProxy(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.$store.getters['user/networkInfo'],
-    );
-    this.balance = (await algopainter.balanceOf(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.$store.getters['user/account'],
-    )) as string;
+  async setAccountBalance() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    this.balance = await fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
   }
 }
 </script>

@@ -85,7 +85,7 @@ import { Options, Vue } from 'vue-class-component';
   },
 })
 export default class ProfileDropdownButton extends Vue {
-  balance: string = '';
+  balance: number = 0;
 
   get isConnected() {
     return this.$store.state.user.isConnected;
@@ -112,7 +112,12 @@ export default class ProfileDropdownButton extends Vue {
   }
 
   formatAccountBalance() {
-    return parseInt(this.balance);
+    const [integerPart, decimalPart] = this.balance.toString().split('.');
+    if (!decimalPart) {
+      return integerPart;
+    }
+    const slicedDecimal: string = decimalPart.slice(0, 2);
+    return [integerPart, slicedDecimal + '...'].join('.');
   }
 
   async goToProfilePage() {
@@ -124,10 +129,9 @@ export default class ProfileDropdownButton extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.$store.getters['user/networkInfo']
     );
-    this.balance = (
-      (await algopainter.balanceOf(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.$store.getters['user/account']
+    this.balance = (await algopainter.balanceOf(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.$store.getters['user/account']
       )) as string
     ).toString();
   }

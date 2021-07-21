@@ -52,10 +52,9 @@
               {{ $t('common.coinSymbol') }}
             </div>
             <div
-              v-if="isConnected"
-              class="text-h1 text-bold q-py-xl"
+              class="text-h3 text-bold algop"
             >
-              {{ balance }}
+              {{ formatAccountBalance() }}
             </div>
             <algo-button
               size="lg"
@@ -114,10 +113,22 @@ export default class AccountDetails extends Vue {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.balance = await fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
   }
+
+  formatAccountBalance() {
+    const [integerPart, decimalPart] = this.balance.toString().split('.');
+    if (!decimalPart) {
+      return integerPart;
+    }
+    const slicedDecimal: string = decimalPart.slice(0, 2);
+    return [integerPart, slicedDecimal + '...'].join('.');
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.algop{
+  
+}
 .user-info {
   @media (max-width: $breakpoint-xs-max) {
     text-align: center;

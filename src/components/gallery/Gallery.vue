@@ -104,7 +104,6 @@ export default class Gallery extends Vue {
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
-    console.log('Gallery');
   }
 
   currentPage: number = 1;

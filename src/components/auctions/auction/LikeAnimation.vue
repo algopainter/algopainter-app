@@ -57,7 +57,6 @@ export default class LikeAnimation extends Vue {
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
-    console.log('LikeAnimation');
   }
 
   incrementCounter() {

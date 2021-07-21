@@ -106,7 +106,6 @@ export default class GalleryItem extends Vue.with(Props) {
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
-    console.log('GalleryItem');
   }
 
   options: Ioptions = {

@@ -121,7 +121,7 @@ export default {
     title: 'Edit Profile',
     name: 'Name:',
     email: 'Email:',
-    custom: 'Custom',
+    custom: 'Custom URL',
     webSite: 'Website ou portifolio',
     bio: 'Bio:',
     chooseFile: 'Choose File',

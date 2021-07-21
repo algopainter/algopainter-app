@@ -316,9 +316,6 @@ export default class Auction extends Vue {
       age: '32 years',
       interests: 'digital, fractal, urban, classic',
       collections: 2,
-      wallet: {
-        algop: 9102,
-      },
       profilePhotoUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
     },
     {
@@ -328,9 +325,6 @@ export default class Auction extends Vue {
       age: '21 years',
       interests: 'classic',
       collections: 7,
-      wallet: {
-        algop: 6421,
-      },
       profilePhotoUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
     },
   ];

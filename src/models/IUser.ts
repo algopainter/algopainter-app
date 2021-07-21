@@ -5,8 +5,5 @@ export interface IUser {
   age: string;
   interests: string;
   collections: number;
-  wallet: {
-    algop: number;
-  };
   profilePhotoUrl?: string;
 }

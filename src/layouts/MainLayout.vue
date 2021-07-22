@@ -1,21 +1,27 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header class="q-py-lg bg-white">
-      <dashboard-header
-        :leftDrawerOpen="leftDrawerOpen"
-        @connectYourWalletClicked="showModal = true"
-        @openDrawer="openDrawer"
-      />
-    </q-header>
-    <q-drawer v-model="leftDrawerOpen" :width="120" :breakpoint="768">
-      <side-bar />
-    </q-drawer>
-    <q-page-container class="q-px-lg">
-      <router-view />
-      <connect-your-wallet v-if="showModal" />
-      <wrong-chain-dialog v-if="showWrongChainDialog" />
-    </q-page-container>
-  </q-layout>
+  <div class="container">
+    <q-layout view="lHh Lpr lFf ">
+      <q-header class="q-py-lg bg-white row justify-center">
+        <dashboard-header
+          :left-drawer-open="leftDrawerOpen"
+          @connectYourWalletClicked="showModal = true"
+          @openDrawer="openDrawer"
+        />
+      </q-header>
+      <q-drawer
+        v-model="leftDrawerOpen"
+        :width="120"
+        :breakpoint="768"
+      >
+        <side-bar />
+      </q-drawer>
+      <q-page-container class="q-px-lg">
+        <router-view />
+        <connect-your-wallet v-if="showModal" />
+        <wrong-chain-dialog v-if="showWrongChainDialog" />
+      </q-page-container>
+    </q-layout>
+  </div>
 </template>
 
 <script lang="ts">
@@ -79,3 +85,9 @@ export default class MainLayout extends Vue {
   }
 }
 </script>
+<style scoped>
+.container {
+  max-width: 1450px;
+  margin: auto;
+}
+</style>

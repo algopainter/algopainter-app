@@ -314,12 +314,8 @@ export default class Auction extends Vue {
       name: 'Alice',
       email: 'alice.k@email.com',
       age: '32 years',
-      country: 'CA',
       interests: 'digital, fractal, urban, classic',
       collections: 2,
-      wallet: {
-        algop: 9102,
-      },
       profilePhotoUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
     },
     {
@@ -327,12 +323,8 @@ export default class Auction extends Vue {
       name: 'Mike',
       email: 'mike@email.com',
       age: '21 years',
-      country: 'AR',
       interests: 'classic',
       collections: 7,
-      wallet: {
-        algop: 6421,
-      },
       profilePhotoUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
     },
   ];

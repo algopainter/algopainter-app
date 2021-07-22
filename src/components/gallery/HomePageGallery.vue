@@ -1,6 +1,8 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
-    <div class="header">
+    <div
+      class="header q-gutter-xs"
+    >
       <algo-button
         :label="$t('dashboard.homePage.gwei')"
         class="q-mr-xs"
@@ -419,6 +421,14 @@ export default class HomePageGallery extends Vue {
   color: #333;
   font-weight: bold;
   border: 2px solid #f4538d;
+}
+
+body.screen--xs {
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 </style>

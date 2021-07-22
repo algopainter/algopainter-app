@@ -11,7 +11,7 @@
         />
       </div>
     </div>
-    <div class="col-12 col-lg-3">
+    <div class="col-12 col-lg-3 q-pt-md column items-center no-wrap">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
@@ -23,7 +23,7 @@
           <latest-bids-item :bid="bid" />
         </div>
       </div>
-      <div class="q-pt-md">
+      <div class="q-pt-md row justify-center">
         <algo-button
           color="primary"
         >

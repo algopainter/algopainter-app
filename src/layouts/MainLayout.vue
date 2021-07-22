@@ -35,9 +35,11 @@ import WrongChainDialog from 'components/common/WrongChainDialog.vue';
   },
   watch: {
     isConnected: ['refreshModal'],
+    networkInfo: ['refreshWrongChainDialog'],
   },
   computed: {
     isConnected: false,
+    networkInfo: false,
   },
 })
 export default class MainLayout extends Vue {
@@ -64,8 +66,16 @@ export default class MainLayout extends Vue {
     return this.$store.state.user.isConnected;
   }
 
+  get networkInfo() {
+    return this.$store.state.user.networkInfo;
+  }
+
   refreshModal() {
     this.showModal = !this.isConnected;
+  }
+
+  refreshWrongChainDialog() {
+    this.showWrongChainDialog = (this.networkInfo?.id !== 56);
   }
 }
 </script>

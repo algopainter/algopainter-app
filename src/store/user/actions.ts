@@ -70,7 +70,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
 
     provider.on('chainChanged', () => {
       //window.location.reload();
-      commitUserData(commit);
+      void commitUserData(commit);
     });
 
     provider.on('disconnect', () => {

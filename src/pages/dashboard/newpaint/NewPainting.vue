@@ -147,6 +147,10 @@ export default class NewPainting extends Vue {
       label: 'Colorful blocks',
     },
     {
+      value: 'Colorful paths',
+      label: 'Colorful paths',
+    },
+    {
       value: 'Hot flows',
       label: 'Hot flows',
     },
@@ -175,8 +179,16 @@ export default class NewPainting extends Vue {
       label: 'Big Wall',
     },
     {
+      value: 'Room',
+      label: 'Room',
+    },
+    {
       value: 'Bedroom',
       label: 'Bedroom',
+    },
+    {
+      value: 'Open Gallery',
+      label: 'Open Gallery',
     },
     {
       value: 'High-Tech Gallery',

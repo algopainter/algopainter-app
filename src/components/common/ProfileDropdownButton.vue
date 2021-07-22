@@ -85,7 +85,7 @@ import { Options, Vue } from 'vue-class-component';
   },
 })
 export default class ProfileDropdownButton extends Vue {
-  balance: number = 0;
+  balance: string = '';
 
   get isConnected() {
     return this.$store.state.user.isConnected;
@@ -134,12 +134,12 @@ export default class ProfileDropdownButton extends Vue {
   async fetchAccountBalance() {
     const algopainter = new AlgoPainterTokenProxy(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.$store.getters['user/networkInfo']
+      this.$store.getters['user/networkInfo'],
     );
     this.balance = (await algopainter.balanceOf(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.$store.getters['user/account']
-    )) as number;
+      this.$store.getters['user/account'],
+    )) as string;
   }
 }
 </script>

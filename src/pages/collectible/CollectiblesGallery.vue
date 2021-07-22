@@ -1,5 +1,7 @@
 <template>
-  <gallery />
+  <gallery
+    @favoriteClicked="favoriteClicked"
+  />
 </template>
 
 <script>
@@ -14,6 +16,8 @@ import {
   },
 })
 export default class CollectiblesGallery extends Vue {
-
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <q-layout view="lHh Lpr lFf">
-      <q-header class="q-py-lg bg-white ">
+    <q-layout view="lHh Lpr lFf ">
+      <q-header class="q-py-lg bg-white row justify-center">
         <dashboard-header
           :left-drawer-open="leftDrawerOpen"
           @connectYourWalletClicked="showModal = true"
@@ -74,5 +74,6 @@ export default class MainLayout extends Vue {
 <style scoped>
 .container {
   max-width: 1450px;
+  margin: auto;
 }
 </style>

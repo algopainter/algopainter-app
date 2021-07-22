@@ -9,38 +9,17 @@
           round
         >
           <img :src="person.picture">
-          <q-tooltip>{{ person.name }}</q-tooltip>
+
+          <q-tooltip
+            class="bg-primary"
+          >
+            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+          </q-tooltip>
         </q-avatar>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <div>
-          <q-btn-dropdown
-            class="btn-dropdown"
-            dropdown-icon="mdi-dots-horizontal"
-          >
-            <q-list>
-              <q-item
-                v-for="opcoesredes in socialNetworks"
-                :key="opcoesredes.value"
-                v-close-popup
-                clickable
-                @click="share(auction.art.id, opcoesredes.label)"
-              >
-                <q-item-section>
-                  <q-item-label>
-                    <q-icon
-                      color="primary"
-                      size="sm"
-                      :name="opcoesredes.name"
-                    />
-                    {{ opcoesredes.label }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </div>
+        <ShareArtIcons :art="auction.art" />
         <div class="col-12 col-md-1">
           <LikeAnimation
             @favoriteClicked="favoriteClicked()"
@@ -80,7 +59,7 @@
         color="primary"
         :label="$t('common.placeABid')"
         icon-right="mdi-arrow-right"
-        to="/auctions/123"
+        :to="`/auctions/${auction.id}`"
       />
     </div>
   </div>
@@ -93,6 +72,7 @@ import { Vue, Options, prop } from 'vue-class-component';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
+import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 
 class Props {
   auction = prop({
@@ -104,10 +84,12 @@ class Props {
 interface Ioptions {
   socialNetworks: string;
 }
+
 @Options({
   components: {
     AlgoButton,
     LikeAnimation,
+    ShareArtIcons,
   },
   watch: {
     isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
@@ -160,6 +142,26 @@ export default class AuctionItem extends Vue.with(Props) {
       name: 'mdi-email',
     },
   ]
+
+  isAuctionFavorite: boolean = false;
+
+  favoriteAuction() {
+    this.isAuctionFavorite = !this.isAuctionFavorite;
+  }
+
+  incrementCounter() {
+    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
+  }
+
+  postFavoriteAuction() {
+  // post http request
+    return true;
+  }
+
+  // FAKE DATA
+  favoriteCounter: number = parseInt(
+    (Math.random() * 100).toString(),
+  );
 }
 </script>
 

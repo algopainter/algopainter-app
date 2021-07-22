@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row q-col-gutter-xl items-center">
-      <div class="col-12 col-sm-6 col-xl-8">
+      <div class="col-12 col-sm-6 col-xl-6">
         <div class="user-info flex items-center q-col-gutter-lg">
           <div class="picture">
             <q-img
@@ -18,12 +18,6 @@
             </div>
             <div class="details">
               {{ user.age }}
-            </div>
-            <div class="details country-flag">
-              <img
-                src="https://lipis.github.io/flag-icon-css/flags/4x3/gb.svg"
-              >
-              {{ user.country }}
             </div>
             <div class="details text-grey-5">
               {{ user.interests }}
@@ -43,7 +37,7 @@
           </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-xl-4">
+      <div class="col-12 col-sm-6 col-xl-6">
         <div class="row q-col-gutter-lg">
           <div class="col-12 col-lg-6 text-primary text-center">
             <div class="text-h3 text-bold">
@@ -57,8 +51,18 @@
             <div class="text-h3 text-bold">
               {{ $t('common.coinSymbol') }}
             </div>
-            <div class="text-h1 text-bold q-py-xl">
-              {{ $n(user.wallet.algop) }}
+            <div
+              class="text-h3 text-bold q-py-md"
+            >
+              {{ formatAccountBalance() }}
+              <q-tooltip
+                anchor="top middle"
+                self="top middle"
+                class="bg-primary"
+                :offset="[7, 7]"
+              >
+                {{ $t(`dashboard.algop`) }} {{ balance }}
+              </q-tooltip>
             </div>
             <algo-button
               size="lg"
@@ -82,10 +86,19 @@ import { Vue, Options } from 'vue-class-component';
 
 import { IUser } from 'src/models/IUser';
 import AlgoButton from '../common/Button.vue';
+import { fetchAccountBalance } from 'src/helpers/user';
 
 @Options({
   components: {
     AlgoButton,
+  },
+  computed: {
+    isConnected: false,
+    accountAddress: '',
+  },
+  watch: {
+    isConnected: ['setAccountBalance'],
+    accountAddress: ['setAccountBalance'],
   },
 })
 export default class AccountDetails extends Vue {
@@ -94,13 +107,29 @@ export default class AccountDetails extends Vue {
     name: 'Natasha',
     email: 'natasha.k@gmail.com',
     age: '27 years',
-    country: 'UK',
     interests: 'abstract, modern, digital, fractal, urban, classic',
     collections: 8,
-    wallet: {
-      algop: 1302,
-    },
   };
+
+  balance: string = '';
+
+  get isConnected() {
+    return this.$store.state.user.account;
+  }
+
+  async setAccountBalance() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    this.balance = await fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
+  }
+
+  formatAccountBalance() {
+    const [integerPart, decimalPart] = this.balance.toString().split('.');
+    if (!decimalPart) {
+      return integerPart;
+    }
+    const slicedDecimal: string = decimalPart.slice(0, 2);
+    return [integerPart, slicedDecimal + '...'].join('.');
+  }
 }
 </script>
 

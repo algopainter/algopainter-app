@@ -9,38 +9,16 @@
           round
         >
           <img :src="person.picture">
-          <q-tooltip>{{ person.name }}</q-tooltip>
+          <q-tooltip
+            class="bg-primary"
+          >
+            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+          </q-tooltip>
         </q-avatar>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <div>
-          <q-btn-dropdown
-            class="btn-dropdown"
-            dropdown-icon="mdi-dots-horizontal"
-          >
-            <q-list>
-              <q-item
-                v-for="opcoesredes in socialNetworks"
-                :key="opcoesredes.value"
-                v-close-popup
-                clickable
-                @click="share(galleryItem.art.id, opcoesredes.label)"
-              >
-                <q-item-section>
-                  <q-item-label>
-                    <q-icon
-                      color="primary"
-                      size="sm"
-                      :name="opcoesredes.name"
-                    />
-                    {{ opcoesredes.label }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </div>
+        <ShareArtIcons :art="galleryItem.art" />
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
             <LikeAnimation
@@ -61,6 +39,15 @@
       <div class="img-description">
         <p>{{ galleryItem.description }}</p>
       </div>
+      <div class="row justify-center">
+        <algoButton
+          icon="visibility"
+          class="full-width q-my-md "
+          color="primary"
+          :label="$t('dashboard.auctionPage.btnView')"
+          :to="`/collections/${galleryItem.id}`"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -72,6 +59,7 @@ import { Vue, Options, prop } from 'vue-class-component';
 import { IGallery } from 'src/models/IGallery';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
+import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 
 class Props {
   galleryItem = prop({
@@ -83,10 +71,15 @@ class Props {
 interface Ioptions {
   socialNetworks: string;
 }
+
 @Options({
   components: {
     AlgoButton,
     LikeAnimation,
+    ShareArtIcons,
+  },
+  watch: {
+    isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
@@ -134,6 +127,24 @@ export default class GalleryItem extends Vue.with(Props) {
       name: 'mdi-email',
     },
   ]
+
+  favoriteAuction() {
+    this.isAuctionFavorite = !this.isAuctionFavorite;
+  }
+
+  incrementCounter() {
+    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
+  }
+
+  postFavoriteAuction() {
+  // post http request
+    return true;
+  }
+
+  // FAKE DATA
+  favoriteCounter: number = parseInt(
+    (Math.random() * 100).toString(),
+  );
 }
 </script>
 
@@ -141,14 +152,6 @@ export default class GalleryItem extends Vue.with(Props) {
 
 .container {
   padding: 0 1rem 0 0;
-}
-
-.btn-dropdown{
-  color: #f4538d;
-}
-.btn-dropdown:before{
-  box-shadow: none;
-  border: none;
 }
 .users {
   .q-avatar:not(:first-child) {

@@ -1,16 +1,18 @@
 <template>
-  <q-toolbar class="q-pa-none header">
+  <q-toolbar class="container  q-pa-none header">
     <q-img
       src="../assets/icons/ALGOP.svg"
       class="btn-drawer q-ml-lg"
       :class="[leftDrawerOpen ? 'hide' : 'show']"
       @click="moveDrawer"
     />
-    <q-toolbar-title class="title">
+    <q-toolbar-title class="title col-xs-6 col-sm-8 col-md-10 col-lg-10">
       {{ $route.meta.title }}
     </q-toolbar-title>
-    <nav class="q-pr-lg nav-bar text-primary">
+    <nav class=" nav-bar text-primary col-xs-6 col-sm-4 col-md-2 col-lg-2">
+      <profile-dropdown-button v-if="isConnected" />
       <algo-button
+        v-else
         :label="$t('dashboard.connectToYourWallet')"
         color="primary"
         outline
@@ -23,6 +25,7 @@
 <script lang="ts">
 import { Options, Vue, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
+import ProfileDropdownButton from 'components/common/ProfileDropdownButton.vue';
 
 class Props {
   leftDrawerOpen = prop({
@@ -34,9 +37,13 @@ class Props {
   emits: ['connectYourWalletClicked', 'openDrawer'],
   components: {
     AlgoButton,
+    ProfileDropdownButton,
+  },
+  computed: {
+    isConnected: false,
   },
   /* watch: {
-    leftDrawerOpen = 
+    leftDrawerOpen =
   }, */
 })
 export default class DashboardHeader extends Vue.with(Props) {
@@ -44,6 +51,10 @@ export default class DashboardHeader extends Vue.with(Props) {
 
   connectYourWalletClicked() {
     this.$emit('connectYourWalletClicked');
+  }
+
+  get isConnected() {
+    return this.$store.state.user.isConnected;
   }
 
   moveDrawer() {
@@ -74,7 +85,11 @@ export default class DashboardHeader extends Vue.with(Props) {
   }
 }
 
-@media(max-width: 450px) {
+.container{
+  max-width: 1350px;
+}
+
+@media (max-width: 450px) {
   .header {
     display: flex;
     justify-content: space-between;
@@ -85,7 +100,6 @@ export default class DashboardHeader extends Vue.with(Props) {
       display: none;
     }
     .nav {
-
     }
   }
 }

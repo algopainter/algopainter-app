@@ -1,5 +1,8 @@
 <template>
-  <avatar-section class="q-py-md" :imageUrl="bid.user.profilePhotoUrl">
+  <avatar-section
+    class="q-py-md"
+    :image-url="bid.user.profilePhotoUrl"
+  >
     <template #title>
       <div class="text-bold">
         <i18n-t keypath="dashboard.auctionPage.previousBid">

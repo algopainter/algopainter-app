@@ -5,6 +5,10 @@ export default {
   connectToYourWallet: 'Connect wallet',
   walletConnect: 'WalletConnect',
   metaMask: 'MetaMask',
+  tokenBalance: '{amount} {token}',
+  buyToken: 'Buy {token}',
+  editProfileTerm: 'Edit Profile',
+  balance: 'Balance',
   homePage: {
     title: 'My Account',
     editAccount: 'Edit Account',
@@ -22,6 +26,7 @@ export default {
     expressions: 'Expressions',
     monero: 'Monero',
     loadMore: 'Load More',
+    colon: ':',
   },
   newPainting: {
     title: 'New Painting',
@@ -110,12 +115,13 @@ export default {
     investors: 'Investors',
     liked: 'Liked!',
     placeABid: 'Place a Bid',
+    btnView: 'View Art',
   },
   editProfile: {
     title: 'Edit Profile',
     name: 'Name:',
     email: 'Email:',
-    custom: 'Custom',
+    custom: 'Custom URL',
     webSite: 'Website ou portifolio',
     bio: 'Bio:',
     chooseFile: 'Choose File',
@@ -129,5 +135,14 @@ export default {
     monero: 'Monero',
     myPainting: 'My Painting',
     newPainting: 'New Painting',
+  },
+  viewArt: {
+    title: 'Your Art',
+    goGallery: 'Go to Gallery',
+    details: 'Details',
+    algoPainter: 'AlgoPainter',
+    owner: 'Owner',
+    description: 'Description',
+    btnCreatepainter: ' I want to create a painting like that!',
   },
 };

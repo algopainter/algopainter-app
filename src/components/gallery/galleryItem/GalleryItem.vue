@@ -9,38 +9,16 @@
           round
         >
           <img :src="person.picture">
-          <q-tooltip>{{ person.name }}</q-tooltip>
+          <q-tooltip
+            class="bg-primary"
+          >
+            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+          </q-tooltip>
         </q-avatar>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <div>
-          <q-btn-dropdown
-            class="btn-dropdown"
-            dropdown-icon="mdi-dots-horizontal"
-          >
-            <q-list>
-              <q-item
-                v-for="opcoesredes in socialNetworks"
-                :key="opcoesredes.value"
-                v-close-popup
-                clickable
-                @click="share(galleryItem.art.id, opcoesredes.label)"
-              >
-                <q-item-section>
-                  <q-item-label>
-                    <q-icon
-                      color="primary"
-                      size="sm"
-                      :name="opcoesredes.name"
-                    />
-                    {{ opcoesredes.label }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </div>
+        <ShareArtIcons :art="galleryItem.art" />
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
             <LikeAnimation
@@ -61,6 +39,15 @@
       <div class="img-description">
         <p>{{ galleryItem.description }}</p>
       </div>
+      <div class="row justify-center">
+        <algoButton
+          icon="visibility"
+          class="full-width q-my-md "
+          color="primary"
+          :label="$t('dashboard.auctionPage.btnView')"
+          :to="`/collections/${galleryItem.id}`"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -78,10 +65,6 @@ class Props {
     type: Object as PropType<IGallery>,
     required: true,
   });
-}
-
-interface Ioptions {
-  socialNetworks: string;
 }
 @Options({
   components: {
@@ -134,6 +117,7 @@ export default class GalleryItem extends Vue.with(Props) {
       name: 'mdi-email',
     },
   ]
+
 }
 </script>
 
@@ -141,14 +125,6 @@ export default class GalleryItem extends Vue.with(Props) {
 
 .container {
   padding: 0 1rem 0 0;
-}
-
-.btn-dropdown{
-  color: #f4538d;
-}
-.btn-dropdown:before{
-  box-shadow: none;
-  border: none;
 }
 .users {
   .q-avatar:not(:first-child) {

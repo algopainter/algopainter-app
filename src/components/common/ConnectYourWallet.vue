@@ -1,5 +1,9 @@
 <template>
-  <q-dialog ref="dialog" persistent @hide="onDialogHide">
+  <q-dialog
+    ref="dialog"
+    persistent
+    @hide="onDialogHide"
+  >
     <q-card class="q-dialog-plugin q-pa-md">
       <q-card-section class="row q-col-gutter-xl">
         <div class="text-h6">
@@ -11,7 +15,7 @@
           <q-img
             class="wallet"
             src="/images/metamask.png"
-            @click="connectToWallet"
+            @click="connectToMetaMask"
           />
           <div>{{ $t('dashboard.metaMask') }}</div>
         </div>
@@ -19,7 +23,7 @@
           <q-img
             class="wallet"
             src="/images/walletconnect.png"
-            @click="connectToWallet"
+            @click="connectToMetaMask"
           />
           <div>{{ $t('dashboard.walletConnect') }}</div>
         </div>
@@ -56,11 +60,12 @@ export default class ConnectYourWallet extends Vue {
     this.$emit('hide');
   }
 
-  connectToWallet() {
-    this.$store.dispatch('user/connectToWallet', 0).then(
+  connectToMetaMask() {
+    this.$store.dispatch('user/connectToWallet', 'metamask').then(
       (value) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (this.$store.getters['user/isConnected']) {
+          console.log('conectado');
           this.$emit('connected');
         } else {
           console.log('fail when connectToWallet');
@@ -68,7 +73,7 @@ export default class ConnectYourWallet extends Vue {
       },
       (error) => {
         console.log(error);
-      }
+      },
     );
   }
 }

@@ -5,6 +5,7 @@ function state(): UserStateInterface {
     isConnected: false,
     account: undefined,
     error: undefined,
+    networkInfo: undefined,
   };
 }
 

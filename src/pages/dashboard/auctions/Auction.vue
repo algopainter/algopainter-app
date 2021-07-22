@@ -329,6 +329,8 @@ export default class Auction extends Vue {
     id: '1',
     name: 'Abstract Art Bind Number 91',
     source: 'placeholder',
+    owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
+    algopainter: 'Hashley Gwei',
     price: 120,
     bidBack: 0.1,
     keywords: '#Art #Algopainter #Creation',
@@ -341,16 +343,19 @@ export default class Auction extends Vue {
         id: '1',
         name: 'Billy Nguyen',
         picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+        accountable: 'Collection',
       },
       {
         id: '2',
         name: 'Beverley Weaver',
         picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+        accountable: 'Owner',
       },
       {
         id: '3',
         name: 'Leonard Ryan',
         picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+        accountable: 'Creator',
       },
     ],
   };

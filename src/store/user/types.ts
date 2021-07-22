@@ -1,14 +1,7 @@
-import { GetterTree } from 'vuex';
-import { StateInterface } from '..';
 
-export interface UserStateInterface {
-  isConnected: boolean;
-  account?: string;
-  error?: Error;
-}
-
-export interface UserRootGetters extends GetterTree<UserStateInterface, StateInterface> {
-  account: () => string;
+export interface NetworkInfo {
+  id: number;
+  type: string;
 }
 
 interface RequestArguments {
@@ -32,7 +25,7 @@ interface ProviderConnectInfo {
   readonly chainId: string;
 }
 
-export interface EthereumEvent {
+interface EthereumEvent {
   connect: ProviderConnectInfo;
   disconnect: ProviderRpcError;
   accountsChanged: Array<string>;
@@ -66,4 +59,17 @@ export interface Ethereumish {
     callback: (error: never, response: never) => void
   ) => void;
   sendAsync: (request: RequestArguments) => Promise<unknown>;
+}
+
+export interface UserStateInterface {
+  isConnected: boolean;
+  account?: string;
+  error?: Error;
+  networkInfo?: NetworkInfo;
+}
+
+export interface IWeb3Provider {
+  on<K extends EventKeys>(event: K, eventHandler: EventHandler<K>): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  request: (payload: any) => Promise<never>;
 }

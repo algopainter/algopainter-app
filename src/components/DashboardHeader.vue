@@ -1,15 +1,15 @@
 <template>
-  <q-toolbar class="q-pa-none header">
+  <q-toolbar class="container q-pa-none header">
     <q-img
       src="../assets/icons/ALGOP.svg"
       class="btn-drawer q-ml-lg"
       :class="[leftDrawerOpen ? 'hide' : 'show']"
       @click="moveDrawer"
     />
-    <q-toolbar-title class="title">
+    <q-toolbar-title class="title col-xs-6 col-sm-8 col-md-10 col-lg-10">
       {{ $route.meta.title }}
     </q-toolbar-title>
-    <nav class="q-pr-lg nav-bar text-primary">
+    <nav class=" nav-bar text-primary col-xs-6 col-sm-4 col-md-2 col-lg-2">
       <profile-dropdown-button v-if="isConnected" />
       <algo-button
         v-else
@@ -83,6 +83,10 @@ export default class DashboardHeader extends Vue.with(Props) {
     padding: 0 24px;
     cursor: pointer;
   }
+}
+
+.container{
+  max-width: 1350px;
 }
 
 @media (max-width: 450px) {

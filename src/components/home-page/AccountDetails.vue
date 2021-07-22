@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row q-col-gutter-xl items-center">
-      <div class="col-12 col-sm-6 col-xl-8">
+      <div class="col-12 col-sm-6 col-xl-6">
         <div class="user-info flex items-center q-col-gutter-lg">
           <div class="picture">
             <q-img
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-xl-4">
+      <div class="col-12 col-sm-6 col-xl-6">
         <div class="row q-col-gutter-lg">
           <div class="col-12 col-lg-6 text-primary text-center">
             <div class="text-h3 text-bold">

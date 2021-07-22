@@ -27,7 +27,7 @@ import AuctionsList from 'src/components/auctions/AuctionsList.vue';
 })
 export default class HomePage extends Vue {
   favoriteClicked() {
-    this.$emit('favoriteClicked')
+    this.$emit('favoriteClicked');
   }
 }
 </script>

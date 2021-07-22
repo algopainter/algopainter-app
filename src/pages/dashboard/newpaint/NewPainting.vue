@@ -1,5 +1,5 @@
 <template>
-  <q-page
+  <div
     id="new-painting"
     class="row q-pb-lg"
   >
@@ -19,11 +19,11 @@
             <q-input
               v-model="painting.text"
               :label="$t('dashboard.newPainting.typeAText')"
-              maxlength="55"
+              maxlength="64"
               counter
             />
           </div>
-          <div>
+          <!--
             <label>{{ $t('dashboard.newPainting.paintOnWall') }}</label>
             <div class="row q-col-gutter-md">
               <q-radio
@@ -37,7 +37,7 @@
                 :label="$t('dashboard.newPainting.noLabel')"
               />
             </div>
-          </div>
+            -->
           <div>
             <label>{{ $t('dashboard.newPainting.randomColors') }}</label>
             <div class="row q-col-gutter-md">
@@ -65,16 +65,25 @@
             />
           </div>
           <div>
-            <label>{{ $t('dashboard.newPainting.yourInspiration') }}</label>
-            <div class="row">
-              <div>
-                <q-option-group
-                  v-model="painting.inspiration"
-                  :options="inspirationOptions"
-                  color="primary"
-                />
-              </div>
-            </div>
+            <q-select
+              v-model="painting.inspiration"
+              :label="$t('dashboard.newPainting.inspirations')"
+              :options="inspirationValue"
+            />
+          </div>
+          <div>
+            <q-select
+              v-model="painting.exhibition"
+              :label="$t('dashboard.newPainting.exhibition')"
+              :options="exhibitionValue"
+            />
+          </div>
+          <div>
+            <q-select
+              v-model="painting.technique"
+              :label="$t('dashboard.newPainting.technique')"
+              :options="techniqueValue"
+            />
           </div>
           <div class="row justify-center">
             <algo-button
@@ -89,7 +98,7 @@
         </div>
       </div>
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script lang="ts">
@@ -105,6 +114,8 @@ interface IPainting {
   applyRandomColors: boolean;
   inversionProbability: number;
   inspiration: string;
+  exhibition: string;
+  technique: string;
 }
 
 @Options({
@@ -118,7 +129,91 @@ export default class NewPainting extends Vue {
     applyRandomColors: false,
     inversionProbability: 50,
     inspiration: '',
+    exhibition: '',
+    technique: '',
   }
+
+  inspirationValue =[
+    {
+      value: 'Random',
+      label: 'Random',
+    },
+    {
+      value: 'Calm',
+      label: 'Calm',
+    },
+    {
+      value: 'Colorful blocks',
+      label: 'Colorful blocks',
+    },
+    {
+      value: 'Hot flows',
+      label: 'Hot flows',
+    },
+    {
+      value: 'Galaxy',
+      label: 'Galaxy',
+    },
+    {
+      value: 'Madness',
+      label: 'Madness',
+    },
+
+  ]
+
+  exhibitionValue = [
+    {
+      value: 'None',
+      label: 'None',
+    },
+    {
+      value: 'Wall',
+      label: 'Wall',
+    },
+    {
+      value: 'Big Wall',
+      label: 'Big Wall',
+    },
+    {
+      value: 'Bedroom',
+      label: 'Bedroom',
+    },
+    {
+      value: 'High-Tech Gallery',
+      label: 'High-Tech Gallery',
+    },
+    {
+      value: 'PsyVerse',
+      label: 'PsyVerse',
+    },
+  ]
+
+  techniqueValue = [
+    {
+      value: 'Regular',
+      label: 'Regular',
+    },
+    {
+      value: 'Splatters and Drips',
+      label: 'Splatters and Drips',
+    },
+    {
+      value: 'Dripping Paint',
+      label: 'Dripping Paint',
+    },
+    {
+      value: 'Acrylic',
+      label: 'Acrylic',
+    },
+    {
+      value: 'Freedom',
+      label: 'Freedom',
+    },
+    {
+      value: 'Heavy Brush',
+      label: 'Heavy Brush',
+    },
+  ]
 
   private : string = 'line';
   get inspirationOptions() {

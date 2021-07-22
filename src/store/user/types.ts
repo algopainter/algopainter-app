@@ -4,6 +4,10 @@ export interface NetworkInfo {
   type: string;
 }
 
+export interface AccountAddress {
+  address: string;
+}
+
 interface RequestArguments {
   readonly method: string;
   // eslint-disable-next-line @typescript-eslint/ban-types

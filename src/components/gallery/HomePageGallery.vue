@@ -87,6 +87,8 @@ export default class HomePageGallery extends Vue {
       art: {
         id: '1',
         name: '#25 Virtual Reality',
+        algopainter: 'Hashley Gwei',
+        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
         source: 'placeholder',
         price: 120,
         bidBack: 0.1,
@@ -123,6 +125,8 @@ export default class HomePageGallery extends Vue {
       art: {
         id: '2',
         name: '#25 Virtual Reality',
+        algopainter: 'Hashley Gwei',
+        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
         source: 'placeholder',
         price: 120,
         bidBack: 0.1,
@@ -159,6 +163,8 @@ export default class HomePageGallery extends Vue {
       art: {
         id: '3',
         name: '#25 Virtual Reality',
+        algopainter: 'Hashley Gwei',
+        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
         source: 'placeholder',
         price: 120,
         bidBack: 0.1,
@@ -195,6 +201,8 @@ export default class HomePageGallery extends Vue {
       art: {
         id: '4',
         name: '#25 Virtual Reality',
+        algopainter: 'Hashley Gwei',
+        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
         source: 'placeholder',
         price: 120,
         bidBack: 0.1,
@@ -231,6 +239,8 @@ export default class HomePageGallery extends Vue {
       art: {
         id: '5',
         name: '#25 Virtual Reality',
+        algopainter: 'Hashley Gwei',
+        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
         source: 'placeholder',
         price: 120,
         bidBack: 0.1,
@@ -268,6 +278,8 @@ export default class HomePageGallery extends Vue {
         id: '6',
         name: '#25 Virtual Reality',
         source: 'placeholder',
+        algopainter: 'Hashley Gwei',
+        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
         price: 120,
         bidBack: 0.1,
         keywords: '#art',
@@ -303,6 +315,8 @@ export default class HomePageGallery extends Vue {
       art: {
         id: '7',
         name: '#25 Virtual Reality',
+        algopainter: 'Hashley Gwei',
+        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
         source: 'placeholder',
         price: 120,
         bidBack: 0.1,
@@ -339,6 +353,8 @@ export default class HomePageGallery extends Vue {
       art: {
         id: '8',
         name: '#25 Virtual Reality',
+        algopainter: 'Hashley Gwei',
+        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
         source: 'placeholder',
         price: 120,
         bidBack: 0.1,

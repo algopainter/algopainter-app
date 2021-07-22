@@ -85,7 +85,7 @@ import { Options, Vue } from 'vue-class-component';
   },
 })
 export default class ProfileDropdownButton extends Vue {
-  balance: number = 0;
+  balance: string = '';
 
   get isConnected() {
     return this.$store.state.user.isConnected;
@@ -140,7 +140,6 @@ export default class ProfileDropdownButton extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.$store.getters['user/account'],
     )) as string;
-
   }
 }
 </script>

@@ -43,6 +43,7 @@
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
         :gallery-item="galleryItem"
+        @favoriteClicked="favoriteClicked"
       />
     </div>
     <div
@@ -53,6 +54,7 @@
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
         :gallery-item="galleryItem"
+        @favoriteClicked="favoriteClicked"
       />
     </div>
     <div
@@ -63,6 +65,7 @@
         v-for="galleryItem in gallery"
         :key="galleryItem.id"
         :gallery-item="galleryItem"
+        @favoriteClicked="favoriteClicked"
       />
     </div>
     <div class="q-pa-lg flex flex-center">
@@ -97,6 +100,10 @@ export default class Gallery extends Vue {
     return {
       current: ref(3),
     };
+  }
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
   }
 
   currentPage: number = 1;

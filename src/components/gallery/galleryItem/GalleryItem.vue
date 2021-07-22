@@ -21,30 +21,9 @@
         <ShareArtIcons :art="galleryItem.art" />
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
-            <div class="icons text-center flex justify-center">
-              <div class="favorite">
-                <div>
-                  <q-icon
-                    color="primary"
-                    size="1.7rem"
-                    :name="
-                      isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
-                    "
-                    :class="{
-                      press: isAuctionFavorite,
-                      shake: isAuctionFavorite,
-                    }"
-                    @click="favoriteAuction"
-                  />
-                  <div class="text-primary">
-                    {{ favoriteCounter }}
-                  </div>
-                  <span
-                    :class="{ press: isAuctionFavorite } "
-                  >{{ $t('dashboard.auctionPage.liked') }}</span>
-                </div>
-              </div>
-            </div>
+            <LikeAnimation
+              @favoriteClicked="favoriteClicked"
+            />
           </div>
         </div>
       </div>
@@ -79,6 +58,7 @@ import { Vue, Options, prop } from 'vue-class-component';
 
 import { IGallery } from 'src/models/IGallery';
 import AlgoButton from 'components/common/Button.vue';
+import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 
 class Props {
@@ -87,9 +67,15 @@ class Props {
     required: true,
   });
 }
+
+interface Ioptions {
+  socialNetworks: string;
+}
+
 @Options({
   components: {
     AlgoButton,
+    LikeAnimation,
     ShareArtIcons,
   },
   watch: {
@@ -98,6 +84,49 @@ class Props {
 })
 export default class GalleryItem extends Vue.with(Props) {
   isAuctionFavorite: boolean = false;
+
+  share(id: string, socialMedia: string) {
+    const urlsShared: {[index: string]:string} = {
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
+      Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
+      Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
+      Email: 'mailto:[]?subject=AlgoPainter',
+    };
+    const linkElement = document.createElement('a');
+    linkElement.href = (urlsShared[socialMedia]);
+    window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
+  }
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
+
+  options: Ioptions = {
+    socialNetworks: '',
+  }
+
+  socialNetworks = [
+    {
+      value: 0,
+      label: 'Facebook',
+      name: 'facebook',
+    },
+    {
+      value: 0,
+      label: 'Twitter',
+      name: 'mdi-twitter',
+    },
+    {
+      value: 0,
+      label: 'Telegram',
+      name: 'mdi-telegram',
+    },
+    {
+      value: 0,
+      label: 'E-mail',
+      name: 'mdi-email',
+    },
+  ]
 
   favoriteAuction() {
     this.isAuctionFavorite = !this.isAuctionFavorite;

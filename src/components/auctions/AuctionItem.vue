@@ -21,32 +21,9 @@
       <div class="actions flex items-center q-col-gutter-sm">
         <ShareArtIcons :art="auction.art" />
         <div class="col-12 col-md-1">
-          <div class="col-12 col-md-1">
-            <div class="icons text-center flex justify-center">
-              <div class="favorite">
-                <div>
-                  <q-icon
-                    color="primary"
-                    size="1.7rem"
-                    :name="
-                      isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
-                    "
-                    :class="{
-                      press: isAuctionFavorite,
-                      shake: isAuctionFavorite,
-                    }"
-                    @click="favoriteAuction"
-                  />
-                  <div class="text-primary">
-                    {{ favoriteCounter }}
-                  </div>
-                  <span
-                    :class="{ press: isAuctionFavorite } "
-                  >{{ $t('dashboard.auctionPage.liked') }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <LikeAnimation
+            @favoriteClicked="favoriteClicked()"
+          />
         </div>
       </div>
     </div>
@@ -94,6 +71,7 @@ import { Vue, Options, prop } from 'vue-class-component';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
+import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 
 class Props {
@@ -103,16 +81,68 @@ class Props {
   });
 }
 
+interface Ioptions {
+  socialNetworks: string;
+}
+
 @Options({
   components: {
     AlgoButton,
+    LikeAnimation,
     ShareArtIcons,
   },
   watch: {
     isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
   },
+  emits: [
+    'favoriteClicked',
+  ],
 })
 export default class AuctionItem extends Vue.with(Props) {
+  share(id: string, socialMedia: string) {
+    const urlsShared: {[index: string]:string} = {
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
+      Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
+      Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
+      Email: 'mailto:[]?subject=AlgoPainter',
+    };
+    console.log(socialMedia);
+    const linkElement = document.createElement('a');
+    linkElement.href = (urlsShared[socialMedia]);
+    window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
+  }
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
+
+  options: Ioptions = {
+    socialNetworks: '',
+  }
+
+  socialNetworks = [
+    {
+      value: 0,
+      label: 'Facebook',
+      name: 'facebook',
+    },
+    {
+      value: 0,
+      label: 'Twitter',
+      name: 'mdi-twitter',
+    },
+    {
+      value: 0,
+      label: 'Telegram',
+      name: 'mdi-telegram',
+    },
+    {
+      value: 0,
+      label: 'Email',
+      name: 'mdi-email',
+    },
+  ]
+
   isAuctionFavorite: boolean = false;
 
   favoriteAuction() {
@@ -136,6 +166,17 @@ export default class AuctionItem extends Vue.with(Props) {
 </script>
 
 <style lang="scss" scoped>
+.btn-dropdown{
+  color: #f4538d;
+}
+.link-sharer{
+  text-decoration: none;
+  color: black;
+}
+.btn-dropdown:before{
+  box-shadow: none;
+  border: none;
+}
 .users {
   .q-avatar:not(:first-child) {
     margin-left: -8px;
@@ -171,54 +212,4 @@ export default class AuctionItem extends Vue.with(Props) {
   }
 }
 
-.favorite {
-div {
-  height: 40px;
-  margin: 0 auto;
-  position: relative;
-}
-@keyframes fade {
-  0% {
-    color: rgba(255, 255, 255, 0);
-  }
-  50% {
-    color: $primary;
-  }
-  100% {
-    color: rgba(255, 255, 255, 0);
-  }
-}
-span {
-  position: absolute;
-  bottom: 70px;
-  left: 0;
-  right: 0;
-  visibility: hidden;
-  transition: 0.6s;
-  z-index: -2;
-  font-size: 3px;
-  color: transparent;
-  font-weight: 400;
-}
-span.press {
-  bottom: 40px;
-  left: -7px;
-  font-size: 14px;
-  visibility: visible;
-  animation: fade 1s;
-}
-.shake {
-  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
-
-@keyframes shake {
-  40%,
-  60% {
-    transform: translate3d(0, -5px, 0);
-  }
-}
-}
 </style>

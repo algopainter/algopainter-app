@@ -16,7 +16,9 @@
         <side-bar />
       </q-drawer>
       <q-page-container class="q-px-lg">
-        <router-view />
+        <router-view
+          @favoriteClicked="refreshModal"
+        />
         <connect-your-wallet v-if="showModal" />
         <wrong-chain-dialog v-if="showWrongChainDialog" />
       </q-page-container>

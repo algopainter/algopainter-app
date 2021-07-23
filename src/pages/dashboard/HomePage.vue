@@ -1,13 +1,15 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
     <div>
-      <auctions-list />
+      <auctions-list @favoriteClicked="favoriteClicked" />
     </div>
     <div class="header gallery">
       {{ $t('dashboard.homePage.collectiblesGallery') }}
     </div>
     <div>
-      <home-page-gallery />
+      <home-page-gallery 
+        @favoriteClicked="favoriteClicked"
+      />
     </div>
   </q-page>
 </template>
@@ -24,7 +26,9 @@ import AuctionsList from 'src/components/auctions/AuctionsList.vue';
   },
 })
 export default class HomePage extends Vue {
-
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
 }
 </script>
 

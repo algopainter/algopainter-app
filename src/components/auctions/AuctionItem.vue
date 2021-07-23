@@ -38,12 +38,7 @@
       <div>
         <div class="flex items-center q-col-gutter-sm">
           <div class="price">
-            <div>{{ $n(auction.art.price, 'currency') }}</div>
-          </div>
-          <div>
-            {{ $t('dashboard.auctions.numberOfBids', {
-              numberOfBids: auction.numberOfBids,
-            }) }}
+            <div class="row justify-center">{{ $n(auction.art.price, 'currency') }}</div>
           </div>
         </div>
       </div>

@@ -60,7 +60,6 @@ export default {
   auctions: {
     title: 'Auctions',
     hotBids: 'Hot Bids 🔥',
-    numberOfBids: '{numberOfBids} of {numberOfBids}',
     highestBid: 'Highest Bid {highestBid}',
     topSellers: {
       top: 'Top {sellers}',

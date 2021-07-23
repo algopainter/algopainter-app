@@ -113,7 +113,7 @@ export default class AccountDetails extends Vue {
 
   balance: string = '';
 
-  get isConnected() {
+  get accountAddress() {
     return this.$store.state.user.account;
   }
 

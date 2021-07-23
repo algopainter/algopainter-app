@@ -22,7 +22,7 @@ export default {
     sell: 'SELL',
     latestBids: 'Latest bids',
     seeAllBids: 'See all bids',
-    collectiblesGallery: 'Collectibles Gallery',
+    collectiblesGallery: 'Collection Gallery',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',
@@ -123,7 +123,7 @@ export default {
     sChanges: 'Save changes',
   },
   gallery: {
-    title: 'Collectibles Gallery',
+    title: 'Collection Gallery',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',

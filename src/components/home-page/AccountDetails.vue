@@ -122,10 +122,12 @@ export default class AccountDetails extends Vue {
   }
 
   async setAccountBalance() {
-    this.balance = (
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])
-    );
+    if (this.isConnected) {
+      this.balance = (
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])
+      );
+    }
   }
 
   formatAccountBalance() {

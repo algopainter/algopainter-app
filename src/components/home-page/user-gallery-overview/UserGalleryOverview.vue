@@ -1,6 +1,6 @@
 <template>
   <div class="row q-col-gutter-lg">
-    <div class="col-12 col-lg-9 flex q-col-gutter-md">
+    <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
       <div
         v-for="item in galleryItems"
         :key="item.id"
@@ -11,7 +11,7 @@
         />
       </div>
     </div>
-    <div class="col-12 col-lg-3 q-pt-md column items-center no-wrap">
+    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>

@@ -6,4 +6,8 @@ const fetchAccountBalance = async(networkInfo: NetworkInfo, accountAddress: stri
   return (await algopainter.balanceOf(accountAddress)) as number;
 };
 
-export { fetchAccountBalance };
+const helpers = {
+  fetchAccountBalance,
+};
+
+export default helpers;

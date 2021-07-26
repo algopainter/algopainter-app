@@ -50,18 +50,11 @@
       </div>
 
       <div class="highest-bid">
-        <div
-          v-for="(bid, index) in isHot.bids"
-          :key="index"
-        >
-          <div v-if="bid.type === 'highest'">
-            <i18n-t keypath="dashboard.auctions.highestBid">
-              <template #highestBid>
-                <b class="text-primary">{{ `${bid.amount} ${bid.tokenSymbol}` }}</b>
-              </template>
-            </i18n-t>
-          </div>
-        </div>
+        <i18n-t keypath="dashboard.auctions.highestBid">
+          <template #highestBid>
+            <b class="text-primary">{{ `${isHot.highestBid.amount} ${isHot.highestBid.tokenSymbol}` }}</b>
+          </template>
+        </i18n-t>
       </div>
 
       <q-btn

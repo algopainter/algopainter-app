@@ -143,7 +143,6 @@ export default class AuctionsList extends Vue {
   async getDataHotBids() {
     try {
       const data = await api.get('auctions?page=1&perPage=4&isHot=true');
-      console.log(data.data.data);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.areHot = data.data.data as [];
       this.loadingHotBids = false;

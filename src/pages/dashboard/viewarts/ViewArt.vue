@@ -33,24 +33,24 @@
       class="row"
     >
       <div class="col-xs-12 col-sm-6 col-md-6">
-        <div class="float-right">
-          <ShareArtIcons
-            :art="galleryItems.id"
-          />
-        </div>
-        <div class="column items-center">
+        <div class="row justify-center">
           <q-img
             class="img"
             src="../../../assets/placeholder-images/painting.jpg"
           />
-
-          <algo-button
-            color="primary"
-            class="q-my-md"
-            :label="$t('dashboard.viewArt.btnCreatepainter')"
-            to="/new-painting"
-          />
+          <div class="">
+            <ShareArtIcons
+              :art="galleryItems.id"
+            />
+          </div>
         </div>
+
+        <algo-button
+          color="primary"
+          class="btn-new-painting"
+          :label="$t('dashboard.viewArt.btnCreatepainter')"
+          to="/new-painting"
+        />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-4">
         <div class="column items-center">
@@ -152,5 +152,16 @@ export default class ViewArt extends Vue.with(Props) {
 .img{
   width: 80%;
   border-radius:5%
+}
+.btn-new-painting{
+  display: flex;
+  margin: auto;
+  margin-top: 10px
+}
+@media (max-width: 420px) {
+.img{
+  width: 60%;
+  margin-left: 50px;
+}
 }
 </style>

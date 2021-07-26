@@ -6,14 +6,13 @@
           v-for="(bid, index) in isHot.bids"
           :key="index"
         >
-          <!-- q-avatar needs fix: not displaying images correctly -->
           <q-avatar
             v-if="changeAvatar(bid.bidder)"
             size="lg"
             round
           >
-            <!--
-            v-if="changeAvatar(bid.bidder)" 
+            <!-- fix avatar picture inside img
+              v-if="changeAvatar(bid.bidder)"
             -->
             <img
               :src="bidderAvatar"
@@ -44,6 +43,18 @@
     <div class="details q-pa-sm">
       <div class="name">
         {{ isHot.item.title }}
+      </div>
+      <div>
+        <div class="flex items-center q-col-gutter-sm">
+          <!--
+          <div class="price">
+            <div>{{ $n(auction.art.price, 'currency') }}</div>
+          </div>
+          -->
+          <div class="price">
+            <div>{{ isHot.bids[0].tokenSymbol + ' ' + isHot.bids[0].amount }}</div>
+          </div>
+        </div>
       </div>
 
       <div class="highest-bid">
@@ -119,12 +130,9 @@ export default class AuctionItem extends Vue.with(Props) {
     window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
   }
 
-  test: number = 2;
   loading: boolean = true;
   previewImageUrl: string = '';
   bidderAvatar: string = '';
-  /* functionCounter: number = 0;
-  stopFunction: boolean = false; */
 
   changeAvatar(bid: any) {
     if (typeof (bid) !== 'undefined') {

@@ -1,35 +1,37 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
-    <div class="header">
-      <div class="left">
-        <algo-button
-          :label="$t('dashboard.gallery.gwei')"
-          class="q-mr-xs"
-          :class="[currentCollection == 1 ? 'btn-selected' : 'btn-unselected']"
-          @click="currentCollection = 1"
-        />
-        <algo-button
-          :label="$t('dashboard.gallery.expressions')"
-          class="q-mr-xs"
-          :class="[currentCollection == 2 ? 'btn-selected' : 'btn-unselected']"
-          @click="currentCollection = 2"
-        />
-        <algo-button
-          :label="$t('dashboard.gallery.monero')"
-          class="q-mr-xs"
-          :class="[currentCollection == 3 ? 'btn-selected' : 'btn-unselected']"
-          @click="currentCollection = 3"
-        />
+    <div class="header row">
+      <div class="left col-xs-12 col-sm-12 col-md-6 col-lg-8 col-xl-7">
+        <div class="btn-collection">
+          <algo-button
+            :label="$t('dashboard.gallery.gwei')"
+            class="q-mr-xs btn"
+            :class="[currentCollection == 1 ? 'btn-selected' : 'btn-unselected']"
+            @click="currentCollection = 1"
+          />
+          <algo-button
+            :label="$t('dashboard.gallery.expressions')"
+            class="q-mr-xs btn"
+            :class="[currentCollection == 2 ? 'btn-selected' : 'btn-unselected']"
+            @click="currentCollection = 2"
+          />
+          <algo-button
+            :label="$t('dashboard.gallery.monero')"
+            class="q-mr-xs btn"
+            :class="[currentCollection == 3 ? 'btn-selected' : 'btn-unselected']"
+            @click="currentCollection = 3"
+          />
+        </div>
       </div>
-      <div class="right">
+      <div class="right col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
         <algo-button
           :label="$t('dashboard.gallery.myPainting')"
-          class="q-ml-xs btn-size btn-grey"
+          class="q-ml-xs btn-size btn btn-grey"
           outline
         />
         <algo-button
           :label="$t('dashboard.gallery.newPainting')"
-          class="q-ml-xs btn-size"
+          class="q-ml-xs btn btn-size"
           color="primary"
           to="/new-painting"
         />
@@ -448,14 +450,40 @@ export default class Gallery extends Vue {
   border: 2px solid #f4538d;
 }
 
-.btn-size {
+.btn {
   width: 100px;
   height: 44px;
+  min-width: 150px;
 }
 
 .btn-grey {
   color: rgb(185, 185, 185);
   border: 1px solid rgb(185, 185, 185);
+}
+@media (max-width: 420px) {
+  .btn-size {
+    min-width: 150px;
+    float: left;
+  }
+  .header{
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .left{
+    float: bottom;
+  }
+  .right{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .btn-collection{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 </style>

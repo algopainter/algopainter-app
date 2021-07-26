@@ -1,27 +1,30 @@
 <template>
   <div v-if="loading === false">
     <div class="art-header flex q-pb-sm">
-      <div class="users">
-        <q-avatar
+      <div class="users flex q-pb-sm">
+        <div
           v-for="(bid, index) in isHot.bids"
           :key="index"
-          size="lg"
-          round
         >
-          <img
+          <!-- q-avatar needs fix: not displaying images correctly -->
+          <q-avatar
             v-if="changeAvatar(bid.bidder)"
-            :src="bidderAvatar"
+            size="lg"
+            round
           >
-          <!--
-          <div v-if="stopFunction != true">
-          </div>
-          -->
-          <q-tooltip
-            class="bg-primary"
-          >
-            {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
-          </q-tooltip>
-        </q-avatar>
+            <!--
+            v-if="changeAvatar(bid.bidder)" 
+            -->
+            <img
+              :src="bidderAvatar"
+            >
+            <q-tooltip
+              class="bg-primary"
+            >
+              {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
+            </q-tooltip>
+          </q-avatar>
+        </div>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
@@ -41,23 +44,6 @@
     <div class="details q-pa-sm">
       <div class="name">
         {{ isHot.item.title }}
-      </div>
-      <div>
-        <div class="flex items-center q-col-gutter-sm">
-          <!--
-          <div class="price">
-            <div>{{ $n(auction.art.price, 'currency') }}</div>
-          </div>
-          -->
-          <div class="price">
-            <div>{{ isHot.bids[0].tokenSymbol + ' ' + isHot.bids[0].amount }}</div>
-          </div>
-          <div>
-            {{ $t('dashboard.auctions.numberOfBids', {
-              numberOfBids: isHot.bids.length,
-            }) }}
-          </div>
-        </div>
       </div>
 
       <div class="highest-bid">
@@ -90,7 +76,6 @@
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 
-import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
@@ -141,21 +126,18 @@ export default class AuctionItem extends Vue.with(Props) {
   /* functionCounter: number = 0;
   stopFunction: boolean = false; */
 
-  changeAvatar(bid: []/*, length: number */) {
+  changeAvatar(bid: any) {
     if (typeof (bid) !== 'undefined') {
-      this.bidderAvatar = bid.avatar;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.bidderAvatar = bid.avatar as string;
       return true;
     }
-    /* this.functionCounter = this.functionCounter + 1;
-    if (this.functionCounter > length) {
-      this.stopFunction = true;
-      this.functionCounter = 0;
-    } */
     this.bidderAvatar = '';
     return false;
   }
 
   mounted() {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     setTimeout(this.showRun, 0);
   }
 

@@ -132,8 +132,9 @@ export default class AuctionsList extends Vue {
 
   async getData() {
     try {
-      const data = await api.get('auctions?page=4&perPage=1');
+      const data = await api.get('auctions?page=1&perPage=4&isHot=true');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log(data);
       this.areHot = data.data.data as [];
       this.loading = false;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

@@ -1,5 +1,5 @@
 <template>
-  <div class="col-12 text-h6 ">
+  <div class="col-12 text-h6 q-mb-lg">
     {{ $t('createCollectible.create.example') }}
     <section
       v-if="exampleImg === '' "
@@ -77,6 +77,7 @@
 <script lang="ts">
 import { Vue, Options, prop } from 'vue-class-component';
 import AlgoButton from '../../components/common/Button.vue';
+
 class Props {
   idBtn = prop({
     type: String,

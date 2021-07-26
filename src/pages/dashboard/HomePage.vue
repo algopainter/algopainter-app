@@ -7,7 +7,7 @@
       {{ $t('dashboard.homePage.collectiblesGallery') }}
     </div>
     <div>
-      <home-page-gallery 
+      <home-page-gallery
         @favoriteClicked="favoriteClicked"
       />
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar class="container  q-pa-none header">
+  <q-toolbar class="container q-pa-none header">
     <q-img
       src="../assets/icons/ALGOP.svg"
       class="btn-drawer q-ml-lg"
@@ -9,7 +9,7 @@
     <q-toolbar-title class="title col-xs-6 col-sm-8 col-md-10 col-lg-10">
       {{ $route.meta.title }}
     </q-toolbar-title>
-    <nav class=" nav-bar text-primary col-xs-6 col-sm-4 col-md-2 col-lg-2">
+    <nav class=" nav-bar text-primary col-xs-6 col-sm-4 col-md-2 col-lg-2 q-mr-md">
       <profile-dropdown-button v-if="isConnected" />
       <algo-button
         v-else

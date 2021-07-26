@@ -1,27 +1,33 @@
 <template>
-  <div>
+  <div v-if="loading === false">
     <div class="art-header flex q-pb-sm">
-      <div class="users">
-        <q-avatar
-          v-for="person in auction.art.importantPeople"
-          :key="person.id"
-          size="lg"
-          round
+      <div class="users flex q-pb-sm">
+        <div
+          v-for="(bid, index) in isHot.bids"
+          :key="index"
         >
-          <img :src="person.picture">
-
-          <q-tooltip
-            class="bg-primary"
+          <q-avatar
+            v-if="changeAvatar(bid.bidder)"
+            size="lg"
+            round
           >
-            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
-          </q-tooltip>
-        </q-avatar>
+            <img
+              :src="bid.bidder.avatar"
+            >
+            <q-tooltip
+              class="bg-primary"
+            >
+              {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
+            </q-tooltip>
+          </q-avatar>
+        </div>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <ShareArtIcons :art="auction.art" />
+        <ShareArtIcons :art="isHot._id" />
         <div class="col-12 col-md-1">
           <LikeAnimation
+            :likes="isHot.item.likes"
             @favoriteClicked="favoriteClicked()"
           />
         </div>
@@ -29,32 +35,34 @@
     </div>
     <q-img
       class="art-image"
-      src="../../assets/placeholder-images/painting.jpg"
+      :src="previewImageUrl"
     />
     <div class="details q-pa-sm">
       <div class="name">
-        {{ auction.art.name }}
+        {{ isHot.item.title }}
       </div>
       <div>
         <div class="flex items-center q-col-gutter-sm">
           <div class="price">
-            <div class="row justify-center">{{ $n(auction.art.price, 'currency') }}</div>
+            <div>{{ isHot.bids[0].tokenSymbol + ' ' + isHot.bids[0].amount }}</div>
           </div>
         </div>
       </div>
+
       <div class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
           <template #highestBid>
-            <b class="text-primary">{{ `${auction.highestBid}WETH` }}</b>
+            <b class="text-primary">{{ `${isHot.highestBid.amount} ${isHot.highestBid.tokenSymbol}` }}</b>
           </template>
         </i18n-t>
       </div>
+
       <q-btn
         flat
         color="primary"
         :label="$t('common.placeABid')"
         icon-right="mdi-arrow-right"
-        :to="`/auctions/${auction.id}`"
+        :to="`/auctions/${isHot._id}`"
       />
     </div>
   </div>
@@ -64,14 +72,14 @@
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 
-import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 
 class Props {
-  auction = prop({
-    type: Object as PropType<IAuctionItem>,
+  isHot = prop({
+    type: Object as PropType<IAuctionItem2>,
     required: true,
   });
 }
@@ -105,6 +113,29 @@ export default class AuctionItem extends Vue.with(Props) {
     const linkElement = document.createElement('a');
     linkElement.href = (urlsShared[socialMedia]);
     window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
+  }
+
+  loading: boolean = true;
+  previewImageUrl: string = '';
+  /* functionCounter: number = 0;
+  stopFunction: boolean = false; */
+
+  changeAvatar(bid: any) {
+    if (typeof (bid) !== 'undefined') {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      return true;
+    }
+    return false;
+  }
+
+  mounted() {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    setTimeout(this.showRun, 0);
+  }
+
+  showRun() {
+    this.loading = false;
+    this.previewImageUrl = this.isHot.item.previewImageUrl;
   }
 
   favoriteClicked() {

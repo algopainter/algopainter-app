@@ -3,11 +3,13 @@
     <div class="header">
       {{ $t('dashboard.auctions.hotBids') }}
     </div>
-    <div class="flex q-col-gutter-md">
+    <div
+      v-if="loadingHotBids === false"
+      class="flex q-col-gutter-md">
       <auction-item
-        v-for="auction in auctions"
-        :key="auction.id"
-        :auction="auction"
+        v-for="isHot in areHot"
+        :key="isHot._id"
+        :is-hot="isHot"
         @favoriteClicked="favoriteClicked()"
       />
     </div>
@@ -33,63 +35,67 @@
         />
       </div>
     </div>
-    <div
-      v-if="currentOptionsTop.id == 1"
-      class="top-sellers q-pb-xl"
-    >
-      <div class="flex q-col-gutter-xl">
-        <div
-          v-for="seller, index in buyTopSellers"
-          :key="seller.id"
-        >
-          <div class="flex q-col-gutter-md items-center">
-            <div class="text-h6 text-bold">
-              {{ index + 1 }}
-            </div>
-            <div>
-              <q-avatar
-                round
-                size="64px"
-              >
-                <img :src="seller.picture">
-              </q-avatar>
-            </div>
-            <div>
-              <div class="text-h5 text-bold">
-                {{ seller.name }}
+    <div v-if="currentOptionsTop.id === 1">
+      <div
+        v-if="loadingTopSellers === false"
+        class="top-sellers q-pb-xl"
+      >
+        <div class="flex q-col-gutter-xl">
+          <div
+            v-for="(seller, index) in TopSellers"
+            :key="index"
+          >
+            <div class="flex q-col-gutter-md items-center">
+              <div class="text-h6 text-bold">
+                {{ index + 1 }}
               </div>
-              <div>{{ $n(seller.sellValue, 'currency',) }}</div>
+              <div>
+                <q-avatar
+                  round
+                  size="64px"
+                >
+                  <img :src="seller.avatar">
+                </q-avatar>
+              </div>
+              <div>
+                <div class="text-h5 text-bold">
+                  {{ seller.name }}
+                </div>
+                <div>{{ $n(seller.amount, 'currency',) }}</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div
-      v-if="currentOptionsTop.id == 2"
-      class="top-sellers q-pb-xl"
-    >
-      <div class="flex q-col-gutter-xl">
-        <div
-          v-for="seller, index in sellTopSellers"
-          :key="seller.id"
-        >
-          <div class="flex q-col-gutter-md items-center">
-            <div class="text-h6 text-bold">
-              {{ index + 1 }}
-            </div>
-            <div>
-              <q-avatar
-                round
-                size="64px"
-              >
-                <img :src="seller.picture">
-              </q-avatar>
-            </div>
-            <div>
-              <div class="text-h5 text-bold">
-                {{ seller.name }}
+    <div v-if="currentOptionsTop.id === 2">
+      <div
+        v-if="loadingTopBuyers === false"
+        class="top-sellers q-pb-xl"
+      >
+        <div class="flex q-col-gutter-xl">
+          <div
+            v-for="(seller, index) in TopBuyers"
+            :key="index"
+          >
+            <div class="flex q-col-gutter-md items-center">
+              <div class="text-h6 text-bold">
+                {{ index + 1 }}
               </div>
-              <div>{{ $n(seller.sellValue, 'currency') }}</div>
+              <div>
+                <q-avatar
+                  round
+                  size="64px"
+                >
+                  <img :src="seller.avatar">
+                </q-avatar>
+              </div>
+              <div>
+                <div class="text-h5 text-bold">
+                  {{ seller.name }}
+                </div>
+                <div>{{ $n(seller.amount, 'currency') }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -108,9 +114,11 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
+import { ITopSellersBuyers } from 'src/models/ITopSellersBuyers';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
+import { api } from 'src/boot/axios';
 
 @Options({
   components: {
@@ -119,209 +127,55 @@ import AlgoButton from 'components/common/Button.vue';
   },
 })
 export default class AuctionsList extends Vue {
+  TopSellers: ITopSellersBuyers[] = [];
+  TopBuyers: ITopSellersBuyers[] = [];
+  areHot: IAuctionItem2[] = [];
+  loadingHotBids: boolean = true;
+  loadingTopSellers: boolean = true;
+  loadingTopBuyers: boolean = true;
+
+  mounted() {
+    void this.getDataHotBids();
+    void this.getDataTopSellers();
+    void this.getDataTopBuyers();
+  }
+
+  async getDataHotBids() {
+    try {
+      const data = await api.get('auctions?page=1&perPage=4&isHot=true');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.areHot = data.data.data as [];
+      this.loadingHotBids = false;
+    } catch (e) {
+      console.log('e', e);
+    }
+  }
+
+  async getDataTopSellers() {
+    try {
+      const data = await api.get('reports/top/sellers');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.TopSellers = data.data as [];
+      this.loadingTopSellers = false;
+    } catch (e) {
+      console.log('e', e);
+    }
+  }
+
+  async getDataTopBuyers() {
+    try {
+      const data = await api.get('reports/top/buyers');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.TopBuyers = data.data as [];
+      this.loadingTopBuyers = false;
+    } catch (e) {
+      console.log('e', e);
+    }
+  }
+
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
-
-  auctions: IAuctionItem[] = [{
-    id: '1',
-    art: {
-      id: '1',
-      name: 'Art Abstract Name',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      keywords: '#art',
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      importantPeople: [{
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-        accountable: 'Collection',
-      },
-      {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-        accountable: 'Owner',
-      },
-      {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-        accountable: 'Creator',
-      }],
-    },
-    numberOfBids: 1,
-    highestBid: 300,
-  }, {
-    id: '2',
-    art: {
-      id: '2',
-      name: 'Art Abstract Name',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      keywords: '#art',
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      importantPeople: [{
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-        accountable: 'Collection',
-      },
-      {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-        accountable: 'Owner',
-      },
-      {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-        accountable: 'Creator',
-      }],
-    },
-    numberOfBids: 1,
-    highestBid: 300,
-  }, {
-    id: '3',
-    art: {
-      id: '3',
-      name: 'Art Abstract Name',
-      source: 'placeholder',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      price: 120,
-      bidBack: 0.1,
-      keywords: '#art',
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      importantPeople: [{
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-        accountable: 'Collection',
-      },
-      {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-        accountable: 'Owner',
-      },
-      {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-        accountable: 'Creator',
-      }],
-    },
-    numberOfBids: 1,
-    highestBid: 300,
-  }, {
-    id: '4',
-    art: {
-      id: '4',
-      name: 'Art Abstract Name',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      keywords: '#art',
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      importantPeople: [{
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-        accountable: 'Collection',
-      },
-      {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-        accountable: 'Owner',
-      },
-      {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-        accountable: 'Creator',
-      }],
-    },
-    numberOfBids: 1,
-    highestBid: 300,
-  }];
-
-  buyTopSellers: unknown[] = [{
-    id: '1',
-    name: 'Amy',
-    sellValue: 10000,
-    picture: 'https://randomuser.me/api/portraits/women/73.jpg',
-  }, {
-    id: '2',
-    name: 'Roland',
-    sellValue: 3050,
-    picture: 'https://randomuser.me/api/portraits/men/51.jpg',
-  }, {
-    id: '3',
-    name: 'Leona',
-    sellValue: 2650,
-    picture: 'https://randomuser.me/api/portraits/women/77.jpg',
-  }, {
-    id: '4',
-    name: 'Perry',
-    sellValue: 2450,
-    picture: 'https://randomuser.me/api/portraits/men/77.jpg',
-  }, {
-    id: '5',
-    name: 'Kylie',
-    sellValue: 2150,
-    picture: 'https://randomuser.me/api/portraits/women/44.jpg',
-  }];
-
-  sellTopSellers: unknown[] = [{
-    id: '1',
-    name: 'Jess',
-    sellValue: 11450,
-    picture: 'https://randomuser.me/api/portraits/women/50.jpg',
-  }, {
-    id: '2',
-    name: 'Fergus',
-    sellValue: 8450,
-    picture: 'https://randomuser.me/api/portraits/men/30.jpg',
-  }, {
-    id: '3',
-    name: 'Vif',
-    sellValue: 6450,
-    picture: 'https://randomuser.me/api/portraits/women/20.jpg',
-  }, {
-    id: '4',
-    name: 'Therry',
-    sellValue: 5450,
-    picture: 'https://randomuser.me/api/portraits/men/10.jpg',
-  }, {
-    id: '5',
-    name: 'Kyle',
-    sellValue: 5250,
-    picture: 'https://randomuser.me/api/portraits/women/66.jpg',
-  }];
 
   categories: unknown[] = [{
     id: '1',

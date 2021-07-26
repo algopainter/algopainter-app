@@ -86,7 +86,7 @@ import { Vue, Options } from 'vue-class-component';
 
 import { IUser } from 'src/models/IUser';
 import AlgoButton from '../common/Button.vue';
-import { fetchAccountBalance } from 'src/helpers/user';
+import UserUtils from 'src/helpers/user';
 
 @Options({
   components: {
@@ -111,24 +111,29 @@ export default class AccountDetails extends Vue {
     collections: 8,
   };
 
-  balance: string = '';
+  balance: number = 0;
 
   get isConnected() {
+    return this.$store.state.user.isConnected;
+  }
+
+  get accountAddress() {
     return this.$store.state.user.account;
   }
 
   async setAccountBalance() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    this.balance = await fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
+    if (this.isConnected) {
+      this.balance = (
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])
+      );
+    }
   }
 
   formatAccountBalance() {
-    const [integerPart, decimalPart] = this.balance.toString().split('.');
-    if (!decimalPart) {
-      return integerPart;
-    }
-    const slicedDecimal: string = decimalPart.slice(0, 2);
-    return [integerPart, slicedDecimal + '...'].join('.');
+    return UserUtils.formatAccountBalance(
+      this.balance, 2,
+    );
   }
 }
 </script>

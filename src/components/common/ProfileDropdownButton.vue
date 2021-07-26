@@ -67,9 +67,9 @@
 </template>
 
 <script lang="ts">
-import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import AlgoButton from 'components/common/Button.vue';
 import { Options, Vue } from 'vue-class-component';
+import UserUtils from 'src/helpers/user';
 
 @Options({
   components: {
@@ -85,7 +85,7 @@ import { Options, Vue } from 'vue-class-component';
   },
 })
 export default class ProfileDropdownButton extends Vue {
-  balance: string = '';
+  balance: number = 0;
 
   get isConnected() {
     return this.$store.state.user.isConnected;
@@ -96,50 +96,28 @@ export default class ProfileDropdownButton extends Vue {
   }
 
   mounted() {
-    this.setAccountBalance();
+    void this.setAccountBalance();
   }
 
-  setAccountBalance() {
+  async setAccountBalance() {
     if (this.isConnected) {
-      void this.fetchAccountBalance();
+      this.balance = (
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])
+      );
     }
   }
 
   formatedAccount() {
-    const a = this.accountAddress as string;
-    const splited = a.split('');
-    return splited.slice(0, 11).join('') + '...' + splited.slice(-4).join('');
+    return UserUtils.formatedAccount(this.accountAddress as string);
   }
 
-  /**
-   * input/output example
-   *
-   * Input: 6679.690202143615462628
-   * Output: 6679.69...
-   *
-   */
   formatAccountBalance() {
-    const [integerPart, decimalPart] = this.balance.toString().split('.');
-    if (!decimalPart) {
-      return integerPart;
-    }
-    const slicedDecimal: string = decimalPart.slice(0, 2);
-    return [integerPart, slicedDecimal + '...'].join('.');
+    return UserUtils.formatAccountBalance(this.balance, 2);
   }
 
   async goToProfilePage() {
     await this.$router.push('/edit-profile');
-  }
-
-  async fetchAccountBalance() {
-    const algopainter = new AlgoPainterTokenProxy(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.$store.getters['user/networkInfo'],
-    );
-    this.balance = (await algopainter.balanceOf(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.$store.getters['user/account'],
-    )) as string;
   }
 }
 </script>

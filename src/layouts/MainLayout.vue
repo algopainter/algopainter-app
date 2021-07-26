@@ -20,6 +20,7 @@
           @favoriteClicked="refreshModal"
         />
         <connect-your-wallet v-if="showModal" />
+        <wrong-chain-dialog v-if="showWrongChainDialog" />
       </q-page-container>
     </q-layout>
   </div>
@@ -31,18 +32,22 @@ import { Vue, Options } from 'vue-class-component';
 import DashboardHeader from 'components/DashboardHeader.vue';
 import SideBar from 'components/SideBar.vue';
 import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
+import WrongChainDialog from 'components/common/WrongChainDialog.vue';
 
 @Options({
   components: {
     DashboardHeader,
     SideBar,
     ConnectYourWallet,
+    WrongChainDialog,
   },
   watch: {
     isConnected: ['refreshModal'],
+    networkInfo: ['refreshWrongChainDialog'],
   },
   computed: {
     isConnected: false,
+    networkInfo: false,
   },
 })
 export default class MainLayout extends Vue {
@@ -58,6 +63,7 @@ export default class MainLayout extends Vue {
   }
 
   showModal: boolean = false;
+  showWrongChainDialog: boolean = false;
 
   openDrawer() {
     // console.log(this.leftDrawerOpen);
@@ -68,8 +74,16 @@ export default class MainLayout extends Vue {
     return this.$store.state.user.isConnected;
   }
 
+  get networkInfo() {
+    return this.$store.state.user.networkInfo;
+  }
+
   refreshModal() {
     this.showModal = !this.isConnected;
+  }
+
+  refreshWrongChainDialog() {
+    this.showWrongChainDialog = (this.networkInfo?.id !== 56);
   }
 }
 </script>

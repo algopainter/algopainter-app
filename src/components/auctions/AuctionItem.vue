@@ -11,11 +11,8 @@
             size="lg"
             round
           >
-            <!-- fix avatar picture inside img
-              v-if="changeAvatar(bid.bidder)"
-            -->
             <img
-              :src="bidderAvatar"
+              :src="bid.bidder.avatar"
             >
             <q-tooltip
               class="bg-primary"
@@ -46,11 +43,6 @@
       </div>
       <div>
         <div class="flex items-center q-col-gutter-sm">
-          <!--
-          <div class="price">
-            <div>{{ $n(auction.art.price, 'currency') }}</div>
-          </div>
-          -->
           <div class="price">
             <div>{{ isHot.bids[0].tokenSymbol + ' ' + isHot.bids[0].amount }}</div>
           </div>
@@ -132,15 +124,14 @@ export default class AuctionItem extends Vue.with(Props) {
 
   loading: boolean = true;
   previewImageUrl: string = '';
-  bidderAvatar: string = '';
+  /* functionCounter: number = 0;
+  stopFunction: boolean = false; */
 
   changeAvatar(bid: any) {
     if (typeof (bid) !== 'undefined') {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.bidderAvatar = bid.avatar as string;
       return true;
     }
-    this.bidderAvatar = '';
     return false;
   }
 

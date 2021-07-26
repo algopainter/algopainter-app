@@ -28,7 +28,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-class-component';
+import { Vue, Options, prop } from 'vue-class-component';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
+import { PropType } from 'vue';
+
+class Props {
+  likes = prop({
+    type: Object as PropType<IAuctionItem2>,
+    required: true,
+  });
+}
 
 @Options({
   watch: {
@@ -36,7 +45,7 @@ import { Vue, Options } from 'vue-class-component';
   },
 })
 
-export default class LikeAnimation extends Vue {
+export default class LikeAnimation extends Vue.with(Props) {
   isAuctionFavorite: boolean = false;
   digitalWalletConnected: boolean = false;
 
@@ -68,10 +77,7 @@ export default class LikeAnimation extends Vue {
     return true;
   }
 
-  // FAKE DATA
-  favoriteCounter: number = parseInt(
-    (Math.random() * 100).toString(),
-  );
+  favoriteCounter: any = this.likes;
 }
 </script>
 

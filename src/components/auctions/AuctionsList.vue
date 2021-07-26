@@ -3,11 +3,13 @@
     <div class="header">
       {{ $t('dashboard.auctions.hotBids') }}
     </div>
-    <div class="flex q-col-gutter-md">
+    <div
+      v-if="loading === false"
+      class="flex q-col-gutter-md">
       <auction-item
-        v-for="auction in auctions"
-        :key="auction.id"
-        :auction="auction"
+        v-for="isHot in areHot"
+        :key="isHot._id"
+        :is-hot="isHot"
         @favoriteClicked="favoriteClicked()"
       />
     </div>
@@ -109,8 +111,10 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
+import { api } from 'src/boot/axios';
 
 @Options({
   components: {
@@ -119,6 +123,27 @@ import AlgoButton from 'components/common/Button.vue';
   },
 })
 export default class AuctionsList extends Vue {
+  areHot: IAuctionItem2[] = [];
+  loading: boolean = true;
+
+  mounted() {
+    void this.getData();
+  }
+
+  async getData() {
+    try {
+      const data = await api.get('auctions?page=4&perPage=1');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.areHot = data.data.data as [];
+      this.loading = false;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log('data:', data.data.data);
+      console.log(this.areHot);
+    } catch (e) {
+      console.log('e', e);
+    }
+  }
+
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }

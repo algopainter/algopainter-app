@@ -1,27 +1,34 @@
 <template>
-  <div>
+  <div v-if="loading === false">
     <div class="art-header flex q-pb-sm">
       <div class="users">
         <q-avatar
-          v-for="person in auction.art.importantPeople"
-          :key="person.id"
+          v-for="(bid, index) in isHot.bids"
+          :key="index"
           size="lg"
           round
         >
-          <img :src="person.picture">
-
+          <img
+            v-if="changeAvatar(bid.bidder)"
+            :src="bidderAvatar"
+          >
+          <!--
+          <div v-if="stopFunction != true">
+          </div>
+          -->
           <q-tooltip
             class="bg-primary"
           >
-            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+            {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
           </q-tooltip>
         </q-avatar>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <ShareArtIcons :art="auction.art" />
+        <ShareArtIcons :art="isHot._id" />
         <div class="col-12 col-md-1">
           <LikeAnimation
+            :likes="isHot.item.likes"
             @favoriteClicked="favoriteClicked()"
           />
         </div>
@@ -29,37 +36,51 @@
     </div>
     <q-img
       class="art-image"
-      src="../../assets/placeholder-images/painting.jpg"
+      :src="previewImageUrl"
     />
     <div class="details q-pa-sm">
       <div class="name">
-        {{ auction.art.name }}
+        {{ isHot.item.title }}
       </div>
       <div>
         <div class="flex items-center q-col-gutter-sm">
+          <!--
           <div class="price">
             <div>{{ $n(auction.art.price, 'currency') }}</div>
           </div>
+          -->
+          <div class="price">
+            <div>{{ isHot.bids[0].tokenSymbol + ' ' + isHot.bids[0].amount }}</div>
+          </div>
           <div>
             {{ $t('dashboard.auctions.numberOfBids', {
-              numberOfBids: auction.numberOfBids,
+              numberOfBids: isHot.bids.length,
             }) }}
           </div>
         </div>
       </div>
+
       <div class="highest-bid">
-        <i18n-t keypath="dashboard.auctions.highestBid">
-          <template #highestBid>
-            <b class="text-primary">{{ `${auction.highestBid}WETH` }}</b>
-          </template>
-        </i18n-t>
+        <div
+          v-for="(bid, index) in isHot.bids"
+          :key="index"
+        >
+          <div v-if="bid.type === 'highest'">
+            <i18n-t keypath="dashboard.auctions.highestBid">
+              <template #highestBid>
+                <b class="text-primary">{{ `${bid.amount} ${bid.tokenSymbol}` }}</b>
+              </template>
+            </i18n-t>
+          </div>
+        </div>
       </div>
+
       <q-btn
         flat
         color="primary"
         :label="$t('common.placeABid')"
         icon-right="mdi-arrow-right"
-        :to="`/auctions/${auction.id}`"
+        :to="`/auctions/${isHot._id}`"
       />
     </div>
   </div>
@@ -70,13 +91,14 @@ import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 
 class Props {
-  auction = prop({
-    type: Object as PropType<IAuctionItem>,
+  isHot = prop({
+    type: Object as PropType<IAuctionItem2>,
     required: true,
   });
 }
@@ -110,6 +132,36 @@ export default class AuctionItem extends Vue.with(Props) {
     const linkElement = document.createElement('a');
     linkElement.href = (urlsShared[socialMedia]);
     window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
+  }
+
+  test: number = 2;
+  loading: boolean = true;
+  previewImageUrl: string = '';
+  bidderAvatar: string = '';
+  /* functionCounter: number = 0;
+  stopFunction: boolean = false; */
+
+  changeAvatar(bid: []/*, length: number */) {
+    if (typeof (bid) !== 'undefined') {
+      this.bidderAvatar = bid.avatar;
+      return true;
+    }
+    /* this.functionCounter = this.functionCounter + 1;
+    if (this.functionCounter > length) {
+      this.stopFunction = true;
+      this.functionCounter = 0;
+    } */
+    this.bidderAvatar = '';
+    return false;
+  }
+
+  mounted() {
+    setTimeout(this.showRun, 0);
+  }
+
+  showRun() {
+    this.loading = false;
+    this.previewImageUrl = this.isHot.item.previewImageUrl;
   }
 
   favoriteClicked() {

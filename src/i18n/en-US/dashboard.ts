@@ -22,7 +22,7 @@ export default {
     sell: 'SELL',
     latestBids: 'Latest bids',
     seeAllBids: 'See all bids',
-    collectiblesGallery: 'Collectibles Gallery',
+    collectiblesGallery: 'Collection Gallery',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',
@@ -60,7 +60,6 @@ export default {
   auctions: {
     title: 'Auctions',
     hotBids: 'Hot Bids 🔥',
-    numberOfBids: '{numberOfBids} of {numberOfBids}',
     highestBid: 'Highest Bid {highestBid}',
     topSellers: {
       top: 'Top {sellers}',
@@ -124,7 +123,7 @@ export default {
     sChanges: 'Save changes',
   },
   gallery: {
-    title: 'Collectibles Gallery',
+    title: 'Collection Gallery',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',

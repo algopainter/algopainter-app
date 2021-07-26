@@ -28,7 +28,7 @@ export default {
     comingSoon: 'Coming Soon',
   },
   selectAi: {
-    title: 'Select An Artist',
+    title: 'Select collection',
     titleHashly: 'Abstract Unique Art',
     textHashly1: 'Choose a unique and revolutionary style so that our artist can immortalize you in our gallery.',
     textHashly2: 'Our artist exclusively creates a totally unique work of art with the style you choose. Infinite possibilities to create, register and sell your works.',

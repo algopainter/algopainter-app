@@ -38,7 +38,7 @@
     <div v-if="currentOptionsTop.id === 1">
       <div
         v-if="loadingTopSellers === false"
-        class="top-sellers q-pb-xl"
+        class="top-sellers q-pb-md"
       >
         <div class="flex q-col-gutter-xl">
           <div

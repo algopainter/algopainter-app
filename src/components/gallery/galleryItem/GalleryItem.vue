@@ -22,6 +22,7 @@
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
             <LikeAnimation
+              :likes="galleryItem.art.likes"
               @favoriteClicked="favoriteClicked"
             />
           </div>
@@ -30,7 +31,7 @@
     </div>
     <q-img
       class="art-image"
-      src="../../../assets/placeholder-images/painting.jpg"
+      :src="galleryItem.art.source"
     />
     <div class="details q-pa-sm">
       <div class="name">

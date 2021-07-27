@@ -29,25 +29,30 @@
 
 <script lang="ts">
 import { Vue, Options, prop } from 'vue-class-component';
-import { IAuctionItem2 } from 'src/models/IAuctionItem2';
-import { PropType } from 'vue';
 
 class Props {
   likes = prop({
-    type: Object as PropType<IAuctionItem2>,
     required: true,
+    type: Number,
+    default: 0,
   });
 }
 
 @Options({
   watch: {
-    isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
+    isAuctionFavorite: ['postFavoriteAuction'],
+  },
+  computed: {
+    favoriteCounter: 0,
   },
 })
-
 export default class LikeAnimation extends Vue.with(Props) {
   isAuctionFavorite: boolean = false;
   digitalWalletConnected: boolean = false;
+
+  get favoriteCounter() {
+    return this.isAuctionFavorite ? this.likes + 1 : this.likes;
+  }
 
   walletConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -59,8 +64,6 @@ export default class LikeAnimation extends Vue.with(Props) {
   favoriteAuction() {
     if (this.digitalWalletConnected) {
       this.isAuctionFavorite = !this.isAuctionFavorite;
-    } else {
-      this.isAuctionFavorite = false;
     }
   }
 
@@ -68,69 +71,63 @@ export default class LikeAnimation extends Vue.with(Props) {
     this.$emit('favoriteClicked');
   }
 
-  incrementCounter() {
-    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
-  }
-
   postFavoriteAuction() {
-  // post http request
+    // post http request
     return true;
   }
-
-  favoriteCounter: any = this.likes;
 }
 </script>
 
 <style lang="scss" scoped>
 .favorite {
-div {
-  height: 40px;
-  margin: 0 auto;
-  position: relative;
-  cursor: pointer;
-}
-@keyframes fade {
-  0% {
-    color: rgba(255, 255, 255, 0);
+  div {
+    height: 40px;
+    margin: 0 auto;
+    position: relative;
+    cursor: pointer;
   }
-  50% {
-    color: $primary;
+  @keyframes fade {
+    0% {
+      color: rgba(255, 255, 255, 0);
+    }
+    50% {
+      color: $primary;
+    }
+    100% {
+      color: rgba(255, 255, 255, 0);
+    }
   }
-  100% {
-    color: rgba(255, 255, 255, 0);
+  span {
+    position: absolute;
+    bottom: 70px;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+    transition: 0.6s;
+    z-index: -2;
+    font-size: 3px;
+    color: transparent;
+    font-weight: 400;
   }
-}
-span {
-  position: absolute;
-  bottom: 70px;
-  left: 0;
-  right: 0;
-  visibility: hidden;
-  transition: 0.6s;
-  z-index: -2;
-  font-size: 3px;
-  color: transparent;
-  font-weight: 400;
-}
-span.press {
-  bottom: 40px;
-  left: -7px;
-  font-size: 14px;
-  visibility: visible;
-  animation: fade 1s;
-}
-.shake {
-  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
+  span.press {
+    bottom: 40px;
+    left: -7px;
+    font-size: 14px;
+    visibility: visible;
+    animation: fade 1s;
+  }
+  .shake {
+    animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
 
-@keyframes shake {
-  40%,
-  60% {
-    transform: translate3d(0, -5px, 0);
+  @keyframes shake {
+    40%,
+    60% {
+      transform: translate3d(0, -5px, 0);
+    }
   }
-}
 }
 </style>

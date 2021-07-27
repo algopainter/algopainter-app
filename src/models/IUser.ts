@@ -6,4 +6,6 @@ export interface IUser {
   interests: string;
   collections: number;
   profilePhotoUrl?: string;
+  role?: string;
+  avatar?: string;
 }

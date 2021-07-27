@@ -1,4 +1,4 @@
-interface Person {
+export interface Person {
   id: string;
   name: string;
   picture: string;
@@ -18,5 +18,6 @@ export interface IArt {
     creators: number;
     investors: number;
   }
+  likes?: number;
   importantPeople: Person[];
 }

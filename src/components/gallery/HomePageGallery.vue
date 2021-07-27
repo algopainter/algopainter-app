@@ -1,55 +1,22 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
-    <div
-      class="header q-gutter-xs"
-    >
+    <div class="header q-gutter-xs">
       <algo-button
-        :label="$t('dashboard.homePage.gwei')"
+        v-for="collection in collections"
+        :key="collection._id"
+        :label="collection.title"
         class="q-mr-xs"
-        :class="[currentCollection == 1 ? 'btn-selected' : 'btn-unselected']"
-        @click="currentCollection = 1"
-      />
-      <algo-button
-        :label="$t('dashboard.homePage.expressions')"
-        class="q-mr-xs"
-        :class="[currentCollection == 2 ? 'btn-selected' : 'btn-unselected']"
-        @click="currentCollection = 2"
-      />
-      <algo-button
-        :label="$t('dashboard.homePage.monero')"
-        class="q-mr-xs"
-        :class="[currentCollection == 3 ? 'btn-selected' : 'btn-unselected']"
-        @click="currentCollection = 3"
+        :class="[
+          currentCollection._id == collection._id
+            ? 'btn-selected'
+            : 'btn-unselected',
+        ]"
+        @click="collectionClicked(collection)"
       />
     </div>
-    <div
-      v-if="currentCollection === 1"
-      class="flex q-col-gutter-md"
-    >
+    <div class="flex q-col-gutter-md">
       <gallery-item
-        v-for="galleryItem in gallery"
-        :key="galleryItem.id"
-        :gallery-item="galleryItem"
-        @favoriteClicked="favoriteClicked"
-      />
-    </div>
-    <div
-      v-if="currentCollection === 2"
-      class="flex q-col-gutter-md"
-    >
-      <gallery-item
-        v-for="galleryItem in gallery"
-        :key="galleryItem.id"
-        :gallery-item="galleryItem"
-        @favoriteClicked="favoriteClicked"
-      />
-    </div>
-    <div
-      v-if="currentCollection === 3"
-      class="flex q-col-gutter-md"
-    >
-      <gallery-item
-        v-for="galleryItem in gallery"
+        v-for="galleryItem in currentCollectionGallery"
         :key="galleryItem.id"
         :gallery-item="galleryItem"
         @favoriteClicked="favoriteClicked"
@@ -71,10 +38,12 @@
 import { Vue, Options } from 'vue-class-component';
 
 import { IGallery } from 'src/models/IGallery';
-import {
-  GalleryItem,
-} from 'components/gallery';
+import { GalleryItem } from 'components/gallery';
 import AlgoButton from 'components/common/Button.vue';
+import { ICollection } from 'src/models/ICollection';
+import CollectionController from 'src/controllers/collection/CollectionController';
+import { Person } from 'src/models/IArt';
+import { IImage } from 'src/models/IImage';
 
 @Options({
   components: {
@@ -83,318 +52,53 @@ import AlgoButton from 'components/common/Button.vue';
   },
 })
 export default class HomePageGallery extends Vue {
-  currentCollection: number = 1;
+  currentCollection!: ICollection;
+  collections: ICollection[] = [];
+  currentCollectionGallery: IGallery[] = [];
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
 
-  gallery: IGallery[] = [
-    {
-      id: '1',
-      description: 'Dreaming with your eyes open',
+  collectionClicked(collection: ICollection) {
+    this.currentCollection = collection;
+    this.currentCollectionGallery = collection.images.map((image) => 
+      this.mapImageToGalleryItem(image)
+    );
+  }
+
+  mounted() {
+    void this.getCollections();
+  }
+
+  async getCollections() {
+    const collections = await new CollectionController().getCollections();
+    if (collections) {
+      this.collections = collections.slice(0, 3); // Simulation of three items received from api, only
+      this.currentCollection = collections[0];
+      this.currentCollectionGallery = collections[0].images.map((image) =>
+        this.mapImageToGalleryItem(image)
+      );
+    }
+  }
+
+  mapImageToGalleryItem(image: IImage) {
+    return {
+      id: image._id,
+      description: image.description,
       art: {
-        id: '1',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Owner',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Creator',
-          },
-        ],
+        id: image.nft._id,
+        name: image.title,
+        source: image.nft.previewImage,
+        importantPeople: image.users.map((user) => ({
+          ...user,
+          accountable: user.role,
+          picture: user.avatar,
+        })) as Person[],
+        likes: image.likes,
       },
-    },
-    {
-      id: '2',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '2',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Owner',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Creator',
-          },
-        ],
-      },
-    },
-    {
-      id: '3',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '3',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Owner',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Creator',
-          },
-        ],
-      },
-    },
-    {
-      id: '4',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '4',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Owner',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Creator',
-          },
-        ],
-      },
-    },
-    {
-      id: '5',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '5',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Owner',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Creator',
-          },
-        ],
-      },
-    },
-    {
-      id: '6',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '6',
-        name: '#25 Virtual Reality',
-        source: 'placeholder',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Owner',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Creator',
-          },
-        ],
-      },
-    },
-    {
-      id: '7',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '7',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Owner',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Creator',
-          },
-        ],
-      },
-    },
-    {
-      id: '8',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '8',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Owner',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Creator',
-          },
-        ],
-      },
-    },
-  ];
+    } as IGallery;
+  }
 }
 </script>
 
@@ -403,11 +107,11 @@ export default class HomePageGallery extends Vue {
   font-weight: bold;
 }
 
-.footer{
+.footer {
   display: flex;
 }
 
-.btn-unselected{
+.btn-unselected {
   width: 100px;
   height: 44px;
   color: #333;
@@ -430,5 +134,4 @@ body.screen--xs {
     align-items: center;
   }
 }
-
 </style>

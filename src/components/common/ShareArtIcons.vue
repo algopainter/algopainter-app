@@ -10,7 +10,7 @@
           :key="networkOptions.value"
           v-close-popup
           clickable
-          @click="share(art.id, networkOptions.label)"
+          @click="share(sharer, networkOptions.label)"
         >
           <q-item-section>
             <q-item-label>
@@ -30,12 +30,17 @@
 <script lang="ts">
 import { Vue, prop } from 'vue-class-component';
 import { PropType } from 'vue';
-import { IArt } from 'src/models/IArt';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 class Props {
-  art = prop({
-    type: Object as PropType<IArt>,
+  isHot = prop({
+    type: Object as PropType<IAuctionItem2>,
     required: true,
-  });
+  })
+
+  sharer = prop({
+    required: true,
+    type: String,
+  })
 }
 interface Ioptions {
   socialNetworks: string;
@@ -43,8 +48,8 @@ interface Ioptions {
 export default class ShareArtIcons extends Vue.with(Props) {
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
-      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
-      Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fstackoverflow.com%2Fq%2F20956229%2F1101509&picture=http%3A%2F%2Fwww.applezein.net%2Fwordpress%2Fwp-content%2Fuploads%2F2015%2F03%2Ffacebook-logo.jpg&title=A+nice+question+about+Facebook&quote=Does+anyone+know+if+there+have+been+recent+changes+which+could+have+suddenly+stopped+this+from+working%3F&description=Apparently%2C+the+accepted+answer+is+not+correct.`,
+      Twitter: `http://twitter.com/share?text=Im Sharing on Twitter&url=https://stackoverflow.com/users/2943186/youssef-subehi&hashtags=stackoverflow,example,youssefusf`,
       Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
       Email: 'mailto:[]?subject=AlgoPainter',
     };

@@ -26,7 +26,7 @@
       <div class="actions flex items-center q-col-gutter-sm">
         <ShareArtIcons :art="isHot._id" />
         <div class="col-12 col-md-1">
-          <LikeAnimation
+          <likeAnimation
             :likes="isHot.item.likes"
             @favoriteClicked="favoriteClicked()"
           />

@@ -54,7 +54,7 @@
             <div
               class="text-h3 text-bold q-py-md"
             >
-              {{ formatAccountBalance() }}
+              {{ formatedBalance() }}
               <q-tooltip
                 v-if="isConnected"
                 anchor="top middle"
@@ -112,7 +112,7 @@ export default class AccountDetails extends Vue {
     collections: 8,
   };
 
-  balance: string = '';
+  balance: number = 0;
 
   get isConnected() {
     return this.$store.state.user.isConnected;
@@ -126,14 +126,16 @@ export default class AccountDetails extends Vue {
     if (this.isConnected) {
       this.balance = (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])).toString();
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
     }
   }
 
-  formatAccountBalance() {
-    return UserUtils.formatAccountBalance(
-      this.balance, 2,
-    );
+  formatedBalance() {
+    if (this.isConnected) {
+      return UserUtils.formatAccountBalance(this.balance, 2);
+    } else {
+      return null;
+    }
   }
 }
 </script>

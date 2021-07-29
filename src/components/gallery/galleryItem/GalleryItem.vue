@@ -84,12 +84,8 @@ interface Ioptions {
     account: '',
     isConnected: false,
   },
-  watch: {
-    isArtFavorite: ['postFavoriteArt', 'deleteFavoriteArt'],
-  },
 })
 export default class GalleryItem extends Vue.with(Props) {
-  isArtFavorite: boolean = false;
   collectionArtController: CollectionArtController =
     new CollectionArtController();
 
@@ -115,9 +111,13 @@ export default class GalleryItem extends Vue.with(Props) {
     window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
   }
 
-  favoriteClicked() {
+  favoriteClicked(event: unknown) {
     this.$emit('favoriteClicked');
-    this.isArtFavorite = !this.isArtFavorite;
+    this.favoriteArt(event as boolean);
+  }
+
+  favoriteArt(like: boolean) {
+    like ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
   }
 
   options: Ioptions = {
@@ -148,25 +148,19 @@ export default class GalleryItem extends Vue.with(Props) {
   ];
 
   async postFavoriteArt() {
-    if (!this.isConnected || !this.isArtFavorite) {
-      return;
-    }
     await this.collectionArtController.favoriteArt(
       this.galleryItem.art.id,
       this.account
     );
-    console.log('post');
+    console.log('like, post');
   }
 
   async deleteFavoriteArt() {
-    if (!this.isConnected || this.isArtFavorite) {
-      return;
-    }
     await this.collectionArtController.deleteFavoriteArt(
       this.galleryItem.art.id,
       this.account
     );
-    console.log('delete');
+    console.log('dislike, delete');
   }
 }
 </script>

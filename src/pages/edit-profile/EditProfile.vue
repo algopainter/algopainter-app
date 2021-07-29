@@ -203,7 +203,7 @@ export default class EditProfile extends Vue {
       salt: data.salt,
     };
 
-    const post = await api.put('users/' + this.$store.getters['user/account'], request);
+    await api.put('users/' + this.$store.getters['user/account'], request);
   }
 
   onSubmit() {

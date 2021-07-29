@@ -11,7 +11,7 @@ export default class CollectionArtController extends BaseController {
       };
       const signature = await this.web3Helper.hashMessageAndAskForSignature(
         JSON.stringify(data),
-        address
+        address,
       );
 
       const request = this.requestToBeSigned(data, address);

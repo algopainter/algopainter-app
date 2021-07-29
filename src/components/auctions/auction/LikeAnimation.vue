@@ -6,21 +6,19 @@
           <q-icon
             color="primary"
             size="1.7rem"
-            :name="
-              isAuctionFavorite ? 'mdi-heart' : 'mdi-heart-outline'
-            "
+            :name="like ? 'mdi-heart' : 'mdi-heart-outline'"
             :class="{
-              press: isAuctionFavorite,
-              shake: isAuctionFavorite
+              press: like,
+              shake: like,
             }"
-            @click="favoriteAuction(); favoriteClicked()"
+            @click="favorite();favoriteClicked()"
           />
           <div class="text-primary">
             {{ favoriteCounter }}
           </div>
-          <span
-            :class="{ press: isAuctionFavorite } "
-          >{{ $t('dashboard.auctionPage.liked') }}</span>
+          <span :class="{ press: like }">{{
+            $t('dashboard.auctionPage.liked')
+          }}</span>
         </div>
       </div>
     </div>
@@ -41,24 +39,29 @@ class Props {
 @Options({
   computed: {
     favoriteCounter: 0,
+    isConnected: false,
   },
 })
 export default class LikeAnimation extends Vue.with(Props) {
-  isAuctionFavorite: boolean = false;
+  like: boolean = false;
 
   get favoriteCounter() {
-    return this.isAuctionFavorite ? this.likes + 1 : this.likes;
+    return this.like ? this.likes + 1 : this.likes;
   }
 
-  favoriteAuction() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (this.$store.getters['user/isConnected']) {
-      this.isAuctionFavorite = !this.isAuctionFavorite;
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  favorite() {
+    if (this.isConnected) {
+      this.like = !this.like;
     }
   }
 
   favoriteClicked() {
-    this.$emit('favoriteClicked');
+    this.$emit('favoriteClicked', this.like);
   }
 }
 </script>

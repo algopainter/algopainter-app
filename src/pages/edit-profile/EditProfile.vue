@@ -1,4 +1,3 @@
-
 <template>
   <q-form
     @submit="onSubmit"
@@ -172,8 +171,8 @@ export default class EditProfile extends Vue {
   };
 
   get isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/isConnected'];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/isConnected'] as boolean;
   }
 
   previewImage(e: Event) {
@@ -194,16 +193,18 @@ export default class EditProfile extends Vue {
       salt: nanoid(),
     };
     const web3helper = new Web3Helper();
-    const signature = await web3helper.hashMessageAndAskForSignature(JSON.stringify(data), this.$store.getters['user/account']);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userAccount = this.$store.getters['user/account'] as string;
+    const signature = await web3helper.hashMessageAndAskForSignature(JSON.stringify(data), userAccount);
 
     const request = {
       data,
       signature,
-      account: this.$store.getters['user/account'],
+      account: userAccount,
       salt: data.salt,
     };
 
-    await api.put('users/' + this.$store.getters['user/account'], request);
+    await api.put(`users/${userAccount}`, request);
   }
 
   onSubmit() {

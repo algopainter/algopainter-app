@@ -56,6 +56,7 @@
             >
               {{ formatAccountBalance() }}
               <q-tooltip
+                v-if="isConnected"
                 anchor="top middle"
                 self="top middle"
                 class="bg-primary"
@@ -111,7 +112,7 @@ export default class AccountDetails extends Vue {
     collections: 8,
   };
 
-  balance: number = 0;
+  balance: string = '';
 
   get isConnected() {
     return this.$store.state.user.isConnected;
@@ -125,8 +126,7 @@ export default class AccountDetails extends Vue {
     if (this.isConnected) {
       this.balance = (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])
-      );
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])).toString();
     }
   }
 

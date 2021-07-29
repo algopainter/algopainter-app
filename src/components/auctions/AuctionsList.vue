@@ -5,13 +5,35 @@
     </div>
     <div
       v-if="loadingHotBids === false"
-      class="flex q-col-gutter-md">
-      <auction-item
-        v-for="isHot in areHot"
-        :key="isHot._id"
-        :is-hot="isHot"
-        @favoriteClicked="favoriteClicked()"
-      />
+      class="flex q-col-gutter-md"
+    >
+      <q-carousel
+        v-model="silde"
+        transition-prev="slide-right"
+        transition-next="slide-left"
+        swipeable
+        animated
+        control-color="primary"
+        navigation
+        padding
+        arrows
+        height="300px"
+        class="bg-grey-1 shadow-2 rounded-borders"
+      >
+        <q-carousel-slide
+          v-for="(isHot, index) in areHot"
+          :key="isHot._id"
+          :name="index + 1"
+          :is-hot="isHot"
+        >
+          <auction-item
+            v-for="isHot in areHot"
+            :key="isHot._id"
+            :is-hot="isHot"
+            @favoriteClicked="favoriteClicked()"
+          />
+        </q-carousel-slide>
+      </q-carousel>
     </div>
     <div class="row q-pt-xl">
       <div class="header">
@@ -127,6 +149,7 @@ import { api } from 'src/boot/axios';
   },
 })
 export default class AuctionsList extends Vue {
+  silde: string = '';
   TopSellers: ITopSellersBuyers[] = [];
   TopBuyers: ITopSellersBuyers[] = [];
   areHot: IAuctionItem2[] = [];
@@ -142,7 +165,7 @@ export default class AuctionsList extends Vue {
 
   async getDataHotBids() {
     try {
-      const data = await api.get('auctions?page=1&perPage=4&isHot=true');
+      const data = await api.get('auctions?page=1&isHot=true');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.areHot = data.data.data as [];
       this.loadingHotBids = false;

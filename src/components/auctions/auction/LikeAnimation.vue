@@ -13,7 +13,7 @@
               press: isAuctionFavorite,
               shake: isAuctionFavorite
             }"
-            @click="walletConnected(); favoriteAuction(); favoriteClicked()"
+            @click="favoriteAuction(); favoriteClicked()"
           />
           <div class="text-primary">
             {{ favoriteCounter }}
@@ -39,41 +39,26 @@ class Props {
 }
 
 @Options({
-  watch: {
-    isAuctionFavorite: ['postFavoriteAuction'],
-  },
   computed: {
     favoriteCounter: 0,
   },
 })
 export default class LikeAnimation extends Vue.with(Props) {
   isAuctionFavorite: boolean = false;
-  digitalWalletConnected: boolean = false;
 
   get favoriteCounter() {
     return this.isAuctionFavorite ? this.likes + 1 : this.likes;
   }
 
-  walletConnected() {
+  favoriteAuction() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (this.$store.getters['user/isConnected']) {
-      this.digitalWalletConnected = true;
-    }
-  }
-
-  favoriteAuction() {
-    if (this.digitalWalletConnected) {
       this.isAuctionFavorite = !this.isAuctionFavorite;
     }
   }
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
-  }
-
-  postFavoriteAuction() {
-    // post http request
-    return true;
   }
 }
 </script>

@@ -1,4 +1,3 @@
-
 <template>
   <q-form
     @submit="onSubmit"
@@ -129,6 +128,8 @@
           type="submit"
           color="primary"
           :label="$t('dashboard.editProfile.sChanges')"
+          @click="saveChanges"
+          :disable="!isConnected"
         />
       </div>
     </div>
@@ -139,6 +140,9 @@
 import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import { Screen } from 'quasar';
+import { nanoid } from 'nanoid';
+import Web3Helper from 'src/helpers/web3Helper';
+import { api } from 'src/boot/axios';
 
 interface IProfile {
   name?: string;
@@ -166,6 +170,11 @@ export default class EditProfile extends Vue {
     img: '/images/do-utilizador (1).png',
   };
 
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/isConnected'] as boolean;
+  }
+
   previewImage(e: Event) {
     const newLocal = (<HTMLInputElement>e.target).files;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -176,6 +185,26 @@ export default class EditProfile extends Vue {
     } else {
       this.formFields.img = null;
     }
+  }
+
+  async saveChanges() {
+    const data = {
+      ...this.formFields,
+      salt: nanoid(),
+    };
+    const web3helper = new Web3Helper();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userAccount = this.$store.getters['user/account'] as string;
+    const signature = await web3helper.hashMessageAndAskForSignature(JSON.stringify(data), userAccount);
+
+    const request = {
+      data,
+      signature,
+      account: userAccount,
+      salt: data.salt,
+    };
+
+    await api.put(`users/${userAccount}`, request);
   }
 
   onSubmit() {

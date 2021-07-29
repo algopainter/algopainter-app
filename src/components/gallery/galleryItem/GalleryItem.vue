@@ -61,6 +61,7 @@ import { IGallery } from 'src/models/IGallery';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
+import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
 
 class Props {
   galleryItem = prop({
@@ -79,12 +80,28 @@ interface Ioptions {
     LikeAnimation,
     ShareArtIcons,
   },
+  computed: {
+    account: '',
+    isConnected: false,
+  },
   watch: {
-    isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
+    isArtFavorite: ['postFavoriteArt', 'deleteFavoriteArt'],
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
-  isAuctionFavorite: boolean = false;
+  isArtFavorite: boolean = false;
+  collectionArtController: CollectionArtController =
+    new CollectionArtController();
+
+  get account() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/account'];
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
 
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
@@ -100,11 +117,12 @@ export default class GalleryItem extends Vue.with(Props) {
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
+    this.isArtFavorite = !this.isArtFavorite;
   }
 
   options: Ioptions = {
     socialNetworks: '',
-  }
+  };
 
   socialNetworks = [
     {
@@ -127,30 +145,33 @@ export default class GalleryItem extends Vue.with(Props) {
       label: 'E-mail',
       name: 'mdi-email',
     },
-  ]
+  ];
 
-  favoriteAuction() {
-    this.isAuctionFavorite = !this.isAuctionFavorite;
+  async postFavoriteArt() {
+    if (!this.isConnected || !this.isArtFavorite) {
+      return;
+    }
+    await this.collectionArtController.favoriteArt(
+      this.galleryItem.art.id,
+      this.account
+    );
+    console.log('post');
   }
 
-  incrementCounter() {
-    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
+  async deleteFavoriteArt() {
+    if (!this.isConnected || this.isArtFavorite) {
+      return;
+    }
+    await this.collectionArtController.deleteFavoriteArt(
+      this.galleryItem.art.id,
+      this.account
+    );
+    console.log('delete');
   }
-
-  postFavoriteAuction() {
-  // post http request
-    return true;
-  }
-
-  // FAKE DATA
-  favoriteCounter: number = parseInt(
-    (Math.random() * 100).toString(),
-  );
 }
 </script>
 
 <style lang="scss" scoped>
-
 .container {
   padding: 0 1rem 0 0;
 }
@@ -190,53 +211,53 @@ export default class GalleryItem extends Vue.with(Props) {
 }
 
 .favorite {
-div {
-  height: 40px;
-  margin: 0 auto;
-  position: relative;
-}
-@keyframes fade {
-  0% {
-    color: rgba(255, 255, 255, 0);
+  div {
+    height: 40px;
+    margin: 0 auto;
+    position: relative;
   }
-  50% {
-    color: $primary;
+  @keyframes fade {
+    0% {
+      color: rgba(255, 255, 255, 0);
+    }
+    50% {
+      color: $primary;
+    }
+    100% {
+      color: rgba(255, 255, 255, 0);
+    }
   }
-  100% {
-    color: rgba(255, 255, 255, 0);
+  span {
+    position: absolute;
+    bottom: 70px;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+    transition: 0.6s;
+    z-index: -2;
+    font-size: 3px;
+    color: transparent;
+    font-weight: 400;
   }
-}
-span {
-  position: absolute;
-  bottom: 70px;
-  left: 0;
-  right: 0;
-  visibility: hidden;
-  transition: 0.6s;
-  z-index: -2;
-  font-size: 3px;
-  color: transparent;
-  font-weight: 400;
-}
-span.press {
-  bottom: 40px;
-  left: -7px;
-  font-size: 14px;
-  visibility: visible;
-  animation: fade 1s;
-}
-.shake {
-  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
+  span.press {
+    bottom: 40px;
+    left: -7px;
+    font-size: 14px;
+    visibility: visible;
+    animation: fade 1s;
+  }
+  .shake {
+    animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
 
-@keyframes shake {
-  40%,
-  60% {
-    transform: translate3d(0, -5px, 0);
+  @keyframes shake {
+    40%,
+    60% {
+      transform: translate3d(0, -5px, 0);
+    }
   }
-}
 }
 </style>

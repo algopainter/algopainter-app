@@ -24,8 +24,8 @@
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <ShareArtIcons :sharer="isHot._id" />
-        <div class="col-12 col-md-1">
+        <ShareArtIcons :art="isHot._id" />
+        <div class="col-12 col-md-1 flex">
           <LikeAnimation
             :likes="isHot.item.likes"
             @favoriteClicked="favoriteClicked()"
@@ -37,7 +37,7 @@
       class="art-image"
       :src="previewImageUrl"
     />
-    <div class="details q-pa-sm">
+    <div class="details flex q-pa-sm">
       <div class="name">
         {{ isHot.item.title }}
       </div>
@@ -56,14 +56,15 @@
           </template>
         </i18n-t>
       </div>
-
-      <q-btn
-        flat
-        color="primary"
-        :label="$t('common.placeABid')"
-        icon-right="mdi-arrow-right"
-        :to="`/auctions/${isHot._id}`"
-      />
+      <div class="flex">
+        <q-btn
+          flat
+          color="primary"
+          :label="$t('common.placeABid')"
+          icon-right="mdi-arrow-right"
+          :to="`/auctions/${isHot._id}`"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -220,14 +221,16 @@ export default class AuctionItem extends Vue.with(Props) {
 }
 
 .details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
   .name {
     font-weight: bold;
     font-size: 1.4rem;
   }
 
   .price {
-    display: flex;
-    align-items: center;
     color: $positive;
     font-size: 1.1rem;
     font-weight: bold;
@@ -235,6 +238,10 @@ export default class AuctionItem extends Vue.with(Props) {
 
   .highest-bid {
     font-size: 1.1rem;
+    display: flex;
+    b {
+      margin-left: 5px;
+    }
   }
 }
 

@@ -46,7 +46,7 @@ interface Ioptions {
   socialNetworks: string;
 }
 export default class ShareArtIcons extends Vue.with(Props) {
-  message: string = "Hey, look at the artwork I just minted on the AlgoPainter platform. I'm an artist!"
+  message: string = "Hey, look at this artwork on the AlgoPainter platform! Amazing, isn't it?"
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
       Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://algopainter-app.netlify.app/auctions/${id}&quote=${this.message}`,

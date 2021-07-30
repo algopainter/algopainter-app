@@ -216,6 +216,7 @@ import { IArt } from 'src/models/IArt';
 import { IBid } from 'src/models/IBid';
 import moment from 'moment';
 import { IUser } from 'src/models/IUser';
+import { api } from 'src/boot/axios';
 
 interface ITempUser {
   id: string;
@@ -242,10 +243,27 @@ interface ICollection {
 })
 export default class Auction extends Vue {
   isAuctionImageEnabled: boolean = true;
-
   isAuctionDistributionEnabled: boolean = false;
-
   showBidInput: boolean = false;
+  auctionData: [] = [];
+
+  mounted() {
+    const route = this.$route.params.id;
+    void this.getAuctionData(route);
+    console.log(route);
+  }
+
+  async getAuctionData(route: unknown) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const data = await api.get(`auctions/${route}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.auctionData = data.data as [];
+      console.log(data.data);
+    } catch (e) {
+      console.log('e', e);
+    }
+  }
 
   placeBidClicked() {
     this.showBidInput = !this.showBidInput;

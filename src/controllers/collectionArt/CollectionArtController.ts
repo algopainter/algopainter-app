@@ -18,6 +18,10 @@ export default class CollectionArtController extends BaseController {
       }
 
       const request = this.requestToBeSigned(data, address);
+      console.log({
+        ...request,
+        signature: signatureOrError,
+      });
       const response = await this.post(`images/${artId}/like`, {
         ...request,
         signature: signatureOrError,
@@ -43,6 +47,10 @@ export default class CollectionArtController extends BaseController {
       }
 
       const request = this.requestToBeSigned(data, address);
+      console.log({
+        ...request,
+        signature: signatureOrError,
+      });
       const response = await this.delete(`images/${artId}/dislike`, {
         ...request,
         signature: signatureOrError,

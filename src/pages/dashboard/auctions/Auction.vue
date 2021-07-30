@@ -1,6 +1,11 @@
 <template>
-  <q-page class="q-page q-gutter-lg q-pb-lg">
-    <div class="row q-col-gutter-sm">
+  <q-page
+    class="q-page q-gutter-lg q-pb-lg"
+  >
+    <div
+      v-if="loadingAuctionData === false"
+      class="row q-col-gutter-sm"
+    >
       <div class="col-12 col-md-6">
         <div class="row">
           <div class="col-12 col-md-11">
@@ -25,12 +30,14 @@
                 {{ $t('dashboard.auctionPage.auction') }}
               </algo-button>
             </div>
+
             <q-img
               v-if="isAuctionImageEnabled"
               width="100%"
               class="art-image"
-              src="https://placeimg.com/645/645/nature?t=0.7498161248496579"
+              :src="auctionData.item.previewImageUrl"
             />
+
             <auction-info-chart
               v-if="isAuctionDistributionEnabled"
               :values="[44, 100, 13, 33]"
@@ -42,6 +49,7 @@
             class="col-12 col-md-1 q-my-md"
           >
             <LikeAnimation
+              :likes="auctionData.item.likes"
               @favoriteClicked="favoriteClicked"
             />
             <div class="icons text-center justify-center">
@@ -56,14 +64,24 @@
           </div>
         </div>
       </div>
-      <div class="column justify-between auction q-pl-lg col-12 col-md-5">
+      <div
+        class="column justify-between auction q-pl-lg col-12 col-md-5"
+      >
         <div class="row">
           <div class="auction-details col-md-8">
             <div class="name">
-              {{ auction.art.name }}
+              {{ auctionData.item.title }}
             </div>
-            <div class="keywords">
-              {{ auction.art.keywords }}
+            <div
+              class="flex q-gutter-md"
+            >
+              <div
+                v-for="categorie in auctionData.item.tags"
+                :key="categorie"
+                class="keywords "
+              >
+                #{{ categorie }} 
+              </div>
             </div>
           </div>
           <div class="col-md-4">
@@ -105,30 +123,30 @@
           </q-tabs>
 
           <div class="q-my-md q-mx-sm q-py-xs q-px-md highest-bid">
-            <highest-bid-avatar :bid="highestBid" />
+            <highest-bid-avatar :bid="auctionData.highestBid" />
           </div>
 
-          <q-tab-panels v-model="tab">
+          <q-tab-panels
+            v-model="tab"
+          >
             <q-tab-panel
               name="info"
               class="q-pa-sm"
             >
               <algo-avatar
                 class="q-py-md"
-                :title="$t('dashboard.auctionPage.owner')"
-                :image-url="owner.profilePhotoUrl"
-                :sub-title="owner.name"
+                :title="auctionData.users[1].role"
+                :image-url="auctionData.users[1].avatar"
+                :sub-title="auctionData.users[1].name"
               />
               <algo-avatar
-                v-for="creator in creators"
-                :key="creator.id"
                 class="q-py-md"
-                :title="$t(`dashboard.auctionPage.creator`)"
-                :image-url="creator.profilePhotoUrl"
-                :sub-title="creator.name"
+                :title="auctionData.users[0].role"
+                :image-url="auctionData.users[0].avatar"
+                :sub-title="auctionData.users[0].name"
                 :description="
                   $t('dashboard.auctionPage.pirsDestination', {
-                    pirs: $n(auction.art.pirs.creators, 'percent'),
+                    pirs: $n(auctionData.fee.royalities[0].value*10, 'percent'),
                     role: $t('dashboard.auctionPage.creators').toLowerCase(),
                   })
                 "
@@ -158,10 +176,11 @@
               class="q-pa-sm"
             >
               <bid-avatar
-                v-for="bid in bids"
-                :key="bid.id"
+                v-for="(bidder,index) in auctionData.bids"
+                :key="index"
                 class="q-py-md"
-                :bid="bid"
+                :bid="(bidder)"
+                :fee="auctionData.fee"
               />
             </q-tab-panel>
 
@@ -170,10 +189,10 @@
               class="q-pa-sm"
             >
               <previous-bid-avatar
-                v-for="bid in bids"
-                :key="bid.id"
+                v-for="(bidder,index) in auctionData.bids"
+                :key="index"
                 class="q-py-md"
-                :bid="bid"
+                :bid="bidder"
               />
             </q-tab-panel>
           </q-tab-panels>
@@ -210,6 +229,7 @@ import HighestBidAvatar from 'components/auctions/auction/HighestBidAvatar.vue';
 import PreviousBidAvatar from 'components/auctions/auction/PreviousBidAvatar.vue';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IArt } from 'src/models/IArt';
@@ -243,9 +263,10 @@ interface ICollection {
 })
 export default class Auction extends Vue {
   isAuctionImageEnabled: boolean = true;
+  loadingAuctionData: boolean = true;
   isAuctionDistributionEnabled: boolean = false;
   showBidInput: boolean = false;
-  auctionData: [] = [];
+  auctionData: IAuctionItem2[] = [];
 
   mounted() {
     const route = this.$route.params.id;
@@ -259,6 +280,7 @@ export default class Auction extends Vue {
       const data = await api.get(`auctions/${route}`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auctionData = data.data as [];
+      this.loadingAuctionData = false;
       console.log(data.data);
     } catch (e) {
       console.log('e', e);

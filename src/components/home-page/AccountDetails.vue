@@ -126,7 +126,7 @@ export default class AccountDetails extends Vue {
     if (this.isConnected) {
       this.balance = (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], '0x72CF9eAb1A629bddA03a93fA422795fFC8cc2660'));
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
     }
   }
 

@@ -20,7 +20,7 @@ export default class CollectionArtController extends BaseController {
       const request = this.requestToBeSigned(data, address);
       const response = await this.post(`images/${artId}/like`, {
         ...request,
-        signatureOrError,
+        signature: signatureOrError,
       });
       return response.data as boolean;
     } catch (error) {
@@ -45,7 +45,7 @@ export default class CollectionArtController extends BaseController {
       const request = this.requestToBeSigned(data, address);
       const response = await this.delete(`images/${artId}/dislike`, {
         ...request,
-        signatureOrError,
+        signature: signatureOrError,
       });
       return response.data as boolean;
     } catch (error) {

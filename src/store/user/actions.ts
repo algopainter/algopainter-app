@@ -22,7 +22,7 @@ declare global {
 }
 
 const connectionFlows = {
-  metamask: async (): Promise<IWeb3Provider> => {
+  metamask: async(): Promise<IWeb3Provider> => {
     return new Promise((resolve, reject) => {
       if (window.ethereum) {
         resolve(window.ethereum);

@@ -8,11 +8,10 @@
           size="lg"
           round
         >
-          <img :src="person.picture">
-          <q-tooltip
-            class="bg-primary"
-          >
-            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+          <img :src="person.picture" />
+          <q-tooltip class="bg-primary">
+            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }}
+            {{ person.name }}
           </q-tooltip>
         </q-avatar>
       </div>
@@ -30,10 +29,7 @@
         </div>
       </div>
     </div>
-    <q-img
-      class="art-image"
-      :src="galleryItem.art.source"
-    />
+    <q-img class="art-image" :src="galleryItem.art.source" />
     <div class="details q-pa-sm">
       <div class="name">
         {{ galleryItem.art.name }}
@@ -44,7 +40,7 @@
       <div class="row justify-center">
         <algoButton
           icon="visibility"
-          class="full-width q-my-md "
+          class="full-width q-my-md"
           color="primary"
           :label="$t('dashboard.auctionPage.btnView')"
           :to="`/collections/${galleryItem.id}`"
@@ -104,15 +100,19 @@ export default class GalleryItem extends Vue.with(Props) {
   }
 
   share(id: string, socialMedia: string) {
-    const urlsShared: {[index: string]:string} = {
+    const urlsShared: { [index: string]: string } = {
       Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
       Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
       Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
       Email: 'mailto:[]?subject=AlgoPainter',
     };
     const linkElement = document.createElement('a');
-    linkElement.href = (urlsShared[socialMedia]);
-    window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
+    linkElement.href = urlsShared[socialMedia];
+    window.open(
+      linkElement.href,
+      '_blank',
+      'width=550, height=555, top=100, left=190, scrollbars=no'
+    );
   }
 
   favoriteClicked(wasLiked: boolean) {

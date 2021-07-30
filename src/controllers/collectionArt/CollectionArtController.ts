@@ -1,4 +1,5 @@
 import BaseController from '../BaseController';
+import { isError } from 'src/helpers/utils';
 import { nanoid } from 'nanoid';
 
 export default class CollectionArtController extends BaseController {
@@ -8,20 +9,22 @@ export default class CollectionArtController extends BaseController {
         imageId: artId,
         salt: nanoid(),
       };
-      const signature = await this.web3Helper.hashMessageAndAskForSignature(
-        data,
-        address
-      );
+
+      const signatureOrError =
+        await this.web3Helper.hashMessageAndAskForSignature(data, address);
+
+      if (isError(signatureOrError as Error)) {
+        throw signatureOrError;
+      }
 
       const request = this.requestToBeSigned(data, address);
-
-      const signedRequest = { ...request, signature };
-
-      const result = await this.post(`images/${artId}/like`, signedRequest);
-
-      return result.data as unknown;
+      const response = await this.post(`images/${artId}/like`, {
+        ...request,
+        signatureOrError,
+      });
+      return response.data as boolean;
     } catch (error) {
-      return null;
+      return error as Error;
     }
   }
 
@@ -31,20 +34,22 @@ export default class CollectionArtController extends BaseController {
         imageId: artId,
         salt: nanoid(),
       };
-      const signature = await this.web3Helper.hashMessageAndAskForSignature(
-        data,
-        address
-      );
+
+      const signatureOrError =
+        await this.web3Helper.hashMessageAndAskForSignature(data, address);
+
+      if (isError(signatureOrError as Error)) {
+        throw signatureOrError;
+      }
 
       const request = this.requestToBeSigned(data, address);
-
-      const signedRequest = { ...request, signature };
-
-      const result = await this.delete(`images/${artId}/unlike`, signedRequest);
-
-      return result.data as unknown;
+      const response = await this.delete(`images/${artId}/dislike`, {
+        ...request,
+        signatureOrError,
+      });
+      return response.data as boolean;
     } catch (error) {
-      return null;
+      return error as Error;
     }
   }
 }

@@ -49,8 +49,6 @@ class Props {
   },
 })
 export default class LikeAnimation extends Vue.with(Props) {
-  like: boolean = false;
-
   get favoriteCounter() {
     return this.liked ? this.likes + 1 : this.likes;
   }
@@ -58,12 +56,6 @@ export default class LikeAnimation extends Vue.with(Props) {
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/isConnected'];
-  }
-
-  favorite() {
-    if (this.isConnected) {
-      this.like = !this.like;
-    }
   }
 
   favoriteClicked() {

@@ -143,6 +143,7 @@ import { Screen } from 'quasar';
 import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
+import { isError } from 'src/helpers/utils';
 
 interface IProfile {
   name?: string;
@@ -163,7 +164,6 @@ interface IProfile {
     Screen,
   },
 })
-
 export default class EditProfile extends Vue {
   formFields: IProfile = {
     customProfile: ' ',
@@ -195,14 +195,21 @@ export default class EditProfile extends Vue {
     const web3helper = new Web3Helper();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const userAccount = this.$store.getters['user/account'] as string;
-    const signature = await web3helper.hashMessageAndAskForSignature(JSON.stringify(data), userAccount);
+    const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
+
+    if (isError(signatureOrError as Error)) {
+      console.log('assinatura negada ou api com falha, tratar cada erro aqui');
+      return;
+    }
 
     const request = {
       data,
-      signature,
+      signature: signatureOrError,
       account: userAccount,
       salt: data.salt,
     };
+
+    console.log(request);
 
     await api.put(`users/${userAccount}`, request);
   }

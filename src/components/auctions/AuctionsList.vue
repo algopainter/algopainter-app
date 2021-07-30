@@ -1,3 +1,11 @@
+        <!--
+          <auction-item
+            v-for="isHot in areHot"
+            :key="isHot._id"
+            :is-hot="isHot"
+            @favoriteClicked="favoriteClicked()"
+          />
+        -->
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
     <div class="header">
@@ -5,13 +13,27 @@
     </div>
     <div
       v-if="loadingHotBids === false"
-      class="flex q-col-gutter-md">
-      <auction-item
-        v-for="isHot in areHot"
-        :key="isHot._id"
-        :is-hot="isHot"
-        @favoriteClicked="favoriteClicked()"
-      />
+    >
+      <carousel
+        :items-to-show="4"
+        :wrap-around="true"
+        :breakpoints="breakpoints"
+        :autoplay="5000"
+      >
+        <slide
+          v-for="(isHot, index) in areHot"
+          :key="index"
+        >
+          <auction-item
+            :is-hot="isHot"
+            @favoriteClicked="favoriteClicked()"
+          />
+        </slide>
+
+        <template #addons>
+          <navigation class="navigation"/>
+        </template>
+      </carousel>
     </div>
     <div class="row q-pt-xl">
       <div class="header">
@@ -119,11 +141,17 @@ import { ITopSellersBuyers } from 'src/models/ITopSellersBuyers';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
 import { api } from 'src/boot/axios';
+import 'vue3-carousel/dist/carousel.css';
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 
 @Options({
   components: {
     AuctionItem,
     AlgoButton,
+    Carousel,
+    Slide,
+    Pagination,
+    Navigation,
   },
 })
 export default class AuctionsList extends Vue {
@@ -133,6 +161,7 @@ export default class AuctionsList extends Vue {
   loadingHotBids: boolean = true;
   loadingTopSellers: boolean = true;
   loadingTopBuyers: boolean = true;
+  numbers: number[] = [5, 4, 3, 2, 1];
 
   mounted() {
     void this.getDataHotBids();
@@ -142,9 +171,9 @@ export default class AuctionsList extends Vue {
 
   async getDataHotBids() {
     try {
-      const data = await api.get('auctions?page=1&perPage=4&isHot=true');
+      const data = await api.get('auctions?page=1&isHot=true');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.areHot = data.data.data as [];
+      this.areHot = data.data as [];
       this.loadingHotBids = false;
     } catch (e) {
       console.log('e', e);
@@ -176,6 +205,27 @@ export default class AuctionsList extends Vue {
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
+
+  breakpoints = {
+    0: {
+      itemsToShow: 1,
+      snapAlign: 'center',
+    },
+    // 700px and up
+    800: {
+      itemsToShow: 2,
+      snapAlign: 'center',
+    },
+    // 1024 and up
+    1130: {
+      itemsToShow: 3,
+      snapAlign: 'center',
+    },
+    1450: {
+      itemsToShow: 4,
+      snapAlign: 'start',
+    },
+  };
 
   categories: unknown[] = [{
     id: '1',
@@ -215,12 +265,23 @@ export default class AuctionsList extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .category {
   font-weight: bold;
 }
 
 .header.gallery{
   padding-bottom: 1rem;
+}
+
+.carousel__slide {
+  padding: 10px;
+}
+
+.carousel__prev,
+.carousel__next {
+  background-color: #f4538d;
+  box-sizing: content-box;
+  border: 5px solid white;
 }
 </style>

@@ -26,10 +26,14 @@ export default class Web3Helper {
   }
 
   async signMessageWithAddress(message: string, address: string) {
-    return await this.web3.eth.sign(message, address);
+    try {
+      return await this.web3.eth.sign(message, address);
+    } catch (error) {
+      return error as Error;
+    }
   }
 
-  async hashMessageAndAskForSignature(message: string, address: string) {
+  async hashMessageAndAskForSignature(message: Record<string, unknown>, address: string) {
     const requestHash = this.getHashMessage(
       JSON.stringify(message)
     );

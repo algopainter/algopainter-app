@@ -117,7 +117,9 @@ export default class GalleryItem extends Vue.with(Props) {
 
   favoriteClicked(wasLiked: boolean) {
     this.$emit('favoriteClicked');
-    wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    if (this.isConnected) {
+      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    }
   }
 
   options: Ioptions = {
@@ -153,7 +155,7 @@ export default class GalleryItem extends Vue.with(Props) {
       this.account
     );
     if (isError(response as Error)) {
-      // avisar o usuário
+      alert('mensagem de assinatura recusada');
       return;
     }
     this.wasLiked = true;
@@ -165,7 +167,7 @@ export default class GalleryItem extends Vue.with(Props) {
       this.account
     );
     if (isError(response as Error)) {
-      // avisar o usuário
+      alert('mensagem de assinatura recusada');
       return;
     }
     this.wasLiked = false;

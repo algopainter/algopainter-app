@@ -21,6 +21,7 @@
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
             <LikeAnimation
+              :liked="wasLiked"
               :likes="galleryItem.art.likes"
               @favoriteClicked="favoriteClicked"
             />
@@ -58,6 +59,7 @@ import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
+import { isError } from 'src/helpers/utils';
 
 class Props {
   galleryItem = prop({
@@ -78,15 +80,23 @@ interface Ioptions {
   },
   computed: {
     account: '',
+    isConnected: false,
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
   collectionArtController: CollectionArtController =
     new CollectionArtController();
 
+  wasLiked: boolean = false;
+
   get account() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/account'];
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
   }
 
   share(id: string, socialMedia: string) {
@@ -105,9 +115,11 @@ export default class GalleryItem extends Vue.with(Props) {
     );
   }
 
-  favoriteClicked() {
+  favoriteClicked(wasLiked: boolean) {
     this.$emit('favoriteClicked');
-    void this.postFavoriteGalleryArt();
+    if (this.isConnected) {
+      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    }
   }
 
   options: Ioptions = {
@@ -137,12 +149,28 @@ export default class GalleryItem extends Vue.with(Props) {
     },
   ];
 
-  async postFavoriteGalleryArt() {
-    const result = await this.collectionArtController.favoriteArt(
+  async postFavoriteArt() {
+    const response = await this.collectionArtController.favoriteArt(
       this.galleryItem.art.id,
       this.account
     );
-    console.log(JSON.stringify(result));
+    if (isError(response as Error)) {
+      alert('mensagem de assinatura recusada');
+      return;
+    }
+    this.wasLiked = true;
+  }
+
+  async deleteFavoriteArt() {
+    const response = await this.collectionArtController.deleteFavoriteArt(
+      this.galleryItem.art.id,
+      this.account
+    );
+    if (isError(response as Error)) {
+      alert('mensagem de assinatura recusada');
+      return;
+    }
+    this.wasLiked = false;
   }
 }
 </script>

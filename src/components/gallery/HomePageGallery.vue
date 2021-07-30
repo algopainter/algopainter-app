@@ -87,7 +87,7 @@ export default class HomePageGallery extends Vue {
       id: image._id,
       description: image.description,
       art: {
-        id: image.nft._id,
+        id: image._id,
         name: image.title,
         source: image.nft.previewImage,
         importantPeople: image.users.map((user) => ({

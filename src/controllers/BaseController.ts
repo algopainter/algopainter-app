@@ -24,6 +24,13 @@ export default class BaseController {
     return await this.api.post(path, body, options);
   }
 
+  async delete(
+    path: string,
+    body: Record<string, unknown> = {}
+  ) {
+    return await this.api.delete(path, body);
+  }
+
   requestToBeSigned(
     data: SignedRequestData,
     address: string, // 0x38ad0ab1dd2b9a64dd6d75fb6d84a14893366dcd

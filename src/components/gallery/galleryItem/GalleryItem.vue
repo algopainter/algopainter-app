@@ -63,6 +63,7 @@ import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
+import { isError } from 'src/helpers/utils';
 
 class Props {
   galleryItem = prop({
@@ -147,19 +148,27 @@ export default class GalleryItem extends Vue.with(Props) {
   ];
 
   async postFavoriteArt() {
-    await this.collectionArtController.favoriteArt(
+    const response = await this.collectionArtController.favoriteArt(
       this.galleryItem.art.id,
       this.account
     );
-    console.log('like, post');
+    if (isError(response as Error)) {
+      // avisar o usuário
+      return;
+    }
+    this.wasLiked = true;
   }
 
   async deleteFavoriteArt() {
-    await this.collectionArtController.deleteFavoriteArt(
+    const response = await this.collectionArtController.deleteFavoriteArt(
       this.galleryItem.art.id,
       this.account
     );
-    console.log('dislike, delete');
+    if (isError(response as Error)) {
+      // avisar o usuário
+      return;
+    }
+    this.wasLiked = false;
   }
 }
 </script>

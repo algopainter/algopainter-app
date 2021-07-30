@@ -22,6 +22,7 @@
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
             <LikeAnimation
+              :liked="wasLiked"
               :likes="galleryItem.art.likes"
               @favoriteClicked="favoriteClicked"
             />
@@ -89,6 +90,8 @@ export default class GalleryItem extends Vue.with(Props) {
   collectionArtController: CollectionArtController =
     new CollectionArtController();
 
+  wasLiked: boolean = false;
+
   get account() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/account'];
@@ -111,13 +114,9 @@ export default class GalleryItem extends Vue.with(Props) {
     window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
   }
 
-  favoriteClicked(event: unknown) {
+  favoriteClicked(wasLiked: boolean) {
     this.$emit('favoriteClicked');
-    this.favoriteArt(event as boolean);
-  }
-
-  favoriteArt(like: boolean) {
-    like ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
   }
 
   options: Ioptions = {

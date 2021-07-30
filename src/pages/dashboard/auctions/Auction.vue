@@ -80,7 +80,7 @@
                 :key="categorie"
                 class="keywords "
               >
-                #{{ categorie }} 
+                {{ $t('dashboard.auctionPage.symbol') }}{{ categorie }}
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@
                 :sub-title="collection.name"
                 :description="
                   $t('dashboard.auctionPage.pirsDestination', {
-                    pirs: $n(auction.art.pirs.investors, 'percent'),
+                    pirs: $n(auctionData.fee.royalities[0].value*10, 'percent'),
                     role: $t('dashboard.auctionPage.investors').toLowerCase(),
                   })
                 "
@@ -230,19 +230,7 @@ import PreviousBidAvatar from 'components/auctions/auction/PreviousBidAvatar.vue
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import { IAuctionItem2 } from 'src/models/IAuctionItem2';
-
-import { IAuctionItem } from 'src/models/IAuctionItem';
-import { IArt } from 'src/models/IArt';
-import { IBid } from 'src/models/IBid';
-import moment from 'moment';
-import { IUser } from 'src/models/IUser';
 import { api } from 'src/boot/axios';
-
-interface ITempUser {
-  id: string;
-  name: string;
-  profilePhotoUrl: string;
-}
 
 interface ICollection {
   name: string;
@@ -310,126 +298,9 @@ export default class Auction extends Vue {
   distributionSVG: string = require('../../../assets/icons/chart-distribution.svg');
 
   tab: string = 'info';
-
-  users: IUser[] = [
-    {
-      id: '1',
-      name: 'Alice',
-      email: 'alice.k@email.com',
-      age: '32 years',
-      interests: 'digital, fractal, urban, classic',
-      collections: 2,
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
-    },
-    {
-      id: '2',
-      name: 'Mike',
-      email: 'mike@email.com',
-      age: '21 years',
-      interests: 'classic',
-      collections: 7,
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
-    },
-  ];
-
-  owner: ITempUser = {
-    id: '4',
-    name: 'Dave',
-    profilePhotoUrl: 'https://randomuser.me/api/portraits/men/51.jpg',
-  };
-
-  creators: ITempUser[] = [
-    {
-      id: '1',
-      name: 'Michonne',
-      profilePhotoUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
-    },
-  ];
-
   collection: ICollection = {
     name: 'ArTbs',
     imageUrl: 'https://placeimg.com/500/300/nature?t=0.7498161248496573',
-  };
-
-  highestBidUser: ITempUser = {
-    id: '590',
-    name: 'MattPress',
-    profilePhotoUrl: 'https://randomuser.me/api/portraits/women/73.jpg',
-  };
-
-  art: IArt = {
-    id: '1',
-    name: 'Abstract Art Bind Number 91',
-    source: 'placeholder',
-    owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-    algopainter: 'Hashley Gwei',
-    price: 120,
-    bidBack: 0.1,
-    keywords: '#Art #Algopainter #Creation',
-    pirs: {
-      creators: 0.15,
-      investors: 0.05,
-    },
-    importantPeople: [
-      {
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-        accountable: 'Collection',
-      },
-      {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-        accountable: 'Owner',
-      },
-      {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-        accountable: 'Creator',
-      },
-    ],
-  };
-
-  bids: IBid[] = [
-    {
-      id: '1',
-      user: this.users[0],
-      art: this.art,
-      price: 5,
-      bidAt: moment().subtract(5, 'hours'),
-    },
-    {
-      id: '2',
-      user: this.users[1],
-      art: this.art,
-      price: 4.5,
-      bidAt: moment().subtract(2, 'hours'),
-    },
-    {
-      id: '3',
-      user: this.users[0],
-      art: this.art,
-      price: 4,
-      bidAt: moment(),
-    },
-  ];
-
-  highestBid: IBid = {
-    id: '6',
-    user: this.highestBidUser as IUser,
-    art: this.art,
-    price: 120,
-    bidAt: moment().subtract(10, 'hours'),
-  };
-
-  auction: IAuctionItem = {
-    id: '1',
-    bids: this.bids,
-    art: this.art,
-    numberOfBids: 1,
-    highestBid: 300,
   };
 }
 </script>

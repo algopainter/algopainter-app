@@ -135,18 +135,18 @@
             >
               <algo-avatar
                 class="q-py-md"
-                :title="auctionData.users[1].role"
-                :image-url="auctionData.users[1].avatar"
-                :sub-title="auctionData.users[1].name"
-              />
-              <algo-avatar
-                class="q-py-md"
                 :title="auctionData.users[0].role"
                 :image-url="auctionData.users[0].avatar"
                 :sub-title="auctionData.users[0].name"
+              />
+              <algo-avatar
+                class="q-py-md"
+                :title="auctionData.users[1].role"
+                :image-url="auctionData.users[1].avatar"
+                :sub-title="auctionData.users[1].name"
                 :description="
                   $t('dashboard.auctionPage.pirsDestination', {
-                    pirs: $n(auctionData.fee.royalities[0].value*10, 'percent'),
+                    pirs: $n(auctionData.fee.royalties[0].value*10, 'percent'),
                     role: $t('dashboard.auctionPage.creators').toLowerCase(),
                   })
                 "
@@ -160,11 +160,11 @@
               <algo-avatar
                 class="q-py-md"
                 :title="$t('dashboard.auctionPage.collection')"
-                :image-url="collection.imageUrl"
-                :sub-title="collection.name"
+                :image-url="auctionData.item.previewImageUrl"
+                :sub-title="auctionData.item.collectionName"
                 :description="
                   $t('dashboard.auctionPage.pirsDestination', {
-                    pirs: $n(auctionData.fee.royalities[0].value*10, 'percent'),
+                    pirs: $n(auctionData.fee.royalties[0].value*10, 'percent'),
                     role: $t('dashboard.auctionPage.investors').toLowerCase(),
                   })
                 "
@@ -298,10 +298,6 @@ export default class Auction extends Vue {
   distributionSVG: string = require('../../../assets/icons/chart-distribution.svg');
 
   tab: string = 'info';
-  collection: ICollection = {
-    name: 'ArTbs',
-    imageUrl: 'https://placeimg.com/500/300/nature?t=0.7498161248496573',
-  };
 }
 </script>
 <style lang="scss" scoped>

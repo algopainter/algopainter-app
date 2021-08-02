@@ -115,7 +115,7 @@ export default {
   editProfile: {
     title: 'Edit Profile',
     name: 'Name:',
-    email: 'Email:',
+    email: 'Email: (public information for contact you)',
     custom: 'Custom URL',
     webSite: 'Website ou portifolio',
     bio: 'Bio:',

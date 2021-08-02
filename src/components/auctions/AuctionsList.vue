@@ -18,7 +18,6 @@
         :items-to-show="4"
         :wrap-around="true"
         :breakpoints="breakpoints"
-        :autoplay="5000"
       >
         <slide
           v-for="(isHot, index) in areHot"
@@ -31,7 +30,9 @@
         </slide>
 
         <template #addons>
-          <navigation class="navigation"/>
+          <navigation
+            class="navigation"
+          />
         </template>
       </carousel>
     </div>

@@ -232,11 +232,6 @@ import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import { api } from 'src/boot/axios';
 
-interface ICollection {
-  name: string;
-  imageUrl: string;
-}
-
 @Options({
   components: {
     AuctionInfoChart,

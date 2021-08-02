@@ -110,6 +110,7 @@ export default {
     liked: 'Liked!',
     placeABid: 'Place a Bid',
     btnView: 'View Art',
+    symbol: '#',
   },
   editProfile: {
     title: 'Edit Profile',

@@ -22,7 +22,7 @@ export default class CollectionArtController extends BaseController {
         ...request,
         signature: signatureOrError,
       });
-      const response = await this.post(`images/${artId}/like`, {
+      const response = await this.post(`images/${artId}/likes`, {
         ...request,
         signature: signatureOrError,
       });
@@ -51,7 +51,7 @@ export default class CollectionArtController extends BaseController {
         ...request,
         signature: signatureOrError,
       });
-      const response = await this.delete(`images/${artId}/dislike`, {
+      const response = await this.delete(`images/${artId}/likes`, {
         ...request,
         signature: signatureOrError,
       });

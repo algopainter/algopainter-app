@@ -122,6 +122,11 @@ export default class AccountDetails extends Vue {
     return this.$store.state.user.account;
   }
 
+  mounted() {
+    void this.setAccountBalance();
+    this.formatedBalance();
+  }
+
   async setAccountBalance() {
     if (this.isConnected) {
       this.balance = (

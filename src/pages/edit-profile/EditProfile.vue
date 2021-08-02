@@ -214,6 +214,10 @@ export default class EditProfile extends Vue {
     }
   }
 
+  mounted() {
+    void this.loadData();
+  }
+
   async loadData() {
     this.isLoading = true;
     try {

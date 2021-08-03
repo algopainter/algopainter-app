@@ -141,6 +141,13 @@ export default class AuctionItem extends Vue.with(Props) {
   mounted() {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     setTimeout(this.showRun, 0);
+    void this.loadData();
+  }
+
+  loadData() {
+    this.wasLiked =
+      this.isHot.item.likers.filter((liker) => liker === this.account)
+        .length !== 0;
   }
 
   showRun() {

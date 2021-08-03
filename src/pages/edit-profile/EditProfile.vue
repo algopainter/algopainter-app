@@ -7,10 +7,18 @@
       <div class="col-xs-12 col-sm-12 col-md-3">
         <div class="column items-center q-gutter-md">
           <div class="col q-mt-xl">
-            <img
-              :src="formFields.avatar"
-              class="img "
-            >
+            <div v-if="isConnected">
+              <img
+                :src="formFields.avatar"
+                class="img "
+              >
+            </div>
+            <div v-else>
+              <img
+                src="../../../src/assets/placeholder-images/do-utilizador.png"
+                class="img "
+              >
+            </div>
           </div>
           <div class="col">
             <label

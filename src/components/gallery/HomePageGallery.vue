@@ -1,37 +1,44 @@
 <template>
-  <q-page class="q-gutter-lg q-pb-lg">
-    <div class="header q-gutter-xs">
-      <algo-button
-        v-for="collection in collections"
-        :key="collection._id"
-        :label="collection.title"
-        class="q-mr-xs"
-        :class="[
-          currentCollection._id == collection._id
-            ? 'btn-selected'
-            : 'btn-unselected',
-        ]"
-        @click="collectionClicked(collection)"
-      />
-    </div>
-    <div class="flex q-col-gutter-md">
-      <gallery-item
-        v-for="galleryItem in currentCollectionGallery"
-        :key="galleryItem.id"
-        :gallery-item="galleryItem"
-        @favoriteClicked="favoriteClicked"
-      />
-    </div>
-    <div class="footer">
-      <algo-button
-        :label="$t('dashboard.homePage.loadMore')"
-        color="primary"
-        outline
-        class="load-more q-px-xl q-mx-auto"
-        to="/gallery"
-      />
-    </div>
-  </q-page>
+  <div v-if="loading === false">
+    <q-page class="q-gutter-lg q-pb-lg">
+      <div class="header q-gutter-xs">
+        <algo-button
+          v-for="collection in collections"
+          :key="collection._id"
+          :label="collection.title"
+          class="q-mr-xs"
+          :class="[
+            currentCollection._id == collection._id
+              ? 'btn-selected'
+              : 'btn-unselected',
+          ]"
+          @click="collectionClicked(collection)"
+        />
+      </div>
+      <div class="flex q-col-gutter-md">
+        <gallery-item
+          v-for="galleryItem in currentCollectionGallery"
+          :key="galleryItem.id"
+          :gallery-item="galleryItem"
+          @favoriteClicked="favoriteClicked"
+        />
+      </div>
+      <div class="footer">
+        <algo-button
+          :label="$t('dashboard.homePage.loadMore')"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto"
+          to="/gallery"
+        />
+      </div>
+    </q-page>
+  </div>
+  <div
+    v-else
+  >
+    <HomePageGallerySkeleton />
+  </div>
 </template>
 
 <script lang="ts">
@@ -44,17 +51,20 @@ import { ICollection } from 'src/models/ICollection';
 import CollectionController from 'src/controllers/collection/CollectionController';
 import { Person } from 'src/models/IArt';
 import { IImage } from 'src/models/IImage';
+import HomePageGallerySkeleton from 'components/gallery/galleryItem/HomePageGallerySkeleton.vue';
 
 @Options({
   components: {
     GalleryItem,
     AlgoButton,
+    HomePageGallerySkeleton,
   },
 })
 export default class HomePageGallery extends Vue {
   currentCollection!: ICollection;
   collections: ICollection[] = [];
   currentCollectionGallery: IGallery[] = [];
+  loading: boolean = true;
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
@@ -80,6 +90,7 @@ export default class HomePageGallery extends Vue {
         this.mapImageToGalleryItem(image)
       );
     }
+    this.loading = false;
   }
 
   mapImageToGalleryItem(image: IImage) {
@@ -133,5 +144,9 @@ body.screen--xs {
     flex-direction: column;
     align-items: center;
   }
+}
+
+.custom-skeleton-border {
+  border-radius: 10px;
 }
 </style>

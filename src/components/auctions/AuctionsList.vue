@@ -1,18 +1,10 @@
-        <!--
-          <auction-item
-            v-for="isHot in areHot"
-            :key="isHot._id"
-            :is-hot="isHot"
-            @favoriteClicked="favoriteClicked()"
-          />
-        -->
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
     <div class="header">
       {{ $t('dashboard.auctions.hotBids') }}
     </div>
     <div
-      v-if="loadingHotBids === false"
+      v-if="hotBidsLoading === false"
     >
       <carousel
         :items-to-show="4"
@@ -31,10 +23,16 @@
 
         <template #addons>
           <navigation
-            class="navigation"
+            class="navigation z-max"
           />
         </template>
       </carousel>
+    </div>
+    <div
+      v-else
+      class="flex items-center justify-center"
+    >
+      <CarouselSkeleton />
     </div>
     <div class="row q-pt-xl">
       <div class="header">
@@ -60,12 +58,12 @@
     </div>
     <div v-if="currentOptionsTop.id === 1">
       <div
-        v-if="loadingTopSellers === false"
+        v-if="topSellersLoading === false"
         class="top-sellers q-pb-md"
       >
         <div class="flex q-col-gutter-xl">
           <div
-            v-for="(seller, index) in TopSellers"
+            v-for="(seller, index) in topSellers"
             :key="index"
           >
             <div class="flex q-col-gutter-md items-center">
@@ -90,15 +88,53 @@
           </div>
         </div>
       </div>
+      <div
+        v-else
+        class="flex"
+      >
+        <div
+          v-for="(item, index) in 5"
+          :key="index"
+        >
+          <q-card
+            flat
+            style="width: 235px"
+            class="q-ml-sm q-my-sm"
+          >
+            <q-item>
+              <q-item-section avatar>
+                <q-skeleton
+                  type="QAvatar"
+                  animation="fade"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  <q-skeleton
+                    type="text"
+                    animation="fade"
+                  />
+                </q-item-label>
+                <q-item-label caption>
+                  <q-skeleton
+                    type="text"
+                    animation="fade"
+                  />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-card>
+        </div>
+      </div>
     </div>
     <div v-if="currentOptionsTop.id === 2">
       <div
-        v-if="loadingTopBuyers === false"
+        v-if="topBuyersLoading === false"
         class="top-sellers q-pb-xl"
       >
         <div class="flex q-col-gutter-xl">
           <div
-            v-for="(seller, index) in TopBuyers"
+            v-for="(seller, index) in topBuyers"
             :key="index"
           >
             <div class="flex q-col-gutter-md items-center">
@@ -141,8 +177,8 @@ import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import { ITopSellersBuyers } from 'src/models/ITopSellersBuyers';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
-import { api } from 'src/boot/axios';
 import 'vue3-carousel/dist/carousel.css';
+import CarouselSkeleton from 'components/auctions/auction/CarouselSkeleton.vue';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 
 @Options({
@@ -153,54 +189,50 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
     Slide,
     Pagination,
     Navigation,
+    CarouselSkeleton,
   },
 })
 export default class AuctionsList extends Vue {
-  TopSellers: ITopSellersBuyers[] = [];
-  TopBuyers: ITopSellersBuyers[] = [];
   areHot: IAuctionItem2[] = [];
-  loadingHotBids: boolean = true;
-  loadingTopSellers: boolean = true;
-  loadingTopBuyers: boolean = true;
-  numbers: number[] = [5, 4, 3, 2, 1];
+  hotBidsLoading: boolean = true;
+
+  topSellers: ITopSellersBuyers[] = [];
+  topSellersLoading: boolean = true;
+
+  topBuyers: ITopSellersBuyers[] = [];
+  topBuyersLoading: boolean = true;
 
   mounted() {
-    void this.getDataHotBids();
-    void this.getDataTopSellers();
-    void this.getDataTopBuyers();
+    void this.getHotBids();
+    void this.getTopSellers();
+    void this.getTopBuyers();
   }
 
-  async getDataHotBids() {
-    try {
-      const data = await api.get('auctions?page=1&isHot=true');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.areHot = data.data as [];
-      this.loadingHotBids = false;
-    } catch (e) {
-      console.log('e', e);
-    }
+  getHotBids() {
+    void this.$store.dispatch({
+      type: 'auctions/getHotBids',
+    }).then(() => {
+      this.hotBidsLoading = false;
+      this.areHot = this.$store.state.auctions.hotBids;
+    });
   }
 
-  async getDataTopSellers() {
-    try {
-      const data = await api.get('reports/top/sellers');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.TopSellers = data.data as [];
-      this.loadingTopSellers = false;
-    } catch (e) {
-      console.log('e', e);
-    }
+  getTopSellers() {
+    void this.$store.dispatch({
+      type: 'auctions/getTopSellers',
+    }).then(() => {
+      this.topSellersLoading = false;
+      this.topSellers = this.$store.state.auctions.topSellers;
+    });
   }
 
-  async getDataTopBuyers() {
-    try {
-      const data = await api.get('reports/top/buyers');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.TopBuyers = data.data as [];
-      this.loadingTopBuyers = false;
-    } catch (e) {
-      console.log('e', e);
-    }
+  getTopBuyers() {
+    void this.$store.dispatch({
+      type: 'auctions/getTopBuyers',
+    }).then(() => {
+      this.topBuyersLoading = false;
+      this.topBuyers = this.$store.state.auctions.topBuyers;
+    });
   }
 
   favoriteClicked() {
@@ -285,4 +317,10 @@ export default class AuctionsList extends Vue {
   box-sizing: content-box;
   border: 5px solid white;
 }
+
+.custom-skeleton-border {
+  width: 35px;
+  height: 35px;
+}
+
 </style>

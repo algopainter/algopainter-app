@@ -76,20 +76,14 @@ import UserUtils from 'src/helpers/user';
     AlgoButton,
   },
   computed: {
-    isConnected: false,
     accountAddress: '',
   },
   watch: {
-    isConnected: ['setAccountBalance'],
     accountAddress: ['setAccountBalance'],
   },
 })
 export default class ProfileDropdownButton extends Vue {
   balance: number = 0;
-
-  get isConnected() {
-    return this.$store.state.user.isConnected;
-  }
 
   get accountAddress() {
     return this.$store.state.user.account;

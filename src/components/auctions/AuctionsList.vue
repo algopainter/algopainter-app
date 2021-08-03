@@ -1,11 +1,3 @@
-        <!--
-          <auction-item
-            v-for="isHot in areHot"
-            :key="isHot._id"
-            :is-hot="isHot"
-            @favoriteClicked="favoriteClicked()"
-          />
-        -->
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
     <div class="header">
@@ -31,10 +23,16 @@
 
         <template #addons>
           <navigation
-            class="navigation"
+            class="navigation z-max"
           />
         </template>
       </carousel>
+    </div>
+    <div
+      v-else
+      class="flex items-center justify-center"
+    >
+      <CarouselSkeleton />
     </div>
     <div class="row q-pt-xl">
       <div class="header">
@@ -90,6 +88,44 @@
           </div>
         </div>
       </div>
+      <div
+        v-else
+        class="flex"
+      >
+        <div
+          v-for="(item, index) in 5"
+          :key="index"
+        >
+          <q-card
+            flat
+            style="width: 235px"
+            class="q-ml-sm q-my-sm"
+          >
+            <q-item>
+              <q-item-section avatar>
+                <q-skeleton
+                  type="QAvatar"
+                  animation="fade"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  <q-skeleton
+                    type="text"
+                    animation="fade"
+                  />
+                </q-item-label>
+                <q-item-label caption>
+                  <q-skeleton
+                    type="text"
+                    animation="fade"
+                  />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-card>
+        </div>
+      </div>
     </div>
     <div v-if="currentOptionsTop.id === 2">
       <div
@@ -143,6 +179,7 @@ import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
 import { api } from 'src/boot/axios';
 import 'vue3-carousel/dist/carousel.css';
+import CarouselSkeleton from 'components/auctions/auction/CarouselSkeleton.vue';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 
 @Options({
@@ -153,6 +190,7 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
     Slide,
     Pagination,
     Navigation,
+    CarouselSkeleton,
   },
 })
 export default class AuctionsList extends Vue {
@@ -162,7 +200,7 @@ export default class AuctionsList extends Vue {
   loadingHotBids: boolean = true;
   loadingTopSellers: boolean = true;
   loadingTopBuyers: boolean = true;
-  numbers: number[] = [5, 4, 3, 2, 1];
+  windowSize = window.innerWidth;
 
   mounted() {
     void this.getDataHotBids();
@@ -285,4 +323,10 @@ export default class AuctionsList extends Vue {
   box-sizing: content-box;
   border: 5px solid white;
 }
+
+.custom-skeleton-border {
+  width: 35px;
+  height: 35px;
+}
+
 </style>

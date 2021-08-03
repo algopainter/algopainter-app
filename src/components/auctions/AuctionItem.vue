@@ -98,9 +98,6 @@ interface Ioptions {
   watch: {
     isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
   },
-  emits: [
-    'favoriteClicked',
-  ],
 })
 export default class AuctionItem extends Vue.with(Props) {
   share(id: string, socialMedia: string) {

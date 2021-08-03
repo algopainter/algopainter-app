@@ -22,7 +22,7 @@
           <div class="col-12 col-md-1">
             <LikeAnimation
               :liked="wasLiked"
-              :likes="galleryItem.art.likes"
+              :likes="likes || galleryItem.art.likes"
               @favoriteClicked="favoriteClicked"
             />
           </div>
@@ -77,12 +77,17 @@ class Props {
     account: '',
     isConnected: false,
   },
+  watch: {
+    account: ['loadData'],
+  },
 })
 export default class GalleryItem extends Vue.with(Props) {
   collectionArtController: CollectionArtController =
     new CollectionArtController();
 
   wasLiked: boolean = false;
+
+  likes!: number;
 
   get account() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
@@ -117,29 +122,57 @@ export default class GalleryItem extends Vue.with(Props) {
     }
   }
 
-  async postFavoriteArt() {
-    console.log(this.galleryItem.art.id);
-    const result = await this.collectionArtController.favoriteArt(
-      this.galleryItem.art.id,
-      this.account,
-    );
-    if (result.isFailure) {
-      console.log(result.error);
-    } else {
-      this.wasLiked = true;
-    }
+  mounted() {
+    void this.loadData();
   }
 
-  async deleteFavoriteArt() {
-    console.log(this.galleryItem.art.id);
-    const result = await this.collectionArtController.favoriteArt(
-      this.galleryItem.art.id,
-      this.account,
-    );
-    if (result.isFailure) {
-      console.log(result.error);
-    } else {
+  loadData() {
+    this.wasLiked =
+      (this.galleryItem.art.likers as string[]).filter(
+        (liker) => liker === this.account
+      ).length !== 0;
+    this.likes = this.galleryItem.art.likes as number;
+  }
+
+  postFavoriteArt() {
+    this.collectionArtController
+      .favoriteArt(this.galleryItem.art.id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like(true);
+          }
+        },
+        (error) => {
+          console.log('"like" post error: ', error);
+        }
+      );
+    this.like();
+  }
+
+  deleteFavoriteArt() {
+    this.collectionArtController
+      .deleteFavoriteArt(this.galleryItem.art.id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like();
+          }
+        },
+        (error) => {
+          console.log('"like" delete error: ', error);
+        }
+      );
+    this.like(true);
+  }
+
+  like(undo: boolean = false) {
+    if (undo) {
       this.wasLiked = false;
+      this.likes--;
+    } else {
+      this.wasLiked = true;
+      this.likes++;
     }
   }
 }

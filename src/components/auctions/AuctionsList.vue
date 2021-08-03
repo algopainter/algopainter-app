@@ -12,7 +12,7 @@
       {{ $t('dashboard.auctions.hotBids') }}
     </div>
     <div
-      v-if="loadingHotBids === false"
+      v-if="hotBidsLoading === false"
     >
       <carousel
         :items-to-show="4"
@@ -59,12 +59,12 @@
     </div>
     <div v-if="currentOptionsTop.id === 1">
       <div
-        v-if="loadingTopSellers === false"
+        v-if="topSellersLoading === false"
         class="top-sellers q-pb-md"
       >
         <div class="flex q-col-gutter-xl">
           <div
-            v-for="(seller, index) in TopSellers"
+            v-for="(seller, index) in topSellers"
             :key="index"
           >
             <div class="flex q-col-gutter-md items-center">
@@ -92,12 +92,12 @@
     </div>
     <div v-if="currentOptionsTop.id === 2">
       <div
-        v-if="loadingTopBuyers === false"
+        v-if="topBuyersLoading === false"
         class="top-sellers q-pb-xl"
       >
         <div class="flex q-col-gutter-xl">
           <div
-            v-for="(seller, index) in TopBuyers"
+            v-for="(seller, index) in topBuyers"
             :key="index"
           >
             <div class="flex q-col-gutter-md items-center">
@@ -155,47 +155,54 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
   },
 })
 export default class AuctionsList extends Vue {
-  TopSellers: ITopSellersBuyers[] = [];
-  TopBuyers: ITopSellersBuyers[] = [];
   areHot: IAuctionItem2[] = [];
-  loadingHotBids: boolean = true;
-  loadingTopSellers: boolean = true;
+  hotBidsLoading: boolean = true;
+
+  topSellers: ITopSellersBuyers[] = [];
+  topSellersLoading: boolean = true;
+
+  topBuyers: ITopSellersBuyers[] = [];
   loadingTopBuyers: boolean = true;
-  numbers: number[] = [5, 4, 3, 2, 1];
+  topBuyersLoading: boolean = true;
 
   mounted() {
-    void this.getDataHotBids();
-    void this.getDataTopSellers();
-    void this.getDataTopBuyers();
+    void this.getHotBids();
+    void this.getTopSellers();
+    void this.getTopBuyers();
   }
 
-  async getDataHotBids() {
-    try {
-      const data = await api.get('auctions?page=1&isHot=true');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.areHot = data.data as [];
-      this.loadingHotBids = false;
-    } catch (e) {
-      console.log('e', e);
-    }
+  getHotBids() {
+    void this.$store.dispatch({
+      type: 'auctions/getHotBids',
+    }).then(() => {
+      this.hotBidsLoading = this.$store.state.auctions.hotBidsLoading;
+      this.areHot = this.$store.state.auctions.hotBids;
+    });
   }
 
-  async getDataTopSellers() {
-    try {
-      const data = await api.get('reports/top/sellers');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.TopSellers = data.data as [];
-      this.loadingTopSellers = false;
-    } catch (e) {
-      console.log('e', e);
-    }
+  getTopSellers() {
+    void this.$store.dispatch({
+      type: 'auctions/getTopSellers',
+    }).then(() => {
+      this.topSellersLoading = this.$store.state.auctions.topSellersLoading;
+      this.topSellers = this.$store.state.auctions.topSellers;
+    });
+  }
+
+  getTopBuyers() {
+    void this.$store.dispatch({
+      type: 'auctions/getTopBuyers',
+    }).then(() => {
+      this.topBuyersLoading = this.$store.state.auctions.topBuyersLoading;
+      this.topBuyers = this.$store.state.auctions.topBuyers;
+    });
   }
 
   async getDataTopBuyers() {
     try {
       const data = await api.get('reports/top/buyers');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.TopBuyers = data.data as [];
+      this.topBuyers = data.data as [];
       this.loadingTopBuyers = false;
     } catch (e) {
       console.log('e', e);

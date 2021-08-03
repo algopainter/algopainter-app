@@ -59,17 +59,12 @@ import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
-import { isError } from 'src/helpers/utils';
 
 class Props {
   galleryItem = prop({
     type: Object as PropType<IGallery>,
     required: true,
   });
-}
-
-interface Ioptions {
-  socialNetworks: string;
 }
 
 @Options({
@@ -121,33 +116,6 @@ export default class GalleryItem extends Vue.with(Props) {
       wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
     }
   }
-
-  options: Ioptions = {
-    socialNetworks: '',
-  };
-
-  socialNetworks = [
-    {
-      value: 0,
-      label: 'Facebook',
-      name: 'facebook',
-    },
-    {
-      value: 0,
-      label: 'Twitter',
-      name: 'mdi-twitter',
-    },
-    {
-      value: 0,
-      label: 'Telegram',
-      name: 'mdi-telegram',
-    },
-    {
-      value: 0,
-      label: 'E-mail',
-      name: 'mdi-email',
-    },
-  ];
 
   async postFavoriteArt() {
     const response = await this.collectionArtController.favoriteArt(

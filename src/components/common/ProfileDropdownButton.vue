@@ -106,7 +106,7 @@ export default class ProfileDropdownButton extends Vue {
 
   async setAccountBalance() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    this.balance = await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'],this.$store.getters['user/account']);
+    this.balance = await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
   }
 
   async loadUserProfile() {

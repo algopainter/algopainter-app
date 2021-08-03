@@ -155,12 +155,37 @@ export default class AuctionItem extends Vue.with(Props) {
     this.previewImageUrl = this.isHot.item.previewImageUrl;
   }
 
-  favoriteClicked() {
+  favoriteClicked(wasLiked: boolean) {
     this.$emit('favoriteClicked');
+    if (this.isConnected) {
+      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    }
   }
 
-  options: Ioptions = {
-    socialNetworks: '',
+  async postFavoriteArt() {
+    console.log(this.isHot.item._id);
+    const result = await this.collectionArtController.favoriteArt(
+      this.isHot.item._id,
+      this.account,
+    );
+    if (result.isFailure) {
+      console.log(result.error);
+    } else {
+      this.wasLiked = true;
+    }
+  }
+
+  async deleteFavoriteArt() {
+    console.log(this.isHot.item._id);
+    const result = await this.collectionArtController.deleteFavoriteArt(
+      this.isHot.item._id,
+      this.account
+    );
+    if (result.isFailure) {
+      console.log(result.error);
+    } else {
+      this.wasLiked = false;
+    }
   }
 }
 </script>

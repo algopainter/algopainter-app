@@ -1,14 +1,14 @@
 <template>
   <div>
     <algo-button
-      :label="formatedAccount()"
+      :label="name || formatedAccount()"
       color="primary"
       outline
       class="text-bold"
     >
       <q-menu>
         <div class="q-pa-md">
-          <div class="text-bold q-mb-md">{{ formatedAccount() }}</div>
+          <div class="text-bold q-mb-md">{{ name || formatedAccount() }}</div>
           <q-list>
             <q-item v-ripple class="q-pl-none">
               <q-item-section avatar>
@@ -70,6 +70,8 @@
 import AlgoButton from 'components/common/Button.vue';
 import { Options, Vue } from 'vue-class-component';
 import UserUtils from 'src/helpers/user';
+import UserController from 'src/controllers/user/UserController';
+import { IProfile } from 'src/models/IProfile';
 
 @Options({
   components: {
@@ -79,11 +81,19 @@ import UserUtils from 'src/helpers/user';
     accountAddress: '',
   },
   watch: {
-    accountAddress: ['setAccountBalance'],
+    accountAddress: ['setAccountBalance', 'loadUserProfile'],
   },
 })
 export default class ProfileDropdownButton extends Vue {
   balance: number = 0;
+
+  userProfile: IProfile = {};
+
+  userController: UserController = new UserController();
+
+  get name() {
+    return this.userProfile.name;
+  }
 
   get accountAddress() {
     return this.$store.state.user.account;
@@ -91,14 +101,22 @@ export default class ProfileDropdownButton extends Vue {
 
   mounted() {
     void this.setAccountBalance();
+    void this.loadUserProfile();
   }
 
   async setAccountBalance() {
-    if (this.isConnected) {
-      this.balance = (
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])
-      );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    this.balance = await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'],this.$store.getters['user/account']);
+  }
+
+  async loadUserProfile() {
+    const result = await this.userController.getUserProfile(
+      this.accountAddress as string,
+    );
+    if (result.isFailure) {
+      console.log('erro', result);
+    } else if (result.getValue() !== null) {
+      this.userProfile = result.getValue() as IProfile;
     }
   }
 

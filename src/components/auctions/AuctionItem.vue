@@ -85,10 +85,6 @@ class Props {
   });
 }
 
-interface Ioptions {
-  socialNetworks: string;
-}
-
 @Options({
   components: {
     AlgoButton,
@@ -143,49 +139,6 @@ export default class AuctionItem extends Vue.with(Props) {
   options: Ioptions = {
     socialNetworks: '',
   }
-
-  socialNetworks = [
-    {
-      value: 0,
-      label: 'Facebook',
-      name: 'facebook',
-    },
-    {
-      value: 0,
-      label: 'Twitter',
-      name: 'mdi-twitter',
-    },
-    {
-      value: 0,
-      label: 'Telegram',
-      name: 'mdi-telegram',
-    },
-    {
-      value: 0,
-      label: 'Email',
-      name: 'mdi-email',
-    },
-  ]
-
-  isAuctionFavorite: boolean = false;
-
-  favoriteAuction() {
-    this.isAuctionFavorite = !this.isAuctionFavorite;
-  }
-
-  incrementCounter() {
-    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
-  }
-
-  postFavoriteAuction() {
-  // post http request
-    return true;
-  }
-
-  // FAKE DATA
-  favoriteCounter: number = parseInt(
-    (Math.random() * 100).toString(),
-  );
 }
 </script>
 

@@ -28,7 +28,8 @@
         <div class="col-12 col-md-1 flex">
           <LikeAnimation
             :likes="isHot.item.likes"
-            @favoriteClicked="favoriteClicked()"
+            :liked="wasLiked"
+            @favoriteClicked="favoriteClicked"
           />
         </div>
       </div>
@@ -77,6 +78,7 @@ import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
+import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
 
 class Props {
   isHot = prop({
@@ -96,6 +98,20 @@ class Props {
   },
 })
 export default class AuctionItem extends Vue.with(Props) {
+  collectionArtController: CollectionArtController = new CollectionArtController();
+
+  wasLiked: boolean = false;
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  get account() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/account'];
+  }
+
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
       Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,

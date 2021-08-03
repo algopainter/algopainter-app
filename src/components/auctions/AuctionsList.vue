@@ -140,7 +140,6 @@ import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import { ITopSellersBuyers } from 'src/models/ITopSellersBuyers';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
-import { api } from 'src/boot/axios';
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 
@@ -162,7 +161,6 @@ export default class AuctionsList extends Vue {
   topSellersLoading: boolean = true;
 
   topBuyers: ITopSellersBuyers[] = [];
-  loadingTopBuyers: boolean = true;
   topBuyersLoading: boolean = true;
 
   mounted() {
@@ -175,7 +173,7 @@ export default class AuctionsList extends Vue {
     void this.$store.dispatch({
       type: 'auctions/getHotBids',
     }).then(() => {
-      this.hotBidsLoading = this.$store.state.auctions.hotBidsLoading;
+      this.hotBidsLoading = false;
       this.areHot = this.$store.state.auctions.hotBids;
     });
   }
@@ -184,7 +182,7 @@ export default class AuctionsList extends Vue {
     void this.$store.dispatch({
       type: 'auctions/getTopSellers',
     }).then(() => {
-      this.topSellersLoading = this.$store.state.auctions.topSellersLoading;
+      this.topSellersLoading = false;
       this.topSellers = this.$store.state.auctions.topSellers;
     });
   }
@@ -193,20 +191,9 @@ export default class AuctionsList extends Vue {
     void this.$store.dispatch({
       type: 'auctions/getTopBuyers',
     }).then(() => {
-      this.topBuyersLoading = this.$store.state.auctions.topBuyersLoading;
+      this.topBuyersLoading = false;
       this.topBuyers = this.$store.state.auctions.topBuyers;
     });
-  }
-
-  async getDataTopBuyers() {
-    try {
-      const data = await api.get('reports/top/buyers');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.topBuyers = data.data as [];
-      this.loadingTopBuyers = false;
-    } catch (e) {
-      console.log('e', e);
-    }
   }
 
   favoriteClicked() {

@@ -11,11 +11,9 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const hotBids = res.data as [];
       this.commit('auctions/SET_HOT_BIDS', hotBids);
     } catch (e) {
-      void this.dispatch({
-        type: 'auctions/getHotBids',
-      });
+      console.log('error msg');
     } finally {
-      this.commit('auctions/SET_HOT_BIDS_LOADING', false);
+      console.log('success msg');
     }
   },
   async getTopSellers() {
@@ -25,11 +23,9 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const topSellers = res.data as [];
       this.commit('auctions/SET_TOP_SELLERS', topSellers);
     } catch (e) {
-      void this.dispatch({
-        type: 'auctions/getTopSellers',
-      });
+      console.log('error msg');
     } finally {
-      this.commit('auctions/SET_TOP_SELLERS_LOADING', false);
+      console.log('success msg');
     }
   },
   async getTopBuyers() {
@@ -39,11 +35,9 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const TopBuyers = res.data as [];
       this.commit('auctions/SET_TOP_BUYERS', TopBuyers);
     } catch (e) {
-      void this.dispatch({
-        type: 'auctions/getTopBuyers',
-      });
+      console.log('error msg');
     } finally {
-      this.commit('auctions/SET_TOP_BUYERS_LOADING', false);
+      console.log('success msg');
     }
   },
 };

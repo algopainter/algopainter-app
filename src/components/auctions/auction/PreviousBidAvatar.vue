@@ -1,13 +1,13 @@
 <template>
   <avatar-section
     class="q-py-md"
-    :image-url="bid.user.profilePhotoUrl"
+    :image-url="bid.bidder.avatar"
   >
     <template #title>
       <div class="text-bold">
         <i18n-t keypath="dashboard.auctionPage.previousBid">
           <template #bidPrice>
-            <span class="text-positive">{{ $n(bid.price, 'currency') }}</span>
+            <span class="text-positive">{{ $n(bid.amount, 'currency') }}</span>
           </template>
           <template #bidAtInDays>
             {{ bidAtInDays(bid) }}
@@ -19,7 +19,7 @@
       <div class="text-primary text-bold">
         {{
           $t('dashboard.auctionPage.previousBidBy', {
-            name: bid.user.name,
+            name: bid.bidder.name,
           })
         }}
       </div>

@@ -94,7 +94,7 @@ class Props {
     ShareArtIcons,
   },
   watch: {
-    isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
+    account: ['loadData'],
   },
 })
 export default class AuctionItem extends Vue.with(Props) {

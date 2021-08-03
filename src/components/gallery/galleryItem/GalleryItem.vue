@@ -118,27 +118,29 @@ export default class GalleryItem extends Vue.with(Props) {
   }
 
   async postFavoriteArt() {
-    const response = await this.collectionArtController.favoriteArt(
+    console.log(this.galleryItem.art.id);
+    const result = await this.collectionArtController.favoriteArt(
       this.galleryItem.art.id,
-      this.account
+      this.account,
     );
-    if (isError(response as Error)) {
-      alert('mensagem de assinatura recusada');
-      return;
+    if (result.isFailure) {
+      console.log(result.error);
+    } else {
+      this.wasLiked = true;
     }
-    this.wasLiked = true;
   }
 
   async deleteFavoriteArt() {
-    const response = await this.collectionArtController.deleteFavoriteArt(
+    console.log(this.galleryItem.art.id);
+    const result = await this.collectionArtController.favoriteArt(
       this.galleryItem.art.id,
-      this.account
+      this.account,
     );
-    if (isError(response as Error)) {
-      alert('mensagem de assinatura recusada');
-      return;
+    if (result.isFailure) {
+      console.log(result.error);
+    } else {
+      this.wasLiked = false;
     }
-    this.wasLiked = false;
   }
 }
 </script>

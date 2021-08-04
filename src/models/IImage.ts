@@ -1,7 +1,8 @@
-import { IUser } from './IUser';
+import { IImageUser } from './IImageUser';
 
-export interface INFTArtist extends IUser {
+export interface INFTArtist extends IImageUser {
   _id: string;
+
 }
 
 export interface IImageNFTInfo {
@@ -21,5 +22,6 @@ export interface IImage {
   description: string;
   tags: string[];
   nft: IImageNFTInfo;
-  users: IUser[];
+  users: IImageUser[];
+  collectionName: string;
 }

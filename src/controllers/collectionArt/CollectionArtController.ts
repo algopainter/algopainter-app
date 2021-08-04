@@ -53,12 +53,11 @@ export default class CollectionArtController extends BaseController {
         ...request,
         signature: signatureOrError,
       });
-      const response = await this.delete(`images/${artId}/likes`, {
-        data: {
-          ...request,
-          signature: signatureOrError,
-        },
+      const body = JSON.stringify({
+        ...request,
+        signature: signatureOrError,
       });
+      const response = await this.delete(`images/${artId}/likes?payload=${body}`);
       return Result.ok((response.data as IApiResponse<boolean>).data);
     } catch (error) {
       return Result.fail<string>((error as IError).message);

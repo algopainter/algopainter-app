@@ -2,6 +2,7 @@ import { ActionTree, Commit } from 'vuex';
 import { StateInterface } from '..';
 import { UserStateInterface, IWeb3Provider } from './types';
 import Web3 from 'web3';
+import { api } from 'src/boot/axios';
 // import { provider as Provider } from 'web3-core';
 // import WalletConnectProvider from '@walletconnect/web3-provider';
 
@@ -84,6 +85,19 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       void commitUserData(commit);
     } catch (error) {
       clear(commit, error);
+    }
+  },
+  async getProfile(type) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const res = await api.get(`users/${this.state.user.account}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const profile = res.data as [];
+      this.commit('user/SET_PROFILE', profile);
+    } catch (e) {
+      console.log('error message');
+    } finally {
+      console.log('success message');
     }
   },
 };

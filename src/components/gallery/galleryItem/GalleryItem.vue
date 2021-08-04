@@ -8,7 +8,7 @@
           size="lg"
           round
         >
-          <img :src="person.picture" />
+          <img :src="person.picture">
           <q-tooltip class="bg-primary">
             {{ person.accountable }}{{ $t('dashboard.homePage.colon') }}
             {{ person.name }}
@@ -29,7 +29,10 @@
         </div>
       </div>
     </div>
-    <q-img class="art-image" :src="galleryItem.art.source" />
+    <q-img
+      class="art-image"
+      :src="galleryItem.art.source"
+    />
     <div class="details q-pa-sm">
       <div class="name">
         {{ galleryItem.art.name }}
@@ -111,7 +114,7 @@ export default class GalleryItem extends Vue.with(Props) {
     window.open(
       linkElement.href,
       '_blank',
-      'width=550, height=555, top=100, left=190, scrollbars=no'
+      'width=550, height=555, top=100, left=190, scrollbars=no',
     );
   }
 

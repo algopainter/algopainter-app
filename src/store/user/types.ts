@@ -70,6 +70,7 @@ export interface UserStateInterface {
   account?: string;
   error?: Error;
   networkInfo?: NetworkInfo;
+  profile: [];
 }
 
 export interface IWeb3Provider {

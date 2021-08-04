@@ -124,7 +124,7 @@ export default {
     sChanges: 'Save changes',
   },
   gallery: {
-    title: 'Collection Gallery',
+    title: 'Collection',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',

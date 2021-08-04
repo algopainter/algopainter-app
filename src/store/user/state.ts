@@ -6,6 +6,7 @@ function state(): UserStateInterface {
     account: undefined,
     error: undefined,
     networkInfo: undefined,
+    profile: [],
   };
 }
 

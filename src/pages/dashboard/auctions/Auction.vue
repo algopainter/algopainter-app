@@ -133,24 +133,33 @@
               name="info"
               class="q-pa-sm"
             >
-              <algo-avatar
-                class="q-py-md"
-                :title="auctionData.users[0].role"
-                :image-url="auctionData.users[0].avatar"
-                :sub-title="auctionData.users[0].name"
-              />
-              <algo-avatar
-                class="q-py-md"
-                :title="auctionData.users[1].role"
-                :image-url="auctionData.users[1].avatar"
-                :sub-title="auctionData.users[1].name"
-                :description="
-                  $t('dashboard.auctionPage.pirsDestination', {
-                    pirs: $n(auctionData.fee.royalties[0].value*10, 'percent'),
-                    role: $t('dashboard.auctionPage.creators').toLowerCase(),
-                  })
-                "
-              />
+              <div
+                v-for="(user , i) in auctionData.users"
+                :key="i"
+              >
+                <div v-if="user.role === 'creator'">
+                  <algo-avatar
+                    class="q-py-md"
+                    :title="user.role"
+                    :image-url="user.avatar"
+                    :sub-title="user.name"
+                  />
+                </div>
+                <div v-if="user.role === 'owner'">
+                  <algo-avatar
+                    class="q-py-md"
+                    :title="user.role"
+                    :image-url="user.avatar"
+                    :sub-title="user.name"
+                    :description="
+                      $t('dashboard.auctionPage.pirsDestination', {
+                        pirs: $n(auctionData.fee.royalties[0].value*10, 'percent'),
+                        role: $t('dashboard.auctionPage.creators').toLowerCase(),
+                      })
+                    "
+                  />
+                </div>
+              </div>
               <q-separator
                 class="q-pr-xl"
                 spaced="md"

@@ -107,6 +107,7 @@ export default class HomePageGallery extends Vue {
           picture: user.avatar,
         })) as Person[],
         likes: image.likes,
+        likers: image.likers,
       },
     } as IGallery;
   }

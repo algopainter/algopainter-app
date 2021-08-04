@@ -27,7 +27,7 @@
         <ShareArtIcons :art="isHot._id" />
         <div class="col-12 col-md-1 flex">
           <LikeAnimation
-            :likes="isHot.item.likes"
+            :likes="likes || isHot.item.likes"
             :liked="wasLiked"
             @favoriteClicked="favoriteClicked"
           />
@@ -102,6 +102,8 @@ export default class AuctionItem extends Vue.with(Props) {
 
   wasLiked: boolean = false;
 
+  likes!: number;
+
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/isConnected'];
@@ -148,6 +150,7 @@ export default class AuctionItem extends Vue.with(Props) {
     this.wasLiked =
       this.isHot.item.likers.filter((liker) => liker === this.account)
         .length !== 0;
+    this.likes = this.isHot.item.likes;
   }
 
   showRun() {
@@ -162,29 +165,47 @@ export default class AuctionItem extends Vue.with(Props) {
     }
   }
 
-  async postFavoriteArt() {
-    console.log(this.isHot.item._id);
-    const result = await this.collectionArtController.favoriteArt(
-      this.isHot.item._id,
-      this.account,
-    );
-    if (result.isFailure) {
-      console.log(result.error);
-    } else {
-      this.wasLiked = true;
-    }
+  postFavoriteArt() {
+    this.collectionArtController
+      .favoriteArt(this.isHot.item._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like(true);
+          }
+        },
+        (error) => {
+          // tratar erro
+          console.log('"like" post error: ', error);
+        }
+      );
+    this.like();
   }
 
-  async deleteFavoriteArt() {
-    console.log(this.isHot.item._id);
-    const result = await this.collectionArtController.deleteFavoriteArt(
-      this.isHot.item._id,
-      this.account
-    );
-    if (result.isFailure) {
-      console.log(result.error);
-    } else {
+  deleteFavoriteArt() {
+    this.collectionArtController
+      .deleteFavoriteArt(this.isHot.item._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like();
+          }
+        },
+        (error) => {
+          // tratar erro
+          console.log('"like" delete error: ', error);
+        }
+      );
+    this.like(true);
+  }
+
+  like(undo: boolean = false) {
+    if (undo) {
       this.wasLiked = false;
+      this.likes--;
+    } else {
+      this.wasLiked = true;
+      this.likes++;
     }
   }
 }

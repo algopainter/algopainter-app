@@ -177,7 +177,7 @@ export default class AuctionItem extends Vue.with(Props) {
         (error) => {
           // tratar erro
           console.log('"like" post error: ', error);
-        }
+        },
       );
     this.like();
   }
@@ -194,7 +194,7 @@ export default class AuctionItem extends Vue.with(Props) {
         (error) => {
           // tratar erro
           console.log('"like" delete error: ', error);
-        }
+        },
       );
     this.like(true);
   }

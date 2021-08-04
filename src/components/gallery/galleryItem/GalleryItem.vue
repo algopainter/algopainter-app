@@ -132,7 +132,7 @@ export default class GalleryItem extends Vue.with(Props) {
   loadData() {
     this.wasLiked =
       (this.galleryItem.art.likers as string[]).filter(
-        (liker) => liker === this.account
+        (liker) => liker === this.account,
       ).length !== 0;
     this.likes = this.galleryItem.art.likes as number;
   }
@@ -148,7 +148,7 @@ export default class GalleryItem extends Vue.with(Props) {
         },
         (error) => {
           console.log('"like" post error: ', error);
-        }
+        },
       );
     this.like();
   }
@@ -164,7 +164,7 @@ export default class GalleryItem extends Vue.with(Props) {
         },
         (error) => {
           console.log('"like" delete error: ', error);
-        }
+        },
       );
     this.like(true);
   }

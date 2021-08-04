@@ -110,7 +110,6 @@ export default class ProfileDropdownButton extends Vue {
   }
 
   async loadUserProfile() {
-    console.log('passou aqui');
     const result = await this.userController.getUserProfile(
       this.accountAddress as string,
     );

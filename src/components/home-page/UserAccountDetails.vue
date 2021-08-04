@@ -40,8 +40,8 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import { IUsers } from 'src/models/IUsers';
 import { IUser } from 'src/models/IUser';
+
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
 
@@ -68,7 +68,7 @@ export default class UserAccountDetails extends Vue {
     collections: 8,
   };
 
-  userProfile: IUsers[] = [];
+  userProfile: IUser[] = [];
   loadingUserProfile: boolean = true;
 
   userItems = '0';

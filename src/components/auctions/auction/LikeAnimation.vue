@@ -14,7 +14,7 @@
             @click="favoriteClicked()"
           />
           <div class="text-primary">
-            {{ favoriteCounter }}
+            {{ likes }}
           </div>
           <span :class="{ press: liked }">{{
             $t('dashboard.auctionPage.liked')
@@ -44,15 +44,10 @@ class Props {
 
 @Options({
   computed: {
-    favoriteCounter: 0,
     isConnected: false,
   },
 })
 export default class LikeAnimation extends Vue.with(Props) {
-  get favoriteCounter() {
-    return this.liked ? this.likes + 1 : this.likes;
-  }
-
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/isConnected'];

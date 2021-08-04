@@ -1,14 +1,11 @@
 <template>
-  <div
-    v-for="galleryItems in gallery"
-    :key="galleryItems.id"
-  >
+  <div v-if="loadingDetailsData === false">
     <div class="row justify-between">
       <div
         class="col-lg-6 col-md-6"
       >
         <p class="text-bold text-h5">
-          {{ galleryItems.art.name }}
+          {{ detailsData.title }}
         </p>
       </div>
       <div>
@@ -36,11 +33,11 @@
         <div class="row justify-center">
           <q-img
             class="img"
-            src="../../../assets/placeholder-images/painting.jpg"
+            :src="detailsData.nft.previewImage"
           />
           <div class="">
             <ShareArtIcons
-              :art="galleryItems.id"
+              :art="detailsData._id"
             />
           </div>
         </div>
@@ -61,17 +58,24 @@
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.algoPainter') }}
             </span>
-            <p>{{ galleryItems.art.algopainter }}</p>
+            <p>{{ detailsData.collectionName }} </p>
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.owner') }}
             </span>
-            <p>
-              {{ galleryItems.art.owner }}
-            </p>
+            <div
+              v-for="(user , index) in detailsData.users"
+              :key="index"
+            >
+              <div v-if="user.role === 'owner'">
+                <p>
+                  {{ user.name }}
+                </p>
+              </div>
+            </div>
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
             </span>
-            <p> {{ galleryItems.description }}</p>
+            <p> {{ detailsData.description }}</p>
           </div>
         </div>
       </div>
@@ -80,63 +84,36 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options, prop } from 'vue-class-component';
-import { PropType } from 'vue';
+import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-import { IGallery } from 'src/models/IGallery';
 import ShareArtIcons from 'components/common/ShareArtIcons.vue';
-class Props {
-   galleryItem = prop({
-     type: Object as PropType<IGallery>,
-     required: true,
-   });
-}
+import { IImage } from 'src/models/IImage';
+import { api } from 'src/boot/axios';
 
 @Options({
   components: { AlgoButton, ShareArtIcons },
 })
 
-export default class ViewArt extends Vue.with(Props) {
-  gallery: IGallery[] = [
-    {
-      id: '1',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '1',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Collection',
-          },
-        ],
-      },
-    },
-  ]
+export default class ViewArt extends Vue {
+  loadingDetailsData: boolean = true;
+  detailsData: IImage[] = [];
+
+  mounted() {
+    const route = this.$route.params.id;
+    void this.getDetailsData(route);
+  }
+
+  async getDetailsData(route: unknown) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const data = await api.get(`images/${route}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.detailsData = data.data as [];
+      this.loadingDetailsData = false;
+    } catch (e) {
+      console.log('e', e);
+    }
+  }
 }
 </script>
 <style scoped>

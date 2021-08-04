@@ -86,6 +86,7 @@ import { ICollection } from 'src/models/ICollection';
 import CollectionController from 'src/controllers/collection/CollectionController';
 import { Person } from 'src/models/IArt';
 import { IImage } from 'src/models/IImage';
+import { IUser } from 'src/models/IUser';
 
 @Options({
   components: {
@@ -141,7 +142,7 @@ export default class Gallery extends Vue {
         id: image._id,
         name: image.title,
         source: image.nft.previewImage,
-        importantPeople: image.users.map((user) => ({
+        importantPeople: (image.users as unknown as IUser[]).map((user) => ({
           ...user,
           accountable: user.role,
           picture: user.avatar,

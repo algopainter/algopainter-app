@@ -69,6 +69,20 @@
               <div v-if="user.role === 'owner'">
                 <p>
                   {{ user.name }}
+                  <q-tooltip
+                    anchor="bottom middle"
+                    self="top middle"
+                    class="bg-primary"
+                    :offset="[0, 0]"
+                    :hide-delay="950"
+                  >
+                    {{ user.account }}
+                  </q-tooltip>
+                </p>
+              </div>
+              <div v-if="user.role === ''">
+                <p>
+                  {{ user.account }}
                 </p>
               </div>
             </div>

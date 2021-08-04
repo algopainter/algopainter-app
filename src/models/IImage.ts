@@ -17,6 +17,7 @@ export interface IImage {
   _id: string;
   title: string;
   likes: number;
+  likers: string[];
   description: string;
   tags: string[];
   nft: IImageNFTInfo;

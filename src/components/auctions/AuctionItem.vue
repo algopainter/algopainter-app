@@ -27,8 +27,9 @@
         <ShareArtIcons :art="isHot._id" />
         <div class="col-12 col-md-1 flex">
           <LikeAnimation
-            :likes="isHot.item.likes"
-            @favoriteClicked="favoriteClicked()"
+            :likes="likes || isHot.item.likes"
+            :liked="wasLiked"
+            @favoriteClicked="favoriteClicked"
           />
         </div>
       </div>
@@ -77,16 +78,13 @@ import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
+import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
 
 class Props {
   isHot = prop({
     type: Object as PropType<IAuctionItem2>,
     required: true,
   });
-}
-
-interface Ioptions {
-  socialNetworks: string;
 }
 
 @Options({
@@ -96,13 +94,26 @@ interface Ioptions {
     ShareArtIcons,
   },
   watch: {
-    isAuctionFavorite: ['incrementCounter', 'postFavoriteAuction'],
+    account: ['loadData'],
   },
-  emits: [
-    'favoriteClicked',
-  ],
 })
 export default class AuctionItem extends Vue.with(Props) {
+  collectionArtController: CollectionArtController = new CollectionArtController();
+
+  wasLiked: boolean = false;
+
+  likes!: number;
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  get account() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/account'];
+  }
+
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
       Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
@@ -132,6 +143,14 @@ export default class AuctionItem extends Vue.with(Props) {
   mounted() {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     setTimeout(this.showRun, 0);
+    void this.loadData();
+  }
+
+  loadData() {
+    this.wasLiked =
+      this.isHot.item.likers.filter((liker) => liker === this.account)
+        .length !== 0;
+    this.likes = this.isHot.item.likes;
   }
 
   showRun() {
@@ -139,56 +158,56 @@ export default class AuctionItem extends Vue.with(Props) {
     this.previewImageUrl = this.isHot.item.previewImageUrl;
   }
 
-  favoriteClicked() {
+  favoriteClicked(wasLiked: boolean) {
     this.$emit('favoriteClicked');
+    if (this.isConnected) {
+      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    }
   }
 
-  options: Ioptions = {
-    socialNetworks: '',
+  postFavoriteArt() {
+    this.collectionArtController
+      .favoriteArt(this.isHot.item._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like(true);
+          }
+        },
+        (error) => {
+          // tratar erro
+          console.log('"like" post error: ', error);
+        }
+      );
+    this.like();
   }
 
-  socialNetworks = [
-    {
-      value: 0,
-      label: 'Facebook',
-      name: 'facebook',
-    },
-    {
-      value: 0,
-      label: 'Twitter',
-      name: 'mdi-twitter',
-    },
-    {
-      value: 0,
-      label: 'Telegram',
-      name: 'mdi-telegram',
-    },
-    {
-      value: 0,
-      label: 'Email',
-      name: 'mdi-email',
-    },
-  ]
-
-  isAuctionFavorite: boolean = false;
-
-  favoriteAuction() {
-    this.isAuctionFavorite = !this.isAuctionFavorite;
+  deleteFavoriteArt() {
+    this.collectionArtController
+      .deleteFavoriteArt(this.isHot.item._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like();
+          }
+        },
+        (error) => {
+          // tratar erro
+          console.log('"like" delete error: ', error);
+        }
+      );
+    this.like(true);
   }
 
-  incrementCounter() {
-    this.isAuctionFavorite ? this.favoriteCounter++ : this.favoriteCounter--;
+  like(undo: boolean = false) {
+    if (undo) {
+      this.wasLiked = false;
+      this.likes--;
+    } else {
+      this.wasLiked = true;
+      this.likes++;
+    }
   }
-
-  postFavoriteAuction() {
-  // post http request
-    return true;
-  }
-
-  // FAKE DATA
-  favoriteCounter: number = parseInt(
-    (Math.random() * 100).toString(),
-  );
 }
 </script>
 

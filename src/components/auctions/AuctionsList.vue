@@ -74,6 +74,7 @@
                 <q-avatar
                   round
                   size="64px"
+                  @onclick="goToProfile"
                 >
                   <img :src="seller.avatar">
                 </q-avatar>
@@ -159,14 +160,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="explore-results flex q-col-gutter-md">
-      <auction-item
-        v-for="auction in auctions"
-        :key="auction.id"
-        :auction="auction"
-        @favoriteClicked="favoriteClicked"
-      />
     </div>
   </q-page>
 </template>

@@ -6,20 +6,22 @@
           v-for="(bid, index) in isHot.bids"
           :key="index"
         >
-          <q-avatar
-            v-if="changeAvatar(bid.bidder)"
-            size="lg"
-            round
-          >
-            <img
-              :src="bid.bidder.avatar"
+          <router-link :to="{path: 'user-gallery', query: { customProfile: bid.bidder.account }}">
+            <q-avatar
+              v-if="changeAvatar(bid.bidder)"
+              size="lg"
+              round
             >
-            <q-tooltip
-              class="bg-primary"
-            >
-              {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
-            </q-tooltip>
-          </q-avatar>
+              <img
+                :src="bid.bidder.avatar"
+              >
+              <q-tooltip
+                class="bg-primary"
+              >
+                {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
+              </q-tooltip>
+            </q-avatar>
+          </router-link>
         </div>
       </div>
       <q-space />

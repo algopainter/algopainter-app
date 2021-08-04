@@ -7,6 +7,8 @@ function state(): UserStateInterface {
     error: undefined,
     networkInfo: undefined,
     profile: [],
+    userAccount: undefined,
+    userProfile: [],
   };
 }
 

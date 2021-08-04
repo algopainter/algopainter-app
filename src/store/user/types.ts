@@ -71,6 +71,8 @@ export interface UserStateInterface {
   error?: Error;
   networkInfo?: NetworkInfo;
   profile: [];
+  userAccount?: string;
+  userProfile: [];
 }
 
 export interface IWeb3Provider {

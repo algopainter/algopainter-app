@@ -1,19 +1,23 @@
 <template>
   <div class="container">
     <div class="art-header flex q-pb-sm">
-      <div class="users">
-        <q-avatar
-          v-for="person in galleryItem.art.importantPeople"
-          :key="person.id"
-          size="lg"
-          round
-        >
-          <img :src="person.picture" />
-          <q-tooltip class="bg-primary">
-            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }}
-            {{ person.name }}
-          </q-tooltip>
-        </q-avatar>
+      <div
+        v-for="person in galleryItem.art.importantPeople"
+        :key="person.id"
+        class="users"
+      >
+        <router-link :to="{path: 'user-gallery', query: { customProfile: person.account }}">
+          <q-avatar
+            size="lg"
+            round
+          >
+            <img :src="person.picture">
+            <q-tooltip class="bg-primary">
+              {{ person.accountable }}{{ $t('dashboard.homePage.colon') }}
+              {{ person.name }}
+            </q-tooltip>
+          </q-avatar>
+        </router-link>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">

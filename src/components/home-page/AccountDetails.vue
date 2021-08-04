@@ -41,7 +41,7 @@
               {{ $t('dashboard.homePage.collection') }}
             </div>
             <div class="text-h1 text-bold q-py-xl">
-              {{ user.collections }}
+              {{ userItems }}
             </div>
           </div>
           <div class="col-12 col-lg-6 text-secondary text-center">
@@ -191,6 +191,9 @@ export default class AccountDetails extends Vue {
   profile: IUsers[] = [];
   loadingProfile: boolean = true;
 
+  userItems = '0';
+  loadingUserItems: boolean = true;
+
   balance: number = 0;
 
   get isConnected() {
@@ -206,12 +209,14 @@ export default class AccountDetails extends Vue {
   @Watch('accountAddress')
   onPropertyChanged(value: string, oldValue: string) {
     void this.getProfile();
+    void this.getUserItems();
   }
 
   mounted() {
     void this.setAccountBalance();
     this.formatedBalance();
     void this.getProfile();
+    void this.getUserItems();
   }
 
   getProfile() {
@@ -221,7 +226,18 @@ export default class AccountDetails extends Vue {
       }).then(() => {
         this.loadingProfile = false;
         this.profile = this.$store.state.user.profile;
-        console.log(this.profile);
+      });
+    }
+  }
+
+  getUserItems() {
+    if (this.isConnected === true) {
+      void this.$store.dispatch({
+        type: 'collections/getUserItems',
+        account: this.accountAddress,
+      }).then(() => {
+        this.loadingUserItems = false;
+        this.userItems = this.$store.state.collections.userItems;
       });
     }
   }

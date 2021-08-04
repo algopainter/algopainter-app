@@ -50,6 +50,7 @@ import AlgoButton from 'components/common/Button.vue';
 import { ICollection } from 'src/models/ICollection';
 import CollectionController from 'src/controllers/collection/CollectionController';
 import { Person } from 'src/models/IArt';
+import { IUser } from 'src/models/IUser';
 import { IImage } from 'src/models/IImage';
 import HomePageGallerySkeleton from 'components/gallery/galleryItem/HomePageGallerySkeleton.vue';
 
@@ -72,8 +73,8 @@ export default class HomePageGallery extends Vue {
 
   collectionClicked(collection: ICollection) {
     this.currentCollection = collection;
-    this.currentCollectionGallery = collection.images.map((image) => 
-      this.mapImageToGalleryItem(image)
+    this.currentCollectionGallery = collection.images.map((image) =>
+      this.mapImageToGalleryItem(image),
     );
   }
 
@@ -87,7 +88,7 @@ export default class HomePageGallery extends Vue {
       this.collections = collections.slice(0, 3); // Simulation of three items received from api, only
       this.currentCollection = collections[0];
       this.currentCollectionGallery = collections[0].images.map((image) =>
-        this.mapImageToGalleryItem(image)
+        this.mapImageToGalleryItem(image),
       );
     }
     this.loading = false;
@@ -101,7 +102,7 @@ export default class HomePageGallery extends Vue {
         id: image._id,
         name: image.title,
         source: image.nft.previewImage,
-        importantPeople: image.users.map((user) => ({
+        importantPeople: (image.users as unknown as IUser[]).map((user) => ({
           ...user,
           accountable: user.role,
           picture: user.avatar,

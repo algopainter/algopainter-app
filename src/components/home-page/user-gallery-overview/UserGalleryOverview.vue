@@ -1,5 +1,8 @@
 <template>
-  <div class="row q-col-gutter-lg">
+  <div
+    v-if="loadingGalleryBid === false"
+    class="row q-col-gutter-lg"
+  >
     <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
       <div
         v-for="item in galleryItems"
@@ -15,17 +18,17 @@
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
-      <div class="column q-col-gutter-md">
-        <div
-          v-for="bid in bids"
-          :key="bid.id"
-        >
-          <latest-bids-item :bid="bid" />
-        </div>
+      <div
+        v-for="bid in galleryBid"
+        :key="bid._id"
+        class="column q-col-gutter-md"
+      >
+        <LatestBidsItem :bid="bid" />
       </div>
       <div class="q-pt-md row justify-center">
         <algo-button
           color="primary"
+          @click="teste()"
         >
           {{ $t('dashboard.homePage.seeAllBids') }}
         </algo-button>
@@ -37,13 +40,15 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import moment from 'moment';
-
+import { Watch } from 'vue-property-decorator';
 import { IArt } from 'src/models/IArt';
+import { IBidder } from 'src/models/IBidder';
 import { IBid } from 'src/models/IBid';
 import AlgoButton from 'components/common/Button.vue';
 
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
+import { api } from 'src/boot/axios';
 
 @Options({
   components: {
@@ -57,10 +62,54 @@ export default class UserGalleryOverview extends Vue {
     this.$emit('favoriteClicked');
   }
 
+  galleryBid: IBidder[] = []
+  loadingGalleryBid: boolean = true
+  page: number = 3
+
+ @Watch('accountAddress')
+  onPropertyChanged(value: string, oldValue: string) {
+    void this.getGalleryBidders();
+  }
+
+ mounted() {
+   void this.getGalleryBidders();
+ }
+
+ get isConnected() {
+   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+   return this.$store.getters['user/isConnected'] as boolean;
+ }
+
+ get accountAddress() {
+   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+   return this.$store.getters['user/account'] as string;
+ }
+
+ async getGalleryBidders() {
+   try {
+     console.log('accountAdresss', this.accountAddress);
+     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+     const response = await api.get(`bids?bidder=${this.accountAddress}&page=1&perPage=${this.page}`);
+     console.log('buuuu', this.page);
+     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+     this.galleryBid = response.data.data as [];
+     this.loadingGalleryBid = false;
+     console.log('resoponse', this.galleryBid);
+   } catch (e) {
+     console.log('errooooor', e);
+   }
+ }
+
+ teste() {
+   this.page = 2;
+   console.log(this.page);
+ }
+
   galleryItems: IArt[] = [
     {
       id: '1',
-      name: 'Art Abstract Name',
+      name: 'aqui',
       algopainter: 'Hashley Gwei',
       owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
       source: 'placeholder',
@@ -92,7 +141,7 @@ export default class UserGalleryOverview extends Vue {
     },
     {
       id: '2',
-      name: 'Art Abstract Name',
+      name: 'oiii',
       algopainter: 'Hashley Gwei',
       owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
       source: 'placeholder',
@@ -165,13 +214,13 @@ export default class UserGalleryOverview extends Vue {
     },
     {
       id: '2',
-      art: this.galleryItems[0],
+      art: this.galleryItems[1],
       price: 200,
       bidAt: moment(),
     },
     {
       id: '3',
-      art: this.galleryItems[0],
+      art: this.galleryItems[2],
       price: 200,
       bidAt: moment(),
     },

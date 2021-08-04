@@ -100,6 +100,21 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       console.log('success message');
     }
   },
+  async getUserProfile(type, value) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const account = value.account as string;
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const res = await api.get(`users/${account}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const user = res.data as [];
+      this.commit('user/SET_USER_PROFILE', user);
+    } catch (e) {
+      console.log('error message');
+    } finally {
+      console.log('success message');
+    }
+  },
 };
 
 export default actions;

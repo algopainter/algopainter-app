@@ -1,4 +1,4 @@
-export interface IUsers {
+export interface IImageUser {
     _id: string
     account: string,
     updatedAt: string,
@@ -15,4 +15,5 @@ export interface IUsers {
     telegram: string,
     twitter: string,
     webSite: string,
+    role: string,
 }

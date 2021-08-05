@@ -160,7 +160,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
-import { IUsers } from 'src/models/IUsers';
+import { IImageUser } from 'src/models/IImageUser';
 import { IUser } from 'src/models/IUser';
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
@@ -188,7 +188,7 @@ export default class AccountDetails extends Vue {
     collections: 8,
   };
 
-  profile: IUsers[] = [];
+  profile: IImageUser[] = [];
   loadingProfile: boolean = true;
 
   userItems = '0';

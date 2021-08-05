@@ -33,7 +33,6 @@ import { Vue, Options } from 'vue-class-component';
 import moment from 'moment';
 import { Watch } from 'vue-property-decorator';
 import { IArt } from 'src/models/IArt';
-import { IBidder } from 'src/models/IBidder';
 import { IBid } from 'src/models/IBid';
 import AlgoButton from 'components/common/Button.vue';
 
@@ -99,7 +98,9 @@ export default class UserGalleryOverview extends Vue {
         this.galleryBid[2],
       ];
       this.galleryBidShow = this.galleryBidClosed;
-      this.loadingGalleryBid = false;
+      if (this.isConnected) {
+        this.loadingGalleryBid = false;
+      }
       console.log(this.galleryBid);
     } catch (e) {
       console.log('error', e);

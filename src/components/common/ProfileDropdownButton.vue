@@ -12,7 +12,7 @@
           <q-avatar size="41px">
             <img
               class="profile-img"
-              :src="userProfile.avatar || '/img/do-utilizador.png'"
+              :src="userProfile.avatar || '/placeholder-images/do-utilizador.png'"
             >
           </q-avatar>
           <div class="profile-chip">

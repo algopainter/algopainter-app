@@ -1,19 +1,38 @@
 <template>
   <div>
-    <algo-button
-      :label="name || formatedAccount()"
-      color="primary"
-      outline
-      class="text-bold"
-    >
+    <q-button>
+      <div class="q-gutter-xs row">
+        <q-chip
+          size="18px"
+          color="primary"
+          text-color="white"
+          class="text-h6"
+          clickable
+        >
+          <q-avatar size="41px">
+            <img
+              class="profile-img"
+              :src="userProfile.avatar || '/img/do-utilizador.png'"
+            >
+          </q-avatar>
+          <div class="profile-chip">
+            {{
+              (userProfile &&
+                userProfile.name &&
+                userProfile.name.split(' ')[0]) ||
+                formatedAccount(5, -3)
+            }}
+          </div>
+        </q-chip>
+      </div>
       <q-menu>
         <div class="q-pa-md">
-          <div class="text-bold q-mb-md">{{ name || formatedAccount() }}</div>
+          <div class="text-bold q-mb-md">{{ formatedAccount(11, -4) }}</div>
           <q-list>
             <q-item v-ripple class="q-pl-none">
               <q-item-section avatar>
                 <q-avatar>
-                  <img src="/images/ALGOP.svg" />
+                  <img :src="userProfile.avatar || '/img/do-utilizador.png'" >
                 </q-avatar>
               </q-item-section>
               <q-item-section>
@@ -62,7 +81,7 @@
           </q-list>
         </div>
       </q-menu>
-    </algo-button>
+    </q-button>
   </div>
 </template>
 
@@ -91,10 +110,6 @@ export default class ProfileDropdownButton extends Vue {
 
   userController: UserController = new UserController();
 
-  get name() {
-    return this.userProfile.name;
-  }
-
   get accountAddress() {
     return this.$store.state.user.account;
   }
@@ -122,8 +137,12 @@ export default class ProfileDropdownButton extends Vue {
     }
   }
 
-  formatedAccount() {
-    return UserUtils.formatedAccount(this.accountAddress as string);
+  formatedAccount(inital: number, final: number) {
+    return UserUtils.formatedAccount(
+      this.accountAddress as string,
+      inital,
+      final
+    );
   }
 
   formatAccountBalance() {
@@ -135,3 +154,14 @@ export default class ProfileDropdownButton extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+.profile-chip {
+  font-size: 15px;
+  font-weight: 700;
+}
+.profile-img {
+  border: 3px solid #fff;
+  border-radius: 34px !important;
+  background: #fff;
+}
+</style>

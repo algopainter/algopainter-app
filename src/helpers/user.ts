@@ -29,9 +29,9 @@ const formatAccountBalance = (balance: number, decimalPlaces: number): string =>
  * Output: "0x38ad0ab1d...6dcd"
  *
  */
-const formatedAccount = (accountAddress: string) => {
+const formatedAccount = (accountAddress: string, inital: number = 5, final: number = -3) => {
   const splited = accountAddress.split('');
-  return splited.slice(0, 11).join('') + '...' + splited.slice(-4).join('');
+  return splited.slice(0, inital).join('') + '...' + splited.slice(final).join('');
 };
 
 const helpers = {

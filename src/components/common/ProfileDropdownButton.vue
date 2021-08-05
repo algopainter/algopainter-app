@@ -32,7 +32,7 @@
             <q-item v-ripple class="q-pl-none">
               <q-item-section avatar>
                 <q-avatar>
-                  <img :src="userProfile.avatar || '/img/do-utilizador.png'" >
+                  <img :src="userProfile.avatar || '/placeholder-images/do-utilizador.png'" >
                 </q-avatar>
               </q-item-section>
               <q-item-section>

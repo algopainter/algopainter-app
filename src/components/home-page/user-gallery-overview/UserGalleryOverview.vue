@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div
     v-if="loadingGalleryBid === false"
@@ -19,8 +23,8 @@
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
       <div
-        v-for="bid in galleryBid"
-        :key="bid._id"
+        v-for="(bid, i) in galleryBidShow"
+        :key="i"
         class="column q-col-gutter-md"
       >
         <LatestBidsItem :bid="bid" />
@@ -28,6 +32,7 @@
       <div class="q-pt-md row justify-center">
         <algo-button
           color="primary"
+          @click="Allbids()"
         >
           {{ $t('dashboard.homePage.seeAllBids') }}
         </algo-button>
@@ -63,7 +68,22 @@ export default class UserGalleryOverview extends Vue {
 
   galleryBid: IBidder[] = []
   loadingGalleryBid: boolean = true
-  page: number = 3
+  page: number|string = 3
+  btnBidsClicked: boolean = false
+
+  galleryBidClosed = []
+  galleryBidShow =[]
+
+  Allbids() {
+    console.log('aqui', this.galleryBidClosed);
+    this.btnBidsClicked = !this.btnBidsClicked;
+    if (this.btnBidsClicked === false) {
+      this.galleryBidShow = this.galleryBidClosed;
+    }
+    if (this.btnBidsClicked === true) {
+      this.galleryBidShow = this.galleryBid;
+    }
+  }
 
  @Watch('accountAddress')
   onPropertyChanged(value: string, oldValue: string) {
@@ -88,15 +108,29 @@ export default class UserGalleryOverview extends Vue {
    try {
      console.log('accountAdresss', this.accountAddress);
      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-     const response = await api.get(`bids?bidder=${this.accountAddress}&page=1&perPage=${this.page}`);
+     const response = await api.get(`bids?bidder=${this.accountAddress}`);
      console.log('buuuu', this.page);
      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
      this.galleryBid = response.data.data as [];
+     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+     const galleryBid0 = response.data.data[0] as [];
+     const galleryBid1 = response.data.data[1] as [];
+     const galleryBid2 = response.data.data[2] as [];
      this.loadingGalleryBid = false;
-     console.log('resoponse', this.galleryBid);
+     this.galleryBidClosed = [galleryBid0, galleryBid1, galleryBid2];
+     this.galleryBidShow = this.galleryBidClosed;
    } catch (e) {
      console.log('error', e);
    }
+ }
+
+ Allbidss() {
+   if (this.page === 'all') {
+     this.page = 3;
+   } else {
+     this.page = 'all';
+   }
+   void this.getGalleryBidders();
  }
 
   galleryItems: IArt[] = [

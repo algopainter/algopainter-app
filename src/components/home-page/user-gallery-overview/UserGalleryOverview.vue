@@ -28,7 +28,6 @@
       <div class="q-pt-md row justify-center">
         <algo-button
           color="primary"
-          @click="teste()"
         >
           {{ $t('dashboard.homePage.seeAllBids') }}
         </algo-button>
@@ -88,7 +87,6 @@ export default class UserGalleryOverview extends Vue {
  async getGalleryBidders() {
    try {
      console.log('accountAdresss', this.accountAddress);
-     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
      const response = await api.get(`bids?bidder=${this.accountAddress}&page=1&perPage=${this.page}`);
      console.log('buuuu', this.page);
@@ -97,13 +95,8 @@ export default class UserGalleryOverview extends Vue {
      this.loadingGalleryBid = false;
      console.log('resoponse', this.galleryBid);
    } catch (e) {
-     console.log('errooooor', e);
+     console.log('error', e);
    }
- }
-
- teste() {
-   this.page = 2;
-   console.log(this.page);
  }
 
   galleryItems: IArt[] = [

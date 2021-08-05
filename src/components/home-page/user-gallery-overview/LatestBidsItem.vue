@@ -14,6 +14,9 @@
         </div>
       </div>
       <div class="price">
+        <div>
+          {{ $n(bid.amount , 'currency') }}
+        </div>
       </div>
       <div class="date">
         <div>{{ bid.createdAt }}</div>

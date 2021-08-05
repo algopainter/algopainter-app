@@ -1,21 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
-  <div
-    v-if="loadingGalleryBid === false"
-    class="row q-col-gutter-lg"
-  >
+  <div v-if="loadingGalleryBid === false" class="row q-col-gutter-lg">
     <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
-      <div
-        v-for="item in galleryItems"
-        :key="item.id"
-      >
-        <gallery-item
-          :art="item"
-          @favoriteClicked="favoriteClicked"
-        />
+      <div v-for="item in galleryItems" :key="item.id">
+        <gallery-item :art="item" @favoriteClicked="favoriteClicked" />
       </div>
     </div>
     <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
@@ -30,10 +17,10 @@
         <LatestBidsItem :bid="bid" />
       </div>
       <div class="q-pt-md row justify-center">
-        <algo-button
-          color="primary"
-          @click="Allbids()"
-        >
+        <algo-button v-if="btnBidsClicked" color="primary" @click="Allbids()">
+          {{ $t('dashboard.homePage.seeLess') }}
+        </algo-button>
+        <algo-button v-else color="primary" @click="Allbids()">
           {{ $t('dashboard.homePage.seeAllBids') }}
         </algo-button>
       </div>
@@ -66,72 +53,58 @@ export default class UserGalleryOverview extends Vue {
     this.$emit('favoriteClicked');
   }
 
-  galleryBid: IBidder[] = []
-  loadingGalleryBid: boolean = true
-  page: number|string = 3
-  btnBidsClicked: boolean = false
-
-  galleryBidClosed = []
-  galleryBidShow =[]
+  galleryBid = [];
+  loadingGalleryBid: boolean = true;
+  btnBidsClicked: boolean = false;
+  galleryBidClosed = [];
+  galleryBidShow = [];
 
   Allbids() {
-    console.log('aqui', this.galleryBidClosed);
     this.btnBidsClicked = !this.btnBidsClicked;
     if (this.btnBidsClicked === false) {
       this.galleryBidShow = this.galleryBidClosed;
-    }
-    if (this.btnBidsClicked === true) {
+    } else {
       this.galleryBidShow = this.galleryBid;
     }
   }
 
- @Watch('accountAddress')
+  @Watch('accountAddress')
   onPropertyChanged(value: string, oldValue: string) {
     void this.getGalleryBidders();
   }
 
- mounted() {
-   void this.getGalleryBidders();
- }
+  mounted() {
+    void this.getGalleryBidders();
+  }
 
- get isConnected() {
-   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-   return this.$store.getters['user/isConnected'] as boolean;
- }
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/isConnected'] as boolean;
+  }
 
- get accountAddress() {
-   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-   return this.$store.getters['user/account'] as string;
- }
+  get accountAddress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
 
- async getGalleryBidders() {
-   try {
-     console.log('accountAdresss', this.accountAddress);
-     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-     const response = await api.get(`bids?bidder=${this.accountAddress}`);
-     console.log('buuuu', this.page);
-     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-     this.galleryBid = response.data.data as [];
-     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-     const galleryBid0 = response.data.data[0] as [];
-     const galleryBid1 = response.data.data[1] as [];
-     const galleryBid2 = response.data.data[2] as [];
-     this.loadingGalleryBid = false;
-     this.galleryBidClosed = [galleryBid0, galleryBid1, galleryBid2];
-     this.galleryBidShow = this.galleryBidClosed;
-   } catch (e) {
-     console.log('error', e);
-   }
- }
-
- Allbidss() {
-   if (this.page === 'all') {
-     this.page = 3;
-   } else {
-     this.page = 'all';
-   }
-   void this.getGalleryBidders();
- }
+  async getGalleryBidders() {
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const response = await api.get(`bids?bidder=${this.accountAddress}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.galleryBid = response.data as [];
+      this.galleryBidClosed = [
+        this.galleryBid[0],
+        this.galleryBid[1],
+        this.galleryBid[2],
+      ];
+      this.galleryBidShow = this.galleryBidClosed;
+      this.loadingGalleryBid = false;
+      console.log(this.galleryBid);
+    } catch (e) {
+      console.log('error', e);
+    }
+  }
 
   galleryItems: IArt[] = [
     {
@@ -147,24 +120,26 @@ export default class UserGalleryOverview extends Vue {
         investors: 0.05,
       },
       keywords: '#art',
-      importantPeople: [{
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-        accountable: 'Collection',
-      },
-      {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-        accountable: 'Owner',
-      },
-      {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-        accountable: 'Creator',
-      }],
+      importantPeople: [
+        {
+          id: '1',
+          name: 'Billy Nguyen',
+          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+          accountable: 'Collection',
+        },
+        {
+          id: '2',
+          name: 'Beverley Weaver',
+          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+          accountable: 'Owner',
+        },
+        {
+          id: '3',
+          name: 'Leonard Ryan',
+          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+          accountable: 'Creator',
+        },
+      ],
     },
     {
       id: '2',
@@ -179,24 +154,26 @@ export default class UserGalleryOverview extends Vue {
         creators: 0.08,
         investors: 0.05,
       },
-      importantPeople: [{
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-        accountable: 'Collection',
-      },
-      {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-        accountable: 'Owner',
-      },
-      {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-        accountable: 'Creator',
-      }],
+      importantPeople: [
+        {
+          id: '1',
+          name: 'Billy Nguyen',
+          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+          accountable: 'Collection',
+        },
+        {
+          id: '2',
+          name: 'Beverley Weaver',
+          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+          accountable: 'Owner',
+        },
+        {
+          id: '3',
+          name: 'Leonard Ryan',
+          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+          accountable: 'Creator',
+        },
+      ],
     },
     {
       id: '3',
@@ -211,24 +188,26 @@ export default class UserGalleryOverview extends Vue {
         creators: 0.08,
         investors: 0.05,
       },
-      importantPeople: [{
-        id: '1',
-        name: 'Billy Nguyen',
-        picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-        accountable: 'Collection',
-      },
-      {
-        id: '2',
-        name: 'Beverley Weaver',
-        picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-        accountable: 'Owner',
-      },
-      {
-        id: '3',
-        name: 'Leonard Ryan',
-        picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-        accountable: 'Creator',
-      }],
+      importantPeople: [
+        {
+          id: '1',
+          name: 'Billy Nguyen',
+          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
+          accountable: 'Collection',
+        },
+        {
+          id: '2',
+          name: 'Beverley Weaver',
+          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
+          accountable: 'Owner',
+        },
+        {
+          id: '3',
+          name: 'Leonard Ryan',
+          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
+          accountable: 'Creator',
+        },
+      ],
     },
   ];
 

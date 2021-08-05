@@ -10,7 +10,7 @@
       </div>
       <div class="bid-back ">
         <div>
-          {{ $n(bid.bidBack , 'percent') }} {{ $t('common.bidBack') }}
+          {{ $n(bid.bidBack/100 , 'percent') }} {{ $t('common.bidBack') }}
         </div>
       </div>
       <div class="price">

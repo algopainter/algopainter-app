@@ -24,6 +24,7 @@ export default {
     seeAllBids: 'See all bids',
     seeLess: 'See less',
     collectiblesGallery: 'Collection',
+    exploreCollectibles: 'Explore Collectibles',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',

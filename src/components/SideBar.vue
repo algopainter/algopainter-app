@@ -18,7 +18,7 @@
         <q-tooltip
           anchor="center right"
           self="center left"
-          class="bg-primary"
+          class="bg-primary test"
           :offset="[10, 10]"
         >
           <span>{{ item.label }}</span>
@@ -93,6 +93,5 @@ export default class SideBar extends Vue {
       background-color: $secondary;
     }
   }
-
 }
 </style>

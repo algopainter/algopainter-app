@@ -40,6 +40,18 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       console.log('success msg');
     }
   },
+  async getAllBids() {
+    try {
+      const res = await api.get('auctions');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const allBids = res.data as [];
+      this.commit('auctions/SET_ALL_BIDS', allBids);
+    } catch (e) {
+      console.log('error msg');
+    } finally {
+      console.log('success msg');
+    }
+  },
 };
 
 export default actions;

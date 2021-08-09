@@ -6,24 +6,26 @@
         src="../assets/icons/ALGOP.svg"
         class="icon q-ml-sm q-mt-md"
       />
-      <component
-        :is="item.to ? 'router-link' : 'div'"
-        v-for="item, index in items"
-        :key="index"
-        class="item"
-        :style="{'mask-image': `url(${item.icon})`}"
-        :to="item.to"
-        @click="item.to ? null : item.onClick"
-      >
-        <q-tooltip
-          anchor="center right"
-          self="center left"
-          class="bg-primary"
-          :offset="[10, 10]"
+      <div>
+        <component
+          :is="item.to ? 'router-link' : 'div'"
+          v-for="item, index in items"
+          :key="index"
+          class="item"
+          :style="{'mask-image': `url(${item.icon})`}"
+          :to="item.to"
+          @click="item.to ? null : item.onClick()"
         >
-          <span>{{ item.label }}</span>
-        </q-tooltip>
-      </component>
+          <q-tooltip
+            anchor="center right"
+            self="center left"
+            class="bg-primary"
+            :offset="[10, 10]"
+          >
+            <span>{{ item.label }}</span>
+          </q-tooltip>
+        </component>
+      </div>
     </div>
   </div>
 </template>
@@ -36,7 +38,7 @@ interface SideBarItem {
   img?: string;
   to?: string;
   label?: string;
-  onClick?: () => unknown;
+  onClick: () => unknown;
 }
 
 export default class SideBar extends Vue {
@@ -46,16 +48,25 @@ export default class SideBar extends Vue {
         icon: require('../assets/icons/home.svg'),
         to: '/',
         label: 'Home',
+        onClick: () => undefined,
       },
       {
         icon: require('../assets/icons/my-gallery.svg'),
-        to: '/my-gallery',
         label: 'My Gallery',
+        onClick: () => {
+          if (this.$store.state.user.isConnected) {
+            void this.$router.push('/my-gallery');
+          } else {
+            this.$emit('galleryClicked');
+            this.$emit('pageOptionClicked', '/my-gallery');
+          }
+        },
       },
       {
         icon: require('../assets/icons/paint-board-and-brush.svg'),
         to: '/create-collectible',
         label: 'Create collectible',
+        onClick: () => undefined,
       },
     ];
   }

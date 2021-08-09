@@ -74,7 +74,7 @@ export default class HomePageGallery extends Vue {
   async collectionClicked(collection: ICollection) {
     this.currentCollection = collection;
     const images = await new CollectionController().getCollectionsImages(collection._id);
-    this.currentCollectionGallery = (images || []).map((image) =>
+    this.currentCollectionGallery = images.map((image) =>
       this.mapImageToGalleryItem(image),
     );
   }
@@ -89,7 +89,7 @@ export default class HomePageGallery extends Vue {
       this.collections = collections.slice(0, 3); // Simulation of three items received from api, only
       this.currentCollection = collections[0];
       const images = await new CollectionController().getCollectionsImages(collections[0]._id);
-      this.currentCollectionGallery = (images || []).map((image) =>
+      this.currentCollectionGallery = images.map((image) =>
         this.mapImageToGalleryItem(image),
       );
     }

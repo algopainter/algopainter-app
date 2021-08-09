@@ -100,7 +100,6 @@ export default class UserGalleryOverview extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.galleryBid = response.data as [];
       if (this.galleryBid.length !== 0) {
-        console.log('this.galleryBid', this.galleryBid);
         this.galleryBidClosed = [
           this.galleryBid[0],
           this.galleryBid[1],
@@ -111,7 +110,6 @@ export default class UserGalleryOverview extends Vue {
       }
       this.galleryBidShow = this.galleryBidClosed;
       this.loadingGalleryBid = false;
-      console.log('this.galleryBidShow', this.galleryBidShow);
     } catch (e) {
       console.log('error', e);
     }

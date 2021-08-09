@@ -23,7 +23,14 @@
         :key="i"
         class="column q-col-gutter-md"
       >
-        <LatestBidsItem :bid="bid" />
+        <div v-if="bid != undefined">
+          <LatestBidsItem :bid="bid" />
+        </div>
+        <div v-if="nullGalleryBidShow === true">
+          <div class="flex q-mb-md">
+            {{ $t('dashboard.homePage.publicNoBids') }}
+          </div>
+        </div>
       </div>
       <div class="q-pt-md row justify-center">
         <algo-button
@@ -104,17 +111,19 @@ export default class MyGalleryOverview extends Vue {
 
   async getGalleryBidders() {
     try {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const response = await api.get(`bids?bidder=${this.accountAddress}`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.galleryBid = response.data as [];
-      this.galleryBidClosed = [
-        this.galleryBid[0],
-        this.galleryBid[1],
-        this.galleryBid[2],
-      ];
-      this.galleryBidShow = this.galleryBidClosed;
       if (this.isConnected) {
+        this.galleryBid = response.data as [];
+        if (this.galleryBid.length !== 0) {
+          this.galleryBidClosed = [
+            this.galleryBid[0],
+            this.galleryBid[1],
+            this.galleryBid[2],
+          ];
+        } else {
+          this.nullGalleryBidShow = true;
+        }
+        this.galleryBidShow = this.galleryBidClosed;
         this.loadingGalleryBid = false;
       }
     } catch (e) {

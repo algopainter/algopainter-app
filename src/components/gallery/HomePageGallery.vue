@@ -71,9 +71,10 @@ export default class HomePageGallery extends Vue {
     this.$emit('favoriteClicked');
   }
 
-  collectionClicked(collection: ICollection) {
+  async collectionClicked(collection: ICollection) {
     this.currentCollection = collection;
-    this.currentCollectionGallery = collection.images.map((image) =>
+    const images = await new CollectionController().getCollectionsImages(collection._id);
+    this.currentCollectionGallery = (images || []).map((image) =>
       this.mapImageToGalleryItem(image),
     );
   }
@@ -87,7 +88,8 @@ export default class HomePageGallery extends Vue {
     if (collections) {
       this.collections = collections.slice(0, 3); // Simulation of three items received from api, only
       this.currentCollection = collections[0];
-      this.currentCollectionGallery = collections[0].images.map((image) =>
+      const images = await new CollectionController().getCollectionsImages(collections[0]._id);
+      this.currentCollectionGallery = (images || []).map((image) =>
         this.mapImageToGalleryItem(image),
       );
     }

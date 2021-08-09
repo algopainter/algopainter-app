@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div v-if="loading === false">
     <div class="row justify-between">
@@ -101,6 +102,7 @@ import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
 import UserUtils from 'src/helpers/user';
 import { IImageUser } from 'src/models/IImageUser';
+import { IProfile } from 'src/models/IProfile';
 
 @Options({
   components: { AlgoButton, ShareArtIcons, LikeAnimation },
@@ -148,11 +150,13 @@ export default class ViewArt extends Vue {
       image: '',
       previewImage: '',
       rawImage: '',
-      artist: this.user,
       parameters: { name: 'fake' },
     },
-    users: [this.user],
+    users: [this.user as IProfile],
     collectionName: '',
+    collectionOwner: '',
+    owner: '',
+    creator: '',
   };
 
   collectionArtController: CollectionArtController = new CollectionArtController();
@@ -178,7 +182,7 @@ export default class ViewArt extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.image = data.data as IImage;
       this.likes = this.image.likes;
-      this.imageOwner = UserUtils.getUsersByRole(this.image.users, 'owner')[0];
+      this.imageOwner = UserUtils.getUsersByRole(this.image.users as IImageUser[], 'owner')[0];
       this.loadWasLiked();
       this.loading = false;
     } catch (e) {
@@ -200,7 +204,7 @@ export default class ViewArt extends Vue {
 
   loadWasLiked() {
     this.wasLiked =
-      (this.image.likers).filter(
+      (this.image.likers || []).filter(
         (liker) => liker === this.account,
       ).length !== 0;
   }

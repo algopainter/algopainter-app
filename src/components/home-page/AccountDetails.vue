@@ -52,28 +52,18 @@
               <div
                 class="text-h3 text-bold q-py-md"
               >
-                {{ formatedBalance() }}
-                <q-tooltip
-                  v-if="isConnected"
-                  anchor="top middle"
-                  self="top middle"
-                  class="bg-primary"
-                  :offset="[7, 7]"
-                >
-                  {{ $t(`dashboard.algop`) }} {{ balance }}
-                </q-tooltip>
-              </div>
-              <algo-button
-                size="lg"
-                color="primary"
-                type="a"
-                href="https://exchange.pancakeswap.finance/#/
-              swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
-                target="_blank"
-              >
-                {{ $t('dashboard.homePage.buyAlgop') }}
-              </algo-button>
+                {{ $t(`dashboard.algop`) }} {{ balance }}
+              </q-tooltip>
             </div>
+            <algo-button
+              size="lg"
+              color="primary"
+              type="a"
+              href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
+              target="_blank"
+            >
+              {{ $t('dashboard.homePage.buyAlgop') }}
+            </algo-button>
           </div>
         </div>
       </div>
@@ -149,8 +139,7 @@
               size="lg"
               color="primary"
               type="a"
-              href="https://exchange.pancakeswap.finance/#/
-              swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
+              href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
               target="_blank"
             >
               {{ $t('dashboard.homePage.buyAlgop') }}

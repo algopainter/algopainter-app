@@ -36,7 +36,7 @@ const formatedAccount = (accountAddress: string, inital: number = 5, final: numb
   return splited.slice(0, inital).join('') + '...' + splited.slice(final).join('');
 };
 
-const getUsersByRole = (users: IImageUser[], role: string) : any => {
+const getUsersByRole = (users: IImageUser[], role: string) : IImageUser[] => {
   return users.filter((user) => (user?.role === role));
 };
 

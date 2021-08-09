@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import { Watch } from 'vue-property-decorator';
 import { IArt } from 'src/models/IArt';
 import AlgoButton from 'components/common/Button.vue';
 
@@ -61,7 +62,7 @@ import { api } from 'src/boot/axios';
     LatestBidsItem,
   },
 })
-export default class UserGalleryOverview extends Vue {
+export default class MyGalleryOverview extends Vue {
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
@@ -81,14 +82,29 @@ export default class UserGalleryOverview extends Vue {
     }
   }
 
+  @Watch('accountAddress')
+  onPropertyChanged(value: string, oldValue: string) {
+    void this.getGalleryBidders();
+  }
+
   mounted() {
     void this.getGalleryBidders();
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/isConnected'] as boolean;
+  }
+
+  get accountAddress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
   }
 
   async getGalleryBidders() {
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`bids?bidder=${this.$route.query.customProfile}`);
+      const response = await api.get(`bids?bidder=${this.accountAddress}`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.galleryBid = response.data as [];
       this.galleryBidClosed = [
@@ -97,7 +113,9 @@ export default class UserGalleryOverview extends Vue {
         this.galleryBid[2],
       ];
       this.galleryBidShow = this.galleryBidClosed;
-      this.loadingGalleryBid = false;
+      if (this.isConnected) {
+        this.loadingGalleryBid = false;
+      }
     } catch (e) {
       console.log('error', e);
     }

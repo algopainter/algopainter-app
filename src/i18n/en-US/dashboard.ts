@@ -12,11 +12,13 @@ export default {
   algop: '$ALGOP',
   homePage: {
     title: 'My Account',
+    publicTitle: 'Public Profile',
     editAccount: 'Edit Account',
     sendNewArt: 'Send New Art',
     collection: 'Collection',
     buyAlgop: 'Buy $ALGOP  ',
     myGallery: 'My Gallery',
+    gallery: 'Gallery',
     pirs: 'PIRS:',
     pirsVal: '{creators} creators / {investors} investors',
     sell: 'SELL',

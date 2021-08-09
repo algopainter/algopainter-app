@@ -101,7 +101,6 @@ export default class UserGalleryOverview extends Vue {
       if (this.isConnected) {
         this.loadingGalleryBid = false;
       }
-      console.log(this.galleryBid);
     } catch (e) {
       console.log('error', e);
     }

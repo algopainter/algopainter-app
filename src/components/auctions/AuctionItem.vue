@@ -246,9 +246,14 @@ export default class AuctionItem extends Vue.with(Props) {
   flex-direction: column;
   align-items: flex-start;
 
-  .name {
+.name {
     font-weight: bold;
     font-size: 1.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    width: 250px;
   }
 
   .price {

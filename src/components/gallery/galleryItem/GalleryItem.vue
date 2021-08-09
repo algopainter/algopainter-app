@@ -38,10 +38,10 @@
       :src="galleryItem.art.source"
     />
     <div class="details q-pa-sm">
-      <div class="name">
+      <div class="name limit-text">
         {{ galleryItem.art.name }}
       </div>
-      <div class="img-description">
+      <div class="img-description limit-text">
         <p>{{ galleryItem.description }}</p>
       </div>
       <div class="row justify-center">
@@ -188,6 +188,13 @@ export default class GalleryItem extends Vue.with(Props) {
 <style lang="scss" scoped>
 .container {
   padding: 0 1rem 0 0;
+}
+.limit-text{
+   text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    width: 250px;
 }
 .users {
   .q-avatar:not(:first-child) {

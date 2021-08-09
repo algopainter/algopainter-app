@@ -4,7 +4,7 @@
       <UserAccountDetails />
     </div>
     <div class="header">
-      {{ $t('dashboard.homePage.myGallery') }}
+      {{ $t('dashboard.homePage.gallery') }}
     </div>
     <div>
       <UserGalleryOverview />

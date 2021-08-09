@@ -52,9 +52,9 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'user-gallery',
-        component: () => import('pages/dashboard/user-gallery/UserGallery.vue'),
+        component: () => import('src/pages/dashboard/user-gallery/UserGallery.vue'),
         meta: {
-          title: i18n.global.t('dashboard.homePage.title'),
+          title: i18n.global.t('dashboard.homePage.publicTitle'),
         },
       },
       {

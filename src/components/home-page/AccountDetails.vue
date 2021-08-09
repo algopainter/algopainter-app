@@ -158,7 +158,7 @@ import { IImageUser } from 'src/models/IImageUser';
 import { IUser } from 'src/models/IUser';
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
-import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overview/AccountDetailsSkeleton.vue'
+import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overview/AccountDetailsSkeleton.vue';
 
 @Options({
   components: {

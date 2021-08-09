@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { IImageUser } from 'src/models/IImageUser';
 import AlgoPainterTokenProxy from '../eth/AlgoPainterTokenProxy';
 import { NetworkInfo } from '../store/user/types';
@@ -35,8 +36,8 @@ const formatedAccount = (accountAddress: string, inital: number = 5, final: numb
   return splited.slice(0, inital).join('') + '...' + splited.slice(final).join('');
 };
 
-const getUsersByRole = (users: IImageUser[], role: string) => {
-  return users.filter((user) => (user.role === role));
+const getUsersByRole = (users: IImageUser[], role: string) : IImageUser[] => {
+  return users.filter((user) => (user?.role === role));
 };
 
 const helpers = {

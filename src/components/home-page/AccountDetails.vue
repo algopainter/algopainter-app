@@ -1,63 +1,56 @@
 <template>
   <div v-if="isConnected">
-    <div class="row q-col-gutter-xl items-center">
-      <div class="col-12 col-sm-6 col-xl-6">
-        <div class="user-info flex column q-col-gutter-lg">
-          <div class="picture">
-            <q-img
-              :src="profile.avatar"
-              class="picture-content"
-            />
+    <div v-if="loadingUserItems === false && loadingProfile === false">
+      <div class="row q-col-gutter-xl items-center">
+        <div class="col-12 col-sm-6 col-xl-6">
+          <div class="user-info flex column q-col-gutter-lg">
+            <div class="picture">
+              <q-img
+                :src="profile.avatar"
+                class="picture-content"
+              />
+            </div>
+            <div class="user-details">
+              <div class="name text-primary text-bold text-h3">
+                {{ profile.name }}
+              </div>
+              <div class="details">
+                {{ profile.email }}
+              </div>
+              <div class="details text-grey-5">
+                {{ profile.bio }}
+              </div>
+            </div>
           </div>
-          <div class="user-details">
-            <div class="name text-primary text-bold text-h3">
-              {{ profile.name }}
-            </div>
-            <div class="details">
-              {{ profile.email }}
-            </div>
-            <div class="details text-grey-5">
-              {{ profile.bio }}
+          <div class="row q-pt-lg q-col-gutter-md">
+            <div class="col-6 col-sm-auto btn-edit">
+              <algo-button
+                class="full-width btn-edit"
+                size="lg"
+                color="primary"
+                to="/edit-profile"
+              >
+                {{ $t('dashboard.homePage.editAccount') }}
+              </algo-button>
             </div>
           </div>
         </div>
-        <div class="row q-pt-lg q-col-gutter-md">
-          <div class="col-6 col-sm-auto btn-edit">
-            <algo-button
-              class="full-width btn-edit"
-              size="lg"
-              color="primary"
-              to="/edit-profile"
-            >
-              {{ $t('dashboard.homePage.editAccount') }}
-            </algo-button>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-xl-6">
-        <div class="row q-col-gutter-lg">
-          <div class="col-12 col-lg-6 text-primary text-center">
-            <div class="text-h3 text-bold">
-              {{ $t('dashboard.homePage.collection') }}
+        <div class="col-12 col-sm-6 col-xl-6">
+          <div class="row q-col-gutter-lg">
+            <div class="col-12 col-lg-6 text-primary text-center">
+              <div class="text-h3 text-bold">
+                {{ $t('dashboard.homePage.collection') }}
+              </div>
+              <div class="text-h1 text-bold q-py-xl">
+                {{ userItems }}
+              </div>
             </div>
-            <div class="text-h1 text-bold q-py-xl">
-              {{ userItems }}
-            </div>
-          </div>
-          <div class="col-12 col-lg-6 text-secondary text-center">
-            <div class="text-h3 text-bold">
-              {{ $t('common.coinSymbol') }}
-            </div>
-            <div
-              class="text-h3 text-bold q-py-md"
-            >
-              {{ formatedBalance() }}
-              <q-tooltip
-                v-if="isConnected"
-                anchor="top middle"
-                self="top middle"
-                class="bg-primary"
-                :offset="[7, 7]"
+            <div class="col-12 col-lg-6 text-secondary text-center">
+              <div class="text-h3 text-bold">
+                {{ $t('common.coinSymbol') }}
+              </div>
+              <div
+                class="text-h3 text-bold q-py-md"
               >
                 {{ $t(`dashboard.algop`) }} {{ balance }}
               </q-tooltip>
@@ -74,6 +67,9 @@
           </div>
         </div>
       </div>
+    </div>
+    <div v-else>
+      <AccountDetailsSkeleton />
     </div>
   </div>
   <div v-else>
@@ -162,10 +158,12 @@ import { IImageUser } from 'src/models/IImageUser';
 import { IUser } from 'src/models/IUser';
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
+import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overview/AccountDetailsSkeleton.vue'
 
 @Options({
   components: {
     AlgoButton,
+    AccountDetailsSkeleton,
   },
   computed: {
     isConnected: false,

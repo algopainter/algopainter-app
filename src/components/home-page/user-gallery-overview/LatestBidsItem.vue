@@ -1,25 +1,27 @@
 <template>
-  <div class="latest-bids-item">
+  <div class="latest-bids-item q-mb-md">
     <q-img
       class="art-image"
-      src="../../../assets/placeholder-images/painting.jpg"
+      :src="bid.item.previewImageUrl"
     />
     <div class="details">
-      <div class="name">
-        {{ bid.art.name }}
+      <div class="name ">
+        {{ bid.item.title }}
       </div>
-      <div class="bid-back">
+      <div class="bid-back ">
         <div>
-          {{ $n(bid.art.bidBack, 'percent') }} {{ $t('common.bidBack') }}
+          {{ $n(bid.bidBack/100 , 'percent') }} {{ $t('common.bidBack') }}
         </div>
       </div>
       <div class="price">
-        <div>{{ $n(bid.price, 'currency') }}</div>
+        <div>
+          {{ $n(bid.amount , 'currency') }}
+        </div>
       </div>
       <div class="date">
-        <div>{{ bid.bidAt.calendar() }}</div>
+        <div>{{ bid.createdAt }}</div>
         <q-tooltip>
-          {{ bid.bidAt.format('LLLL') }}
+          {{ bid.createdAt }}
         </q-tooltip>
       </div>
     </div>
@@ -30,16 +32,17 @@
 import { PropType } from 'vue';
 import { Vue, prop } from 'vue-class-component';
 
-import { IBid } from 'src/models/IBid';
+import { IBidder } from 'src/models/IBidder';
 
 class Props {
   bid = prop({
-    type: Object as PropType<IBid>,
+    type: Object as PropType<IBidder>,
     required: true,
   });
 }
 
 export default class LatestBidsItem extends Vue.with(Props) {
+
 }
 </script>
 

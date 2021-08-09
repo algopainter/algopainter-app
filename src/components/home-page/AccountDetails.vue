@@ -49,7 +49,16 @@
               <div
                 class="text-h3 text-bold q-py-md"
               >
-                {{ $t(`dashboard.algop`) }} {{ balance }}
+                {{ $t(`dashboard.algop`) }} {{ formattedBalance() }}
+                <q-tooltip
+                  v-if="isConnected"
+                  anchor="top middle"
+                  self="top middle"
+                  class="bg-primary"
+                  :offset="[7, 7]"
+                >
+                  {{ $t(`dashboard.algop`) }} {{ balance }}
+                </q-tooltip>
               </div>
               <algo-button
                 size="lg"
@@ -75,7 +84,6 @@
 import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IImageUser } from 'src/models/IImageUser';
-import { IUser } from 'src/models/IUser';
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
 import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overview/AccountDetailsSkeleton.vue';
@@ -95,15 +103,6 @@ import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overvi
   },
 })
 export default class AccountDetails extends Vue {
-  user: IUser = {
-    id: '1',
-    name: 'Natasha',
-    email: 'natasha.k@gmail.com',
-    age: '27 years',
-    interests: 'abstract, modern, digital, fractal, urban, classic',
-    collections: 8,
-  };
-
   profile: IImageUser[] = [];
   loadingProfile: boolean = true;
 
@@ -130,7 +129,7 @@ export default class AccountDetails extends Vue {
 
   mounted() {
     void this.setAccountBalance();
-    this.formatedBalance();
+    this.formattedBalance();
     void this.getProfile();
     void this.getUserItems();
   }
@@ -166,7 +165,7 @@ export default class AccountDetails extends Vue {
     }
   }
 
-  formatedBalance() {
+  formattedBalance() {
     if (this.isConnected) {
       return UserUtils.formatAccountBalance(this.balance, 2);
     } else {

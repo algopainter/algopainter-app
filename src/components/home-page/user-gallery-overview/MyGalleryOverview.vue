@@ -72,6 +72,7 @@ export default class MyGalleryOverview extends Vue {
   btnBidsClicked: boolean = false;
   galleryBidClosed = [];
   galleryBidShow = [];
+  nullGalleryBidShow: boolean = false;
 
   Allbids() {
     this.btnBidsClicked = !this.btnBidsClicked;

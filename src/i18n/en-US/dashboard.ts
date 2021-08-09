@@ -25,6 +25,8 @@ export default {
     latestBids: 'Latest bids',
     seeAllBids: 'See all bids',
     seeLess: 'See less',
+    publicNoBids: 'This user never placed a bid',
+    personalNoBids: 'You never placed a bid',
     collectiblesGallery: 'Collection',
     gwei: 'Gwei',
     expressions: 'Expressions',

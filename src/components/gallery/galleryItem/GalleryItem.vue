@@ -11,7 +11,14 @@
             size="lg"
             round
           >
-            <img :src="person.picture">
+            <img
+              v-if="person.picture != null"
+              :src="person.picture"
+            >
+            <img
+              v-else
+              src="/images/do-utilizador (1).png"
+            >
             <q-tooltip class="bg-primary">
               {{ person.accountable }}{{ $t('dashboard.homePage.colon') }}
               {{ person.name }}

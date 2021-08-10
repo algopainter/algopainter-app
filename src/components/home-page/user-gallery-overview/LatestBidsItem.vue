@@ -34,16 +34,13 @@
 import { PropType } from 'vue';
 import { Vue, prop } from 'vue-class-component';
 import { IBidder } from 'src/models/IBidder';
-
 class Props {
   bid = prop({
     type: Object as PropType<IBidder>,
     required: true,
   });
 }
-
 export default class LatestBidsItem extends Vue.with(Props) {
-
 }
 </script>
 
@@ -55,15 +52,12 @@ export default class LatestBidsItem extends Vue.with(Props) {
 .latest-bids-item {
   display: flex;
 }
-
 .art-image {
   height: 100px;
   width: 100px;
 }
-
 .details {
   padding: 6px;
-
   .name {
     font-weight: bold;
     font-size: 1.2rem;
@@ -74,21 +68,18 @@ export default class LatestBidsItem extends Vue.with(Props) {
     white-space: nowrap;
 
   }
-
   .bid-back {
     font-size: 1.1rem;
     line-height: 1.2rem;
     font-weight: bold;
     color: $primary;
   }
-
   .price {
     font-size: 1.6rem;
     line-height: 1.8rem;
     font-weight: bold;
     color: $positive;
   }
-
   .date {
     line-height: 1.2rem;
     color: $grey-5;

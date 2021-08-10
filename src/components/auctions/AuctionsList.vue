@@ -71,13 +71,14 @@
                 {{ index + 1 }}
               </div>
               <div>
-                <q-avatar
-                  round
-                  size="64px"
-                  @onclick="goToProfile"
-                >
-                  <img :src="seller.avatar">
-                </q-avatar>
+                <router-link :to="{path: 'user-gallery', query: { customProfile: seller.account }}">
+                  <q-avatar
+                    round
+                    size="64px"
+                  >
+                    <img :src="seller.avatar">
+                  </q-avatar>
+                </router-link>
               </div>
               <div>
                 <div class="text-h5 text-bold">
@@ -135,7 +136,7 @@
       >
         <div class="flex q-col-gutter-xl">
           <div
-            v-for="(seller, index) in topBuyers"
+            v-for="(buyer, index) in topBuyers"
             :key="index"
           >
             <div class="flex q-col-gutter-md items-center">
@@ -143,18 +144,20 @@
                 {{ index + 1 }}
               </div>
               <div>
-                <q-avatar
-                  round
-                  size="64px"
-                >
-                  <img :src="seller.avatar">
-                </q-avatar>
+                <router-link :to="{path: 'user-gallery', query: { customProfile: buyer.account }}">
+                  <q-avatar
+                    round
+                    size="64px"
+                  >
+                    <img :src="buyer.avatar">
+                  </q-avatar>
+                </router-link>
               </div>
               <div>
                 <div class="text-h5 text-bold">
-                  {{ seller.name }}
+                  {{ buyer.name }}
                 </div>
-                <div>{{ $n(seller.amount, 'currency') }}</div>
+                <div>{{ $n(buyer.amount, 'currency') }}</div>
               </div>
             </div>
           </div>

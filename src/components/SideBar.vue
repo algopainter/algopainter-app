@@ -6,24 +6,26 @@
         src="../assets/icons/ALGOP.svg"
         class="icon q-ml-sm q-mt-md"
       />
-      <component
-        :is="item.to ? 'router-link' : 'div'"
-        v-for="item, index in items"
-        :key="index"
-        class="item"
-        :style="{'mask-image': `url(${item.icon})`}"
-        :to="item.to"
-        @click="item.to ? null : item.onClick"
-      >
-        <q-tooltip
-          anchor="center right"
-          self="center left"
-          class="bg-primary"
-          :offset="[10, 10]"
+      <div>
+        <component
+          :is="item.to ? 'router-link' : 'div'"
+          v-for="item, index in items"
+          :key="index"
+          class="item"
+          :style="{'mask-image': `url(${item.icon})`}"
+          :to="item.to"
+          @click="item.to ? null : item.onClick()"
         >
-          <span>{{ item.label }}</span>
-        </q-tooltip>
-      </component>
+          <q-tooltip
+            anchor="center right"
+            self="center left"
+            class="bg-primary"
+            :offset="[10, 10]"
+          >
+            <span>{{ item.label }}</span>
+          </q-tooltip>
+        </component>
+      </div>
     </div>
   </div>
 </template>

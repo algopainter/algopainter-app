@@ -29,8 +29,8 @@
           >
             <span>{{ item.label }}</span>
           </q-tooltip>
-        </component>
-      </div>
+        </q-tooltip>
+      </component>
     </div>
   </div>
 </template>

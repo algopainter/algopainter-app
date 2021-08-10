@@ -41,8 +41,17 @@
       :src="previewImageUrl"
     />
     <div class="details flex q-pa-sm">
-      <div class="name">
-        {{ isHot.item.title }}
+      <div>
+        <div
+          class="name"
+        >
+          {{ isHot.item.title }}
+        </div>
+        <q-tooltip
+          class="bg-primary"
+        >
+          {{ isHot.item.title }}
+        </q-tooltip>
       </div>
       <div>
         <div class="flex items-center q-col-gutter-sm">
@@ -246,9 +255,14 @@ export default class AuctionItem extends Vue.with(Props) {
   flex-direction: column;
   align-items: flex-start;
 
-  .name {
+.name {
     font-weight: bold;
     font-size: 1.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    width: 250px;
   }
 
   .price {

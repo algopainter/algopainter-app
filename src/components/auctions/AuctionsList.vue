@@ -23,7 +23,7 @@
 
         <template #addons>
           <navigation
-            class="navigation z-max"
+            class="navigation"
           />
         </template>
       </carousel>
@@ -71,13 +71,14 @@
                 {{ index + 1 }}
               </div>
               <div>
-                <q-avatar
-                  round
-                  size="64px"
-                  @onclick="goToProfile"
-                >
-                  <img :src="seller.avatar">
-                </q-avatar>
+                <router-link :to="{path: 'user-gallery', query: { customProfile: seller.account }}">
+                  <q-avatar
+                    round
+                    size="64px"
+                  >
+                    <img :src="seller.avatar">
+                  </q-avatar>
+                </router-link>
               </div>
               <div>
                 <div class="text-h5 text-bold">
@@ -135,7 +136,7 @@
       >
         <div class="flex q-col-gutter-xl">
           <div
-            v-for="(seller, index) in topBuyers"
+            v-for="(buyer, index) in topBuyers"
             :key="index"
           >
             <div class="flex q-col-gutter-md items-center">
@@ -143,18 +144,20 @@
                 {{ index + 1 }}
               </div>
               <div>
-                <q-avatar
-                  round
-                  size="64px"
-                >
-                  <img :src="seller.avatar">
-                </q-avatar>
+                <router-link :to="{path: 'user-gallery', query: { customProfile: buyer.account }}">
+                  <q-avatar
+                    round
+                    size="64px"
+                  >
+                    <img :src="buyer.avatar">
+                  </q-avatar>
+                </router-link>
               </div>
               <div>
                 <div class="text-h5 text-bold">
-                  {{ seller.name }}
+                  {{ buyer.name }}
                 </div>
-                <div>{{ $n(seller.amount, 'currency') }}</div>
+                <div>{{ $n(buyer.amount, 'currency') }}</div>
               </div>
             </div>
           </div>
@@ -304,11 +307,18 @@ export default class AuctionsList extends Vue {
   padding: 10px;
 }
 
-.carousel__prev,
+.carousel__prev {
+  background-color: #f4538d;
+  box-sizing: content-box;
+  border: 5px solid white;
+  margin-left: 20px;
+}
+
 .carousel__next {
   background-color: #f4538d;
   box-sizing: content-box;
   border: 5px solid white;
+  margin-right: 20px;
 }
 
 .custom-skeleton-border {

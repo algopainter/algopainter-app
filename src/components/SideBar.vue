@@ -104,6 +104,5 @@ export default class SideBar extends Vue {
       background-color: $secondary;
     }
   }
-
 }
 </style>

@@ -7,7 +7,7 @@
       <div class="col-xs-12 col-sm-12 col-md-3">
         <div class="column items-center q-gutter-md">
           <div class="col q-mt-xl">
-            <div v-if="isConnected">
+            <div v-if="isConnected === true && formFields.avatar !=null">
               <img
                 :src="formFields.avatar"
                 class="img "
@@ -159,7 +159,7 @@ import { Screen, Notify } from 'quasar';
 import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
-import { isError } from 'src/helpers/utils';
+import { isError, resizeImage } from 'src/helpers/utils';
 
 interface IProfile {
   name?: string;
@@ -215,8 +215,9 @@ export default class EditProfile extends Vue {
       reader.onerror = error => reject(error);
     });
     const base64 = await toBase64(file);
+    const resized = await resizeImage(base64, 500, 500) as string;
     if (file) {
-      this.formFields.avatar = base64;
+      this.formFields.avatar = resized;
     } else {
       this.formFields.avatar = '';
     }

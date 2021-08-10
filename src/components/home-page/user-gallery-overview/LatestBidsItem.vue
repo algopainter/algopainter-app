@@ -7,7 +7,7 @@
       />
     </div>
     <div class="details">
-      <div class="name">
+      <div class="name ">
         {{ bid.item.title }}
       </div>
       <div class="bid-back ">
@@ -33,6 +33,7 @@
 <script lang="ts">
 import { PropType } from 'vue';
 import { Vue, prop } from 'vue-class-component';
+
 import { IBidder } from 'src/models/IBidder';
 class Props {
   bid = prop({
@@ -45,10 +46,6 @@ export default class LatestBidsItem extends Vue.with(Props) {
 </script>
 
 <style lang="scss" scoped>
-.img{
-  width: 50px;
-  height: 50px
-}
 .latest-bids-item {
   display: flex;
 }
@@ -62,11 +59,6 @@ export default class LatestBidsItem extends Vue.with(Props) {
     font-weight: bold;
     font-size: 1.2rem;
     line-height: 1.4rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 200px;
-    white-space: nowrap;
-
   }
   .bid-back {
     font-size: 1.1rem;

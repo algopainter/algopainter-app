@@ -11,6 +11,9 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_TOP_BUYERS(state: AuctionStateInterface, payload) {
     state.topBuyers = payload as [];
   },
+  SET_ALL_BIDS(state: AuctionStateInterface, payload) {
+    state.allBids = payload as [];
+  },
 };
 
 export default mutation;

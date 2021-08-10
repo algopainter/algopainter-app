@@ -1,3 +1,4 @@
+
 <template>
   <div v-if="loadingUserProfile === false && loadingUserItems === false">
     <div class="row q-col-gutter-xl items-center">

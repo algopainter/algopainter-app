@@ -2,7 +2,7 @@
   <div class="latest-bids-item q-mb-md q-gutter-xl">
     <div class="img">
       <q-img
-        class="art-image "
+        class="art-image"
         :src="bid.item.previewImageUrl"
       />
     </div>

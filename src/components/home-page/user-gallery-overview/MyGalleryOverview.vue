@@ -1,17 +1,19 @@
 <template>
   <div
-    v-if="loadingGalleryBid === false"
+    v-if="loadingGalleryBid === false && loadingGalleryArts === false"
     class="row q-col-gutter-lg"
   >
     <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
       <div
-        v-for="item in galleryItems"
-        :key="item.id"
+        v-for="(item, index) in galleryArts"
+        :key="index"
       >
-        <gallery-item
-          :art="item"
-          @favoriteClicked="favoriteClicked"
-        />
+        <div>
+          <gallery-item
+            :art="item"
+            @favoriteClicked="favoriteClicked"
+          />
+        </div>
       </div>
     </div>
     <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
@@ -57,7 +59,7 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IArt } from 'src/models/IArt';
 import AlgoButton from 'components/common/Button.vue';
-
+import { IMyGallery } from 'src/models/IMyGallery';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import { api } from 'src/boot/axios';
@@ -74,12 +76,15 @@ export default class MyGalleryOverview extends Vue {
     this.$emit('favoriteClicked');
   }
 
+  galleryArts:IMyGallery[] = [];
   galleryBid = [];
   loadingGalleryBid: boolean = true;
+  loadingGalleryArts: boolean = true;
   btnBidsClicked: boolean = false;
   galleryBidClosed = [];
   galleryBidShow = [];
   nullGalleryBidShow: boolean = false;
+  nullGalleryArts: boolean = false;
 
   Allbids() {
     this.btnBidsClicked = !this.btnBidsClicked;
@@ -91,12 +96,15 @@ export default class MyGalleryOverview extends Vue {
   }
 
   @Watch('accountAddress')
+
   onPropertyChanged(value: string, oldValue: string) {
     void this.getGalleryBidders();
+    void this.getGalleryArts();
   }
 
   mounted() {
     void this.getGalleryBidders();
+    void this.getGalleryArts();
   }
 
   get isConnected() {
@@ -128,6 +136,19 @@ export default class MyGalleryOverview extends Vue {
       }
     } catch (e) {
       console.log('error', e);
+    }
+  }
+
+  async getGalleryArts() {
+    try {
+      const response = await api.get(`users/${this.accountAddress}/images`);
+      if (this.isConnected) {
+        this.galleryArts = response.data as [];
+        console.log(this.galleryArts);
+        this.loadingGalleryArts = false;
+      }
+    } catch (error) {
+      console.log('erro no galleryArts');
     }
   }
 

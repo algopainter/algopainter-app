@@ -14,7 +14,7 @@
           class="item"
           :style="{'mask-image': `url(${item.icon})`}"
           :to="item.to"
-          @click="item.to ? null : item.onClick"
+          @click="item.to ? null : item.onClick()"
         >
           <q-tooltip
             anchor="center right"

@@ -41,8 +41,17 @@
       :src="previewImageUrl"
     />
     <div class="details flex q-pa-sm">
-      <div class="name">
-        {{ isHot.item.title }}
+      <div>
+        <div
+          class="name"
+        >
+          {{ isHot.item.title }}
+        </div>
+        <q-tooltip
+          class="bg-primary"
+        >
+          {{ isHot.item.title }}
+        </q-tooltip>
       </div>
       <div>
         <div class="flex items-center q-col-gutter-sm">

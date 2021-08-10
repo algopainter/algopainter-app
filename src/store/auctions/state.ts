@@ -5,6 +5,7 @@ function state(): AuctionStateInterface {
     hotBids: [],
     topSellers: [],
     topBuyers: [],
+    allBids: [],
   };
 }
 

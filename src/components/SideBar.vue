@@ -6,15 +6,20 @@
         src="../assets/icons/ALGOP.svg"
         class="icon q-ml-sm q-mt-md"
       />
-      <div>
-        <component
-          :is="item.to ? 'router-link' : 'div'"
-          v-for="item, index in items"
-          :key="index"
-          class="item"
-          :style="{'mask-image': `url(${item.icon})`}"
-          :to="item.to"
-          @click="item.to ? null : item.onClick()"
+      <component
+        :is="item.to ? 'router-link' : 'div'"
+        v-for="item, index in items"
+        :key="index"
+        class="item"
+        :style="{'mask-image': `url(${item.icon})`}"
+        :to="item.to"
+        @click="item.to ? null : item.onClick"
+      >
+        <q-tooltip
+          anchor="center right"
+          self="center left"
+          class="bg-primary test"
+          :offset="[10, 10]"
         >
           <q-tooltip
             anchor="center right"
@@ -104,6 +109,5 @@ export default class SideBar extends Vue {
       background-color: $secondary;
     }
   }
-
 }
 </style>

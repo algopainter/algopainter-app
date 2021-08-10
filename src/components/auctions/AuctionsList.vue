@@ -23,7 +23,7 @@
 
         <template #addons>
           <navigation
-            class="navigation z-max"
+            class="navigation"
           />
         </template>
       </carousel>
@@ -304,11 +304,18 @@ export default class AuctionsList extends Vue {
   padding: 10px;
 }
 
-.carousel__prev,
+.carousel__prev {
+  background-color: #f4538d;
+  box-sizing: content-box;
+  border: 5px solid white;
+  margin-left: 20px;
+}
+
 .carousel__next {
   background-color: #f4538d;
   box-sizing: content-box;
   border: 5px solid white;
+  margin-right: 20px;
 }
 
 .custom-skeleton-border {

@@ -3,7 +3,13 @@
     <div>
       <auctions-list @favoriteClicked="favoriteClicked" />
     </div>
-    <div class="header gallery">
+    <div class="header">
+      {{ $t('dashboard.homePage.exploreCollectibles') }}
+    </div>
+    <div>
+      <auctions-explorer @favoriteClicked="favoriteClicked" />
+    </div>
+    <div class="header gallery q-mb-lg">
       {{ $t('dashboard.homePage.collectiblesGallery') }}
     </div>
     <div>
@@ -18,11 +24,13 @@
 import { Vue, Options } from 'vue-class-component';
 import { HomePageGallery } from 'components/gallery';
 import AuctionsList from 'src/components/auctions/AuctionsList.vue';
+import AuctionsExplorer from 'src/components/auctions/AuctionsExplorer.vue';
 
 @Options({
   components: {
     HomePageGallery,
     AuctionsList,
+    AuctionsExplorer,
   },
 })
 export default class HomePage extends Vue {
@@ -35,6 +43,10 @@ export default class HomePage extends Vue {
 <style lang="scss" scoped>
 .category {
   font-weight: bold;
+}
+
+.header {
+  margin-bottom: 1.5rem
 }
 
 .header.gallery{

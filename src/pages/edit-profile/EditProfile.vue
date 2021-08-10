@@ -7,7 +7,7 @@
       <div class="col-xs-12 col-sm-12 col-md-3">
         <div class="column items-center q-gutter-md">
           <div class="col q-mt-xl">
-            <div v-if="isConnected">
+            <div v-if="isConnected === true && formFields.avatar !=null">
               <img
                 :src="formFields.avatar"
                 class="img "

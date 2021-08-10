@@ -7,7 +7,6 @@ export interface IImageUser {
     bio: string,
     name: string,
     type: string,
-    __v: number,
     customProfile: string,
     facebook: string,
     email: string,

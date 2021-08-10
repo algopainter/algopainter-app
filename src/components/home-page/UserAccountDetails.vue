@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loadingUserProfile === false">
+  <div v-if="loadingUserProfile === false && loadingUserItems === false">
     <div class="row q-col-gutter-xl items-center">
       <div class="col-12 col-sm-6 col-xl-6">
         <div class="user-info flex column q-col-gutter-lg">
@@ -36,6 +36,9 @@
       </div>
     </div>
   </div>
+  <div v-else>
+    <UserAccountDetailsSkeleton />
+  </div>
 </template>
 
 <script lang="ts">
@@ -44,10 +47,12 @@ import { IUser } from 'src/models/IUser';
 
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
+import UserAccountDetailsSkeleton from 'src/components/home-page/user-gallery-overview/UserAccountDetailsSkeleton.vue';
 
 @Options({
   components: {
     AlgoButton,
+    UserAccountDetailsSkeleton,
   },
   computed: {
     isConnected: false,

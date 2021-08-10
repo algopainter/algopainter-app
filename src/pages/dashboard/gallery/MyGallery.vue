@@ -7,7 +7,7 @@
       {{ $t('dashboard.homePage.myGallery') }}
     </div>
     <div>
-      <user-gallery-overview />
+      <MyGalleryOverview />
     </div>
   </q-page>
 </template>
@@ -15,15 +15,13 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 
-import {
-  AccountDetails,
-  UserGalleryOverview,
-} from 'components/home-page';
+import { AccountDetails } from 'components/home-page';
+import MyGalleryOverview from 'src/components/home-page/user-gallery-overview/MyGalleryOverview.vue';
 
 @Options({
   components: {
     AccountDetails,
-    UserGalleryOverview,
+    MyGalleryOverview,
   },
 })
 export default class MyGallery extends Vue {

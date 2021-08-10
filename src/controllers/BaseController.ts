@@ -13,20 +13,20 @@ export default class BaseController {
   }
 
   async get(path: string) {
-    return await this.api.get(path);
+    return await this.api.get(path, { timeout: 1000 * 30 });
   }
 
   async post(
     path: string,
     body: Record<string, unknown> = {},
-    options: Record<string, unknown> = {}
+    options: Record<string, unknown> = {},
   ) {
     return await this.api.post(path, body, options);
   }
 
   async delete(
     path: string,
-    body: Record<string, unknown> = {}
+    body: Record<string, unknown> = {},
   ) {
     return await this.api.delete(path, body);
   }

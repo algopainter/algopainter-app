@@ -13,13 +13,19 @@
         :width="120"
         :breakpoint="768"
       >
-        <side-bar />
+        <side-bar
+          @galleryClicked="refreshModal"
+          @pageOptionClicked="pageOptionClicked"
+        />
       </q-drawer>
       <q-page-container class="q-px-lg">
         <router-view
           @favoriteClicked="refreshModal"
         />
-        <connect-your-wallet v-if="showModal" />
+        <connect-your-wallet
+          v-if="showModal"
+          :page-to-go-after-connected="page"
+        />
         <wrong-chain-dialog v-if="showWrongChainDialog" />
       </q-page-container>
     </q-layout>
@@ -28,7 +34,6 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
 import DashboardHeader from 'components/DashboardHeader.vue';
 import SideBar from 'components/SideBar.vue';
 import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
@@ -64,6 +69,7 @@ export default class MainLayout extends Vue {
 
   showModal: boolean = false;
   showWrongChainDialog: boolean = false;
+  page: string = '';
 
   openDrawer() {
     // console.log(this.leftDrawerOpen);
@@ -84,6 +90,10 @@ export default class MainLayout extends Vue {
 
   refreshWrongChainDialog() {
     this.showWrongChainDialog = (this.networkInfo?.id !== 56);
+  }
+
+  pageOptionClicked(page: string) {
+    this.page = page;
   }
 }
 </script>

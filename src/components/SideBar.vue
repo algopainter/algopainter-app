@@ -21,9 +21,16 @@
           class="bg-primary test"
           :offset="[10, 10]"
         >
-          <span>{{ item.label }}</span>
-        </q-tooltip>
-      </component>
+          <q-tooltip
+            anchor="center right"
+            self="center left"
+            class="bg-primary"
+            :offset="[10, 10]"
+          >
+            <span>{{ item.label }}</span>
+          </q-tooltip>
+        </component>
+      </div>
     </div>
   </div>
 </template>
@@ -36,7 +43,7 @@ interface SideBarItem {
   img?: string;
   to?: string;
   label?: string;
-  onClick?: () => unknown;
+  onClick: () => unknown;
 }
 
 export default class SideBar extends Vue {
@@ -46,16 +53,25 @@ export default class SideBar extends Vue {
         icon: require('../assets/icons/home.svg'),
         to: '/',
         label: 'Home',
+        onClick: () => undefined,
       },
       {
         icon: require('../assets/icons/my-gallery.svg'),
-        to: '/my-gallery',
         label: 'My Gallery',
+        onClick: () => {
+          if (this.$store.state.user.isConnected) {
+            void this.$router.push('/my-gallery');
+          } else {
+            this.$emit('galleryClicked');
+            this.$emit('pageOptionClicked', '/my-gallery');
+          }
+        },
       },
       {
         icon: require('../assets/icons/paint-board-and-brush.svg'),
         to: '/create-collectible',
         label: 'Create collectible',
+        onClick: () => undefined,
       },
     ];
   }

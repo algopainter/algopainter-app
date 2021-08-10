@@ -18,17 +18,10 @@
         <q-tooltip
           anchor="center right"
           self="center left"
-          class="bg-primary test"
+          class="bg-primary"
           :offset="[10, 10]"
         >
-          <q-tooltip
-            anchor="center right"
-            self="center left"
-            class="bg-primary"
-            :offset="[10, 10]"
-          >
-            <span>{{ item.label }}</span>
-          </q-tooltip>
+          <span>{{ item.label }}</span>
         </q-tooltip>
       </component>
     </div>

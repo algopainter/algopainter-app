@@ -1,19 +1,30 @@
 <template>
   <div class="container">
     <div class="art-header flex q-pb-sm">
-      <div class="users">
-        <q-avatar
-          v-for="person in galleryItem.art.importantPeople"
-          :key="person.id"
-          size="lg"
-          round
-        >
-          <img :src="person.picture" />
-          <q-tooltip class="bg-primary">
-            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }}
-            {{ person.name }}
-          </q-tooltip>
-        </q-avatar>
+      <div
+        v-for="person in galleryItem.art.importantPeople"
+        :key="person.id"
+        class="users"
+      >
+        <router-link :to="{path: 'user-gallery', query: { customProfile: person.account }}">
+          <q-avatar
+            size="lg"
+            round
+          >
+            <img
+              v-if="person.picture != null"
+              :src="person.picture"
+            >
+            <img
+              v-else
+              src="/images/do-utilizador (1).png"
+            >
+            <q-tooltip class="bg-primary">
+              {{ person.accountable }}{{ $t('dashboard.homePage.colon') }}
+              {{ person.name }}
+            </q-tooltip>
+          </q-avatar>
+        </router-link>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
@@ -22,19 +33,22 @@
           <div class="col-12 col-md-1">
             <LikeAnimation
               :liked="wasLiked"
-              :likes="galleryItem.art.likes"
+              :likes="likes || galleryItem.art.likes"
               @favoriteClicked="favoriteClicked"
             />
           </div>
         </div>
       </div>
     </div>
-    <q-img class="art-image" :src="galleryItem.art.source" />
+    <q-img
+      class="art-image"
+      :src="galleryItem.art.source"
+    />
     <div class="details q-pa-sm">
-      <div class="name">
+      <div class="name limit-text">
         {{ galleryItem.art.name }}
       </div>
-      <div class="img-description">
+      <div class="img-description limit-text">
         <p>{{ galleryItem.description }}</p>
       </div>
       <div class="row justify-center">
@@ -59,17 +73,12 @@ import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
-import { isError } from 'src/helpers/utils';
 
 class Props {
   galleryItem = prop({
     type: Object as PropType<IGallery>,
     required: true,
   });
-}
-
-interface Ioptions {
-  socialNetworks: string;
 }
 
 @Options({
@@ -82,12 +91,17 @@ interface Ioptions {
     account: '',
     isConnected: false,
   },
+  watch: {
+    account: ['loadData'],
+  },
 })
 export default class GalleryItem extends Vue.with(Props) {
   collectionArtController: CollectionArtController =
     new CollectionArtController();
 
   wasLiked: boolean = false;
+
+  likes!: number;
 
   get account() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
@@ -111,7 +125,7 @@ export default class GalleryItem extends Vue.with(Props) {
     window.open(
       linkElement.href,
       '_blank',
-      'width=550, height=555, top=100, left=190, scrollbars=no'
+      'width=550, height=555, top=100, left=190, scrollbars=no',
     );
   }
 
@@ -122,55 +136,58 @@ export default class GalleryItem extends Vue.with(Props) {
     }
   }
 
-  options: Ioptions = {
-    socialNetworks: '',
-  };
-
-  socialNetworks = [
-    {
-      value: 0,
-      label: 'Facebook',
-      name: 'facebook',
-    },
-    {
-      value: 0,
-      label: 'Twitter',
-      name: 'mdi-twitter',
-    },
-    {
-      value: 0,
-      label: 'Telegram',
-      name: 'mdi-telegram',
-    },
-    {
-      value: 0,
-      label: 'E-mail',
-      name: 'mdi-email',
-    },
-  ];
-
-  async postFavoriteArt() {
-    const response = await this.collectionArtController.favoriteArt(
-      this.galleryItem.art.id,
-      this.account
-    );
-    if (isError(response as Error)) {
-      alert('mensagem de assinatura recusada');
-      return;
-    }
-    this.wasLiked = true;
+  mounted() {
+    void this.loadData();
   }
 
-  async deleteFavoriteArt() {
-    const response = await this.collectionArtController.deleteFavoriteArt(
-      this.galleryItem.art.id,
-      this.account
-    );
-    if (isError(response as Error)) {
-      alert('mensagem de assinatura recusada');
-      return;
+  loadData() {
+    this.wasLiked =
+      (this.galleryItem.art.likers as string[]).filter(
+        (liker) => liker === this.account,
+      ).length !== 0;
+    this.likes = this.galleryItem.art.likes as number;
+  }
+
+  postFavoriteArt() {
+    this.collectionArtController
+      .favoriteArt(this.galleryItem.art.id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like(true);
+          }
+        },
+        (error) => {
+          console.log('"like" post error: ', error);
+        },
+      );
+    this.like();
+  }
+
+  deleteFavoriteArt() {
+    this.collectionArtController
+      .deleteFavoriteArt(this.galleryItem.art.id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like();
+          }
+        },
+        (error) => {
+          console.log('"like" delete error: ', error);
+        },
+      );
+    this.like(true);
+  }
+
+  like(undo: boolean = false) {
+    if (undo) {
+      this.wasLiked = false;
+      this.likes--;
+    } else {
+      this.wasLiked = true;
+      this.likes++;
     }
-    this.wasLiked = false;
   }
 }
 </script>
@@ -178,6 +195,13 @@ export default class GalleryItem extends Vue.with(Props) {
 <style lang="scss" scoped>
 .container {
   padding: 0 1rem 0 0;
+}
+.limit-text{
+   text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    width: 250px;
 }
 .users {
   .q-avatar:not(:first-child) {

@@ -19,5 +19,6 @@ export interface IArt {
     investors: number;
   }
   likes?: number;
+  likers?: string[];
   importantPeople: Person[];
 }

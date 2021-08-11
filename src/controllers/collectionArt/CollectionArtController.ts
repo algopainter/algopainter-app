@@ -1,6 +1,8 @@
 import BaseController from '../BaseController';
 import { isError } from 'src/helpers/utils';
 import { nanoid } from 'nanoid';
+import { IApiResponse, IError } from 'src/core/types';
+import Result from 'src/core/Result';
 
 export default class CollectionArtController extends BaseController {
   async favoriteArt(artId: string, address: string) {
@@ -22,13 +24,13 @@ export default class CollectionArtController extends BaseController {
         ...request,
         signature: signatureOrError,
       });
-      const response = await this.post(`images/${artId}/like`, {
+      const response = await this.post(`images/${artId}/likes`, {
         ...request,
         signature: signatureOrError,
       });
-      return response.data as boolean;
+      return Result.ok((response.data as IApiResponse<boolean>).data);
     } catch (error) {
-      return error as Error;
+      return Result.fail<string>((error as IError).message);
     }
   }
 
@@ -51,13 +53,14 @@ export default class CollectionArtController extends BaseController {
         ...request,
         signature: signatureOrError,
       });
-      const response = await this.delete(`images/${artId}/dislike`, {
+      const body = JSON.stringify({
         ...request,
         signature: signatureOrError,
       });
-      return response.data as boolean;
+      const response = await this.delete(`images/${artId}/likes?payload=${body}`);
+      return Result.ok((response.data as IApiResponse<boolean>).data);
     } catch (error) {
-      return error as Error;
+      return Result.fail<string>((error as IError).message);
     }
   }
 }

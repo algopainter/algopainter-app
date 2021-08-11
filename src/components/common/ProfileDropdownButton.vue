@@ -1,19 +1,38 @@
 <template>
   <div>
-    <algo-button
-      :label="formatedAccount()"
-      color="primary"
-      outline
-      class="text-bold"
-    >
+    <q-button>
+      <div class="q-gutter-xs row">
+        <q-chip
+          size="18px"
+          color="primary"
+          text-color="white"
+          class="text-h6"
+          clickable
+        >
+          <q-avatar size="41px">
+            <img
+              class="profile-img"
+              :src="userProfile.avatar || '/placeholder-images/do-utilizador.png'"
+            >
+          </q-avatar>
+          <div class="profile-chip">
+            {{
+              (userProfile &&
+                userProfile.name &&
+                userProfile.name.split(' ')[0]) ||
+                formatedAccount(5, -3)
+            }}
+          </div>
+        </q-chip>
+      </div>
       <q-menu>
         <div class="q-pa-md">
-          <div class="text-bold q-mb-md">{{ formatedAccount() }}</div>
+          <div class="text-bold q-mb-md">{{ formatedAccount(11, -4) }}</div>
           <q-list>
             <q-item v-ripple class="q-pl-none">
               <q-item-section avatar>
                 <q-avatar>
-                  <img src="/images/ALGOP.svg" />
+                  <img :src="userProfile.avatar || '/placeholder-images/do-utilizador.png'" >
                 </q-avatar>
               </q-item-section>
               <q-item-section>
@@ -54,7 +73,7 @@
                   "
                   type="a"
                   color="primary"
-                  href="https://exchange.pancakeswap.finance/#/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
+                  href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
                   target="_blank"
                 />
               </q-item-section>
@@ -62,7 +81,7 @@
           </q-list>
         </div>
       </q-menu>
-    </algo-button>
+    </q-button>
   </div>
 </template>
 
@@ -70,26 +89,26 @@
 import AlgoButton from 'components/common/Button.vue';
 import { Options, Vue } from 'vue-class-component';
 import UserUtils from 'src/helpers/user';
+import UserController from 'src/controllers/user/UserController';
+import { IProfile } from 'src/models/IProfile';
 
 @Options({
   components: {
     AlgoButton,
   },
   computed: {
-    isConnected: false,
     accountAddress: '',
   },
   watch: {
-    isConnected: ['setAccountBalance'],
-    accountAddress: ['setAccountBalance'],
+    accountAddress: ['setAccountBalance', 'loadUserProfile'],
   },
 })
 export default class ProfileDropdownButton extends Vue {
   balance: number = 0;
 
-  get isConnected() {
-    return this.$store.state.user.isConnected;
-  }
+  userProfile: IProfile = {};
+
+  userController: UserController = new UserController();
 
   get accountAddress() {
     return this.$store.state.user.account;
@@ -97,19 +116,33 @@ export default class ProfileDropdownButton extends Vue {
 
   mounted() {
     void this.setAccountBalance();
+    void this.loadUserProfile();
   }
 
   async setAccountBalance() {
-    if (this.isConnected) {
-      this.balance = (
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'])
-      );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    this.balance = await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
+  }
+
+  async loadUserProfile() {
+    const result = await this.userController.getUserProfile(
+      this.accountAddress as string,
+    );
+    if (result.isFailure) {
+      console.log('erro', result);
+    } else if ((result.getValue() as IProfile)._id) {
+      this.userProfile = result.getValue() as IProfile;
+    } else {
+      this.userProfile = {};
     }
   }
 
-  formatedAccount() {
-    return UserUtils.formatedAccount(this.accountAddress as string);
+  formatedAccount(inital: number, final: number) {
+    return UserUtils.formatedAccount(
+      this.accountAddress as string,
+      inital,
+      final
+    );
   }
 
   formatAccountBalance() {
@@ -121,3 +154,14 @@ export default class ProfileDropdownButton extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+.profile-chip {
+  font-size: 15px;
+  font-weight: 700;
+}
+.profile-img {
+  border: 3px solid #fff;
+  border-radius: 34px !important;
+  background: #fff;
+}
+</style>

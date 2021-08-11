@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 <template>
   <q-form
     @submit="onSubmit"
@@ -6,10 +7,18 @@
       <div class="col-xs-12 col-sm-12 col-md-3">
         <div class="column items-center q-gutter-md">
           <div class="col q-mt-xl">
-            <img
-              :src="formFields.img"
-              class="img "
-            >
+            <div v-if="isConnected === true && formFields.avatar !=null">
+              <img
+                :src="formFields.avatar"
+                class="img "
+              >
+            </div>
+            <div v-else>
+              <img
+                src="../../../src/assets/placeholder-images/do-utilizador.png"
+                class="img "
+              >
+            </div>
           </div>
           <div class="col">
             <label
@@ -128,28 +137,35 @@
           type="submit"
           color="primary"
           :label="$t('dashboard.editProfile.sChanges')"
-          @click="saveChanges"
           :disable="!isConnected"
+          @click="saveChanges"
         />
       </div>
     </div>
+    <q-inner-loading :showing="isLoading">
+      <q-spinner-gears
+        size="50px"
+        color="primary"
+      />
+    </q-inner-loading>
   </q-form>
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-import { Screen } from 'quasar';
+import { Watch } from 'vue-property-decorator';
+import { Screen, Notify } from 'quasar';
 import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
-import { isError } from 'src/helpers/utils';
+import { isError, resizeImage } from 'src/helpers/utils';
 
 interface IProfile {
   name?: string;
   email?: string;
   customProfile?: string;
-  img?: string| null;
+  avatar?: string;
   webSite? : string;
   bio?: string;
   facebook?: string;
@@ -167,60 +183,115 @@ interface IProfile {
 export default class EditProfile extends Vue {
   formFields: IProfile = {
     customProfile: ' ',
-    img: '/images/do-utilizador (1).png',
+    avatar: '/images/do-utilizador (1).png',
   };
+
+  isLoading: boolean = false;
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['user/isConnected'] as boolean;
   }
 
-  previewImage(e: Event) {
+  get account() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
+
+  @Watch('account')
+  onPropertyChanged(value: string, oldValue: string) {
+    void this.loadData();
+  }
+
+  async previewImage(e: Event) {
     const newLocal = (<HTMLInputElement>e.target).files;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const newLocala = newLocal!;
     const file = newLocala[0];
+    const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve((reader.result || '').toString());
+      reader.onerror = error => reject(error);
+    });
+    const base64 = await toBase64(file);
+    const resized = await resizeImage(base64, 500, 500) as string;
     if (file) {
-      this.formFields.img = URL.createObjectURL(file);
+      this.formFields.avatar = resized;
     } else {
-      this.formFields.img = null;
+      this.formFields.avatar = '';
+    }
+  }
+
+  mounted() {
+    if (this.isConnected) {
+      void this.loadData();
+    }
+  }
+
+  async loadData() {
+    this.isLoading = true;
+    try {
+      const result = await api.get(`users/${this.account}`);
+      this.formFields = result.data as IProfile;
+    } catch (e) {
+      Notify.create({
+        message: 'An error has occurred while getting user information',
+        color: 'red',
+        icon: 'mdi-alert',
+      });
+    } finally {
+      this.isLoading = false;
     }
   }
 
   async saveChanges() {
-    const data = {
-      ...this.formFields,
-      salt: nanoid(),
-    };
-    const web3helper = new Web3Helper();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const userAccount = this.$store.getters['user/account'] as string;
-    const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
+    try {
+      this.isLoading = true;
+      const data = {
+        ...this.formFields,
+        salt: nanoid(),
+      };
+      const web3helper = new Web3Helper();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const userAccount = this.$store.getters['user/account'] as string;
+      const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
 
-    if (isError(signatureOrError as Error)) {
-      console.log('assinatura negada ou api com falha, tratar cada erro aqui');
-      return;
+      if (isError(signatureOrError as Error)) {
+        console.log('assinatura negada ou api com falha, tratar cada erro aqui');
+        return;
+      }
+
+      const request = {
+        data,
+        signature: signatureOrError,
+        account: userAccount,
+        salt: data.salt,
+      };
+
+      await api.put(`users/${userAccount}`, request);
+      Notify.create({
+        message: 'Profile updated sucessfully!',
+        color: 'green',
+        icon: 'mdi-check',
+      });
+    } catch (e) {
+      Notify.create({
+        message: 'An error has occurred while updating profile',
+        color: 'red',
+        icon: 'mdi-alert',
+      });
+    } finally {
+      this.isLoading = false;
     }
-
-    const request = {
-      data,
-      signature: signatureOrError,
-      account: userAccount,
-      salt: data.salt,
-    };
-
-    console.log(request);
-
-    await api.put(`users/${userAccount}`, request);
   }
 
   onSubmit() {
     this.$q.notify({
       group: true,
       icon: 'mdi-check',
-      message: 'Salve Profile',
+      message: 'Please confirm your changes...',
       textColor: 'primary',
-      position: 'center',
       timeout: 2500,
     });
   }

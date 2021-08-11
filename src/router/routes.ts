@@ -51,6 +51,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'user-gallery',
+        component: () => import('src/pages/dashboard/user-gallery/UserGallery.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.homePage.publicTitle'),
+        },
+      },
+      {
         path: 'sell-your-art',
         component: () => import('pages/dashboard/sellyourart/SellYourArt.vue'),
         meta: {

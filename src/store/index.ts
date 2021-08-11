@@ -6,7 +6,11 @@ import {
   useStore as vuexUseStore,
 } from 'vuex';
 import { UserStateInterface } from './user/types';
+import { AuctionStateInterface } from './auctions/types';
+import { CollectionsStateInterface } from './collections/types';
 import user from './user';
+import auctions from './auctions';
+import collections from './collections';
 
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
@@ -27,6 +31,8 @@ export interface StateInterface {
   // Best to strongly type as per the line above.
   example: unknown;
   user: UserStateInterface;
+  auctions: AuctionStateInterface;
+  collections: CollectionsStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -45,6 +51,8 @@ export default store(function(/* { ssrContext } */) {
     modules: {
       // example
       user,
+      auctions,
+      collections,
     },
 
     // enable strict mode (adds overhead!)

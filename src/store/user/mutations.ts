@@ -14,6 +14,12 @@ const mutation: MutationTree<UserStateInterface> = {
   setNetworkInfo(state: UserStateInterface, payload?: NetworkInfo) {
     state.networkInfo = payload;
   },
+  SET_PROFILE(state: UserStateInterface, payload: []) {
+    state.profile = payload;
+  },
+  SET_USER_PROFILE(state: UserStateInterface, payload: []) {
+    state.userProfile = payload;
+  },
 };
 
 export default mutation;

@@ -17,6 +17,7 @@ const i18n = createI18n({
       percent: {
         style: 'percent',
         minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
       },
     },
   },

@@ -1,14 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
-  <div
-    v-for="galleryItems in gallery"
-    :key="galleryItems.id"
-  >
+  <div v-if="loading === false">
     <div class="row justify-between">
       <div
         class="col-lg-6 col-md-6"
       >
         <p class="text-bold text-h5">
-          {{ galleryItems.art.name }}
+          {{ image.title }}
         </p>
       </div>
       <div>
@@ -36,11 +36,16 @@
         <div class="row justify-center">
           <q-img
             class="img"
-            src="../../../assets/placeholder-images/painting.jpg"
+            :src="image.nft.previewImage"
           />
           <div class="">
+            <LikeAnimation
+              :liked="wasLiked"
+              :likes="likes"
+              @favoriteClicked="favoriteClicked"
+            />
             <ShareArtIcons
-              :art="galleryItems.id"
+              :art="image._id"
             />
           </div>
         </div>
@@ -61,17 +66,27 @@
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.algoPainter') }}
             </span>
-            <p>{{ galleryItems.art.algopainter }}</p>
+            <p>{{ image.collectionName }} </p>
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.owner') }}
             </span>
             <p>
-              {{ galleryItems.art.owner }}
+              {{ imageOwner.name || imageOwner.account }}
+              <q-tooltip
+                v-if="imageOwner.name !== null"
+                anchor="bottom middle"
+                self="top middle"
+                class="bg-primary"
+                :offset="[0, 0]"
+                :hide-delay="950"
+              >
+                {{ imageOwner.account }}
+              </q-tooltip>
             </p>
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
             </span>
-            <p> {{ galleryItems.description }}</p>
+            <p> {{ image.description }}</p>
           </div>
         </div>
       </div>
@@ -80,63 +95,163 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options, prop } from 'vue-class-component';
-import { PropType } from 'vue';
+import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-import { IGallery } from 'src/models/IGallery';
 import ShareArtIcons from 'components/common/ShareArtIcons.vue';
-class Props {
-   galleryItem = prop({
-     type: Object as PropType<IGallery>,
-     required: true,
-   });
-}
+import { IImage } from 'src/models/IImage';
+import { api } from 'src/boot/axios';
+import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
+import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
+import UserUtils from 'src/helpers/user';
+import { IImageUser } from 'src/models/IImageUser';
+import { IProfile } from 'src/models/IProfile';
 
 @Options({
-  components: { AlgoButton, ShareArtIcons },
+  components: { AlgoButton, ShareArtIcons, LikeAnimation },
+  computed: {
+    account: '',
+    isConnected: false,
+  },
+  watch: {
+    account: ['loadData'],
+  },
 })
 
-export default class ViewArt extends Vue.with(Props) {
-  gallery: IGallery[] = [
-    {
-      id: '1',
-      description: 'Dreaming with your eyes open',
-      art: {
-        id: '1',
-        name: '#25 Virtual Reality',
-        algopainter: 'Hashley Gwei',
-        owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-        source: 'placeholder',
-        price: 120,
-        bidBack: 0.1,
-        keywords: '#art',
-        pirs: {
-          creators: 0.08,
-          investors: 0.05,
-        },
-        importantPeople: [
-          {
-            id: '1',
-            name: 'Billy Nguyen',
-            picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '2',
-            name: 'Beverley Weaver',
-            picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-            accountable: 'Collection',
-          },
-          {
-            id: '3',
-            name: 'Leonard Ryan',
-            picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-            accountable: 'Collection',
-          },
-        ],
-      },
+export default class ViewArt extends Vue {
+  loading: boolean = true;
+
+  user = {
+    _id: '',
+    account: '',
+    updatedAt: '',
+    createdAt: '',
+    avatar: '',
+    bio: '',
+    name: '',
+    type: '',
+    __v: 0,
+    customProfile: '',
+    facebook: '',
+    email: '',
+    instagram: '',
+    telegram: '',
+    twitter: '',
+    webSite: '',
+    role: '',
+  };
+
+  image: IImage = {
+    _id: '',
+    title: '',
+    likes: 0,
+    likers: [''],
+    description: '',
+    tags: [''],
+    nft: {
+      _id: '',
+      image: '',
+      previewImage: '',
+      rawImage: '',
+      parameters: { name: 'fake' },
     },
-  ]
+    users: [this.user as IProfile],
+    collectionName: '',
+    collectionOwner: '',
+    owner: '',
+    creator: '',
+  };
+
+  collectionArtController: CollectionArtController = new CollectionArtController();
+
+  wasLiked: boolean = false;
+
+  likes!: number;
+
+  imageOwner!: IImageUser;
+
+  get account() {
+    return this.$store.state.user.account as string;
+  }
+
+  mounted() {
+    void this.getDetailsData();
+  }
+
+  async getDetailsData() {
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const data = await api.get(`images/${this.$route.params.id}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.image = data.data as IImage;
+      this.likes = this.image.likes;
+      this.imageOwner = UserUtils.getUsersByRole(this.image.users as IImageUser[], 'owner')[0];
+      this.loadWasLiked();
+      this.loading = false;
+    } catch (e) {
+      console.log('e', e);
+    }
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  favoriteClicked(wasLiked: boolean) {
+    this.$emit('favoriteClicked');
+    if (this.isConnected) {
+      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    }
+  }
+
+  loadWasLiked() {
+    this.wasLiked =
+      (this.image.likers || []).filter(
+        (liker) => liker === this.account,
+      ).length !== 0;
+  }
+
+  postFavoriteArt() {
+    this.collectionArtController
+      .favoriteArt(this.image._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like(true);
+          }
+        },
+        (error) => {
+          console.log('"like" post error: ', error);
+        },
+      );
+    this.like();
+  }
+
+  deleteFavoriteArt() {
+    this.collectionArtController
+      .deleteFavoriteArt(this.image._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like();
+          }
+        },
+        (error) => {
+          console.log('"like" delete error: ', error);
+        },
+      );
+    this.like(true);
+  }
+
+  like(undo: boolean = false) {
+    if (undo) {
+      this.wasLiked = false;
+      this.likes--;
+    } else {
+      this.wasLiked = true;
+      this.likes++;
+    }
+  }
 }
 </script>
 <style scoped>

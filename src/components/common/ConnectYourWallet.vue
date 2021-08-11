@@ -34,12 +34,19 @@
 
 <script lang="ts">
 import { QDialog } from 'quasar';
-import { Options, Vue } from 'vue-class-component';
+import { Options, Vue, prop } from 'vue-class-component';
+
+class Props {
+  pageToGoAfterConnected = prop({
+    required: false,
+    default: '',
+  })
+}
 
 @Options({
   emits: ['hide', 'connected'],
 })
-export default class ConnectYourWallet extends Vue {
+export default class ConnectYourWallet extends Vue.with(Props) {
   declare $refs: {
     dialog: QDialog;
   };
@@ -63,13 +70,11 @@ export default class ConnectYourWallet extends Vue {
   connectToMetaMask() {
     this.$store.dispatch('user/connectToWallet', 'metamask').then(
       (value) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (this.$store.getters['user/isConnected']) {
-          console.log('conectado');
-          this.$emit('connected');
-        } else {
-          console.log('fail when connectToWallet');
+        console.log('terminou de conectar');
+        if (this.pageToGoAfterConnected) {
+          void this.$router.push(this.pageToGoAfterConnected);
         }
+        this.$emit('connected');
       },
       (error) => {
         console.log(error);

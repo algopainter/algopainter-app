@@ -55,6 +55,7 @@ export interface IAuctionItem2 {
   isHot: boolean;
   item: {
     likes: number;
+    likers: string[];
     previewImageUrl: string;
     tags: string[];
     title: string;

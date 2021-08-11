@@ -76,7 +76,14 @@
                     round
                     size="64px"
                   >
-                    <img :src="seller.avatar">
+                    <img
+                      v-if="seller.avatar != ''"
+                      :src="seller.avatar"
+                    >
+                    <img
+                      v-else
+                      src="/images/do-utilizador (1).png"
+                    >
                   </q-avatar>
                 </router-link>
               </div>
@@ -149,7 +156,14 @@
                     round
                     size="64px"
                   >
-                    <img :src="buyer.avatar">
+                    <img
+                      v-if="buyer.avatar != ''"
+                      :src="buyer.avatar"
+                    >
+                    <img
+                      v-else
+                      src="/images/do-utilizador (1).png"
+                    >
                   </q-avatar>
                 </router-link>
               </div>

@@ -3,16 +3,23 @@
     <div class="art-header flex q-pb-sm">
       <div class="users">
         <q-avatar
-          v-for="person in art.importantPeople"
-          :key="person.id"
+          v-for="(person, index) in art.users"
+          :key="index"
           size="lg"
           round
         >
-          <img :src="person.picture">
+          <img
+            v-if="person.avatar != null"
+            :src="person.avatar"
+          >
+          <img
+            v-else
+            src="/images/do-utilizador (1).png"
+          >
           <q-tooltip
             class="bg-primary"
           >
-            {{ person.accountable }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+            {{ person.role }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
           </q-tooltip>
         </q-avatar>
       </div>
@@ -21,41 +28,11 @@
     </div>
     <q-img
       class="art-image"
-      src="../../../assets/placeholder-images/painting.jpg"
+      :src="art.nft.previewImage"
     />
     <div class="details q-pa-sm">
       <div class="name">
-        {{ art.name }}
-      </div>
-      <div class="q-py-sm">
-        <div class="flex q-col-gutter-sm">
-          <div class="price">
-            <img src="../../../assets/icons/coin.svg">
-            <div>{{ $n(art.price, 'currency') }}</div>
-          </div>
-          <div class="bid-back">
-            <img src="../../../assets/icons/return-on-investment.svg">
-            <div>
-              {{ $n(art.bidBack, 'percent') }} {{ $t('common.bidBack') }}
-            </div>
-          </div>
-        </div>
-        <div class="pirs">
-          <img src="../../../assets/icons/return-on-investment.svg">
-          <div>
-            <span class="label">
-              {{ $t('dashboard.homePage.pirs') }}
-            </span>
-            <i18n-t keypath="dashboard.homePage.pirsVal">
-              <template #creators>
-                {{ $n(art.pirs.creators, 'percent') }}
-              </template>
-              <template #investors>
-                {{ $n(art.pirs.investors, 'percent') }}
-              </template>
-            </i18n-t>
-          </div>
-        </div>
+        {{ art.description }}
       </div>
       <q-btn
         class="sell-action"
@@ -74,13 +51,13 @@
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 
-import { IArt } from 'src/models/IArt';
+import { IMyGallery } from 'src/models/IMyGallery';
 import AlgoButton from '../../common/Button.vue';
 import ShareArtIcons from '../../common/ShareArtIcons.vue';
 
 class Props {
   art = prop({
-    type: Object as PropType<IArt>,
+    type: Object as PropType<IMyGallery>,
     required: true,
   });
 }

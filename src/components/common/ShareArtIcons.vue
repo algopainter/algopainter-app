@@ -37,7 +37,7 @@ class Props {
     required: true,
   })
 
-  sharer = prop({
+  art = prop({
     required: true,
     type: String,
   })
@@ -49,9 +49,9 @@ export default class ShareArtIcons extends Vue.with(Props) {
   message: string = "Hey, look at this artwork on the AlgoPainter platform! Amazing, isn't it?"
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
-      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://algopainter-app.netlify.app/auctions/${id}&quote=${this.message}`,
-      Twitter: `http://twitter.com/share?text=${this.message}&url=https://algopainter-app.netlify.app/auctions/${id}&hashtags=AlgoPainter,ALGOP,NFTS`,
-      Telegram: `https://telegram.me/share/?url=https://algopainter-app.netlify.app/auctions/${id}%3F&text=${this.message}`,
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=${this.art}&quote=${this.message}`,
+      Twitter: `http://twitter.com/share?text=${this.message}&url=${this.art}&hashtags=AlgoPainter,ALGOP,NFTS`,
+      Telegram: `https://telegram.me/share/?url=${this.art}%3F&text=${this.message}`,
       Email: 'mailto:[]?subject=AlgoPainter',
     };
     console.log(socialMedia);

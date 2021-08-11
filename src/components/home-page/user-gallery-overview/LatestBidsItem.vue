@@ -20,12 +20,12 @@
           {{ $n(bid.amount , 'currency') }}
         </div>
       </div>
-      <div class="date">
+      <!-- <div class="date">
         <div>{{ bid.createdAt }}</div>
         <q-tooltip>
           {{ bid.createdAt }}
         </q-tooltip>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

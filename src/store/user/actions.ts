@@ -43,6 +43,7 @@ const clear = (commit: Commit, error?: Error) => {
 
 const actions: ActionTree<UserStateInterface, StateInterface> = {
   async connectToWallet({ commit }, wallet: WalletEnum) {
+    localStorage.wallet = wallet;
     const providerFlow = connectionFlows[wallet];
 
     if (!providerFlow) {

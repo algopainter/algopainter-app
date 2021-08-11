@@ -119,8 +119,8 @@ export default class MyGalleryOverview extends Vue {
 
   async getGalleryBidders() {
     try {
-      const response = await api.get(`bids?bidder=${this.accountAddress}`);
       if (this.isConnected) {
+        const response = await api.get(`bids?bidder=${this.accountAddress}`);
         this.galleryBid = response.data as [];
         if (this.galleryBid.length !== 0) {
           this.galleryBidClosed = [

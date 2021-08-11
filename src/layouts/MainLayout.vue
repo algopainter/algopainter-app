@@ -38,6 +38,7 @@ import DashboardHeader from 'components/DashboardHeader.vue';
 import SideBar from 'components/SideBar.vue';
 import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
 import WrongChainDialog from 'components/common/WrongChainDialog.vue';
+import { Watch } from 'vue-property-decorator';
 
 @Options({
   components: {
@@ -59,12 +60,27 @@ export default class MainLayout extends Vue {
   leftDrawerOpen: boolean = false;
 
   beforeMount() {
+    this.headerMenu();
+    this.walletAutomaticConnect();
+  }
+
+  headerMenu() {
     if (window.innerWidth <= 768) {
       this.leftDrawerOpen = false;
     } else {
       this.leftDrawerOpen = true;
-      // enquanto leftDrawerOpen for true, quero o display do button como hidden
     }
+  }
+
+  walletAutomaticConnect() {
+    if (localStorage.isConnected) {
+      void this.$store.dispatch('user/connectToWallet', localStorage.wallet);
+    }
+  }
+
+  @Watch('isConnected')
+  onPropertyChanged(value: string, oldValue: string) {
+    localStorage.isConnected = this.isConnected;
   }
 
   showModal: boolean = false;

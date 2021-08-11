@@ -1,5 +1,5 @@
 <template>
-  <div class="latest-bids-item q-mb-md q-gutter-xl">
+  <div class="latest-bids-item q-mb-md q-gutter-sm">
     <div class="img">
       <q-img
         class="art-image"
@@ -7,7 +7,7 @@
       />
     </div>
     <div class="details">
-      <div class="name ">
+      <div class="name">
         {{ bid.item.title }}
       </div>
       <div class="bid-back ">
@@ -54,11 +54,17 @@ export default class LatestBidsItem extends Vue.with(Props) {
   width: 100px;
 }
 .details {
-  padding: 6px;
   .name {
     font-weight: bold;
     font-size: 1.2rem;
     line-height: 1.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    align-items: left;
+    text-align: left;
+    width: 160px;
+  }
   }
   .bid-back {
     font-size: 1.1rem;
@@ -76,5 +82,4 @@ export default class LatestBidsItem extends Vue.with(Props) {
     line-height: 1.2rem;
     color: $grey-5;
   }
-}
 </style>

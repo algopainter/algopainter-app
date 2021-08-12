@@ -1,17 +1,25 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 <template>
   <div
-    v-if="loadingGalleryBid === false"
+    v-if="loadingGalleryBid === false && loadingGalleryArts === false"
     class="row q-col-gutter-lg"
   >
     <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
-      <div
-        v-for="item in galleryItems"
-        :key="item.id"
-      >
-        <gallery-item
-          :art="item"
-          @favoriteClicked="favoriteClicked"
-        />
+      <div v-if="nullGalleryArts === false">
+        <div
+          v-for="(item, index) in galleryArts"
+          :key="index"
+        >
+          <gallery-item
+            :art="item"
+            @favoriteClicked="favoriteClicked"
+          />
+        </div>
+      </div>
+      <div v-else>
+        <div class="text-h6 text-primary text-center q-pb-md">
+          {{ $t('dashboard.homePage.personalNoItems') }}
+        </div>
       </div>
     </div>
     <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
@@ -23,7 +31,7 @@
         :key="i"
         class="column q-col-gutter-md"
       >
-        <div v-if="bid != undefined"> 
+        <div v-if="bid != undefined">
           <LatestBidsItem :bid="bid" />
         </div>
       </div>
@@ -54,12 +62,12 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import { IArt } from 'src/models/IArt';
 import AlgoButton from 'components/common/Button.vue';
 
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import { api } from 'src/boot/axios';
+import { IMyGallery } from 'src/models/IMyGallery';
 
 @Options({
   components: {
@@ -75,10 +83,15 @@ export default class UserGalleryOverview extends Vue {
 
   galleryBid = [];
   loadingGalleryBid: boolean = true;
-  btnBidsClicked: boolean = false;
   galleryBidClosed = [];
   galleryBidShow = [];
   nullGalleryBidShow: boolean = false;
+
+  btnBidsClicked: boolean = false;
+
+  galleryArts:IMyGallery[] = [];
+  loadingGalleryArts: boolean = true;
+  nullGalleryArts: boolean = false;
 
   Allbids() {
     this.btnBidsClicked = !this.btnBidsClicked;
@@ -91,13 +104,13 @@ export default class UserGalleryOverview extends Vue {
 
   mounted() {
     void this.getGalleryBidders();
+    void this.getGalleryArts();
   }
 
   async getGalleryBidders() {
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const response = await api.get(`bids?bidder=${this.$route.query.customProfile}`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.galleryBid = response.data as [];
       if (this.galleryBid.length !== 0) {
         this.galleryBidClosed = [
@@ -115,109 +128,18 @@ export default class UserGalleryOverview extends Vue {
     }
   }
 
-  galleryItems: IArt[] = [
-    {
-      id: '1',
-      name: 'aqui',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      keywords: '#art',
-      importantPeople: [
-        {
-          id: '1',
-          name: 'Billy Nguyen',
-          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          accountable: 'Collection',
-        },
-        {
-          id: '2',
-          name: 'Beverley Weaver',
-          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          accountable: 'Owner',
-        },
-        {
-          id: '3',
-          name: 'Leonard Ryan',
-          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          accountable: 'Creator',
-        },
-      ],
-    },
-    {
-      id: '2',
-      name: 'oiii',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      keywords: '#art',
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      importantPeople: [
-        {
-          id: '1',
-          name: 'Billy Nguyen',
-          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          accountable: 'Collection',
-        },
-        {
-          id: '2',
-          name: 'Beverley Weaver',
-          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          accountable: 'Owner',
-        },
-        {
-          id: '3',
-          name: 'Leonard Ryan',
-          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          accountable: 'Creator',
-        },
-      ],
-    },
-    {
-      id: '3',
-      name: 'Art Abstract Name',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      keywords: '#art',
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      importantPeople: [
-        {
-          id: '1',
-          name: 'Billy Nguyen',
-          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          accountable: 'Collection',
-        },
-        {
-          id: '2',
-          name: 'Beverley Weaver',
-          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          accountable: 'Owner',
-        },
-        {
-          id: '3',
-          name: 'Leonard Ryan',
-          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          accountable: 'Creator',
-        },
-      ],
-    },
-  ];
+  async getGalleryArts() {
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const response = await api.get(`users/${this.$route.query.customProfile}/images`);
+      this.galleryArts = response.data as [];
+      if (this.galleryArts.length === 0) {
+        this.nullGalleryArts = true;
+      }
+      this.loadingGalleryArts = false;
+    } catch (error) {
+      console.log('erro no galleryArts');
+    }
+  }
 }
 </script>

@@ -10,7 +10,7 @@
           :key="networkOptions.value"
           v-close-popup
           clickable
-          @click="share(art.id, networkOptions.label)"
+          @click="share(sharer, networkOptions.label)"
         >
           <q-item-section>
             <q-item-label>
@@ -30,22 +30,28 @@
 <script lang="ts">
 import { Vue, prop } from 'vue-class-component';
 import { PropType } from 'vue';
-import { IArt } from 'src/models/IArt';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 class Props {
-  art = prop({
-    type: Object as PropType<IArt>,
+  isHot = prop({
+    type: Object as PropType<IAuctionItem2>,
     required: true,
-  });
+  })
+
+  art = prop({
+    required: true,
+    type: String,
+  })
 }
 interface Ioptions {
   socialNetworks: string;
 }
 export default class ShareArtIcons extends Vue.with(Props) {
+  message: string = "Hey, look at this artwork on the AlgoPainter platform! Amazing, isn't it?"
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
-      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
-      Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
-      Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=${this.art}&quote=${this.message}`,
+      Twitter: `http://twitter.com/share?text=${this.message}&url=${this.art}&hashtags=AlgoPainter,ALGOP,NFTS`,
+      Telegram: `https://telegram.me/share/?url=${this.art}%3F&text=${this.message}`,
       Email: 'mailto:[]?subject=AlgoPainter',
     };
     console.log(socialMedia);

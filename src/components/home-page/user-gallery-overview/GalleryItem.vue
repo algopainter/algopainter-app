@@ -18,13 +18,13 @@
           >
           <q-tooltip
             class="bg-primary"
-          >
+          > 
             {{ person.role }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
           </q-tooltip>
         </q-avatar>
       </div>
       <q-space />
-      <ShareArtIcons :art="art" />
+      <ShareArtIcons :art="art.nft.previewImage" />
     </div>
     <q-img
       class="art-image"

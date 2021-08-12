@@ -126,6 +126,7 @@ export default class Gallery extends Vue {
 
   async getCollections() {
     const collections = await new CollectionController().getCollections();
+    console.log('collections', collections);
     if (collections) {
       this.collections = collections; // Simulation of three items received from api, only
       this.currentCollection = collections[0];
@@ -196,6 +197,7 @@ export default class Gallery extends Vue {
   color: rgb(185, 185, 185);
   border: 1px solid rgb(185, 185, 185);
 }
+
 @media (max-width: 420px) {
   .btn-size {
     min-width: 150px;

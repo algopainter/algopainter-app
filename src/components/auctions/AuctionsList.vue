@@ -7,7 +7,7 @@
       {{ $t('dashboard.auctions.hotBids') }}
     </div>
     <div>
-      <p class="q-mt-lg"> Coming soon... </p>
+      <p class="q-mt-lg text-primary text-bold text-h5"> Coming soon... </p>
     </div>
     <!--
     <div

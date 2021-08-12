@@ -3,12 +3,14 @@
     <div>
       <auctions-list @favoriteClicked="favoriteClicked" />
     </div>
+    <!--
     <div class="header">
-      {{ $t('dashboard.homePage.exploreCollectibles') }}
+      {{ $t('dashboard.homePage.exploreAuctions') }}
     </div>
     <div>
       <auctions-explorer @favoriteClicked="favoriteClicked" />
     </div>
+    -->
     <div class="header gallery q-mb-lg">
       {{ $t('dashboard.homePage.collectiblesGallery') }}
     </div>

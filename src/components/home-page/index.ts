@@ -1,4 +1,4 @@
-export { default as AccountDetails } from './AccountDetails.vue';
+export { default as AccountDetails } from './MyAccountDetails.vue';
 
 export {
   default as UserGalleryOverview,

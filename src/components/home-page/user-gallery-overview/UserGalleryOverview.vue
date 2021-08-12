@@ -15,6 +15,7 @@
         >
           <gallery-item
             :art="item"
+            :user="true"
             @favoriteClicked="favoriteClicked"
           />
         </div>
@@ -72,12 +73,14 @@ import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import { api } from 'src/boot/axios';
 import { IMyGallery } from 'src/models/IMyGallery';
+import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 
 @Options({
   components: {
     AlgoButton,
     GalleryItem,
     LatestBidsItem,
+    LatestBidsItemSkeleton,
   },
 })
 export default class UserGalleryOverview extends Vue {

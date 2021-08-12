@@ -4,15 +4,20 @@
     class="row q-col-gutter-lg"
   >
     <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
-      <div
-        v-for="(item, index) in galleryArts"
-        :key="index"
-      >
-        <div>
+      <div v-if="nullGalleryArts === false">
+        <div
+          v-for="(item, index) in galleryArts"
+          :key="index"
+        >
           <gallery-item
             :art="item"
             @favoriteClicked="favoriteClicked"
           />
+        </div>
+      </div>
+      <div v-else>
+        <div class="text-h6 text-primary text-center q-pb-md">
+          {{ $t('dashboard.homePage.personalNoItems') }}
         </div>
       </div>
     </div>
@@ -57,7 +62,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
-import { IArt } from 'src/models/IArt';
 import AlgoButton from 'components/common/Button.vue';
 import { IMyGallery } from 'src/models/IMyGallery';
 import GalleryItem from './GalleryItem.vue';
@@ -96,7 +100,6 @@ export default class MyGalleryOverview extends Vue {
   }
 
   @Watch('accountAddress')
-
   onPropertyChanged(value: string, oldValue: string) {
     void this.getGalleryBidders();
     void this.getGalleryArts();
@@ -141,120 +144,17 @@ export default class MyGalleryOverview extends Vue {
 
   async getGalleryArts() {
     try {
-      const response = await api.get(`users/${this.accountAddress}/images`);
+      const response = await api.get(`users/${this.accountAddress}/images`); // id com galleryitem: 0x7A8476832Eb89189F0aDbC183A1B70C447Bb311a
       if (this.isConnected) {
         this.galleryArts = response.data as [];
-        console.log(this.galleryArts);
+        if (this.galleryArts.length === 0) {
+          this.nullGalleryArts = true;
+        }
         this.loadingGalleryArts = false;
       }
     } catch (error) {
       console.log('erro no galleryArts');
     }
   }
-
-  galleryItems: IArt[] = [
-    {
-      id: '1',
-      name: 'aqui',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      keywords: '#art',
-      importantPeople: [
-        {
-          id: '1',
-          name: 'Billy Nguyen',
-          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          accountable: 'Collection',
-        },
-        {
-          id: '2',
-          name: 'Beverley Weaver',
-          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          accountable: 'Owner',
-        },
-        {
-          id: '3',
-          name: 'Leonard Ryan',
-          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          accountable: 'Creator',
-        },
-      ],
-    },
-    {
-      id: '2',
-      name: 'oiii',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      keywords: '#art',
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      importantPeople: [
-        {
-          id: '1',
-          name: 'Billy Nguyen',
-          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          accountable: 'Collection',
-        },
-        {
-          id: '2',
-          name: 'Beverley Weaver',
-          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          accountable: 'Owner',
-        },
-        {
-          id: '3',
-          name: 'Leonard Ryan',
-          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          accountable: 'Creator',
-        },
-      ],
-    },
-    {
-      id: '3',
-      name: 'Art Abstract Name',
-      algopainter: 'Hashley Gwei',
-      owner: '0xdE201f115f48A10878d831cC21a2EdD1aAe92121',
-      source: 'placeholder',
-      price: 120,
-      bidBack: 0.1,
-      keywords: '#art',
-      pirs: {
-        creators: 0.08,
-        investors: 0.05,
-      },
-      importantPeople: [
-        {
-          id: '1',
-          name: 'Billy Nguyen',
-          picture: 'https://randomuser.me/api/portraits/men/5.jpg',
-          accountable: 'Collection',
-        },
-        {
-          id: '2',
-          name: 'Beverley Weaver',
-          picture: 'https://randomuser.me/api/portraits/women/31.jpg',
-          accountable: 'Owner',
-        },
-        {
-          id: '3',
-          name: 'Leonard Ryan',
-          picture: 'https://randomuser.me/api/portraits/men/11.jpg',
-          accountable: 'Creator',
-        },
-      ],
-    },
-  ];
 }
 </script>

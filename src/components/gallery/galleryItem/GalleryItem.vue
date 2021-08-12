@@ -125,6 +125,9 @@ export default class GalleryItem extends Vue.with(Props) {
   }
 
   loadData() {
+    console.log('this.galleryItem', this.galleryItem);
+    console.log('this.galleryItem.art', this.galleryItem.art);
+    console.log('this.galleryItem.art.likers', this.galleryItem.art.likers);
     this.wasLiked =
       (this.galleryItem.art.likers as string[]).filter(
         (liker) => liker === this.account,

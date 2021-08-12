@@ -18,53 +18,53 @@
             />
           </div>
         </div>
-        <div v-else>
-          <div class="text-h6 text-primary text-center q-pb-md">
-            {{ $t('dashboard.homePage.personalNoItems') }}
-          </div>
+      </div>
+      <div v-else>
+        <div class="text-h6 text-primary text-center q-pb-md">
+          {{ $t('dashboard.homePage.personalNoItems') }}
         </div>
       </div>
-      <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
-        <div class="text-h5 text-bold text-primary q-pb-md">
-          {{ $t('dashboard.homePage.latestBids') }}
+    </div>
+    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
+      <div class="text-h5 text-bold text-primary q-pb-md">
+        {{ $t('dashboard.homePage.latestBids') }}
+      </div>
+      <div v-if="loadingLatestBidsItem === false">
+        <div
+          v-for="(bid, i) in galleryBidShow"
+          :key="i"
+          class="column q-col-gutter-md"
+        >
+          <div v-if="bid != undefined">
+            <LatestBidsItem
+              :bid="bid"
+            />
+          </div>
         </div>
-        <div v-if="loadingLatestBidsItem === false">
-          <div
-            v-for="(bid, i) in galleryBidShow"
-            :key="i"
-            class="column q-col-gutter-md"
+        <div v-if="nullGalleryBidShow === true">
+          <div class="flex q-mb-md">
+            {{ $t('dashboard.homePage.publicNoBids') }}
+          </div>
+        </div>
+        <div class="q-pt-md row justify-center">
+          <algo-button
+            v-if="btnBidsClicked"
+            color="primary"
+            @click="Allbids()"
           >
-            <div v-if="bid != undefined">
-              <LatestBidsItem
-                :bid="bid"
-              />
-            </div>
-          </div>
-          <div v-if="nullGalleryBidShow === true">
-            <div class="flex q-mb-md">
-              {{ $t('dashboard.homePage.publicNoBids') }}
-            </div>
-          </div>
-          <div class="q-pt-md row justify-center">
-            <algo-button
-              v-if="btnBidsClicked"
-              color="primary"
-              @click="Allbids()"
-            >
-              {{ $t('dashboard.homePage.seeLess') }}
-            </algo-button>
-            <algo-button
-              v-else
-              color="primary"
-              @click="Allbids()"
-            >
-              {{ $t('dashboard.homePage.seeAllBids') }}
-            </algo-button>
-          </div>
+            {{ $t('dashboard.homePage.seeLess') }}
+          </algo-button>
+          <algo-button
+            v-else
+            color="primary"
+            @click="Allbids()"
+          >
+            {{ $t('dashboard.homePage.seeAllBids') }}
+          </algo-button>
         </div>
-        <div v-else>
-          <LatestBidsItemSkeleton />
-        </div>
+      </div>
+      <div v-else>
+        <LatestBidsItemSkeleton />
       </div>
     </div>
   </div>

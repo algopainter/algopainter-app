@@ -34,7 +34,13 @@
       <div class="name">
         {{ art.description }}
       </div>
+      <q-tooltip
+        class="bg-primary"
+      >
+        {{ art.description }}
+      </q-tooltip>
       <q-btn
+        v-if="user === false"
         class="sell-action"
         to="/sell-your-art"
         flat
@@ -59,6 +65,12 @@ class Props {
   art = prop({
     type: Object as PropType<IMyGallery>,
     required: true,
+  });
+
+  user = prop({
+    type: Boolean,
+    required: false,
+    default: false,
   });
 }
 @Options({
@@ -90,6 +102,11 @@ export default class UserGalleryOverview extends Vue.with(Props) {
   .name {
     font-weight: bold;
     font-size: 1.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    width: 250px;
   }
 
   .price {

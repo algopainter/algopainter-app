@@ -6,12 +6,20 @@
         <div class="user-info flex column q-col-gutter-lg">
           <div class="picture">
             <q-img
+              v-if="userProfile.avatar != null"
               :src="userProfile.avatar"
+              class="picture-content"
+            />
+            <q-img
+              v-else
+              src="/images/do-utilizador (1).png"
               class="picture-content"
             />
           </div>
           <div class="user-details">
-            <div class="name text-primary text-bold text-h3">
+            <div
+              class="name text-primary text-bold text-h3"
+            >
               {{ userProfile.name }}
             </div>
             <div class="details">

@@ -48,6 +48,11 @@
       <div class="name limit-text">
         {{ galleryItem.art.name }}
       </div>
+      <q-tooltip
+        class="bg-primary"
+      >
+        {{ galleryItem.art.name }}
+      </q-tooltip>
       <div class="img-description limit-text">
         <p>{{ galleryItem.description }}</p>
       </div>

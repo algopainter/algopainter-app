@@ -250,7 +250,7 @@ export default class AuctionItem extends Vue.with(Props) {
     white-space: nowrap;
     text-align: left;
     width: 250px;
-  }
+}
 
   .price {
     color: $positive;

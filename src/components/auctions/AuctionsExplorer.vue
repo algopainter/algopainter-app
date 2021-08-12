@@ -1,3 +1,4 @@
+<!--
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 <template>
   <div class="q-gutter-lg q-pb-lg">
@@ -133,3 +134,5 @@ export default class AuctionsExplorer extends Vue {
 }
 
 </style>
+ -->
+ 

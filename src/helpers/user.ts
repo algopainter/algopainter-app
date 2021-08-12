@@ -28,10 +28,10 @@ const formatAccountBalance = (balance: number, decimalPlaces: number): string =>
  * input/output example
  *
  * Input: "0x38Ad0Ab1Dd2B9a64Dd6D75fB6D84a14893366DCD"
- * Output: "0x38ad0ab1d...6dcd"
+ * Output: "0x38...6dcd"
  *
  */
-const formatedAccount = (accountAddress: string, inital: number = 5, final: number = -3) => {
+const formatedAccount = (accountAddress: string, inital: number = 4, final: number = 4) => {
   const splited = accountAddress.split('');
   return splited.slice(0, inital).join('') + '...' + splited.slice(final).join('');
 };

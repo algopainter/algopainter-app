@@ -10,6 +10,7 @@ export default {
   editProfileTerm: 'Edit Profile',
   balance: 'Balance',
   algop: '$ALGOP',
+  selectAlgoP: 'Select an AlgoPainter',
   homePage: {
     title: 'My Account',
     publicTitle: 'Public Profile',

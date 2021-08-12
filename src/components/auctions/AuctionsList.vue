@@ -1,8 +1,15 @@
 <template>
+  <!--
   <q-page class="q-gutter-lg q-pb-lg">
+  -->
+  <div>
     <div class="header">
       {{ $t('dashboard.auctions.hotBids') }}
     </div>
+    <div>
+      <p class="q-mt-lg"> Coming soon... </p>
+    </div>
+    <!--
     <div
       v-if="hotBidsLoading === false"
     >
@@ -34,6 +41,8 @@
     >
       <CarouselSkeleton />
     </div>
+    -->
+    <!--
     <div class="row q-pt-xl">
       <div class="header">
         <i18n-t keypath="dashboard.auctions.topSellers.top">
@@ -178,7 +187,11 @@
         </div>
       </div>
     </div>
-  </q-page>
+    -->
+  </div>
+  <!--
+    </q-page>
+    -->
 </template>
 
 <script lang="ts">

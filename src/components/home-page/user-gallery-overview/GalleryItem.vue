@@ -24,7 +24,7 @@
         </q-avatar>
       </div>
       <q-space />
-      <ShareArtIcons :art="art" />
+      <ShareArtIcons :art="art.nft.previewImage" />
     </div>
     <q-img
       class="art-image"

@@ -45,7 +45,7 @@
               @favoriteClicked="favoriteClicked"
             />
             <ShareArtIcons
-              :art="image._id"
+              :art="image.nft.previewImage"
             />
           </div>
         </div>

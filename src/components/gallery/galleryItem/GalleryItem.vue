@@ -28,7 +28,7 @@
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <ShareArtIcons :art="galleryItem.art" />
+        <ShareArtIcons :art="galleryItem.art.source" />
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
             <LikeAnimation
@@ -111,22 +111,6 @@ export default class GalleryItem extends Vue.with(Props) {
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/isConnected'];
-  }
-
-  share(id: string, socialMedia: string) {
-    const urlsShared: { [index: string]: string } = {
-      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
-      Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
-      Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
-      Email: 'mailto:[]?subject=AlgoPainter',
-    };
-    const linkElement = document.createElement('a');
-    linkElement.href = urlsShared[socialMedia];
-    window.open(
-      linkElement.href,
-      '_blank',
-      'width=550, height=555, top=100, left=190, scrollbars=no',
-    );
   }
 
   favoriteClicked(wasLiked: boolean) {

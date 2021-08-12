@@ -26,7 +26,7 @@
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <ShareArtIcons :art="isHot._id" />
+        <ShareArtIcons :art="previewImageUrl" />
         <div class="col-12 col-md-1 flex">
           <LikeAnimation
             :likes="likes || isHot.item.likes"
@@ -123,19 +123,6 @@ export default class AuctionItem extends Vue.with(Props) {
   get account() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/account'];
-  }
-
-  share(id: string, socialMedia: string) {
-    const urlsShared: {[index: string]:string} = {
-      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://app.algopainter.art/paintings/${id}`,
-      Twitter: `https://twitter.com/intent/tweet?url=https://app.algopainter.art/paintings/${id}&amp;text=teste&amp;hashtags=algoPainter,Algo%20Painter`,
-      Telegram: `https://telegram.me/share/?url=https://app.algopainter.art/paintings/${id}%3F&title=Alogo%20painter%20I%20`,
-      Email: 'mailto:[]?subject=AlgoPainter',
-    };
-    console.log(socialMedia);
-    const linkElement = document.createElement('a');
-    linkElement.href = (urlsShared[socialMedia]);
-    window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');
   }
 
   loading: boolean = true;

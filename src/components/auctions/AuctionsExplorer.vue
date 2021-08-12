@@ -133,6 +133,4 @@ export default class AuctionsExplorer extends Vue {
   height: 35px;
 }
 
-</style>
- -->
- 
+</style> -->

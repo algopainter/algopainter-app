@@ -71,17 +71,17 @@
               {{ $t('dashboard.viewArt.owner') }}
             </span>
             <p>
-              {{ imageOwner.name || imageOwner.account }}
-              <q-tooltip
-                v-if="imageOwner.name !== null"
+              {{ setAccountBalance() }}
+              <!-- <q-tooltip
+                v-if="imageOwner.name != null || imageOwner.name != ''"
                 anchor="bottom middle"
                 self="top middle"
                 class="bg-primary"
                 :offset="[0, 0]"
                 :hide-delay="950"
               >
-                {{ imageOwner.account }}
-              </q-tooltip>
+                {{ setAccountBalance() }}
+              </q-tooltip> -->
             </p>
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
@@ -119,6 +119,7 @@ import { IProfile } from 'src/models/IProfile';
 
 export default class ViewArt extends Vue {
   loading: boolean = true;
+  selectAccount: string = '';
 
   user = {
     _id: '',
@@ -252,7 +253,14 @@ export default class ViewArt extends Vue {
       this.likes++;
     }
   }
+
+  setAccountBalance() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    this.selectAccount = this.imageOwner.name;
+    return UserUtils.formatedAccount(this.selectAccount);
+  }
 }
+
 </script>
 <style scoped>
 .btn-size {

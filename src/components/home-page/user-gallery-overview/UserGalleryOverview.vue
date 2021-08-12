@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 <template>
-  <div
-    v-if="loadingGalleryBid === false && loadingGalleryArts === false"
+ <div
     class="row q-col-gutter-lg"
   >
-    <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
+    <div
+      v-if="loadingGalleryArts === false && loadingGalleryArts === false"
+      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
       <div
         v-if="nullGalleryArts === false"
         class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
@@ -13,52 +15,63 @@
           v-for="(item, index) in galleryArts"
           :key="index"
         >
-          <gallery-item
-            :art="item"
-            @favoriteClicked="favoriteClicked"
-          />
+          <div>
+            <gallery-item
+              :art="item"
+              @favoriteClicked="favoriteClicked"
+            />
+          </div>
         </div>
       </div>
       <div v-else>
         <div class="text-h6 text-primary text-center q-pb-md">
-          {{ $t('dashboard.homePage.publicNoItems') }}
+          {{ $t('dashboard.homePage.personalNoItems') }}
         </div>
       </div>
     </div>
-
+    <div v-else>
+      <MyGallerySkeleton />
+    </div>
     <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
-      <div
-        v-for="(bid, i) in galleryBidShow"
-        :key="i"
-        class="column q-col-gutter-md"
-      >
-        <div v-if="bid != undefined">
-          <LatestBidsItem :bid="bid" />
+      <div v-if="loadingLatestBidsItem === false">
+        <div
+          v-for="(bid, i) in galleryBidShow"
+          :key="i"
+          class="column q-col-gutter-md"
+        >
+          <div v-if="bid != undefined">
+            <LatestBidsItem
+              :bid="bid"
+            />
+          </div>
+        </div>
+        <div v-if="nullGalleryBidShow === true">
+          <div class="flex q-mb-md">
+            {{ $t('dashboard.homePage.personalNoBids') }}
+          </div>
+        </div>
+        <div class="q-pt-md row justify-center">
+          <algo-button
+            v-if="btnBidsClicked"
+            color="primary"
+            @click="Allbids()"
+          >
+            {{ $t('dashboard.homePage.seeLess') }}
+          </algo-button>
+          <algo-button
+            v-else
+            color="primary"
+            @click="Allbids()"
+          >
+            {{ $t('dashboard.homePage.seeAllBids') }}
+          </algo-button>
         </div>
       </div>
-      <div v-if="nullGalleryBidShow === true">
-        <div class="flex q-mb-md">
-          {{ $t('dashboard.homePage.publicNoBids') }}
-        </div>
-      </div>
-      <div class="q-pt-md row justify-center">
-        <algo-button
-          v-if="btnBidsClicked"
-          color="primary"
-          @click="Allbids()"
-        >
-          {{ $t('dashboard.homePage.seeLess') }}
-        </algo-button>
-        <algo-button
-          v-else
-          color="primary"
-          @click="Allbids()"
-        >
-          {{ $t('dashboard.homePage.seeAllBids') }}
-        </algo-button>
+      <div v-else>
+        <LatestBidsItemSkeleton />
       </div>
     </div>
   </div>
@@ -72,12 +85,16 @@ import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import { api } from 'src/boot/axios';
 import { IMyGallery } from 'src/models/IMyGallery';
+import MyGallerySkeleton from './MyGallerySkeleton.vue';
+import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 
 @Options({
   components: {
     AlgoButton,
     GalleryItem,
     LatestBidsItem,
+    LatestBidsItemSkeleton,
+    MyGallerySkeleton,
   },
 })
 export default class UserGalleryOverview extends Vue {
@@ -90,7 +107,7 @@ export default class UserGalleryOverview extends Vue {
   galleryBidClosed = [];
   galleryBidShow = [];
   nullGalleryBidShow: boolean = false;
-
+  loadingLatestBidsItem: boolean = true;
   btnBidsClicked: boolean = false;
 
   galleryArts:IMyGallery[] = [];
@@ -127,6 +144,7 @@ export default class UserGalleryOverview extends Vue {
       }
       this.galleryBidShow = this.galleryBidClosed;
       this.loadingGalleryBid = false;
+      this.loadingLatestBidsItem = false;
     } catch (e) {
       console.log('error', e);
     }

@@ -67,7 +67,7 @@ class Props {
     ShareArtIcons,
   },
 })
-export default class UserGalleryOverview extends Vue.with(Props) {
+export default class GalleryItem extends Vue.with(Props) {
 
 }
 </script>

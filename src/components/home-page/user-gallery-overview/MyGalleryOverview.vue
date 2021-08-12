@@ -28,6 +28,9 @@
         </div>
       </div>
     </div>
+    <div v-else>
+      <MyGallerySkeleton />
+    </div>
     <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
@@ -82,6 +85,7 @@ import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import { api } from 'src/boot/axios';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
+import MyGallerySkeleton from './MyGallerySkeleton.vue';
 
 @Options({
   components: {
@@ -89,6 +93,7 @@ import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
     GalleryItem,
     LatestBidsItem,
     LatestBidsItemSkeleton,
+    MyGallerySkeleton,
   },
 })
 export default class MyGalleryOverview extends Vue {
@@ -106,6 +111,7 @@ export default class MyGalleryOverview extends Vue {
   nullGalleryBidShow: boolean = false;
   nullGalleryArts: boolean = false;
   loadingLatestBidsItem: boolean = true;
+  loadingMyGallery: boolean = false;
 
   Allbids() {
     this.btnBidsClicked = !this.btnBidsClicked;
@@ -155,6 +161,8 @@ export default class MyGalleryOverview extends Vue {
         this.galleryBidShow = this.galleryBidClosed;
         this.loadingGalleryBid = false;
         this.loadingLatestBidsItem = false;
+        this.loadingMyGallery = false;
+
         console.log(this.loadingLatestBidsItem);
       }
     } catch (e) {

@@ -1,78 +1,84 @@
 <template>
-  <q-page class="q-gutter-lg q-pb-lg">
-    <div class="header row">
-      <div class="left col-xs-12 col-sm-12 col-md-6 col-lg-8 col-xl-7">
-        <div class="btn-collection">
+  <div v-if="loading === false">
+    <q-page class="q-gutter-lg q-pb-lg">
+      <div class="header row">
+        <div class="left col-xs-12 col-sm-12 col-md-6 col-lg-8 col-xl-7">
+          <div class="btn-collection">
+            <algo-button
+              v-for="collection in collections"
+              :key="collection._id"
+              :label="collection.title"
+              class="q-mr-xs"
+              :class="[
+                currentCollection._id == collection._id
+                  ? 'btn-selected'
+                  : 'btn-unselected',
+              ]"
+              @click="collectionClicked(collection)"
+            />
+          </div>
+        </div>
+        <div class="right col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
           <algo-button
-            v-for="collection in collections"
-            :key="collection._id"
-            :label="collection.title"
-            class="q-mr-xs"
-            :class="[
-              currentCollection._id == collection._id
-                ? 'btn-selected'
-                : 'btn-unselected',
-            ]"
-            @click="collectionClicked(collection)"
+            :label="$t('dashboard.gallery.myPainting')"
+            class="q-ml-xs btn-size btn btn-grey"
+            outline
+          />
+          <algo-button
+            :label="$t('dashboard.gallery.newPainting')"
+            class="q-ml-xs btn btn-size"
+            color="primary"
+            to="/new-painting"
           />
         </div>
       </div>
-      <div class="right col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
-        <algo-button
-          :label="$t('dashboard.gallery.myPainting')"
-          class="q-ml-xs btn-size btn btn-grey"
-          outline
-        />
-        <algo-button
-          :label="$t('dashboard.gallery.newPainting')"
-          class="q-ml-xs btn btn-size"
-          color="primary"
-          to="/new-painting"
+      <div
+        v-if="collectionSelected === 'Gwei'"
+        class="flex q-col-gutter-md"
+      >
+        <gallery-item
+          v-for="galleryItem in currentCollectionGallery"
+          :key="galleryItem.id"
+          :gallery-item="galleryItem"
+          @favoriteClicked="favoriteClicked"
         />
       </div>
-    </div>
-    <div
-      v-if="collectionSelected === 'Gwei'"
-      class="flex q-col-gutter-md"
-    >
-      <gallery-item
-        v-for="galleryItem in currentCollectionGallery"
-        :key="galleryItem.id"
-        :gallery-item="galleryItem"
-        @favoriteClicked="favoriteClicked"
-      />
-    </div>
-    <div
-      v-if="collectionSelected === 'Expressions'"
-      class="flex q-col-gutter-md"
-    >
-      <gallery-item
-        v-for="galleryItem in currentCollectionGallery"
-        :key="galleryItem.id"
-        :gallery-item="galleryItem"
-        @favoriteClicked="favoriteClicked"
-      />
-    </div>
-    <div
-      v-if="collectionSelected === 'Monero'"
-      class="flex q-col-gutter-md"
-    >
-      <gallery-item
-        v-for="galleryItem in currentCollectionGallery"
-        :key="galleryItem.id"
-        :gallery-item="galleryItem"
-        @favoriteClicked="favoriteClicked"
-      />
-    </div>
-    <div class="q-pa-lg flex flex-center">
-      <q-pagination
-        v-model="currentPage"
-        :max="5"
-        direction-links
-        outline
-      />
-    </div>
-  </q-page>
+      <div
+        v-if="collectionSelected === 'Expressions'"
+        class="flex q-col-gutter-md"
+      >
+        <gallery-item
+          v-for="galleryItem in currentCollectionGallery"
+          :key="galleryItem.id"
+          :gallery-item="galleryItem"
+          @favoriteClicked="favoriteClicked"
+        />
+      </div>
+      <div
+        v-if="collectionSelected === 'Monero'"
+        class="flex q-col-gutter-md"
+      >
+        <gallery-item
+          v-for="galleryItem in currentCollectionGallery"
+          :key="galleryItem.id"
+          :gallery-item="galleryItem"
+          @favoriteClicked="favoriteClicked"
+        />
+      </div>
+
+      <div class="q-pa-lg flex flex-center">
+        <q-pagination
+          v-model="currentPage"
+          :max="5"
+          direction-links
+          outline
+        />
+      </div>
+    </q-page>
+  </div>
+  <div v-else>
+    <GallerySkeleton />
+  </div>
 </template>
 
 <script lang="ts">
@@ -87,13 +93,16 @@ import CollectionController from 'src/controllers/collection/CollectionControlle
 import { Person } from 'src/models/IArt';
 import { IImage } from 'src/models/IImage';
 import { IUser } from 'src/models/IUser';
+import GallerySkeleton from './GallerySkeleton.vue';
 
 @Options({
   components: {
     GalleryItem,
     AlgoButton,
+    GallerySkeleton,
   },
 })
+
 export default class Gallery extends Vue {
   setup() {
     return {
@@ -106,6 +115,7 @@ export default class Gallery extends Vue {
   collections: ICollection[] = [];
   currentCollectionGallery: IGallery[] = [];
   collectionSelected: string = 'Gwei';
+  loading: boolean = true;
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
@@ -135,6 +145,7 @@ export default class Gallery extends Vue {
         this.mapImageToGalleryItem(image),
       );
     }
+    this.loading = false;
   }
 
   mapImageToGalleryItem(image: IImage) {

@@ -6,7 +6,10 @@
       v-if="loadingGalleryArts === false"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
-      <div v-if="nullGalleryArts === false">
+      <div
+        v-if="nullGalleryArts === false"
+        class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      >
         <div
           v-for="(item, index) in galleryArts"
           :key="index"
@@ -43,7 +46,7 @@
         </div>
         <div v-if="nullGalleryBidShow === true">
           <div class="flex q-mb-md">
-            {{ $t('dashboard.homePage.publicNoBids') }}
+            {{ $t('dashboard.homePage.personalNoBids') }}
           </div>
         </div>
         <div class="q-pt-md row justify-center">
@@ -161,7 +164,7 @@ export default class MyGalleryOverview extends Vue {
 
   async getGalleryArts() {
     try {
-      const response = await api.get(`users/${this.accountAddress}/images`); // id com galleryitem: 0x7A8476832Eb89189F0aDbC183A1B70C447Bb311a
+      const response = await api.get(`users/${this.accountAddress}/images`); // id com galleryite:0xddbc5f514f729d47a51030f049a956c5086b20af
       if (this.isConnected) {
         this.galleryArts = response.data as [];
         if (this.galleryArts.length === 0) {

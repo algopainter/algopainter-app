@@ -6,7 +6,13 @@
           <div class="user-info flex column q-col-gutter-lg">
             <div class="picture">
               <q-img
+                v-if="profile.avatar != null"
                 :src="profile.avatar"
+                class="picture-content"
+              />
+              <q-img
+                v-else
+                src="/images/do-utilizador (1).png"
                 class="picture-content"
               />
             </div>

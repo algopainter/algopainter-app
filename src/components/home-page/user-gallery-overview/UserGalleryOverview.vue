@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 <template>
   <div
-    v-if="loadingGalleryBid === false && loadingGalleryArts === false"
     class="row q-col-gutter-lg"
   >
-    <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
+    <div
+      v-if="loadingGalleryArts === false"
+      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
       <div
         v-if="nullGalleryArts === false"
         class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
@@ -31,35 +33,40 @@
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
-      <div
-        v-for="(bid, i) in galleryBidShow"
-        :key="i"
-        class="column q-col-gutter-md"
-      >
-        <div v-if="bid != undefined">
-          <LatestBidsItem :bid="bid" />
+      <div v-if="loadingGalleryBid === false">
+        <div
+          v-for="(bid, i) in galleryBidShow"
+          :key="i"
+          class="column q-col-gutter-md"
+        >
+          <div v-if="bid != undefined">
+            <LatestBidsItem :bid="bid" />
+          </div>
+        </div>
+        <div v-if="nullGalleryBidShow === true">
+          <div class="flex q-mb-md">
+            {{ $t('dashboard.homePage.publicNoBids') }}
+          </div>
+        </div>
+        <div class="q-pt-md row justify-center">
+          <algo-button
+            v-if="btnBidsClicked"
+            color="primary"
+            @click="Allbids()"
+          >
+            {{ $t('dashboard.homePage.seeLess') }}
+          </algo-button>
+          <algo-button
+            v-else
+            color="primary"
+            @click="Allbids()"
+          >
+            {{ $t('dashboard.homePage.seeAllBids') }}
+          </algo-button>
         </div>
       </div>
-      <div v-if="nullGalleryBidShow === true">
-        <div class="flex q-mb-md">
-          {{ $t('dashboard.homePage.publicNoBids') }}
-        </div>
-      </div>
-      <div class="q-pt-md row justify-center">
-        <algo-button
-          v-if="btnBidsClicked"
-          color="primary"
-          @click="Allbids()"
-        >
-          {{ $t('dashboard.homePage.seeLess') }}
-        </algo-button>
-        <algo-button
-          v-else
-          color="primary"
-          @click="Allbids()"
-        >
-          {{ $t('dashboard.homePage.seeAllBids') }}
-        </algo-button>
+      <div v-else>
+        <LatestBidsItemSkeleton />
       </div>
     </div>
   </div>

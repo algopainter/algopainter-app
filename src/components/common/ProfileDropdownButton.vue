@@ -20,19 +20,24 @@
               (userProfile &&
                 userProfile.name &&
                 userProfile.name.split(' ')[0]) ||
-                formatedAccount(5, -3)
+                formatedAccount(4, -4)
             }}
           </div>
         </q-chip>
       </div>
       <q-menu>
         <div class="q-pa-md">
-          <div class="text-bold q-mb-md">{{ formatedAccount(11, -4) }}</div>
+          <div class="text-bold q-mb-md">
+            {{ formatedAccount(4, -4) }}
+          </div>
           <q-list>
-            <q-item v-ripple class="q-pl-none">
+            <q-item
+              v-ripple
+              class="q-pl-none"
+            >
               <q-item-section avatar>
                 <q-avatar>
-                  <img :src="userProfile.avatar || '/placeholder-images/do-utilizador.png'" >
+                  <img :src="userProfile.avatar || '/placeholder-images/do-utilizador.png'">
                 </q-avatar>
               </q-item-section>
               <q-item-section>
@@ -54,8 +59,8 @@
               <q-item-section>
                 <div class="flex">
                   <div
-                    @click="goToProfilePage"
                     class="text-bold cursor-pointer"
+                    @click="goToProfilePage"
                   >
                     {{ $t('dashboard.editProfileTerm') }}
                   </div>
@@ -141,7 +146,7 @@ export default class ProfileDropdownButton extends Vue {
     return UserUtils.formatedAccount(
       this.accountAddress as string,
       inital,
-      final
+      final,
     );
   }
 

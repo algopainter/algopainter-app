@@ -31,7 +31,7 @@ export default {
     publicNoItems: 'This user does not have items yet',
     personalNoItems: 'You do not have any items yet. Consider getting your first!',
     collectiblesGallery: 'Collection',
-    exploreCollectibles: 'Explore Collectibles',
+    exploreAuctions: 'Explore Auctions',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',
@@ -141,7 +141,7 @@ export default {
     newPainting: 'New Painting',
   },
   viewArt: {
-    title: 'Your Art',
+    title: 'Art',
     goGallery: 'Go to Gallery',
     details: 'Details',
     algoPainter: 'AlgoPainter',

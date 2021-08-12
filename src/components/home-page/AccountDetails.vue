@@ -6,7 +6,13 @@
           <div class="user-info flex column q-col-gutter-lg">
             <div class="picture">
               <q-img
+                v-if="profile.avatar != null"
                 :src="profile.avatar"
+                class="picture-content"
+              />
+              <q-img
+                v-else
+                src="/images/do-utilizador (1).png"
                 class="picture-content"
               />
             </div>
@@ -39,7 +45,7 @@
           <div class="row q-col-gutter-lg">
             <div class="col-12 col-lg-6 text-primary text-center">
               <div class="text-h3 text-bold">
-                {{ $t('dashboard.homePage.collection') }}
+                {{ $t('dashboard.homePage.items') }}
               </div>
               <div class="text-h1 text-bold q-py-xl">
                 {{ userItems }}

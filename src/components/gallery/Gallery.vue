@@ -28,7 +28,7 @@
             :label="$t('dashboard.gallery.newPainting')"
             class="q-ml-xs btn btn-size"
             color="primary"
-            to="/new-painting"
+            @click="openModalArtist"
           />
         </div>
       </div>
@@ -101,6 +101,7 @@ import GallerySkeleton from './GallerySkeleton.vue';
     AlgoButton,
     GallerySkeleton,
   },
+  emits: ['OpenModalArtist'],
 })
 
 export default class Gallery extends Vue {
@@ -116,6 +117,11 @@ export default class Gallery extends Vue {
   currentCollectionGallery: IGallery[] = [];
   collectionSelected: string = 'Gwei';
   loading: boolean = true;
+
+  openModalArtist() {
+    this.$emit('OpenModalArtist');
+    console.log('Gallery');
+  }
 
   favoriteClicked() {
     this.$emit('favoriteClicked');

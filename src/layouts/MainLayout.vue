@@ -16,6 +16,7 @@
         <side-bar
           @galleryClicked="refreshModal"
           @pageOptionClicked="pageOptionClicked"
+          @openModalArtist="openModalArtist"
         />
       </q-drawer>
       <q-page-container class="q-px-lg">
@@ -27,6 +28,7 @@
           :page-to-go-after-connected="page"
         />
         <wrong-chain-dialog v-if="showWrongChainDialog" />
+        <NewPaintingModal v-model="openModal" />
       </q-page-container>
     </q-layout>
   </div>
@@ -39,6 +41,7 @@ import SideBar from 'components/SideBar.vue';
 import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
 import WrongChainDialog from 'components/common/WrongChainDialog.vue';
 import { Watch } from 'vue-property-decorator';
+import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
 
 @Options({
   components: {
@@ -46,6 +49,7 @@ import { Watch } from 'vue-property-decorator';
     SideBar,
     ConnectYourWallet,
     WrongChainDialog,
+    NewPaintingModal,
   },
   watch: {
     isConnected: ['refreshModal'],
@@ -58,6 +62,11 @@ import { Watch } from 'vue-property-decorator';
 })
 export default class MainLayout extends Vue {
   leftDrawerOpen: boolean = false;
+  openModal: boolean = false;
+  showModal: boolean = false;
+  showWrongChainDialog: boolean = false;
+  page: string = '';
+  artistModal: boolean = false;
 
   beforeMount() {
     this.headerMenu();
@@ -83,13 +92,14 @@ export default class MainLayout extends Vue {
     localStorage.isConnected = this.isConnected;
   }
 
-  showModal: boolean = false;
-  showWrongChainDialog: boolean = false;
-  page: string = '';
-
   openDrawer() {
     // console.log(this.leftDrawerOpen);
     this.leftDrawerOpen = true;
+  }
+
+  openModalArtist() {
+    this.openModal = true;
+    console.log('rodando selectArtistModal');
   }
 
   get isConnected() {

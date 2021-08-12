@@ -42,6 +42,8 @@ interface SideBarItem {
 }
 
 export default class SideBar extends Vue {
+  openModal: boolean = false;
+
   get items(): SideBarItem[] {
     return [
       {
@@ -64,9 +66,10 @@ export default class SideBar extends Vue {
       },
       {
         icon: require('../assets/icons/paint-board-and-brush.svg'),
-        to: '/create-collectible',
         label: 'Create collectible',
-        onClick: () => undefined,
+        onClick: () => {
+          this.$emit('openModalArtist');
+        },
       },
     ];
   }

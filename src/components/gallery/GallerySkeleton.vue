@@ -9,7 +9,7 @@
           />
         </div>
       </div>
-      <div class="right row q-mr-lg">
+      <div class="right row justify-between">
         <q-skeleton
           type="QBtn"
           class="btn btn-size q-mr-lg"
@@ -25,7 +25,7 @@
       :key="i"
       class="row"
     >
-      <div>
+      <div class="q-mb-sm">
         <!--aqui -->
         <div
           class="flex q-col-gutter-md"
@@ -76,7 +76,8 @@
         </div>
       </div>
       <!--aqui -->
-      <div class="q-ml-md">
+     <div class="q-mb-sm">
+        <!--aqui -->
         <div
           class="flex q-col-gutter-md"
         >
@@ -125,7 +126,9 @@
           />
         </div>
       </div>
-      <div class="q-ml-md">
+      <!--fim-->
+       <div class="q-mb-sm">
+        <!--aqui -->
         <div
           class="flex q-col-gutter-md"
         >
@@ -233,7 +236,7 @@ export default class GallerySkeleton extends Vue {
 }
 
 .btn {
-  width: 100px;
+  width: 80px;
   height: 44px;
   min-width: 150px;
 }
@@ -244,7 +247,7 @@ export default class GallerySkeleton extends Vue {
 }
 @media (max-width: 420px) {
   .btn-size {
-    min-width: 150px;
+    min-width: 130px;
     float: left;
   }
   .header{
@@ -253,6 +256,9 @@ export default class GallerySkeleton extends Vue {
   }
   .left{
     float: bottom;
+  }
+  .margin{
+    margin-left: 70px
   }
   .right{
     display: flex;

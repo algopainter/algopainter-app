@@ -140,7 +140,7 @@ export default {
     newPainting: 'New Painting',
   },
   viewArt: {
-    title: 'Your Art',
+    title: 'Art',
     goGallery: 'Go to Gallery',
     details: 'Details',
     algoPainter: 'AlgoPainter',

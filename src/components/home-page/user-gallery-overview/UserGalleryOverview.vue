@@ -5,7 +5,10 @@
     class="row q-col-gutter-lg"
   >
     <div class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md">
-      <div v-if="nullGalleryArts === false">
+      <div
+        v-if="nullGalleryArts === false"
+        class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      >
         <div
           v-for="(item, index) in galleryArts"
           :key="index"
@@ -18,10 +21,11 @@
       </div>
       <div v-else>
         <div class="text-h6 text-primary text-center q-pb-md">
-          {{ $t('dashboard.homePage.personalNoItems') }}
+          {{ $t('dashboard.homePage.publicNoItems') }}
         </div>
       </div>
     </div>
+
     <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
@@ -131,7 +135,7 @@ export default class UserGalleryOverview extends Vue {
   async getGalleryArts() {
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.query.customProfile}/images`);
+      const response = await api.get(`users/${this.$route.query.customProfile}/images`); // 0xddbc5f514f729d47a51030f049a956c5086b20af
       this.galleryArts = response.data as [];
       if (this.galleryArts.length === 0) {
         this.nullGalleryArts = true;

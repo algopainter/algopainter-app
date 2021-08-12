@@ -18,7 +18,7 @@
           >
           <q-tooltip
             class="bg-primary"
-          > 
+          >
             {{ person.role }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
           </q-tooltip>
         </q-avatar>

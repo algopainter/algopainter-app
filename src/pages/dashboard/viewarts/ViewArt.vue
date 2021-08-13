@@ -55,7 +55,7 @@
           color="primary"
           class="btn-new-painting"
           :label="$t('dashboard.viewArt.btnCreatepainter')"
-          to="/new-painting"
+          @click="OpenModalArtist()"
         />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-4">

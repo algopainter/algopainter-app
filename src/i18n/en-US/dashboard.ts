@@ -11,6 +11,8 @@ export default {
   balance: 'Balance',
   algop: '$ALGOP',
   selectAlgoP: 'Select an AlgoPainter',
+  wrong: 'Wrong Network',
+  migrate: 'Migrate to a Binance SmartChain',
   homePage: {
     title: 'My Account',
     publicTitle: 'Public Profile',
@@ -69,6 +71,7 @@ export default {
   auctions: {
     title: 'Auctions',
     hotBids: 'Hot Bids 🔥',
+    coming: 'Coming soon...',
     highestBid: 'Highest Bid {highestBid}',
     topSellers: {
       top: 'Top {sellers}',

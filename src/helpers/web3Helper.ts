@@ -35,12 +35,12 @@ export default class Web3Helper {
 
   async hashMessageAndAskForSignature(message: Record<string, unknown>, address: string) {
     const requestHash = this.getHashMessage(
-      JSON.stringify(message)
+      JSON.stringify(message),
     );
 
     return await this.signMessageWithAddress(
       requestHash,
-      address
+      address,
     );
   }
 }

@@ -26,8 +26,8 @@ export function resizeImage(base64: string, maxWidth: number = 400, maxHeight: n
           height = MAX_HEIGHT;
         }
       }
-      canvas.width = width
-      canvas.height = height
+      canvas.width = width;
+      canvas.height = height;
       const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
       ctx.drawImage(img, 0, 0, width, height);
       resolve(canvas.toDataURL('image/jpeg', 0.5));

@@ -59,7 +59,10 @@
     class="mobile-only"
   >
     <div>
-      <div class="q-pa-md" style="width:100%">
+      <div
+        class="q-pa-md"
+        style="width:100%"
+      >
         <div class="q-gutter-md flex column">
           <q-skeleton
             type="circle"
@@ -70,7 +73,10 @@
             width="190px"
             class="q-mx-auto"
           />
-          <q-skeleton width="150px" class="q-mx-auto"/>
+          <q-skeleton
+            width="150px"
+            class="q-mx-auto"
+          />
           <q-skeleton
             width="150px"
             height="60px"

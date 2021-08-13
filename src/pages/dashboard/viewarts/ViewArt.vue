@@ -14,12 +14,6 @@
       <div>
         <div class="right row justify-center align-center">
           <algo-button
-            :label="$t('dashboard.viewArt.goGallery')"
-            class="q-ma-xs btn-size btn-grey"
-            to="/"
-            outline
-          />
-          <algo-button
             :label="$t('dashboard.gallery.newPainting')"
             class="q-ma-xs btn-size"
             color="primary"

@@ -6,15 +6,11 @@
           v-for="(person, index) in art.users"
           :key="index"
           size="lg"
+          class="q-mr-sm"
           round
         >
           <img
-            v-if="person.avatar != null"
-            :src="person.avatar"
-          >
-          <img
-            v-else
-            src="/images/do-utilizador (1).png"
+            :src="person.avatar || '/images/do-utilizador (1).png'"
           >
           <q-tooltip
             class="bg-primary"
@@ -79,12 +75,18 @@ class Props {
     ShareArtIcons,
   },
 })
-export default class UserGalleryOverview extends Vue.with(Props) {
+export default class GalleryItem extends Vue.with(Props) {
 
 }
 </script>
 
 <style lang="scss" scoped>
+
+.teste {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+}
 
 .users {
   .q-avatar:not(:first-child) {

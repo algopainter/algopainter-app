@@ -71,17 +71,17 @@
               {{ $t('dashboard.viewArt.owner') }}
             </span>
             <p>
-              {{ setAccountBalance() }}
-              <!-- <q-tooltip
-                v-if="imageOwner.name != null || imageOwner.name != ''"
+              {{ formatAccount() }}
+              <q-tooltip
+                v-if="imageOwner.name !== imageOwner.account "
                 anchor="bottom middle"
                 self="top middle"
                 class="bg-primary"
                 :offset="[0, 0]"
                 :hide-delay="950"
               >
-                {{ setAccountBalance() }}
-              </q-tooltip> -->
+                {{ formatAccount() }}
+              </q-tooltip>
             </p>
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
@@ -254,10 +254,8 @@ export default class ViewArt extends Vue {
     }
   }
 
-  setAccountBalance() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    this.selectAccount = this.imageOwner.name;
-    return UserUtils.formatedAccount(this.selectAccount);
+  formatAccount() {
+    return UserUtils.formatedAccount(this.imageOwner.name);
   }
 }
 

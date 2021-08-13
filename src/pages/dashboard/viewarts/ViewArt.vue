@@ -69,8 +69,11 @@
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.owner') }}
             </span>
-            <p>
-              {{ imageOwner.name || formatAccount() }}
+            <p v-if="imageOwner.name === imageOwner.account">
+              {{ formatAccount() }}
+            </p>
+            <p v-else>
+              {{ imageOwner.name }}
               <q-tooltip
                 v-if="imageOwner.name !== imageOwner.account "
                 anchor="bottom middle"

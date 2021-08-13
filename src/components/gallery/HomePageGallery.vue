@@ -15,7 +15,7 @@
           @click="collectionClicked(collection)"
         />
       </div>
-      <div class="flex q-col-gutter-md">
+      <div class="flex justify-center">
         <gallery-item
           v-for="galleryItem in currentCollectionGallery"
           :key="galleryItem.id"

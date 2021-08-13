@@ -16,7 +16,7 @@
           <algo-button
             :label="$t('dashboard.viewArt.goGallery')"
             class="q-ma-xs btn-size btn-grey"
-            to="/gallery"
+            to="/"
             outline
           />
           <algo-button

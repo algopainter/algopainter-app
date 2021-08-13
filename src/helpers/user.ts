@@ -31,7 +31,7 @@ const formatAccountBalance = (balance: number, decimalPlaces: number): string =>
  * Output: "0x38...6dcd"
  *
  */
-const formatedAccount = (accountAddress: string, inital: number = 4, final: number = 4) => {
+const formatedAccount = (accountAddress: string, inital: number = 4, final: number = -4) => {
   const splited = accountAddress.split('');
   return splited.slice(0, inital).join('') + '...' + splited.slice(final).join('');
 };

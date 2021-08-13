@@ -25,12 +25,16 @@
       </div>
       <div class="footer">
         <algo-button
-          :label="$t('dashboard.homePage.loadMore')"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
           color="primary"
           outline
           class="load-more q-px-xl q-mx-auto"
-          to="/gallery"
+          :disable="noMoreImages"
+          @click="loadMore()"
         />
+        <!-- to="/gallery" -->
       </div>
     </q-page>
   </div>
@@ -66,12 +70,33 @@ export default class HomePageGallery extends Vue {
   collections: ICollection[] = [];
   currentCollectionGallery: IGallery[] = [];
   loading: boolean = true;
+  loadMoreCounter: number = 1;
+  noMoreImages: boolean = false;
+  btnLoadMoreMsg: string = 'Load More';
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
 
+  async loadMore() {
+    this.loadMoreCounter++;
+    const images = await new CollectionController().getCollectionsImages(this.currentCollection._id, this.loadMoreCounter);
+    if (images.length === 0) {
+      this.noMoreImages = true;
+      this.btnLoadMoreMsg = 'Nothing else to show';
+    } else {
+      const tempCollectionGallery = images.map((image) =>
+        this.mapImageToGalleryItem(image),
+      );
+      // this.currentCollectionGallery = this.currentCollectionGallery.push(tempCollectionGallery);
+      tempCollectionGallery.forEach(item => this.currentCollectionGallery.push(item));
+    }
+  }
+
   async collectionClicked(collection: ICollection) {
+    this.loadMoreCounter = 1;
+    this.btnLoadMoreMsg = 'Load More';
+    this.noMoreImages = false;
     this.currentCollection = collection;
     const images = await new CollectionController().getCollectionsImages(collection._id);
     this.currentCollectionGallery = images.map((image) =>

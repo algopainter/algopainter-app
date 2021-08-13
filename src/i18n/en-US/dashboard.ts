@@ -34,7 +34,7 @@ export default {
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',
-    loadMore: 'Load More',
+    loadMore: '{msg}',
     colon: ':',
   },
   newPainting: {

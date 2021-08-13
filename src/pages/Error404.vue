@@ -3,9 +3,16 @@
     class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center"
   >
     <div>
-      <div style="font-size: 30vh">{{ errorCode }}</div>
+      <div style="font-size: 30vh">
+        {{ errorCode }}
+      </div>
 
-      <div class="text-h2" style="opacity:.4">{{ errorMessage }}</div>
+      <div
+        class="text-h2"
+        style="opacity:.4"
+      >
+        {{ errorMessage }}
+      </div>
 
       <q-btn
         class="q-mt-xl"

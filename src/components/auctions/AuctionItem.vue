@@ -1,64 +1,81 @@
 <template>
-  <div>
+  <div v-if="loading === false">
     <div class="art-header flex q-pb-sm">
-      <div class="users">
-        <q-avatar
-          v-for="person in auction.art.importantPeople"
-          :key="person.id"
-          size="lg"
-          round
+      <div class="users flex q-pb-sm">
+        <div
+          v-for="(bid, index) in isHot.bids"
+          :key="index"
         >
-          <img :src="person.picture" />
-          <q-tooltip>{{ person.name }}</q-tooltip>
-        </q-avatar>
+          <router-link :to="{path: 'user-gallery', query: { customProfile: bid.bidder.account }}">
+            <q-avatar
+              v-if="changeAvatar(bid.bidder)"
+              size="lg"
+              round
+            >
+              <img
+                :src="bid.bidder.avatar"
+              >
+              <q-tooltip
+                class="bg-primary"
+              >
+                {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
+              </q-tooltip>
+            </q-avatar>
+          </router-link>
+        </div>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <div>
-          <q-icon
-            color="primary"
-            size="sm"
-            name="mdi-dots-horizontal"
-          />
-        </div>
-        <div>
-          <q-icon
-            color="primary"
-            size="sm"
-            name="mdi-heart-outline"
+        <ShareArtIcons :art="previewImageUrl" />
+        <div class="col-12 col-md-1 flex">
+          <LikeAnimation
+            :likes="likes || isHot.item.likes"
+            :liked="wasLiked"
+            @favoriteClicked="favoriteClicked"
           />
         </div>
       </div>
     </div>
     <q-img
       class="art-image"
-      src="../../assets/placeholder-images/painting.jpg"
+      :src="previewImageUrl"
     />
-    <div class="details q-pa-sm">
-      <div class="name">
-        {{ auction.art.name }}
+    <div class="details flex q-pa-sm">
+      <div>
+        <div
+          class="name"
+        >
+          {{ isHot.item.title }}
+        </div>
+        <q-tooltip
+          class="bg-primary"
+        >
+          {{ isHot.item.title }}
+        </q-tooltip>
       </div>
       <div>
         <div class="flex items-center q-col-gutter-sm">
           <div class="price">
-            <div>{{ $n(auction.art.price, 'currency') }}</div>
-          </div>
-          <div>
-            {{ $t('dashboard.auctions.numberOfBids', {
-              numberOfBids: auction.numberOfBids,
-            }) }}
+            <div>{{ isHot.bids[0].tokenSymbol + ' ' + isHot.bids[0].amount }}</div>
           </div>
         </div>
       </div>
+
       <div class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
-          <template v-slot:highestBid>
-            <b class="text-primary">{{ `${auction.highestBid}WETH` }}</b>
+          <template #highestBid>
+            <b class="text-primary">{{ `${isHot.highestBid.amount} ${isHot.highestBid.tokenSymbol}` }}</b>
           </template>
         </i18n-t>
       </div>
-      <div class="action">
-        {{ $t('common.placeABid')}} <q-icon name="mdi-arrow-right" />
+      <div class="flex">
+        <q-btn
+          flat
+          color="primary"
+          :label="$t('common.placeABid')"
+          icon-right="mdi-arrow-right"
+          :to="`/auctions/${isHot._id}`"
+        />
       </div>
     </div>
   </div>
@@ -68,12 +85,15 @@
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 
-import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IAuctionItem2 } from 'src/models/IAuctionItem2';
 import AlgoButton from 'components/common/Button.vue';
+import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
+import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
+import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
 
 class Props {
-  auction = prop({
-    type: Object as PropType<IAuctionItem>,
+  isHot = prop({
+    type: Object as PropType<IAuctionItem2>,
     required: true,
   });
 }
@@ -81,13 +101,126 @@ class Props {
 @Options({
   components: {
     AlgoButton,
+    LikeAnimation,
+    ShareArtIcons,
+  },
+  watch: {
+    account: ['loadData'],
   },
 })
 export default class AuctionItem extends Vue.with(Props) {
+  collectionArtController: CollectionArtController = new CollectionArtController();
+
+  wasLiked: boolean = false;
+
+  likes!: number;
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  get account() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/account'];
+  }
+
+  loading: boolean = true;
+  previewImageUrl: string = '';
+  /* functionCounter: number = 0;
+  stopFunction: boolean = false; */
+
+  changeAvatar(bid: any) {
+    if (typeof (bid) !== 'undefined') {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      return true;
+    }
+    return false;
+  }
+
+  mounted() {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    setTimeout(this.showRun, 0);
+    void this.loadData();
+  }
+
+  loadData() {
+    this.wasLiked =
+      this.isHot.item.likers.filter((liker) => liker === this.account)
+        .length !== 0;
+    this.likes = this.isHot.item.likes;
+  }
+
+  showRun() {
+    this.loading = false;
+    this.previewImageUrl = this.isHot.item.previewImageUrl;
+  }
+
+  favoriteClicked(wasLiked: boolean) {
+    this.$emit('favoriteClicked');
+    if (this.isConnected) {
+      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    }
+  }
+
+  postFavoriteArt() {
+    this.collectionArtController
+      .favoriteArt(this.isHot.item._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like(true);
+          }
+        },
+        (error) => {
+          // tratar erro
+          console.log('"like" post error: ', error);
+        },
+      );
+    this.like();
+  }
+
+  deleteFavoriteArt() {
+    this.collectionArtController
+      .deleteFavoriteArt(this.isHot.item._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like();
+          }
+        },
+        (error) => {
+          // tratar erro
+          console.log('"like" delete error: ', error);
+        },
+      );
+    this.like(true);
+  }
+
+  like(undo: boolean = false) {
+    if (undo) {
+      this.wasLiked = false;
+      this.likes--;
+    } else {
+      this.wasLiked = true;
+      this.likes++;
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.btn-dropdown{
+  color: #f4538d;
+}
+.link-sharer{
+  text-decoration: none;
+  color: black;
+}
+.btn-dropdown:before{
+  box-shadow: none;
+  border: none;
+}
 .users {
   .q-avatar:not(:first-child) {
     margin-left: -8px;
@@ -105,14 +238,21 @@ export default class AuctionItem extends Vue.with(Props) {
 }
 
 .details {
-  .name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+.name {
     font-weight: bold;
     font-size: 1.4rem;
-  }
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    width: 250px;
+}
 
   .price {
-    display: flex;
-    align-items: center;
     color: $positive;
     font-size: 1.1rem;
     font-weight: bold;
@@ -120,17 +260,11 @@ export default class AuctionItem extends Vue.with(Props) {
 
   .highest-bid {
     font-size: 1.1rem;
-  }
-
-  .action {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: $primary;
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.6;
+    display: flex;
+    b {
+      margin-left: 5px;
     }
   }
 }
+
 </style>

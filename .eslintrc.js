@@ -38,9 +38,9 @@ module.exports = {
     // Uncomment any of the lines below to choose desired strictness,
     // but leave only one uncommented!
     // See https://eslint.vuejs.org/rules/#available-rules
-    'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
+    // 'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
     // 'plugin:vue/vue3-strongly-recommended', // Priority B: Strongly Recommended (Improving Readability)
-    // 'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
+    'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
 
     'plugin:@intlify/vue-i18n/recommended',
 
@@ -100,9 +100,10 @@ module.exports = {
 
     'semi': ['warn', 'always'],
     'semi-style': 'warn',
+    'space-before-function-paren': ['warn', 'never'],
     'comma-dangle': ['warn', 'always-multiline'],
     'eol-last': ['warn', 'always'],
-    'max-len': ['warn', { 'code': 80 }],
+    'max-len': ['warn', { 'code': 160 }],
     'no-trailing-spaces': 'warn',
     'quotes': ['warn', 'single', { avoidEscape: true }],
 

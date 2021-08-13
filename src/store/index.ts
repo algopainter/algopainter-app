@@ -5,6 +5,12 @@ import {
   Store as VuexStore,
   useStore as vuexUseStore,
 } from 'vuex';
+import { UserStateInterface } from './user/types';
+import { AuctionStateInterface } from './auctions/types';
+import { CollectionsStateInterface } from './collections/types';
+import user from './user';
+import auctions from './auctions';
+import collections from './collections';
 
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
@@ -24,6 +30,9 @@ export interface StateInterface {
   // Declared as unknown to avoid linting issue.
   // Best to strongly type as per the line above.
   example: unknown;
+  user: UserStateInterface;
+  auctions: AuctionStateInterface;
+  collections: CollectionsStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -37,10 +46,13 @@ declare module '@vue/runtime-core' {
 export const storeKey: InjectionKey<VuexStore<StateInterface>> =
   Symbol('vuex-key');
 
-export default store(function (/* { ssrContext } */) {
+export default store(function(/* { ssrContext } */) {
   const Store = createStore<StateInterface>({
     modules: {
       // example
+      user,
+      auctions,
+      collections,
     },
 
     // enable strict mode (adds overhead!)
@@ -51,6 +63,6 @@ export default store(function (/* { ssrContext } */) {
   return Store;
 });
 
-export function useStore () {
+export function useStore() {
   return vuexUseStore(storeKey);
 }

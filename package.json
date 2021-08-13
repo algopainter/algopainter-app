@@ -1,8 +1,8 @@
 {
   "name": "algopainter",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "description": "Create your own collectable crypto art. Join an artist. Join NFTs. Be unique.",
+  "productName": "AlgoPainter",
   "author": "João Paulo Martins <joao.martins@criptonomia.com>",
   "private": true,
   "scripts": {
@@ -12,18 +12,25 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.10.6",
+    "apexcharts": "^3.27.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
-    "quasar": "^2.0.0-beta.1",
+    "nanoid": "^3.1.23",
+    "quasar": "^2.0.0-rc.1",
     "vue-class-component": "^8.0.0-rc.1",
-    "vue-i18n": "^9.0.0-beta.0"
+    "vue-i18n": "^9.0.0-beta.0",
+    "vue-property-decorator": "^9.1.2",
+    "vue3-apexcharts": "^1.4.0",
+    "vue3-carousel": "^0.1.23",
+    "vuex": "^4.0.1",
+    "web3": "^1.4.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
     "@intlify/eslint-plugin-vue-i18n": "^0.11.1",
-    "@quasar/app": "^3.0.0-beta.1",
+    "@quasar/app": "^3.0.0-rc.1",
     "@types/moment": "^2.13.0",
     "@types/node": "^10.17.15",
     "@typescript-eslint/eslint-plugin": "^4.16.1",

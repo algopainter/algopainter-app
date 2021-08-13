@@ -1,37 +1,57 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
-    <div class="account-details q-pa-lg">
-      <account-details />
-    </div>
-    <div class="header">{{ $t('dashboard.homePage.myGallery') }}</div>
     <div>
-      <user-gallery-overview />
+      <auctions-list @favoriteClicked="favoriteClicked" />
+    </div>
+    <!--
+    <div class="header">
+      {{ $t('dashboard.homePage.exploreAuctions') }}
+    </div>
+    <div>
+      <auctions-explorer @favoriteClicked="favoriteClicked" />
+    </div>
+    -->
+    <div class="header gallery q-mb-lg">
+      {{ $t('dashboard.homePage.collectiblesGallery') }}
+    </div>
+    <div>
+      <home-page-gallery
+        @favoriteClicked="favoriteClicked"
+      />
     </div>
   </q-page>
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
-import {
-  AccountDetails,
-  UserGalleryOverview,
-} from 'components/home-page';
+import { HomePageGallery } from 'components/gallery';
+import AuctionsList from 'src/components/auctions/AuctionsList.vue';
+import AuctionsExplorer from 'src/components/auctions/AuctionsExplorer.vue';
 
 @Options({
   components: {
-    AccountDetails,
-    UserGalleryOverview,
+    HomePageGallery,
+    AuctionsList,
+    AuctionsExplorer,
   },
 })
 export default class HomePage extends Vue {
-
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.account-details {
-  border: 2px dashed $primary;
-  border-radius: 20px;
+.category {
+  font-weight: bold;
+}
+
+.header {
+  margin-bottom: 1.5rem
+}
+
+.header.gallery{
+  padding-bottom: 1rem;
 }
 </style>

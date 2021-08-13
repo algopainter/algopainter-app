@@ -1,4 +1,6 @@
-# Quasar App (algopainter)
+# AlgoPainter App
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ba94c9cd-a3ac-4266-9f33-b5e424fe8f1a/deploy-status)](https://app.netlify.com/sites/algopainter-app/deploys)
 
 A Quasar Framework app
 

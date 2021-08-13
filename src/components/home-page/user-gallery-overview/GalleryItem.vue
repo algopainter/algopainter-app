@@ -1,66 +1,65 @@
 <template>
   <div>
-    <div class="art-header flex q-pb-sm">
-      <div class="users">
-        <q-avatar
-          v-for="person in art.importantPeople"
-          :key="person.id"
-          size="lg"
-          round
-        >
-          <img :src="person.picture" />
-          <q-tooltip>{{ person.name }}</q-tooltip>
-        </q-avatar>
+    <div
+      class="art-header flex q-pb-sm"
+    >
+      <div
+        v-for="(person, index) in art.users"
+        :key="index"
+        class="users"
+      >
+        <router-link :to="{path: 'user-gallery', query: { customProfile: person.account }}">
+          <q-avatar
+            size="lg"
+            class="q-mr-xm"
+            round
+          >
+            <img
+              :src="person.avatar || '/images/do-utilizador (1).png'"
+            >
+            <q-tooltip
+              class="bg-primary"
+            >
+              {{ person.role }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+            </q-tooltip>
+          </q-avatar>
+        </router-link>
       </div>
       <q-space />
-      <q-btn
-        color="primary"
-        flat
-        round
-        icon="mdi-dots-horizontal"
-      />
+      <ShareArtIcons :art="art.nft.previewImage" />
     </div>
     <q-img
       class="art-image"
-      src="../../../assets/placeholder-images/painting.jpg"
+      :src="art.nft.previewImage"
     />
     <div class="details q-pa-sm">
       <div class="name">
-        {{ art.name }}
+        {{ art.description }}
       </div>
-      <div class="q-py-sm">
-        <div class="flex q-col-gutter-sm">
-          <div class="price">
-            <img src="../../../assets/icons/coin.svg" />
-            <div>{{ $n(art.price, 'currency') }}</div>
-          </div>
-          <div class="bid-back">
-            <img src="../../../assets/icons/return-on-investment.svg" />
-            <div>
-              {{ $n(art.bidBack, 'percent') }} {{ $t('common.bidBack') }}
-            </div>
-          </div>
-        </div>
-        <div class="pirs">
-          <img src="../../../assets/icons/return-on-investment.svg" />
-          <div>
-            <span class="label">
-              {{ $t('dashboard.homePage.pirs')}}
-            </span>
-            <i18n-t keypath="dashboard.homePage.pirsVal">
-              <template v-slot:creators>
-                {{ $n(art.pirs.creators, 'percent') }}
-              </template>
-              <template v-slot:investors>
-                {{ $n(art.pirs.investors, 'percent') }}
-              </template>
-            </i18n-t>
-          </div>
-        </div>
-      </div>
-      <div class="sell-action">
-        {{ $t('dashboard.homePage.sell')}} <q-icon name="mdi-arrow-right" />
-      </div>
+      <q-tooltip
+        class="bg-primary"
+      >
+        {{ art.description }}
+      </q-tooltip>
+      <algoButton
+        icon="visibility"
+        class="full-width q-my-md"
+        color="primary"
+        :label="$t('dashboard.auctionPage.btnView')"
+        :to="`/collections/${art._id}`"
+      />
+      <!--
+      <q-btn
+        v-if="user === false"
+        class="sell-action"
+        to="/sell-your-art"
+        flat
+        color="positive"
+      >
+        {{ $t('dashboard.homePage.sell') }}
+        <q-icon name="mdi-arrow-right" />
+      </q-btn>
+      -->
     </div>
   </div>
 </template>
@@ -69,26 +68,45 @@
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 
-import { IArt } from 'src/models/IArt';
+import { IMyGallery } from 'src/models/IMyGallery';
 import AlgoButton from '../../common/Button.vue';
+import ShareArtIcons from '../../common/ShareArtIcons.vue';
 
 class Props {
   art = prop({
-    type: Object as PropType<IArt>,
+    type: Object as PropType<IMyGallery>,
     required: true,
   });
-}
 
+  user = prop({
+    type: Boolean,
+    required: false,
+    default: false,
+  });
+}
 @Options({
   components: {
     AlgoButton,
+    ShareArtIcons,
   },
 })
-export default class UserGalleryOverview extends Vue.with(Props) {
+export default class GalleryItem extends Vue.with(Props) {
+
 }
 </script>
 
 <style lang="scss" scoped>
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.teste {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+}
+
 .users {
   .q-avatar:not(:first-child) {
     margin-left: -8px;
@@ -105,6 +123,11 @@ export default class UserGalleryOverview extends Vue.with(Props) {
   .name {
     font-weight: bold;
     font-size: 1.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    width: 250px;
   }
 
   .price {

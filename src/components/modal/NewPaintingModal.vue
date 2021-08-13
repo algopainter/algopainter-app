@@ -13,6 +13,7 @@
           round
           type="a"
           href="https://app.algopainter.art/paintings/new"
+          target="_blank"
         >
           <q-avatar size="250px">
             <img
@@ -25,6 +26,7 @@
           round
           type="a"
           href="https://app.algopainter.art/collections/1/new"
+          target="_blank"
         >
           <q-avatar size="250px">
             <img

@@ -36,7 +36,9 @@
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
       <div>
-        <p class="q-mt-lg text-primary text-bold text-h5"> Coming soon... </p>
+        <p class="q-mt-lg text-primary text-bold text-h5">
+          {{ $t('dashboard.auctions.coming') }}
+        </p>
       </div>
       <!--
       <div v-if="loadingGalleryBid === false">

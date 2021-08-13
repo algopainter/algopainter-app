@@ -1,14 +1,25 @@
 <template>
-  <q-dialog ref="dialog" persistent @hide="onDialogHide">
+  <q-dialog
+    ref="dialog"
+    persistent
+    @hide="onDialogHide"
+  >
     <q-card class="q-dialog-plugin q-pa-md">
       <q-card-section class="q-col-gutter-xl">
         <div class="flex justify-center">
-          <q-spinner color="primary" size="5em" />
+          <q-spinner
+            color="primary"
+            size="5em"
+          />
         </div>
       </q-card-section>
       <q-card-section class="q-pa-lg text-center">
-        <div class="text-h5 text-bold q-py-sm">{{ "Wrong Network" }}</div>
-        <div class="text-bold text-grey">{{ "Migrate to a Binance SmartChain" }}</div>
+        <div class="text-h5 text-bold q-py-sm">
+          {{ $t('dashboard.wrong') }}
+        </div>
+        <div class="text-bold text-grey">
+          {{ $t('dashboard.migrate') }}
+        </div>
       </q-card-section>
     </q-card>
   </q-dialog>

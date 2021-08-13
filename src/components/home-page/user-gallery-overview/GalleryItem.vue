@@ -1,29 +1,35 @@
 <template>
   <div>
-    <div class="art-header flex q-pb-sm">
-      <div class="users">
-        <q-avatar
-          v-for="(person, index) in art.users"
-          :key="index"
-          size="lg"
-          class="q-mr-sm"
-          round
-        >
-          <img
-            :src="person.avatar || '/images/do-utilizador (1).png'"
+    <div
+      class="art-header flex q-pb-sm"
+    >
+      <div
+        v-for="(person, index) in art.users"
+        :key="index"
+        class="users"
+      >
+        <router-link :to="{path: 'user-gallery', query: { customProfile: person.account }}">
+          <q-avatar
+            size="lg"
+            class="q-mr-xm"
+            round
           >
-          <q-tooltip
-            class="bg-primary"
-          >
-            {{ person.role }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
-          </q-tooltip>
-        </q-avatar>
+            <img
+              :src="person.avatar || '/images/do-utilizador (1).png'"
+            >
+            <q-tooltip
+              class="bg-primary"
+            >
+              {{ person.role }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+            </q-tooltip>
+          </q-avatar>
+        </router-link>
       </div>
       <q-space />
       <ShareArtIcons :art="art.nft.previewImage" />
     </div>
     <q-img
-      class="art-image"
+      class="art-image cursor-pointer"
       :src="art.nft.previewImage"
     />
     <div class="details q-pa-sm">
@@ -35,6 +41,13 @@
       >
         {{ art.description }}
       </q-tooltip>
+      <algoButton
+        icon="visibility"
+        class="full-width q-my-md"
+        color="primary"
+        :label="$t('dashboard.auctionPage.btnView')"
+        :to="`/collections/${art._id}`"
+      />
       <!--
       <q-btn
         v-if="user === false"
@@ -83,6 +96,10 @@ export default class GalleryItem extends Vue.with(Props) {
 </script>
 
 <style lang="scss" scoped>
+
+.cursor-pointer {
+  cursor: pointer;
+}
 
 .teste {
   width: 100px;

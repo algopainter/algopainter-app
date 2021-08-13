@@ -23,7 +23,6 @@
             :label="$t('dashboard.gallery.newPainting')"
             class="q-ma-xs btn-size"
             color="primary"
-            to="/new-painting"
           />
         </div>
       </div>
@@ -71,7 +70,7 @@
               {{ $t('dashboard.viewArt.owner') }}
             </span>
             <p>
-              {{ formatAccount() }}
+              {{ imageOwner.name || formatAccount() }}
               <q-tooltip
                 v-if="imageOwner.name !== imageOwner.account "
                 anchor="bottom middle"
@@ -102,7 +101,7 @@ import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import ShareArtIcons from 'components/common/ShareArtIcons.vue';
 import { IImage } from 'src/models/IImage';
-import ViewArtSkeleton from './ViewArtSkeleton.vue'
+import ViewArtSkeleton from './ViewArtSkeleton.vue';
 import { api } from 'src/boot/axios';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
@@ -259,7 +258,7 @@ export default class ViewArt extends Vue {
   }
 
   formatAccount() {
-    return UserUtils.formatedAccount(this.imageOwner.name);
+    return UserUtils.formatedAccount(this.imageOwner.account);
   }
 }
 

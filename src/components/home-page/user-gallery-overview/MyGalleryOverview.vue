@@ -31,7 +31,7 @@
     <div v-else>
       <MyGallerySkeleton />
     </div>
-    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
+    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
@@ -190,3 +190,11 @@ export default class MyGalleryOverview extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.border {
+  border: 2px dashed $primary;
+  border-radius: 20px;
+  max-height: 150px;
+}
+</style>

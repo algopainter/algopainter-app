@@ -31,7 +31,7 @@ export default {
     publicNoBids: 'This user did not place a bid yet',
     personalNoBids: 'You never placed a bid',
     publicNoItems: 'This user does not have items yet',
-    personalNoItems: 'You do not have any items yet. Consider getting your first!',
+    personalNoItems: "Ohh! 😔 You don't have any items yet... Why not mint your first artwork?",
     collectiblesGallery: 'Collection',
     exploreAuctions: 'Explore Auctions',
     gwei: 'Gwei',

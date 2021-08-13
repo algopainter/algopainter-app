@@ -23,7 +23,9 @@
             :label="$t('dashboard.gallery.newPainting')"
             class="q-ma-xs btn-size"
             color="primary"
+            @click="OpenModalArtist()"
           />
+          <NewPaintingModal v-model="openModal" />
         </div>
       </div>
     </div>
@@ -108,12 +110,13 @@ import ViewArtSkeleton from './ViewArtSkeleton.vue';
 import { api } from 'src/boot/axios';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
+import NewPaintingModal from '../../../components/modal/NewPaintingModal.vue';
 import UserUtils from 'src/helpers/user';
 import { IImageUser } from 'src/models/IImageUser';
 import { IProfile } from 'src/models/IProfile';
 
 @Options({
-  components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton },
+  components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton, NewPaintingModal },
   computed: {
     account: '',
     isConnected: false,
@@ -125,7 +128,13 @@ import { IProfile } from 'src/models/IProfile';
 
 export default class ViewArt extends Vue {
   loading: boolean = true;
+  openModal: boolean = false;
   selectAccount: string = '';
+
+  OpenModalArtist() {
+    this.openModal = true;
+    console.log('CollectiblesGallery');
+  }
 
   user = {
     _id: '',

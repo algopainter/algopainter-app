@@ -29,7 +29,7 @@
       <ShareArtIcons :art="art.nft.previewImage" />
     </div>
     <q-img
-      class="art-image cursor-pointer"
+      class="art-image"
       :src="art.nft.previewImage"
     />
     <div class="details q-pa-sm">

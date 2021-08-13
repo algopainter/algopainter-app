@@ -258,7 +258,7 @@ export default class ViewArt extends Vue {
   }
 
   formatAccount() {
-    return UserUtils.formatedAccount(this.imageOwner.name);
+    return UserUtils.formatedAccount(this.imageOwner.account);
   }
 }
 

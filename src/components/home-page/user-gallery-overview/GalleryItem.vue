@@ -35,6 +35,7 @@
       >
         {{ art.description }}
       </q-tooltip>
+      <!--
       <q-btn
         v-if="user === false"
         class="sell-action"
@@ -45,6 +46,7 @@
         {{ $t('dashboard.homePage.sell') }}
         <q-icon name="mdi-arrow-right" />
       </q-btn>
+      -->
     </div>
   </div>
 </template>

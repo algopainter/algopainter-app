@@ -92,6 +92,9 @@
       </div>
     </div>
   </div>
+  <div v-else>
+    <ViewArtSkeleton />
+  </div>
 </template>
 
 <script lang="ts">
@@ -99,6 +102,7 @@ import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import ShareArtIcons from 'components/common/ShareArtIcons.vue';
 import { IImage } from 'src/models/IImage';
+import ViewArtSkeleton from './ViewArtSkeleton.vue'
 import { api } from 'src/boot/axios';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
@@ -107,7 +111,7 @@ import { IImageUser } from 'src/models/IImageUser';
 import { IProfile } from 'src/models/IProfile';
 
 @Options({
-  components: { AlgoButton, ShareArtIcons, LikeAnimation },
+  components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton },
   computed: {
     account: '',
     isConnected: false,

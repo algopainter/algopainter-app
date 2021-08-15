@@ -8,7 +8,7 @@
         class="col-lg-6 col-md-6"
       >
         <p class="text-bold text-h5">
-          {{ image.title }}
+          {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
         </p>
       </div>
       <div>

@@ -73,6 +73,7 @@ export default class HomePageGallery extends Vue {
   loadMoreCounter: number = 1;
   noMoreImages: boolean = false;
   btnLoadMoreMsg: string = 'Load More';
+  images: [] = [];
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
@@ -125,6 +126,7 @@ export default class HomePageGallery extends Vue {
     return {
       id: image._id,
       description: image.description,
+      index: image.nft.index,
       art: {
         id: image._id,
         name: image.title,

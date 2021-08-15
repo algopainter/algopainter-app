@@ -39,6 +39,7 @@ export default {
     monero: 'Monero',
     loadMore: '{msg}',
     colon: ':',
+    symbol: '#',
   },
   newPainting: {
     title: 'New Painting',

@@ -34,7 +34,7 @@
     />
     <div class="details q-pa-sm">
       <div class="name">
-        {{ art.description }}
+        {{ $t('dashboard.homePage.symbol') }}{{ art.nft.index }} {{ art.description }}
       </div>
       <q-tooltip
         class="bg-primary"

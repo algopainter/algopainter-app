@@ -41,7 +41,7 @@
     />
     <div class="details q-pa-sm">
       <div class="name limit-text">
-        {{ galleryItem.art.name }}
+        {{ $t('dashboard.homePage.symbol') }}{{ galleryItem.index }} {{ galleryItem.art.name }}
       </div>
       <q-tooltip
         class="bg-primary"

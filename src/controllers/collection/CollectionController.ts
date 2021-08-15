@@ -15,7 +15,7 @@ export default class CollectionController extends BaseController {
 
   async getCollectionsImages(id: string, page: number = 1, perPage: number = 24) {
     try {
-      const result = await this.get(`collections/${id}/images?page=${page}&perPage=${perPage}`);
+      const result = await this.get(`collections/${id}/images?page=${page}&perPage=${perPage}&order.nft.index=-1`);
       return result.data.data as IImage[];
     } catch (error) {
       return [];

@@ -47,7 +47,7 @@
 
         <algo-button
           color="primary"
-          class="btn-new-painting"
+          class="btn-new-painting full-width"
           :label="$t('dashboard.viewArt.btnCreatepainter')"
           @click="OpenModalArtist()"
         />

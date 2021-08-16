@@ -49,12 +49,12 @@
           />
         </div>
         <div class="responsive-input row ">
-          <q-input
+          <!-- <q-input
             v-model="formFields.customProfile"
             class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
             prefix="algopainter.art/"
-          />
+          /> -->
           <q-input
             v-model="formFields.webSite"
             class="input col-sm-12 col-md-6 q-pr-md"

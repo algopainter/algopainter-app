@@ -29,6 +29,7 @@ const connectionFlows = {
         resolve(window.ethereum);
       } else {
         reject('Could not find ethereum object');
+        window.open('https://metamask.io/download');
       }
     });
   },

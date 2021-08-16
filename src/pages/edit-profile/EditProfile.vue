@@ -276,11 +276,24 @@ export default class EditProfile extends Vue {
         icon: 'mdi-check',
       });
     } catch (e) {
-      Notify.create({
-        message: 'An error has occurred while updating profile',
-        color: 'red',
-        icon: 'mdi-alert',
-      });
+      // console.log(Object.entries(e));
+      // console.log(e.response.data.type);
+      // buno@gmail.com
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (e.response.data.type === 409) {
+        Notify.create({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          message: e.response.data.message as string,
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+      } else {
+        Notify.create({
+          message: 'An error has occurred while updating profile',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+      }
     } finally {
       this.isLoading = false;
     }

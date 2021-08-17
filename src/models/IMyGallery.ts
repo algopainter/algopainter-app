@@ -31,6 +31,7 @@ updatedAt: string;
 nft: {
   _id: string;
   image: string;
+  index: number;
   previewImage: string;
   rawImage: string;
   parameters: {

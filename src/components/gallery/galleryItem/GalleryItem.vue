@@ -41,13 +41,13 @@
     />
     <div class="details q-pa-sm">
       <div class="name limit-text">
-        {{ galleryItem.art.name }}
+        {{ $t('dashboard.homePage.symbol') }}{{ galleryItem.index }} {{ galleryItem.art.name }}
+        <q-tooltip
+          class="bg-primary"
+        >
+          {{ galleryItem.art.name }}
+        </q-tooltip>
       </div>
-      <q-tooltip
-        class="bg-primary"
-      >
-        {{ galleryItem.art.name }}
-      </q-tooltip>
       <div class="img-description limit-text">
         <p>{{ galleryItem.description }}</p>
       </div>

@@ -15,10 +15,6 @@
             class="q-ma-xs"
             type="QBtn"
           />
-          <q-skeleton
-            class="q-ma-xs"
-            type="QBtn"
-          />
         </div>
       </div>
     </div>

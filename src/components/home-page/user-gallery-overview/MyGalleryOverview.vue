@@ -31,7 +31,7 @@
     <div v-else>
       <MyGallerySkeleton />
     </div>
-    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center">
+    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
@@ -150,7 +150,6 @@ export default class MyGalleryOverview extends Vue {
   }
 
   async getGalleryBidders() {
-    console.log(this.loadingLatestBidsItem);
     try {
       if (this.isConnected) {
         const response = await api.get(`bids?bidder=${this.accountAddress}`);
@@ -167,7 +166,6 @@ export default class MyGalleryOverview extends Vue {
         this.galleryBidShow = this.galleryBidClosed;
         this.loadingGalleryBid = false;
         this.loadingLatestBidsItem = false;
-        console.log(this.loadingLatestBidsItem);
       }
     } catch (e) {
       console.log('error', e);
@@ -176,7 +174,7 @@ export default class MyGalleryOverview extends Vue {
 
   async getGalleryArts() {
     try {
-      const response = await api.get(`users/${this.accountAddress}/images`); // id com galleryite:0xddbc5f514f729d47a51030f049a956c5086b20af
+      const response = await api.get(`users/${this.accountAddress}/images?order.nft.index=-1`); // id com galleryite:0xddbc5f514f729d47a51030f049a956c5086b20af
       if (this.isConnected) {
         this.galleryArts = response.data as [];
         if (this.galleryArts.length === 0) {
@@ -190,3 +188,11 @@ export default class MyGalleryOverview extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.border {
+  border: 2px dashed $primary;
+  border-radius: 20px;
+  max-height: 150px;
+}
+</style>

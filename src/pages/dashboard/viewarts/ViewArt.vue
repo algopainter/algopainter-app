@@ -8,17 +8,11 @@
         class="col-lg-6 col-md-6"
       >
         <p class="text-bold text-h5">
-          {{ image.title }}
+          {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
         </p>
       </div>
       <div>
         <div class="right row justify-center align-center">
-          <algo-button
-            :label="$t('dashboard.viewArt.goGallery')"
-            class="q-ma-xs btn-size btn-grey"
-            to="/gallery"
-            outline
-          />
           <algo-button
             :label="$t('dashboard.gallery.newPainting')"
             class="q-ma-xs btn-size"
@@ -53,7 +47,7 @@
 
         <algo-button
           color="primary"
-          class="btn-new-painting"
+          class="btn-new-painting full-width"
           :label="$t('dashboard.viewArt.btnCreatepainter')"
           @click="OpenModalArtist()"
         />

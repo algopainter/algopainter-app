@@ -40,7 +40,7 @@
               @favoriteClicked="favoriteClicked"
             />
             <ShareArtIcons
-              :art="image.nft.previewImage"
+              :art="image.nft.image"
             />
           </div>
         </div>

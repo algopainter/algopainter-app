@@ -57,6 +57,9 @@ module.exports = configure(function(ctx) {
     build: {
       vueRouterMode: 'history', // available values: 'hash', 'history'
 
+      env: {
+        VUE_APP_ALGOPAINTER_API_URL: process.env.VUE_APP_ALGOPAINTER_API_URL,
+      },
       // transpile: false,
 
       // Add dependencies for transpiling with Babel (Array of string/regex)

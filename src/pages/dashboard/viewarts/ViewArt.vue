@@ -12,15 +12,13 @@
         </p>
       </div>
       <div>
-        <div class="right row justify-center align-center">
-          <algo-button
-            :label="$t('dashboard.gallery.newPainting')"
-            class="q-ma-xs btn-size"
-            color="primary"
-            @click="OpenModalArtist()"
-          />
-          <NewPaintingModal v-model="openModal" />
-        </div>
+        <algo-button
+          :label="$t('dashboard.gallery.newPainting')"
+          class="q-ma-xs btn-newPainting"
+          color="primary"
+          @click="OpenModalArtist()"
+        />
+        <NewPaintingModal v-model="openModal" />
       </div>
     </div>
     <div
@@ -31,7 +29,7 @@
         <div class="row justify-center">
           <q-img
             class="img"
-            :src="image.nft.previewImage"
+            :src="image.nft.image"
           />
           <div class="">
             <LikeAnimation
@@ -44,10 +42,15 @@
             />
           </div>
         </div>
+        <a
+          target="_blank"
+          :href="image.nft.rawImage"
+          class="text-download"
+        >{{ $t('dashboard.viewArt.download') }}</a>
 
         <algo-button
           color="primary"
-          class="btn-new-painting full-width"
+          class="btn-btnCreatepainter full-width"
           :label="$t('dashboard.viewArt.btnCreatepainter')"
           @click="OpenModalArtist()"
         />
@@ -270,7 +273,12 @@ export default class ViewArt extends Vue {
 
 </script>
 <style scoped>
-.btn-size {
+.text-download {
+  color:#F4538D;
+  margin-left: 40px ;
+}
+
+.btn-newPainting {
   width: 100px;
   height: 44px;
 }
@@ -283,15 +291,29 @@ export default class ViewArt extends Vue {
   width: 80%;
   border-radius:5%
 }
-.btn-new-painting{
+.btn-btnCreatepainter{
   display: flex;
   margin: auto;
   margin-top: 10px
 }
-@media (max-width: 420px) {
+@media (max-width: 1024px) {
+.text-download {
+  color:#F4538D;
+  margin-left: 20px ;
+}
+}
+@media (max-width: 450px) {
 .img{
   width: 60%;
   margin-left: 50px;
+}
+.text-download {
+  color:#F4538D;
+  margin-left: 60px ;
+}
+.btn-newPainting {
+  width: 88vw;
+  height: 39px;
 }
 }
 </style>

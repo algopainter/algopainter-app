@@ -1,6 +1,6 @@
 <template>
   <div
-    class="row q-col-gutter-lg"
+    class="row"
   >
     <div
       v-if="loadingGalleryArts === false"
@@ -22,8 +22,11 @@
           </div>
         </div>
       </div>
-      <div v-else>
-        <div class="text-h6 text-primary text-center q-pb-md">
+      <div
+        v-else
+        class="col-12 col-md-9 col-lg-9"
+      >
+        <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
           {{ $t('dashboard.homePage.personalNoItems') }}
         </div>
       </div>
@@ -31,12 +34,12 @@
     <div v-else>
       <MyGallerySkeleton />
     </div>
-    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none">
+    <div class="col-12 col-md-3 col-lg-3 column items-center border q-pt-md latestBids">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
       <div>
-        <p class="q-mt-lg text-primary text-bold text-h5">
+        <p class="q-mt-md text-primary text-bold text-h5">
           {{ $t('dashboard.auctions.coming') }}
         </p>
       </div>
@@ -195,4 +198,11 @@ export default class MyGalleryOverview extends Vue {
   border-radius: 20px;
   max-height: 150px;
 }
+
+body.screen--md, .screen--lg, .screen--xl {
+  .latestBids{
+    margin: 8px;
+  }
+}
+
 </style>

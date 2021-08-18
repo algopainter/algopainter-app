@@ -152,5 +152,6 @@ export default {
     owner: 'Owner',
     description: 'Description',
     btnCreatepainter: ' I want to create a painting like that!',
+    download: 'Download the raw painting',
   },
 };

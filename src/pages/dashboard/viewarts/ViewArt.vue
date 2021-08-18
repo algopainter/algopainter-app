@@ -31,7 +31,7 @@
         <div class="row justify-center">
           <q-img
             class="img"
-            :src="image.nft.previewImage"
+            :src="image.nft.image"
           />
           <div class="">
             <!--

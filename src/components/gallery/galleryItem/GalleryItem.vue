@@ -26,11 +26,13 @@
         <ShareArtIcons :art="galleryItem.art.source" />
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
+            <!--
             <LikeAnimation
               :liked="wasLiked"
               :likes="likes || galleryItem.art.likes"
               @favoriteClicked="favoriteClicked"
             />
+            -->
           </div>
         </div>
       </div>

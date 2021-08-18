@@ -32,11 +32,13 @@
             :src="image.nft.image"
           />
           <div class="">
+            <!--
             <LikeAnimation
               :liked="wasLiked"
               :likes="likes"
               @favoriteClicked="favoriteClicked"
             />
+            -->
             <ShareArtIcons
               :art="image.nft.image"
             />

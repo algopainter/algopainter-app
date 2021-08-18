@@ -74,6 +74,7 @@ export default class HomePageGallery extends Vue {
   noMoreImages: boolean = false;
   btnLoadMoreMsg: string = 'Load More';
   images: [] = [];
+  imgIdArray: string[] = [];
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
@@ -89,12 +90,28 @@ export default class HomePageGallery extends Vue {
       const tempCollectionGallery = images.map((image) =>
         this.mapImageToGalleryItem(image),
       );
-      // this.currentCollectionGallery = this.currentCollectionGallery.push(tempCollectionGallery);
-      tempCollectionGallery.forEach(item => this.currentCollectionGallery.push(item));
+
+      const tempImgIdArray: string[] = [];
+
+      tempCollectionGallery.forEach((item) => {
+        tempImgIdArray.push(item.id);
+      });
+
+      // this.imgIdArray.push('61153e624fb5ed1d60bafc85');
+      // this.imgIdArray.push('61153e464fb5ed1d60bafc82');
+      // this.imgIdArray.push('61153e374fb5ed1d60bafc7f');
+
+      tempCollectionGallery.forEach((item) => {
+        if (this.imgIdArray.includes(item.id) === false) {
+          this.currentCollectionGallery.push(item);
+          this.imgIdArray.push(item.id);
+        }
+      });
     }
   }
 
   async collectionClicked(collection: ICollection) {
+    this.imgIdArray = [];
     this.loadMoreCounter = 1;
     this.btnLoadMoreMsg = 'Load More';
     this.noMoreImages = false;
@@ -103,6 +120,9 @@ export default class HomePageGallery extends Vue {
     this.currentCollectionGallery = images.map((image) =>
       this.mapImageToGalleryItem(image),
     );
+    this.currentCollectionGallery.forEach((item) => {
+      this.imgIdArray.push(item.id);
+    });
   }
 
   mounted() {
@@ -119,6 +139,9 @@ export default class HomePageGallery extends Vue {
         this.mapImageToGalleryItem(image),
       );
     }
+    this.currentCollectionGallery.forEach((item) => {
+      this.imgIdArray.push(item.id);
+    });
     this.loading = false;
   }
 

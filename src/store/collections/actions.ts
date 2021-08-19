@@ -14,8 +14,6 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
       this.commit('collections/SET_USER_ITEMS', userItems);
     } catch (e) {
       console.log('error msg');
-    } finally {
-      console.log('success msg');
     }
   },
 };

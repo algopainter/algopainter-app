@@ -153,6 +153,7 @@ export default class MyGalleryOverview extends Vue {
   }
 
   async getGalleryBidders() {
+    this.loadingGalleryBid = true;
     try {
       if (this.isConnected) {
         const response = await api.get(`bids?bidder=${this.accountAddress}`);
@@ -163,30 +164,36 @@ export default class MyGalleryOverview extends Vue {
             this.galleryBid[1],
             this.galleryBid[2],
           ];
+          this.nullGalleryBidShow = false;
         } else {
           this.nullGalleryBidShow = true;
         }
         this.galleryBidShow = this.galleryBidClosed;
-        this.loadingGalleryBid = false;
-        this.loadingLatestBidsItem = false;
       }
     } catch (e) {
       console.log('error', e);
+    } finally {
+      this.loadingGalleryBid = false;
+      this.loadingLatestBidsItem = false;
     }
   }
 
   async getGalleryArts() {
+    this.loadingGalleryArts = true;
     try {
       const response = await api.get(`users/${this.accountAddress}/images?order.nft.index=-1`); // id com galleryite:0xddbc5f514f729d47a51030f049a956c5086b20af
       if (this.isConnected) {
         this.galleryArts = response.data as [];
         if (this.galleryArts.length === 0) {
           this.nullGalleryArts = true;
+        } else {
+          this.nullGalleryArts = false;
         }
-        this.loadingGalleryArts = false;
       }
     } catch (error) {
-      console.log('erro in galleryArts');
+      console.log('error in galleryArts');
+    } finally {
+      this.loadingGalleryArts = false;
     }
   }
 }

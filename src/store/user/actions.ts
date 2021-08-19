@@ -89,17 +89,22 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       clear(commit, error);
     }
   },
-  async getProfile(type) {
+  async getProfile(type, value) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const account = value.account as string;
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const res = await api.get(`users/${this.state.user.account}`);
+      const res = await api.get(`users/${account}`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const profile = res.data as [];
       this.commit('user/SET_PROFILE', profile);
-    } catch (e) {
-      console.log('error message');
-    } finally {
-      console.log('success message');
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (e.response.data.type) {
+        this.commit('user/SET_PROFILE', 'empty');
+      } else {
+        console.log('error message - getProfile', e);
+      }
     }
   },
   async getUserProfile(type, value) {
@@ -112,9 +117,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       const user = res.data as [];
       this.commit('user/SET_USER_PROFILE', user);
     } catch (e) {
-      console.log('error message');
-    } finally {
-      console.log('success message');
+      console.log('error message - getUserProfile');
     }
   },
 };

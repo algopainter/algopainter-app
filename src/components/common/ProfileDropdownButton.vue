@@ -163,6 +163,11 @@ export default class ProfileDropdownButton extends Vue {
 .profile-chip {
   font-size: 15px;
   font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  width: 85px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .profile-img {
   border: 3px solid #fff;

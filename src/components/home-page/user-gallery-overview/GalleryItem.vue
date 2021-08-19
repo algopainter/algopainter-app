@@ -26,7 +26,10 @@
         </router-link>
       </div>
       <q-space />
-      <ShareArtIcons :art="art.nft.previewImage" />
+      <ShareArtIcons
+        :art="art.nft.previewImage"
+        :_id="art._id"
+      />
     </div>
     <q-img
       class="art-image"

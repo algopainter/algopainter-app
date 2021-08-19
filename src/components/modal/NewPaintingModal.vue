@@ -15,9 +15,13 @@
           href="https://app.algopainter.art/paintings/new"
           target="_blank"
         >
-          <q-avatar size="250px">
+          <q-avatar
+            size="250px"
+            class="avatar"
+          >
             <img
               width="150px"
+              class="img"
               src="/images/gwei.png"
             >
           </q-avatar>
@@ -28,7 +32,10 @@
           href="https://app.algopainter.art/collections/1/new"
           target="_blank"
         >
-          <q-avatar size="250px">
+          <q-avatar
+            size="250px"
+            class="avatar"
+          >
             <img
               src="/images/manwithnoname.png"
             >
@@ -77,5 +84,14 @@ export default class NewPaintingModal extends Vue.with(Props) {
 }
 </script>
 <style scoped>
+.avatar {
+  width: 250px;
+}
 
+@media (max-width: 450px) {
+  .avatar{
+    width: 140px;
+    height: 140px;
+  }
+}
 </style>

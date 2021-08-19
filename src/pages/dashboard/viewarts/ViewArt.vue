@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div v-if="loading === false">
     <div class="row justify-between">
@@ -21,9 +18,7 @@
         <NewPaintingModal v-model="openModal" />
       </div>
     </div>
-    <div
-      class="row"
-    >
+    <div class="row">
       <div class="col-xs-11 col-sm-5 col-md-5">
         <div class="row justify-center">
           <q-img

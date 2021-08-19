@@ -26,21 +26,21 @@
             square
           />
         </div>
-        <div class="col items-center">
+        <div class="text-download column items-center">
           <q-skeleton
             width="60px"
             type="text"
-            class="text-link "
+            class="text-download"
           />
 
           <q-skeleton
             class="btn-new-painting"
             type="QBtn"
-            width="90%"
+            width="50%"
           />
         </div>
       </div>
-      <div class="col">
+      <div class="col-xs-1 col-sm-1 col-md-1">
         <!--
             <q-icon
               name="favorite_border"
@@ -56,7 +56,7 @@
           size="30px"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-6 margin">
+      <div class="col-xs-12 col-sm-6 col-md-4 margin">
         <div class="column items-center">
           <div class="col">
             <q-skeleton
@@ -104,49 +104,43 @@ export default class ViewArtSkeleton extends Vue {
 </script>
 
 <style scoped>
-.img-skeleton{
-    border-radius: 12px;
-    height:500px;
-    width: 500px;
+.q-page-container{
+  padding: 10px;
 }
-.img{
-  width: 80%;
-  border-radius:5%
+.text-download {
+  color:#F4538D;
+  text-align:center;
+  margin-top: 7px;
 }
-.btn-new-painting{
-  width: 280px;
-  height: 36px;
-}
-.margin{
-    width: 200px;
-    margin-left: 100px;
-}
-.text-link{
-  justify-items: center;
-}
-@media (max-width: 420px) {
-.img{
-  width: 60%;
-  margin-left: 50px;
-}
-.img-skeleton{
-    width: 200px;
-    border-radius: 12px;
-    height: 200px;
-    margin-left: 50px;
-}
-.margin{
-    width: 200px;
-    margin-left: 0px;
 
-}
-.btns{
-  width: 100px;
+.btn-newPainting {
+  width: 180px;
   height: 44px;
 }
 
-.text-link{
-  align-self: center;
+.img{
+  width: 100vw;
+  height: 55vh;
+  border-radius:5%
+}
+.btn-btnCreatepainter{
+  display: flex;
+  margin: auto;
+  margin-top: 10px
+}
+
+@media (max-width: 450px) {
+.img{
+  width: 80vw;
+}
+
+.btn-newPainting {
+  width: 80vw;
+  height: 39px;
+}
+.btn-btnCreatepainter {
+  width: 80vw;
+  height: 39px;
 }
 }
 </style>

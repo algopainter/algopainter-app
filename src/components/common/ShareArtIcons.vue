@@ -49,10 +49,9 @@ export default class ShareArtIcons extends Vue.with(Props) {
   message: string = "Hey, look at this artwork on the AlgoPainter platform! Amazing, isn't it?"
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
-      Facebook: `https://www.facebook.com/sharer/sharer.php?u=${this.art}&quote=${this.message}https://appv2.algopainter.art/collections/${this._id}`,
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://appv2.algopainter.art/collections/${this._id}&quote=${this.message}`,
       Twitter: `http://twitter.com/share?text=${this.messageTwitter}&url=https://appv2.algopainter.art/collections/${this._id}&hashtags=AlgoPainter,ALGOP,NFTS`,
       Telegram: `https://telegram.me/share/?url=https://appv2.algopainter.art/collections/${this._id}%3F&text=${this.message}`,
-      Email: 'mailto:[]?subject=AlgoPainter',
     };
     console.log(socialMedia);
     const linkElement = document.createElement('a');
@@ -79,11 +78,6 @@ export default class ShareArtIcons extends Vue.with(Props) {
       value: 0,
       label: 'Telegram',
       name: 'mdi-telegram',
-    },
-    {
-      value: 0,
-      label: 'Email',
-      name: 'mdi-email',
     },
   ]
 }

@@ -96,6 +96,7 @@ import { Options, Vue } from 'vue-class-component';
 import UserUtils from 'src/helpers/user';
 import UserController from 'src/controllers/user/UserController';
 import { IProfile } from 'src/models/IProfile';
+import { Watch } from 'vue-property-decorator';
 
 @Options({
   components: {
@@ -124,6 +125,11 @@ export default class ProfileDropdownButton extends Vue {
     void this.loadUserProfile();
   }
 
+  @Watch('accountAddress')
+  onPropertyChanged(value: string, oldValue: string) {
+    void this.loadUserProfile();
+  }
+
   async setAccountBalance() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.balance = await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
@@ -134,7 +140,7 @@ export default class ProfileDropdownButton extends Vue {
       this.accountAddress as string,
     );
     if (result.isFailure) {
-      console.log('erro', result);
+      console.log('error - loadUserProfile ');
     } else if ((result.getValue() as IProfile)._id) {
       this.userProfile = result.getValue() as IProfile;
     } else {

@@ -131,6 +131,7 @@ export default class AccountDetails extends Vue {
   onPropertyChanged(value: string, oldValue: string) {
     void this.getProfile();
     void this.getUserItems();
+    void this.setAccountBalance();
   }
 
   mounted() {
@@ -141,9 +142,11 @@ export default class AccountDetails extends Vue {
   }
 
   getProfile() {
+    this.loadingProfile = true;
     if (this.isConnected === true) {
       void this.$store.dispatch({
         type: 'user/getProfile',
+        account: this.accountAddress,
       }).then(() => {
         this.loadingProfile = false;
         this.profile = this.$store.state.user.profile;
@@ -152,6 +155,7 @@ export default class AccountDetails extends Vue {
   }
 
   getUserItems() {
+    this.loadingUserItems = true;
     if (this.isConnected === true) {
       void this.$store.dispatch({
         type: 'collections/getUserItems',

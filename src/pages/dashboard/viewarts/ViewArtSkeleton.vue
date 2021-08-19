@@ -10,26 +10,38 @@
         />
       </div>
       <div>
-        <div class="right row justify-center align-center btns">
+        <div class="row">
           <q-skeleton
-            class="q-ma-xs"
+            class="q-ma-xs btn-newPainting"
             type="QBtn"
           />
         </div>
       </div>
     </div>
-    <div
-
-      class="row"
-    >
-      <div class="col-xs-12 col-sm-6 col-md-6">
+    <div class="row">
+      <div class="col-xs-11 col-sm-5 col-md-5">
         <div class="row justify-center">
           <q-skeleton
-            class="img-skeleton"
+            class="img"
             square
           />
-          <div class="col">
-            <!--
+        </div>
+        <div class="col items-center">
+          <q-skeleton
+            width="60px"
+            type="text"
+            class="text-link "
+          />
+
+          <q-skeleton
+            class="btn-new-painting"
+            type="QBtn"
+            width="90%"
+          />
+        </div>
+      </div>
+      <div class="col">
+        <!--
             <q-icon
               name="favorite_border"
               color="grey-4"
@@ -37,18 +49,11 @@
               size="30px"
             />
             -->
-            <q-icon
-              name="more_horiz"
-              color="grey-4"
-              class="q-mr-sm q-mt-md"
-              size="30px"
-            />
-          </div>
-        </div>
-        <q-skeleton
-          class="btn-new-painting"
-          type="QBtn"
-          width="90%"
+        <q-icon
+          name="more_horiz"
+          color="grey-4"
+          class="q-mr-sm q-mt-md"
+          size="30px"
         />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 margin">
@@ -104,28 +109,20 @@ export default class ViewArtSkeleton extends Vue {
     height:500px;
     width: 500px;
 }
-.btn-size {
-  width: 100px;
-  height: 44px;
-}
-
-.btn-grey {
-  color: rgb(185, 185, 185);
-  border: 1px solid rgb(185, 185, 185);
-}
 .img{
   width: 80%;
   border-radius:5%
 }
 .btn-new-painting{
-  display: flex;
-  margin: auto;
-  margin-top: 10px
+  width: 280px;
+  height: 36px;
 }
 .margin{
     width: 200px;
     margin-left: 100px;
-
+}
+.text-link{
+  justify-items: center;
 }
 @media (max-width: 420px) {
 .img{
@@ -144,7 +141,12 @@ export default class ViewArtSkeleton extends Vue {
 
 }
 .btns{
-    margin-left: 50px;
+  width: 100px;
+  height: 44px;
+}
+
+.text-link{
+  align-self: center;
 }
 }
 </style>

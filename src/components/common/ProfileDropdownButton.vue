@@ -140,6 +140,7 @@ export default class ProfileDropdownButton extends Vue {
       this.accountAddress as string,
     );
     if (result.isFailure) {
+      this.userProfile = {};
       console.log('error - loadUserProfile ');
     } else if ((result.getValue() as IProfile)._id) {
       this.userProfile = result.getValue() as IProfile;

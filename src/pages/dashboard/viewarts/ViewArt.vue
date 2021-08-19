@@ -43,6 +43,7 @@
             -->
             <ShareArtIcons
               :art="image.nft.image"
+              :_id="image._id"
             />
           </div>
         </div>

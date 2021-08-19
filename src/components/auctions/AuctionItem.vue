@@ -26,7 +26,10 @@
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <ShareArtIcons :art="previewImageUrl" />
+        <ShareArtIcons
+          :art="previewImageUrl"
+          :is-hot="isHot._id"
+        />
         <div class="col-12 col-md-1 flex">
           <LikeAnimation
             :likes="likes || isHot.item.likes"

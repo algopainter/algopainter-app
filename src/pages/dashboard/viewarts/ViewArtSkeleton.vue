@@ -10,26 +10,38 @@
         />
       </div>
       <div>
-        <div class="right row justify-center align-center btns">
+        <div class="row">
           <q-skeleton
-            class="q-ma-xs"
+            class="q-ma-xs btn-newPainting"
             type="QBtn"
           />
         </div>
       </div>
     </div>
-    <div
-
-      class="row"
-    >
-      <div class="col-xs-12 col-sm-6 col-md-6">
+    <div class="row">
+      <div class="col-xs-11 col-sm-5 col-md-5">
         <div class="row justify-center">
           <q-skeleton
-            class="img-skeleton"
+            class="img"
             square
           />
-          <div class="col">
-            <!--
+        </div>
+        <div class="text-download column items-center">
+          <q-skeleton
+            width="60px"
+            type="text"
+            class="text-download"
+          />
+
+          <q-skeleton
+            class="btn-new-painting"
+            type="QBtn"
+            width="50%"
+          />
+        </div>
+      </div>
+      <div class="col-xs-1 col-sm-1 col-md-1">
+        <!--
             <q-icon
               name="favorite_border"
               color="grey-4"
@@ -37,21 +49,14 @@
               size="30px"
             />
             -->
-            <q-icon
-              name="more_horiz"
-              color="grey-4"
-              class="q-mr-sm q-mt-md"
-              size="30px"
-            />
-          </div>
-        </div>
-        <q-skeleton
-          class="btn-new-painting"
-          type="QBtn"
-          width="90%"
+        <q-icon
+          name="more_horiz"
+          color="grey-4"
+          class="q-mr-sm q-mt-md"
+          size="30px"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-6 margin">
+      <div class="col-xs-12 col-sm-6 col-md-4 margin">
         <div class="column items-center">
           <div class="col">
             <q-skeleton
@@ -99,52 +104,43 @@ export default class ViewArtSkeleton extends Vue {
 </script>
 
 <style scoped>
-.img-skeleton{
-    border-radius: 12px;
-    height:500px;
-    width: 500px;
+.q-page-container{
+  padding: 10px;
 }
-.btn-size {
-  width: 100px;
+.text-download {
+  color:#F4538D;
+  text-align:center;
+  margin-top: 7px;
+}
+
+.btn-newPainting {
+  width: 180px;
   height: 44px;
 }
 
-.btn-grey {
-  color: rgb(185, 185, 185);
-  border: 1px solid rgb(185, 185, 185);
-}
 .img{
-  width: 80%;
+  width: 100vw;
+  height: 55vh;
   border-radius:5%
 }
-.btn-new-painting{
+.btn-btnCreatepainter{
   display: flex;
   margin: auto;
   margin-top: 10px
 }
-.margin{
-    width: 200px;
-    margin-left: 100px;
 
-}
-@media (max-width: 420px) {
+@media (max-width: 450px) {
 .img{
-  width: 60%;
-  margin-left: 50px;
+  width: 80vw;
 }
-.img-skeleton{
-    width: 200px;
-    border-radius: 12px;
-    height: 200px;
-    margin-left: 50px;
-}
-.margin{
-    width: 200px;
-    margin-left: 0px;
 
+.btn-newPainting {
+  width: 80vw;
+  height: 39px;
 }
-.btns{
-    margin-left: 50px;
+.btn-btnCreatepainter {
+  width: 80vw;
+  height: 39px;
 }
 }
 </style>

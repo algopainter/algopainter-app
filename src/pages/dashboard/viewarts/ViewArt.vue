@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div v-if="loading === false">
     <div class="row justify-between">
@@ -12,53 +9,56 @@
         </p>
       </div>
       <div>
-        <div class="right row justify-center align-center">
-          <algo-button
-            :label="$t('dashboard.gallery.newPainting')"
-            class="q-ma-xs btn-size"
-            color="primary"
-            @click="OpenModalArtist()"
-          />
-          <NewPaintingModal v-model="openModal" />
-        </div>
+        <algo-button
+          :label="$t('dashboard.gallery.newPainting')"
+          class="q-ma-xs btn-newPainting"
+          color="primary"
+          @click="OpenModalArtist()"
+        />
+        <NewPaintingModal v-model="openModal" />
       </div>
     </div>
-    <div
-
-      class="row"
-    >
-      <div class="col-xs-12 col-sm-6 col-md-6">
+    <div class="row">
+      <div class="col-xs-11 col-sm-5 col-md-5">
         <div class="row justify-center">
           <q-img
             class="img"
             :src="image.nft.image"
           />
-          <div class="">
-            <!--
+        </div>
+        <div class="text-download">
+          <a
+            target="_blank"
+            :href="image.nft.rawImage"
+            class="text-download"
+          >
+            {{ $t('dashboard.viewArt.download') }}
+          </a>
+        </div>
+
+        <algo-button
+          color="primary"
+          class="q-ma-xs btn-btnCreatepainter"
+          :label="$t('dashboard.viewArt.btnCreatepainter')"
+          @click="OpenModalArtist()"
+        />
+      </div>
+      <div class="col-xs-1 col-sm-1 col-md-1">
+        <!--
             <LikeAnimation
               :liked="wasLiked"
               :likes="likes"
               @favoriteClicked="favoriteClicked"
             />
             -->
-            <ShareArtIcons
-              :art="image.nft.image"
-              :_id="image._id"
-            />
-          </div>
-        </div>
-
-        <algo-button
-          color="primary"
-          class="btn-new-painting full-width"
-          :label="$t('dashboard.viewArt.btnCreatepainter')"
-          @click="OpenModalArtist()"
+        <ShareArtIcons
+          :art="image.nft.image"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="col-xs-12 col-sm-6 col-md-4 q-ma-sm">
         <div class="column items-center">
           <div class="col">
-            <p class="text-bold text-h5">
+            <p class="text-bold text-h5 q-mb-sm">
               {{ $t('dashboard.viewArt.details') }}
             </p>
             <span class="text-bold text-primary text-h6">
@@ -273,7 +273,16 @@ export default class ViewArt extends Vue {
 
 </script>
 <style scoped>
-.btn-size {
+.q-page-container{
+  padding: 10px;
+}
+.text-download {
+  color:#F4538D;
+  text-align:center;
+  margin-top: 7px;
+}
+
+.btn-newPainting {
   width: 100px;
   height: 44px;
 }
@@ -283,18 +292,27 @@ export default class ViewArt extends Vue {
   border: 1px solid rgb(185, 185, 185);
 }
 .img{
-  width: 80%;
+  width: 100%;
   border-radius:5%
 }
-.btn-new-painting{
+.btn-btnCreatepainter{
   display: flex;
   margin: auto;
   margin-top: 10px
 }
-@media (max-width: 420px) {
+
+@media (max-width: 450px) {
 .img{
-  width: 60%;
-  margin-left: 50px;
+  width: 80vw;
+}
+
+.btn-newPainting {
+  width: 80vw;
+  height: 39px;
+}
+.btn-btnCreatepainter {
+  width: 80vw;
+  height: 39px;
 }
 }
 </style>

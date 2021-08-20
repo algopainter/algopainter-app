@@ -49,12 +49,12 @@
           />
         </div>
         <div class="responsive-input row ">
-          <!-- <q-input
+          <q-input
             v-model="formFields.customProfile"
             class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
             prefix="algopainter.art/"
-          /> -->
+          />
           <q-input
             v-model="formFields.webSite"
             class="input col-sm-12 col-md-6 q-pr-md"
@@ -160,20 +160,8 @@ import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
 import { isError, resizeImage } from 'src/helpers/utils';
+import { IProfile } from 'src/models/IProfile';
 
-interface IProfile {
-  name?: string;
-  email?: string;
-  customProfile?: string;
-  avatar?: string;
-  webSite? : string;
-  bio?: string;
-  facebook?: string;
-  instagram?: string;
-  twitter?: string;
-  telegram?: string;
-  gmail?: string;
-}
 @Options({
   components: {
     AlgoButton,
@@ -182,7 +170,7 @@ interface IProfile {
 })
 export default class EditProfile extends Vue {
   formFields: IProfile = {
-    customProfile: ' ',
+    customProfile: '',
     avatar: '/images/do-utilizador (1).png',
   };
 
@@ -235,11 +223,22 @@ export default class EditProfile extends Vue {
       const result = await api.get(`users/${this.account}`);
       this.formFields = result.data as IProfile;
     } catch (e) {
-      Notify.create({
-        message: 'An error has occurred while getting user information',
-        color: 'red',
-        icon: 'mdi-alert',
-      });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log(e.response.data);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (e.response.data.type === 404) {
+        Notify.create({
+          message: "You don't have a profile recorded",
+          color: 'orange',
+          icon: 'mdi-alert',
+        });
+      } else {
+        Notify.create({
+          message: 'An error has occurred while getting user information',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+      }
     } finally {
       this.isLoading = false;
     }
@@ -248,6 +247,12 @@ export default class EditProfile extends Vue {
   async saveChanges() {
     try {
       this.isLoading = true;
+      if (!this.formFields.email) {
+        this.formFields.email = undefined;
+      }
+      if (!this.formFields.customProfile) {
+        this.formFields.customProfile = undefined;
+      }
       const data = {
         ...this.formFields,
         salt: nanoid(),
@@ -277,7 +282,8 @@ export default class EditProfile extends Vue {
       });
     } catch (e) {
       // console.log(Object.entries(e));
-      // console.log(e.response.data.type);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log(e.response.data.type);
       // buno@gmail.com
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 409) {
@@ -287,6 +293,7 @@ export default class EditProfile extends Vue {
           color: 'red',
           icon: 'mdi-alert',
         });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       } else {
         Notify.create({
           message: 'An error has occurred while updating profile',

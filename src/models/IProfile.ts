@@ -4,7 +4,7 @@ export interface IProfile {
   avatar?: string;
   name?: string;
   nick?: string;
-  email?: string;
+  email?: string | null;
   bio?: string;
   customProfile?: string;
   webSite? : string | null;

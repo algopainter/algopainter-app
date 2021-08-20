@@ -165,7 +165,7 @@ export default class ProfileDropdownButton extends Vue {
   font-weight: 700;
   text-align: center;
   white-space: nowrap;
-  width: 85px;
+  width: 105px;
   overflow: hidden;
   text-overflow: ellipsis;
 }

@@ -235,11 +235,22 @@ export default class EditProfile extends Vue {
       const result = await api.get(`users/${this.account}`);
       this.formFields = result.data as IProfile;
     } catch (e) {
-      Notify.create({
-        message: 'An error has occurred while getting user information',
-        color: 'red',
-        icon: 'mdi-alert',
-      });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log(e.response.data);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (e.response.data.type === 404) {
+        Notify.create({
+          message: "You don't have a profile recorded",
+          color: 'orange',
+          icon: 'mdi-alert',
+        });
+      } else {
+        Notify.create({
+          message: 'An error has occurred while getting user information',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+      }
     } finally {
       this.isLoading = false;
     }
@@ -277,7 +288,8 @@ export default class EditProfile extends Vue {
       });
     } catch (e) {
       // console.log(Object.entries(e));
-      // console.log(e.response.data.type);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log(e.response.data.type);
       // buno@gmail.com
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 409) {
@@ -287,6 +299,7 @@ export default class EditProfile extends Vue {
           color: 'red',
           icon: 'mdi-alert',
         });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       } else {
         Notify.create({
           message: 'An error has occurred while updating profile',

@@ -49,12 +49,12 @@
           />
         </div>
         <div class="responsive-input row ">
-          <!-- <q-input
+          <q-input
             v-model="formFields.customProfile"
             class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
             prefix="algopainter.art/"
-          /> -->
+          />
           <q-input
             v-model="formFields.webSite"
             class="input col-sm-12 col-md-6 q-pr-md"
@@ -160,20 +160,8 @@ import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
 import { isError, resizeImage } from 'src/helpers/utils';
+import { IProfile } from 'src/models/IProfile';
 
-interface IProfile {
-  name?: string;
-  email?: string;
-  customProfile?: string;
-  avatar?: string;
-  webSite? : string;
-  bio?: string;
-  facebook?: string;
-  instagram?: string;
-  twitter?: string;
-  telegram?: string;
-  gmail?: string;
-}
 @Options({
   components: {
     AlgoButton,
@@ -182,7 +170,7 @@ interface IProfile {
 })
 export default class EditProfile extends Vue {
   formFields: IProfile = {
-    customProfile: ' ',
+    customProfile: '',
     avatar: '/images/do-utilizador (1).png',
   };
 
@@ -259,6 +247,12 @@ export default class EditProfile extends Vue {
   async saveChanges() {
     try {
       this.isLoading = true;
+      if (!this.formFields.email) {
+        this.formFields.email = undefined;
+      }
+      if (!this.formFields.customProfile) {
+        this.formFields.customProfile = undefined;
+      }
       const data = {
         ...this.formFields,
         salt: nanoid(),

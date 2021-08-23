@@ -242,6 +242,16 @@ export default class EditProfile extends Vue {
   }
 
   async saveChanges() {
+    const allowed: any = /[^a-zA-Z0-9-]/g;
+    const notAllowed = allowed.test(this.formFields.customProfile);
+    if (notAllowed) {
+      Notify.create({
+        message: 'Custom URLs may only contain "A-Z", "0-9" and "-"',
+        color: 'red',
+        icon: 'mdi-alert',
+      });
+      return;
+    }
     try {
       this.isLoading = true;
       if (!this.formFields.email) {

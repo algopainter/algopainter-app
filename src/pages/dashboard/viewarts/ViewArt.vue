@@ -34,6 +34,13 @@
           >
             {{ $t('dashboard.viewArt.download') }}
           </a>
+          <q-select
+            v-model="choiseBackground"
+            :options="backgroundImage"
+            :label="$t('dashboard.viewArt.choiseBackground')"
+            color="primary"
+            dense
+          />
         </div>
 
         <algo-button
@@ -127,6 +134,8 @@ export default class ViewArt extends Vue {
   loading: boolean = true;
   openModal: boolean = false;
   selectAccount: string = '';
+  options: string = 'None';
+  choiseBackground: string = '';
 
   OpenModalArtist() {
     this.openModal = true;
@@ -173,6 +182,59 @@ export default class ViewArt extends Vue {
     owner: '',
     creator: '',
   };
+
+  backgroundImage = [
+    {
+      value: '0',
+      label: 'None',
+      img: '',
+      // 'https://gwei.algopainter.art/
+      // ?width=714&amp;
+      // height=714&amp;
+      // text={image.title}&amp;
+      // inspiration=1&amp;
+      // useRandom=false&amp;
+      // probability=0.5&amp;
+      // wallType={{backgroundImage.value}}&amp;
+      // overlay=4&amp;
+      // overlayOpacity=10&quot;)',
+    },
+    {
+      value: '1',
+      label: 'Wall',
+      img: '',
+    },
+    {
+      value: '2',
+      label: 'Big Wall',
+      img: '',
+    },
+    {
+      value: '3',
+      label: 'Room',
+      img: '',
+    },
+    {
+      value: '4',
+      label: 'Bedroom',
+      img: '',
+    },
+    {
+      value: '5',
+      label: 'High-Tech Gallery',
+      img: '',
+    },
+    {
+      value: '6',
+      label: 'Open Gallery',
+      img: '',
+    },
+    {
+      value: '7',
+      label: 'PsyVerse',
+      img: '',
+    },
+  ]
 
   collectionArtController: CollectionArtController = new CollectionArtController();
 

@@ -8,7 +8,7 @@ function state(): UserStateInterface {
     networkInfo: undefined,
     profile: [],
     userAccount: undefined,
-    userProfile: [],
+    userProfile: undefined,
   };
 }
 

@@ -117,6 +117,20 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       const user = res.data as [];
       this.commit('user/SET_USER_PROFILE', user);
     } catch (e) {
+      this.commit('user/SET_USER_PROFILE', undefined);
+      console.log('error message - getUserProfile');
+    }
+  },
+  async getAccountBasedOnCustomUrl(type, value) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const customUrl = value.customUrl as string;
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const res = await api.get(`users/${customUrl}/account`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const userAccount = res.data.account as [];
+      this.commit('user/SET_USER_ACCOUNT', userAccount);
+    } catch (e) {
       console.log('error message - getUserProfile');
     }
   },

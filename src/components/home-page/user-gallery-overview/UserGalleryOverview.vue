@@ -135,7 +135,7 @@ export default class UserGalleryOverview extends Vue {
   async getGalleryBidders() {
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`bids?bidder=${this.$route.query.customProfile}`);
+      const response = await api.get(`bids?bidder=${this.$route.params.account}`);
       this.galleryBid = response.data as [];
       if (this.galleryBid.length !== 0) {
         this.galleryBidClosed = [
@@ -156,7 +156,7 @@ export default class UserGalleryOverview extends Vue {
   async getGalleryArts() {
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.query.customProfile}/images?order.nft.index=-1`); // 0xddbc5f514f729d47a51030f049a956c5086b20af
+      const response = await api.get(`users/${this.$route.params.account}/images?order.nft.index=-1`); // 0xddbc5f514f729d47a51030f049a956c5086b20af
       this.galleryArts = response.data as [];
       if (this.galleryArts.length === 0) {
         this.nullGalleryArts = true;

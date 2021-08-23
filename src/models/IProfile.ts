@@ -5,7 +5,6 @@ export interface IProfile {
   customProfile?: string;
   createdAt?: string;
   avatar?: string;
-=======
   name?: string;
   nick?: string;
   email?: string | null;

@@ -9,7 +9,6 @@ export interface IProfile {
   nick?: string;
   email?: string | null;
   bio?: string;
-  name?: string;
   type?: string;
   instagram?: string | null;
   twitter?: string | null;

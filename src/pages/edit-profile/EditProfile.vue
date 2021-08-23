@@ -288,6 +288,14 @@ export default class EditProfile extends Vue {
           icon: 'mdi-alert',
         });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      } else if (e.response.data.code === 392) {
+        Notify.create({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          message: e.response.data.message as string,
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       } else {
         Notify.create({
           message: 'An error has occurred while updating profile',

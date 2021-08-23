@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 <template>
   <q-form
     @submit="onSubmit"
@@ -242,8 +241,9 @@ export default class EditProfile extends Vue {
   }
 
   async saveChanges() {
-    const allowed: any = /[^a-zA-Z0-9-]/g;
-    const notAllowed = allowed.test(this.formFields.customProfile);
+    const allowed: RegExp = /[^a-zA-Z0-9-]/g;
+    const customProfile: string | any = this.formFields.customProfile;
+    const notAllowed = allowed.test(customProfile);
     if (notAllowed) {
       Notify.create({
         message: 'Custom URLs may only contain "A-Z", "0-9" and "-"',

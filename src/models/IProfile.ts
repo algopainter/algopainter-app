@@ -2,7 +2,7 @@ export interface IProfile {
   _id?: string;
   account?: string;
   updatedAt?: string;
-  customProfile?: string;
+  customProfile?: string | undefined;
   createdAt?: string;
   avatar?: string;
   name?: string;

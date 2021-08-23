@@ -128,9 +128,9 @@ export default {
   editProfile: {
     title: 'Edit Profile',
     name: 'Name:',
-    email: 'Email: (public information for contact you)',
+    email: 'Email (public information to contact you):',
     custom: 'Custom URL',
-    webSite: 'Website ou portifolio',
+    webSite: 'Website or portfolio:',
     bio: 'Bio:',
     chooseFile: 'Choose File',
     sMedia: 'Social media',
@@ -152,5 +152,6 @@ export default {
     owner: 'Owner',
     description: 'Description',
     btnCreatepainter: ' I want to create a painting like that!',
+    download: 'Download the raw painting',
   },
 };

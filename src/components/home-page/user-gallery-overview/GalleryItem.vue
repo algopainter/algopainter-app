@@ -8,7 +8,7 @@
         :key="index"
         class="users"
       >
-        <router-link :to="{path: 'user-gallery', query: { customProfile: person.account }}">
+        <router-link :to="{name: 'customUrl', params: { customUrl: person.customProfile || person.account } }">
           <q-avatar
             size="lg"
             class="q-mr-xm"

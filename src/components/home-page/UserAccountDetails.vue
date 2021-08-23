@@ -6,7 +6,7 @@
         <div class="user-info flex column q-col-gutter-lg">
           <div class="picture">
             <q-img
-              v-if="userProfile.avatar != null"
+              v-if="userProfile.avatar"
               :src="userProfile.avatar"
               class="picture-content"
             />
@@ -108,18 +108,25 @@ export default class UserAccountDetails extends Vue {
   }
 
   getUserProfile() {
-    const route = this.$route.query.customProfile;
+    this.loadingUserProfile = true;
+    const route = this.$route.params.account;
     void this.$store.dispatch({
       type: 'user/getUserProfile',
       account: route,
     }).then(() => {
       this.loadingUserProfile = false;
-      this.userProfile = this.$store.state.user.userProfile;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const userProfile = this.$store.getters['user/GET_USER_PROFILE'] as [];
+      if (userProfile === undefined) {
+        this.userProfile = [];
+      } else {
+        this.userProfile = userProfile;
+      }
     });
   }
 
   getUserItems() {
-    const route = this.$route.query.customProfile;
+    const route = this.$route.params.account;
     void this.$store.dispatch({
       type: 'collections/getUserItems',
       account: route,

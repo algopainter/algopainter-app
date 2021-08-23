@@ -1,4 +1,3 @@
-
 export interface NetworkInfo {
   id: number;
   type: string;
@@ -72,7 +71,7 @@ export interface UserStateInterface {
   networkInfo?: NetworkInfo;
   profile: [];
   userAccount?: string;
-  userProfile: [];
+  userProfile?: [];
 }
 
 export interface IWeb3Provider {

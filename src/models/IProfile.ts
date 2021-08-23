@@ -1,16 +1,18 @@
 export interface IProfile {
   _id?: string;
   account?: string;
-  avatar?: string;
-  name?: string;
-  nick?: string;
-  email?: string;
-  bio?: string;
+  updatedAt?: string;
   customProfile?: string;
-  webSite? : string | null;
-  facebook?: string | null;
+  createdAt?: string;
+  avatar?: string;
+  bio?: string;
+  name?: string;
+  type?: string;
   instagram?: string | null;
   twitter?: string | null;
-  telegram?: string | null;
+  _v?: number;
+  facebook?: string | null;
   gmail?: string | null;
+  telegram?: string | null;
+  webSite? : string | null;
 }

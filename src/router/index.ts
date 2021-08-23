@@ -17,7 +17,7 @@ import routes from './routes';
  * with the Router instance.
  */
 
-export default route<StateInterface>(function(/* { store, ssrContext } */) {
+export default route<StateInterface>(function({ store }) {
   const createHistory =
     process.env.SERVER
       ? createMemoryHistory
@@ -36,6 +36,11 @@ export default route<StateInterface>(function(/* { store, ssrContext } */) {
       process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE,
     ),
   });
+
+  /*
+  Router.beforeEach((to, from, next) => {
+  });
+  */
 
   return Router;
 });

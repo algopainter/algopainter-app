@@ -49,14 +49,12 @@
           />
         </div>
         <div class="responsive-input row ">
-          <!--
           <q-input
             v-model="formFields.customProfile"
             class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
-            prefix="algopainter.art/"
+            prefix="algopainter.art/user/"
           />
-          -->
           <q-input
             v-model="formFields.webSite"
             class="input col-sm-12 col-md-6 q-pr-md"
@@ -172,7 +170,6 @@ import { IProfile } from 'src/models/IProfile';
 })
 export default class EditProfile extends Vue {
   formFields: IProfile = {
-    customProfile: '',
     avatar: '/images/do-utilizador (1).png',
   };
 
@@ -225,8 +222,6 @@ export default class EditProfile extends Vue {
       const result = await api.get(`users/${this.account}`);
       this.formFields = result.data as IProfile;
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      console.log(e.response.data);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 404) {
         Notify.create({
@@ -284,9 +279,6 @@ export default class EditProfile extends Vue {
       });
     } catch (e) {
       // console.log(Object.entries(e));
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      console.log(e.response.data.type);
-      // buno@gmail.com
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 409) {
         Notify.create({

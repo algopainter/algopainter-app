@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { RouteRecordRaw } from 'vue-router';
-
 import { i18n } from 'boot/i18n';
+import { myStore } from 'src/store';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -8,8 +9,37 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
+        name: 'homepage',
         path: '',
         component: () => import('pages/dashboard/HomePage.vue'),
+      },
+      {
+        name: 'customUrl',
+        path: 'user/:customUrl',
+        component: () => import('src/pages/dashboard/user-gallery/UserGallery.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.homePage.publicTitle'),
+        },
+        beforeEnter: (to, from, next) => {
+          if (to.params.customUrl.slice(0, 2) === '0x') { // In case the profile clicked does not have an customized url
+            to.params.account = to.params.customUrl;
+            next();
+          } else { // In case the user typed the customUrl or right cliked an avatar
+            void myStore.dispatch({
+              type: 'user/getAccountBasedOnCustomUrl',
+              customUrl: to.params.customUrl,
+            }).then(() => {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              const userAccount: string = myStore.getters['user/GET_USER_ACCOUNT'];
+              if (userAccount) {
+                to.params.account = userAccount;
+                next();
+              } else {
+                next({ name: '404' });
+              }
+            });
+          }
+        },
       },
       {
         path: 'auctions',
@@ -50,6 +80,7 @@ const routes: RouteRecordRaw[] = [
           title: i18n.global.t('dashboard.homePage.title'),
         },
       },
+      /*
       {
         path: 'user-gallery',
         component: () => import('src/pages/dashboard/user-gallery/UserGallery.vue'),
@@ -57,6 +88,7 @@ const routes: RouteRecordRaw[] = [
           title: i18n.global.t('dashboard.homePage.publicTitle'),
         },
       },
+      */
       {
         path: 'sell-your-art',
         component: () => import('pages/dashboard/sellyourart/SellYourArt.vue'),
@@ -84,8 +116,12 @@ const routes: RouteRecordRaw[] = [
   // Always leave this as last one,
   // but you can also remove it
   {
+    name: '404',
     path: '/:catchAll(.*)*',
     component: () => import('pages/Error404.vue'),
+    /*
+    beforeEnter: (to, from, next) => {
+    */
   },
 ];
 

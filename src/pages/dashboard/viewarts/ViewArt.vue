@@ -41,6 +41,7 @@
             {{ $t('dashboard.viewArt.download') }}
           </a>
           <q-select
+            v-if="image.collectionName === 'Gwei'"
             v-model="chooseBackground"
             :options="backgroundImage"
             :label="$t('dashboard.viewArt.chooseBackground')"

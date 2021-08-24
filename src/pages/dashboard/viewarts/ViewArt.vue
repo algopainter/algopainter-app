@@ -1,12 +1,33 @@
 <template>
   <div v-if="loading === false">
     <div class="row justify-between">
-      <div
-        class="col-lg-6 col-md-6"
-      >
-        <p class="text-bold text-h5">
-          {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
-        </p>
+      <div class="row justify-between conteiner-text-share">
+        <div
+          class="text-img"
+        >
+          <p class="text-bold text-h5">
+            {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
+          </p>
+          <q-tooltip
+            class="bg-primary"
+          >
+            {{ image.title }}
+          </q-tooltip>
+        </div>
+
+        <div class="">
+          <!--
+            <LikeAnimation
+              :liked="wasLiked"
+              :likes="likes"
+              @favoriteClicked="favoriteClicked"
+            />
+            -->
+          <ShareArtIcons
+            :art="image.nft.image"
+            :_id="image._id"
+          />
+        </div>
       </div>
       <div>
         <algo-button
@@ -19,7 +40,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-11 col-sm-5 col-md-5">
+      <div class="col-xs-11 col-sm-5 col-md-6">
         <div class="row justify-center">
           <q-img
             class="img"
@@ -50,19 +71,7 @@
           @click="OpenModalArtist()"
         />
       </div>
-      <div class="col-xs-1 col-sm-1 col-md-1">
-        <!--
-            <LikeAnimation
-              :liked="wasLiked"
-              :likes="likes"
-              @favoriteClicked="favoriteClicked"
-            />
-            -->
-        <ShareArtIcons
-          :art="image.nft.image"
-        />
-      </div>
-      <div class="col-xs-12 col-sm-6 col-md-4 q-ma-sm">
+      <div class="col-xs-12 col-sm-6 col-md-4 q-ma-lg">
         <div class="column items-center">
           <div class="col">
             <p class="text-bold text-h5 q-mb-sm">
@@ -357,12 +366,20 @@ export default class ViewArt extends Vue {
   width: 100%;
   border-radius:5%
 }
+.text-img{
+  width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .btn-btnCreatepainter{
   display: flex;
   margin: auto;
   margin-top: 10px
 }
-
+.conteiner-text-share{
+  width: 50%;
+}
 @media (max-width: 450px) {
 .img{
   width: 80vw;
@@ -375,6 +392,15 @@ export default class ViewArt extends Vue {
 .btn-btnCreatepainter {
   width: 80vw;
   height: 39px;
+}
+.conteiner-text-share{
+  width: 100%;
+}
+.text-img{
+  width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 }
 </style>

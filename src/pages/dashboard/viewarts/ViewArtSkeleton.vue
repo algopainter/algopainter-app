@@ -1,13 +1,31 @@
 <template>
   <div>
     <div class="row justify-between">
-      <div
-        class="col-lg-6 col-md-6"
-      >
-        <q-skeleton
-          type="text"
-          width="280px"
-        />
+      <div class="row justify-between conteiner-text-share-shele">
+        <div
+          class=""
+        >
+          <q-skeleton
+            type="text"
+            width="280px"
+          />
+        </div>
+        <div class="">
+          <!--
+            <q-icon
+              name="favorite_border"
+              color="grey-4"
+              class="q-mr-sm q-mt-md"
+              size="30px"
+            />
+            -->
+          <q-icon
+            name="more_horiz"
+            color="grey-4"
+            class=""
+            size="30px"
+          />
+        </div>
       </div>
       <div>
         <div class="row">
@@ -42,22 +60,6 @@
             width="50%"
           />
         </div>
-      </div>
-      <div class="col-xs-1 col-sm-1 col-md-1">
-        <!--
-            <q-icon
-              name="favorite_border"
-              color="grey-4"
-              class="q-mr-sm q-mt-md"
-              size="30px"
-            />
-            -->
-        <q-icon
-          name="more_horiz"
-          color="grey-4"
-          class="q-mr-sm q-mt-md"
-          size="30px"
-        />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-4 margin">
         <div class="column items-center">
@@ -131,6 +133,9 @@ export default class ViewArtSkeleton extends Vue {
   margin: auto;
   margin-top: 10px
 }
+.conteiner-text-share-shele{
+  width: 50%;
+}
 
 @media (max-width: 450px) {
 .img{
@@ -144,6 +149,9 @@ export default class ViewArtSkeleton extends Vue {
 .btn-btnCreatepainter {
   width: 80vw;
   height: 39px;
+}
+.conteiner-text-share-shele{
+  width: 100%;
 }
 }
 </style>

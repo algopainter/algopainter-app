@@ -6,6 +6,7 @@
           <q-skeleton
             type="text"
             width="280px"
+            height="80px"
           />
         </div>
         <div>
@@ -26,9 +27,9 @@
         </div>
       </div>
       <div>
-        <div class="row">
+        <div class="column items-end">
           <q-skeleton
-            class="q-ma-xs btn-newPainting"
+            class="q-mx-md q-my-sm btn-newPainting"
             type="QBtn"
           />
         </div>

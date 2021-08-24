@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-11 col-sm-5 col-md-6">
+      <div class="col-xs-12 col-sm-6 col-md-6">
         <div class="row justify-center">
           <q-img
             class="img"
@@ -71,8 +71,8 @@
           @click="OpenModalArtist()"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-4 q-ma-lg">
-        <div class="column items-center">
+      <div class="col-xs-12 col-sm-5 col-md-5 q-ma-lg">
+        <div class="column items-right">
           <div class="col">
             <p class="text-bold text-h5 q-mb-sm">
               {{ $t('dashboard.viewArt.details') }}
@@ -143,12 +143,11 @@ export default class ViewArt extends Vue {
   loading: boolean = true;
   openModal: boolean = false;
   selectAccount: string = '';
-  options: string = 'None';
+  options: string = '';
   choiseBackground: string = '';
 
   OpenModalArtist() {
     this.openModal = true;
-    console.log('CollectiblesGallery');
   }
 
   user = {
@@ -196,52 +195,34 @@ export default class ViewArt extends Vue {
     {
       value: '0',
       label: 'None',
-      img: '',
-      // 'https://gwei.algopainter.art/
-      // ?width=714&amp;
-      // height=714&amp;
-      // text={image.title}&amp;
-      // inspiration=1&amp;
-      // useRandom=false&amp;
-      // probability=0.5&amp;
-      // wallType={{backgroundImage.value}}&amp;
-      // overlay=4&amp;
-      // overlayOpacity=10&quot;)',
     },
     {
       value: '1',
       label: 'Wall',
-      img: '',
     },
     {
       value: '2',
       label: 'Big Wall',
-      img: '',
     },
     {
       value: '3',
       label: 'Room',
-      img: '',
     },
     {
       value: '4',
       label: 'Bedroom',
-      img: '',
     },
     {
       value: '5',
       label: 'High-Tech Gallery',
-      img: '',
     },
     {
       value: '6',
       label: 'Open Gallery',
-      img: '',
     },
     {
       value: '7',
       label: 'PsyVerse',
-      img: '',
     },
   ]
 
@@ -347,6 +328,7 @@ export default class ViewArt extends Vue {
 .q-page-container{
   padding: 10px;
 }
+
 .text-download {
   color:#F4538D;
   text-align:center;
@@ -362,24 +344,28 @@ export default class ViewArt extends Vue {
   color: rgb(185, 185, 185);
   border: 1px solid rgb(185, 185, 185);
 }
+
 .img{
-  width: 100%;
-  border-radius:5%
+  width: 100vw;
 }
+
 .text-img{
   width: 500px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .btn-btnCreatepainter{
   display: flex;
   margin: auto;
   margin-top: 10px
 }
+
 .conteiner-text-share{
   width: 50%;
 }
+
 @media (max-width: 450px) {
 .img{
   width: 80vw;
@@ -389,13 +375,16 @@ export default class ViewArt extends Vue {
   width: 80vw;
   height: 39px;
 }
+
 .btn-btnCreatepainter {
   width: 80vw;
   height: 39px;
 }
+
 .conteiner-text-share{
   width: 100%;
 }
+
 .text-img{
   width: 80%;
   white-space: nowrap;

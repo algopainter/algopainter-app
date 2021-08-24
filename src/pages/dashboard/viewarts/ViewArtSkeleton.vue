@@ -126,7 +126,6 @@ export default class ViewArtSkeleton extends Vue {
 .img{
   width: 105vw;
   height: 55vh;
-  border-radius:5%
 }
 .btn-btnCreatepainter{
   display: flex;

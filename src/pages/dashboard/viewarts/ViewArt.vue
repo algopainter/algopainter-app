@@ -1,11 +1,11 @@
 <template>
   <div v-if="loading === false">
     <div class="row justify-between">
-      <div class="row justify-between conteiner-text-share">
+      <div class=" col-xs-12 col-sm-6 col-md-6 row justify-between conteiner-text-share">
         <div
           class="text-img"
         >
-          <p class="text-bold text-h5">
+          <p class="text-bold text-h5 name">
             {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
           </p>
           <q-tooltip
@@ -29,10 +29,10 @@
           />
         </div>
       </div>
-      <div>
+      <div class=" col-xs-12 col-sm-6 col-md-6 column items-end">
         <algo-button
           :label="$t('dashboard.gallery.newPainting')"
-          class="q-ma-xs btn-newPainting"
+          class="q-ma-md btn-newPainting"
           color="primary"
           @click="OpenModalArtist()"
         />
@@ -71,8 +71,8 @@
           @click="OpenModalArtist()"
         />
       </div>
-      <div class="col-xs-12 col-sm-5 col-md-5 q-ma-lg">
-        <div class="column items-right">
+      <div class="col-xs-12 col-sm-5 col-md-5 details">
+        <div>
           <div class="col">
             <p class="text-bold text-h5 q-mb-sm">
               {{ $t('dashboard.viewArt.details') }}
@@ -325,6 +325,21 @@ export default class ViewArt extends Vue {
 
 </script>
 <style scoped>
+.name {
+    font-weight: bold;
+    font-size: 1.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    width: 250px;
+}
+
+.details{
+  margin-left: 25px;
+  margin-top: -6px;
+}
+
 .q-page-container{
   padding: 10px;
 }
@@ -340,17 +355,12 @@ export default class ViewArt extends Vue {
   height: 44px;
 }
 
-.btn-grey {
-  color: rgb(185, 185, 185);
-  border: 1px solid rgb(185, 185, 185);
-}
-
 .img{
   width: 100vw;
 }
 
 .text-img{
-  width: 500px;
+  width: 340px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -371,9 +381,17 @@ export default class ViewArt extends Vue {
   width: 80vw;
 }
 
+.details{
+  margin-left: 0;
+  margin-top: 10px;
+}
+
 .btn-newPainting {
   width: 80vw;
   height: 39px;
+  margin-bottom: 15px;
+  margin-left: 3vw;
+  margin-top: 1px;
 }
 
 .btn-btnCreatepainter {

@@ -9,6 +9,7 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { configure } = require('quasar/wrappers');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = configure(function(ctx) {
   return {
@@ -82,6 +83,10 @@ module.exports = configure(function(ctx) {
       // https://github.com/neutrinojs/webpack-chain
       chainWebpack(/* chain */) {
         //
+      },
+
+      extendWebpack(cfg) {
+        cfg.plugins.push(new NodePolyfillPlugin());
       },
     },
 

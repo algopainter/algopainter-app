@@ -4,7 +4,7 @@ import { UserStateInterface, IWeb3Provider } from './types';
 import Web3 from 'web3';
 import { api } from 'src/boot/axios';
 // import { provider as Provider } from 'web3-core';
-// import WalletConnectProvider from '@walletconnect/web3-provider';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 
 enum WalletEnum {
   METAMASK = 'metamask',
@@ -33,6 +33,20 @@ const connectionFlows = {
       }
     });
   },
+
+  walletConnect: async(): Promise<IWeb3Provider> => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const provider: IWeb3Provider = new WalletConnectProvider({
+      rpc: {
+        56: 'https://bsc-dataseed.binance.org/',
+      },
+      chainId: 56,
+    }) as unknown as IWeb3Provider;
+
+    await provider.enable();
+
+    return provider;
+  },
 };
 
 const clear = (commit: Commit, error?: Error) => {
@@ -58,8 +72,8 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
         method: 'eth_requestAccounts',
       });
       const networkInfo = {
-        id: await web3.eth.net.getId(),
-        type: await web3.eth.net.getNetworkType(),
+        id: await window.web3.eth.net.getId(),
+        type: await window.web3.eth.net.getNetworkType(),
       };
       commit('setIsConnected', true);
       commit('setAccount', accounts[0]);
@@ -80,8 +94,8 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       clear(commit);
     });
 
-    const web3 = new window.Web3(provider);
-    window.web3 = web3; // replaces deprecated web3 object for a stable one from cdn
+    // replaces deprecated web3 object for a stable one from cdn
+    window.web3 = new Web3(provider as never);
 
     try {
       void commitUserData(commit);

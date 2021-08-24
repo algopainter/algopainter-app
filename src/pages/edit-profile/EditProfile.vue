@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 <template>
   <q-form
     @submit="onSubmit"
@@ -242,6 +241,17 @@ export default class EditProfile extends Vue {
   }
 
   async saveChanges() {
+    const allowed: RegExp = /[^a-zA-Z0-9-]/g;
+    const customProfile: string | any = this.formFields.customProfile;
+    const notAllowed = allowed.test(customProfile);
+    if (notAllowed) {
+      Notify.create({
+        message: 'Custom URLs may only contain "A-Z", "0-9" and "-"',
+        color: 'red',
+        icon: 'mdi-alert',
+      });
+      return;
+    }
     try {
       this.isLoading = true;
       if (!this.formFields.email) {
@@ -281,6 +291,14 @@ export default class EditProfile extends Vue {
       // console.log(Object.entries(e));
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 409) {
+        Notify.create({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          message: e.response.data.message as string,
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      } else if (e.response.data.code === 392) {
         Notify.create({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           message: e.response.data.message as string,

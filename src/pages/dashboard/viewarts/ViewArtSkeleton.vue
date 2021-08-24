@@ -32,9 +32,12 @@
             type="text"
             class="text-download"
           />
-
           <q-skeleton
-            class="btn-new-painting"
+            type="QSelect"
+            width="100%"
+          />
+          <q-skeleton
+            class="btn-btnCreatepainter"
             type="QBtn"
             width="50%"
           />
@@ -119,7 +122,7 @@ export default class ViewArtSkeleton extends Vue {
 }
 
 .img{
-  width: 100vw;
+  width: 105vw;
   height: 55vh;
   border-radius:5%
 }

@@ -1,17 +1,36 @@
 <template>
   <div v-if="loading === false">
     <div class="row justify-between">
-      <div
-        class="col-lg-6 col-md-6"
-      >
-        <p class="text-bold text-h5">
-          {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
-        </p>
+      <div class=" col-xs-12 col-sm-6 col-md-6 row justify-between conteiner-text-share">
+        <div>
+          <p class="text-bold text-h5 text-img">
+            {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
+          </p>
+          <q-tooltip
+            class="bg-primary"
+          >
+            {{ image.title }}
+          </q-tooltip>
+        </div>
+
+        <div class="">
+          <!--
+            <LikeAnimation
+              :liked="wasLiked"
+              :likes="likes"
+              @favoriteClicked="favoriteClicked"
+            />
+            -->
+          <ShareArtIcons
+            :art="image.nft.image"
+            :_id="image._id"
+          />
+        </div>
       </div>
-      <div>
+      <div class=" col-xs-12 col-sm-6 col-md-6 column items-end">
         <algo-button
           :label="$t('dashboard.gallery.newPainting')"
-          class="q-ma-xs btn-newPainting"
+          class="q-ma-md btn-newPainting"
           color="primary"
           @click="OpenModalArtist()"
         />
@@ -19,7 +38,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-11 col-sm-5 col-md-5">
+      <div class="col-xs-12 col-sm-6 col-md-6">
         <div class="row justify-center">
           <q-img
             v-if="backgroundChange === false"
@@ -57,20 +76,8 @@
           @click="OpenModalArtist()"
         />
       </div>
-      <div class="col-xs-1 col-sm-1 col-md-1">
-        <!--
-            <LikeAnimation
-              :liked="wasLiked"
-              :likes="likes"
-              @favoriteClicked="favoriteClicked"
-            />
-            -->
-        <ShareArtIcons
-          :art="image.nft.image"
-        />
-      </div>
-      <div class="col-xs-12 col-sm-6 col-md-4 q-ma-sm">
-        <div class="column items-center">
+      <div class="col-xs-12 col-sm-5 col-md-5 details">
+        <div>
           <div class="col">
             <p class="text-bold text-h5 q-mb-sm">
               {{ $t('dashboard.viewArt.details') }}
@@ -101,7 +108,7 @@
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
             </span>
-            <p> {{ image.description }}</p>
+            <p> {{ image.description }} </p>
           </div>
         </div>
       </div>
@@ -179,7 +186,7 @@ export default class ViewArt extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         let arrayValue: string | number = arrayValues[counter - 1];
         if (typeof (arrayValue) === 'string') {
-          arrayValue = arrayValue.split(' ').join('%20')
+          arrayValue = arrayValue.split(' ').join('%20');
         }
         if (counter !== arrayLength) {
           URL = URL.concat(`${parameter}=${arrayValue}&`);
@@ -368,9 +375,16 @@ export default class ViewArt extends Vue {
 
 </script>
 <style scoped>
+
+.details{
+  margin-left: 25px;
+  margin-top: -6px;
+}
+
 .q-page-container{
   padding: 10px;
 }
+
 .text-download {
   color:#F4538D;
   text-align:center;
@@ -382,18 +396,26 @@ export default class ViewArt extends Vue {
   height: 44px;
 }
 
-.btn-grey {
-  color: rgb(185, 185, 185);
-  border: 1px solid rgb(185, 185, 185);
-}
 .img{
-  width: 100%;
-  border-radius:5%
+  max-height: 650px;
+  max-width: 650px;
 }
+
+.text-img{
+  width: 350px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .btn-btnCreatepainter{
   display: flex;
   margin: auto;
   margin-top: 10px
+}
+
+.conteiner-text-share{
+  width: 50%;
 }
 
 @media (max-width: 450px) {
@@ -401,13 +423,33 @@ export default class ViewArt extends Vue {
   width: 80vw;
 }
 
+.details{
+  margin-left: 0;
+  margin-top: 10px;
+}
+
 .btn-newPainting {
   width: 80vw;
   height: 39px;
+  margin-bottom: 15px;
+  margin-left: 3vw;
+  margin-top: 1px;
 }
+
 .btn-btnCreatepainter {
   width: 80vw;
   height: 39px;
+}
+
+.conteiner-text-share{
+  width: 100%;
+}
+
+.text-img{
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 }
 </style>

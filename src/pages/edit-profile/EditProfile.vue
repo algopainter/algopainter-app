@@ -251,6 +251,16 @@ export default class EditProfile extends Vue {
         icon: 'mdi-alert',
       });
       return;
+    } else if (customProfile) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (customProfile[0] === '0' && customProfile[1] === 'x') {
+        Notify.create({
+          message: "Custom URLs may not start with '0x'",
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        return;
+      }
     }
     try {
       this.isLoading = true;

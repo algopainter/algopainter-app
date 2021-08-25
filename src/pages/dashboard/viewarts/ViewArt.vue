@@ -148,14 +148,14 @@ export default class ViewArt extends Vue {
   loading: boolean = true;
   openModal: boolean = false;
   selectAccount: string = '';
-  options: string = 'None';
-  chooseBackground: string = '';
+  options: string = '';
+  choiseBackground: string = '';
   backgroundChange: boolean = false;
   loadingImage: boolean = true;
   imageUrl: string = '';
 
-  mounted() {
-    void this.getDetailsData();
+  OpenModalArtist() {
+    this.openModal = true;
   }
 
   // preciso do id da imagem que ja foi fetched
@@ -196,10 +196,6 @@ export default class ViewArt extends Vue {
       }
     });
     this.imageUrl = URL;
-  }
-
-  OpenModalArtist() {
-    this.openModal = true;
   }
 
   collectionArtController: CollectionArtController = new CollectionArtController();

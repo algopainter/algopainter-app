@@ -153,9 +153,9 @@ export default class ViewArt extends Vue {
   backgroundChange: boolean = false;
   loadingImage: boolean = true;
   imageUrl: string = '';
+
   OpenModalArtist() {
     this.openModal = true;
-
   }
 
   // preciso do id da imagem que ja foi fetched
@@ -186,7 +186,7 @@ export default class ViewArt extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         let arrayValue: string | number = arrayValues[counter - 1];
         if (typeof (arrayValue) === 'string') {
-          arrayValue = arrayValue.split(' ').join('%20')
+          arrayValue = arrayValue.split(' ').join('%20');
         }
         if (counter !== arrayLength) {
           URL = URL.concat(`${parameter}=${arrayValue}&`);
@@ -197,41 +197,6 @@ export default class ViewArt extends Vue {
     });
     this.imageUrl = URL;
   }
-
-  backgroundImage = [
-    {
-      value: '0',
-      label: 'None',
-    },
-    {
-      value: '1',
-      label: 'Wall',
-    },
-    {
-      value: '2',
-      label: 'Big Wall',
-    },
-    {
-      value: '3',
-      label: 'Room',
-    },
-    {
-      value: '4',
-      label: 'Bedroom',
-    },
-    {
-      value: '5',
-      label: 'High-Tech Gallery',
-    },
-    {
-      value: '6',
-      label: 'Open Gallery',
-    },
-    {
-      value: '7',
-      label: 'PsyVerse',
-    },
-  ]
 
   collectionArtController: CollectionArtController = new CollectionArtController();
 

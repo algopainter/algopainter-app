@@ -68,9 +68,16 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
     const provider = await providerFlow();
 
     const commitUserData = async(commit: Commit) => {
-      const accounts = await provider.request({
-        method: 'eth_requestAccounts',
-      });
+      let accounts;
+
+      try {
+        accounts = await provider.request({
+          method: 'eth_requestAccounts',
+        });
+      } catch {
+        accounts = await window.web3.eth.getAccounts();
+      }
+
       const networkInfo = {
         id: await window.web3.eth.net.getId(),
         type: await window.web3.eth.net.getNetworkType(),

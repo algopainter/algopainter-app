@@ -2,10 +2,8 @@
   <div v-if="loading === false">
     <div class="row justify-between">
       <div class=" col-xs-12 col-sm-6 col-md-6 row justify-between conteiner-text-share">
-        <div
-          class="text-img"
-        >
-          <p class="text-bold text-h5 name">
+        <div>
+          <p class="text-bold text-h5 text-img">
             {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
           </p>
           <q-tooltip
@@ -325,15 +323,6 @@ export default class ViewArt extends Vue {
 
 </script>
 <style scoped>
-.name {
-    font-weight: bold;
-    font-size: 1.4rem;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    text-align: left;
-    width: 250px;
-}
 
 .details{
   margin-left: 25px;
@@ -356,7 +345,7 @@ export default class ViewArt extends Vue {
 }
 
 .img{
-  width: 100vw;
+  height: 50%;
 }
 
 .text-img{
@@ -404,7 +393,7 @@ export default class ViewArt extends Vue {
 }
 
 .text-img{
-  width: 80%;
+  width: 250px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

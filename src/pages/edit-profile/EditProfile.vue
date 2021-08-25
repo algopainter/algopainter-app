@@ -40,6 +40,7 @@
           <q-input
             v-model="formFields.name"
             :label="$t('dashboard.editProfile.name')"
+            :rules="[ val => val && val.length > 0 || 'field name is required']"
           />
           <q-input
             v-model="formFields.email"
@@ -290,13 +291,20 @@ export default class EditProfile extends Vue {
         account: userAccount,
         salt: data.salt,
       };
-
-      await api.put(`users/${userAccount}`, request);
-      Notify.create({
-        message: 'Profile updated sucessfully!',
-        color: 'green',
-        icon: 'mdi-check',
-      });
+      if (this.formFields.name === '' || this.formFields.name === ' ') {
+        Notify.create({
+          message: 'field name is required!',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+      } else {
+        await api.put(`users/${userAccount}`, request);
+        Notify.create({
+          message: 'Profile updated sucessfully!',
+          color: 'green',
+          icon: 'mdi-check',
+        });
+      }
     } catch (e) {
       // console.log(Object.entries(e));
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

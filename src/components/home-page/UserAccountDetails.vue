@@ -2,7 +2,7 @@
 <template>
   <div v-if="loadingUserProfile === false && loadingUserItems === false">
     <div class="row q-col-gutter-xl items-center">
-      <div class="col-12 col-sm-6 col-xl-6">
+      <div class="col-12 col-sm-7 col-xl-7">
         <div class="user-info flex column q-col-gutter-lg">
           <div class="picture">
             <q-img
@@ -18,28 +18,50 @@
           </div>
           <div class="user-details">
             <div
-              class="name text-primary text-bold text-h3"
+              class="text-account text-primary text-bold text-h3"
             >
               {{ userProfile.name }}
+              <q-tooltip
+                anchor="top middle"
+                self="top middle"
+                class="bg-primary"
+                :offset="[10, 10]"
+              >
+                {{ $t(userProfile.name) }}
+              </q-tooltip>
             </div>
-            <div class="details">
+            <div class="text-account details">
               {{ userProfile.email }}
+              <q-tooltip
+                anchor="top middle"
+                self="top middle"
+                class="bg-primary"
+                :offset="[10, 10]"
+              >
+                {{ $t(userProfile.email) }}
+              </q-tooltip>
             </div>
-            <div class="details text-grey-5">
+            <div class="text-account details text-grey-5">
               {{ userProfile.bio }}
+              <q-tooltip
+                anchor="top middle"
+                self="top middle"
+                class="bg-primary"
+                :offset="[10, 10]"
+              >
+                {{ $t(userProfile.bio) }}
+              </q-tooltip>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-xl-6">
-        <div class="row q-col-gutter-lg">
-          <div class="col-12 col-lg-6 text-primary text-center">
-            <div class="text-h3 text-bold">
-              {{ $t('dashboard.homePage.items') }}
-            </div>
-            <div class="text-h1 text-bold q-py-xl">
-              {{ userItems }}
-            </div>
+      <div class="col-12 col-sm-5 col-xl-5 justify-center">
+        <div class="col-12 col-lg-6 text-primary text-center">
+          <div class="text-h3 text-bold">
+            {{ $t('dashboard.homePage.items') }}
+          </div>
+          <div class="text-h1 text-bold q-py-xl">
+            {{ userItems }}
           </div>
         </div>
       </div>
@@ -189,5 +211,19 @@ export default class UserAccountDetails extends Vue {
    @media (max-width: $breakpoint-xs-max){
     width: 100%;
    }
+}
+
+.text-account {
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  max-width: 40vw;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>

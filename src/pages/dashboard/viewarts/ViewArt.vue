@@ -108,7 +108,7 @@
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
             </span>
-            <p> {{ image.description }}</p>
+            <p> {{ image.description }} </p>
           </div>
         </div>
       </div>

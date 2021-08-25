@@ -75,6 +75,7 @@ export interface UserStateInterface {
 }
 
 export interface IWeb3Provider {
+  enable: () => Promise<void>;
   on<K extends EventKeys>(event: K, eventHandler: EventHandler<K>): void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   request: (payload: any) => Promise<never>;

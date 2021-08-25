@@ -53,7 +53,7 @@
             v-model="formFields.customProfile"
             class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
-            prefix="algopainter.art/user/"
+            prefix="appv2.algopainter.art/user/"
           />
           <q-input
             v-model="formFields.webSite"
@@ -272,7 +272,7 @@ export default class EditProfile extends Vue {
       if (!this.formFields.customProfile) {
         this.formFields.customProfile = undefined;
       }
-      if (this.formFields.name === '') {
+      if (this.formFields.name === '' || this.formFields.name === undefined) {
         Notify.create({
           message: 'Field name required!',
           color: 'red',

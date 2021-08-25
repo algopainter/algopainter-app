@@ -349,7 +349,7 @@ export default class ViewArt extends Vue {
 }
 
 .text-img{
-  width: 340px;
+  width: 350px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -393,7 +393,7 @@ export default class ViewArt extends Vue {
 }
 
 .text-img{
-  width: 250px;
+  width: 200px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

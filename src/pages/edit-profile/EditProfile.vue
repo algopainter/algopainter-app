@@ -40,7 +40,7 @@
           <q-input
             v-model="formFields.name"
             :label="$t('dashboard.editProfile.name')"
-            :rules="[ val => val && val.length > 0 || 'field name is required']"
+            :rules="[ val => val && val.length > 0 || 'Field name required']"
           />
           <q-input
             v-model="formFields.email"
@@ -265,11 +265,20 @@ export default class EditProfile extends Vue {
     }
     try {
       this.isLoading = true;
+      this.formFields.name = this.formFields.name?.trim();
       if (!this.formFields.email) {
         this.formFields.email = undefined;
       }
       if (!this.formFields.customProfile) {
         this.formFields.customProfile = undefined;
+      }
+      if (this.formFields.name === '') {
+        Notify.create({
+          message: 'Field name required!',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        return;
       }
       const data = {
         ...this.formFields,
@@ -291,20 +300,13 @@ export default class EditProfile extends Vue {
         account: userAccount,
         salt: data.salt,
       };
-      if (this.formFields.name === '' || this.formFields.name === ' ') {
-        Notify.create({
-          message: 'field name is required!',
-          color: 'red',
-          icon: 'mdi-alert',
-        });
-      } else {
-        await api.put(`users/${userAccount}`, request);
-        Notify.create({
-          message: 'Profile updated sucessfully!',
-          color: 'green',
-          icon: 'mdi-check',
-        });
-      }
+
+      await api.put(`users/${userAccount}`, request);
+      Notify.create({
+        message: 'Profile updated sucessfully!',
+        color: 'green',
+        icon: 'mdi-check',
+      });
     } catch (e) {
       // console.log(Object.entries(e));
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

@@ -53,7 +53,6 @@ export default class ShareArtIcons extends Vue.with(Props) {
       Twitter: `http://twitter.com/share?text=${this.messageTwitter}&url=https://appv2.algopainter.art/collections/${this._id}&hashtags=AlgoPainter,ALGOP,NFTS`,
       Telegram: `https://telegram.me/share/?url=https://appv2.algopainter.art/collections/${this._id}%3F&text=${this.message}`,
     };
-    console.log(socialMedia);
     const linkElement = document.createElement('a');
     linkElement.href = (urlsShared[socialMedia]);
     window.open(linkElement.href, '_blank', 'width=550, height=555, top=100, left=190, scrollbars=no');

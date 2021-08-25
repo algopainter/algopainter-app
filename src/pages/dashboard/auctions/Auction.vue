@@ -263,7 +263,6 @@ export default class Auction extends Vue {
   mounted() {
     const route = this.$route.params.id;
     void this.getAuctionData(route);
-    console.log(route);
   }
 
   async getAuctionData(route: unknown) {

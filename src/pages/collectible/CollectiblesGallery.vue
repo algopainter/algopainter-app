@@ -29,7 +29,6 @@ export default class CollectiblesGallery extends Vue {
 
   OpenModalArtist() {
     this.openModal = true;
-    console.log('CollectiblesGallery');
   }
 }
 </script>

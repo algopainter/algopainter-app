@@ -11,19 +11,23 @@
         </div>
       </q-card-section>
       <q-card-section class="row q-col-gutter-xl q-pa-lg items-center">
-        <div class="flex justify-center col-6">
+        <div
+          class="flex justify-center col-6"
+          @click="connectToBlockchain('metamask')"
+        >
           <q-img
             class="wallet"
             src="/images/metamask.png"
-            @click="connectToMetaMask"
           />
           <div>{{ $t('dashboard.metaMask') }}</div>
         </div>
-        <div class="flex justify-center col-6">
+        <div
+          class="flex justify-center col-6"
+          @click="connectToBlockchain('walletConnect')"
+        >
           <q-img
             class="wallet"
             src="/images/walletconnect.png"
-            @click="connectToMetaMask"
           />
           <div>{{ $t('dashboard.walletConnect') }}</div>
         </div>
@@ -67,19 +71,18 @@ export default class ConnectYourWallet extends Vue.with(Props) {
     this.$emit('hide');
   }
 
-  connectToMetaMask() {
-    this.$store.dispatch('user/connectToWallet', 'metamask').then(
-      (value) => {
-        console.log('terminou de conectar');
-        if (this.pageToGoAfterConnected) {
-          void this.$router.push(this.pageToGoAfterConnected);
-        }
-        this.$emit('connected');
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
+  async connectToBlockchain(provider: string) {
+    try {
+      await this.$store.dispatch('user/connectToWallet', provider);
+
+      if (this.pageToGoAfterConnected) {
+        void this.$router.push(this.pageToGoAfterConnected);
+      }
+
+      this.$emit('connected');
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 </script>

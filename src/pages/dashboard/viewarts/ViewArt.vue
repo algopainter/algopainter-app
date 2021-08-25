@@ -41,8 +41,14 @@
       <div class="col-xs-12 col-sm-6 col-md-6">
         <div class="row justify-center">
           <q-img
+            v-if="backgroundChange === false"
             class="img"
-            :src="image.nft.image"
+            :src="imageUrl"
+          />
+          <q-img
+            v-else
+            class="img"
+            :src="imageUrl"
           />
         </div>
         <div class="text-download">
@@ -54,14 +60,15 @@
             {{ $t('dashboard.viewArt.download') }}
           </a>
           <q-select
-            v-model="choiseBackground"
+            v-if="image.collectionName === 'Gwei'"
+            v-model="chooseBackground"
             :options="backgroundImage"
-            :label="$t('dashboard.viewArt.choiseBackground')"
+            :label="$t('dashboard.viewArt.chooseBackground')"
             color="primary"
             dense
+            @update:model-value="changeBackground(chooseBackground.value)"
           />
         </div>
-
         <algo-button
           color="primary"
           class="q-ma-xs btn-btnCreatepainter"
@@ -141,88 +148,59 @@ export default class ViewArt extends Vue {
   loading: boolean = true;
   openModal: boolean = false;
   selectAccount: string = '';
-  options: string = '';
-  choiseBackground: string = '';
+  options: string = 'None';
+  chooseBackground: string = '';
+  backgroundChange: boolean = false;
+  loadingImage: boolean = true;
+  imageUrl: string = '';
+
+  mounted() {
+    void this.getDetailsData();
+  }
+
+  // preciso do id da imagem que ja foi fetched
+  // vou fazer um request para o api https://algopainter-api.netlify.app/api/images/611548094fb5ed1d60bafd0a
+  // Alterar os parâmetros da imagem para ficar igual
+
+  changeBackground(value: string) {
+    this.backgroundChange = true;
+    const parameters: Record<string, any> = this.image.nft.parameters;
+    const arrayKeys = Object.keys(parameters);
+    const arrayValues: any[] = Object.values(parameters);
+    const arrayLength = arrayKeys.length;
+    let URL = 'https://gwei.algopainter.art/?';
+    let counter = 0;
+    arrayKeys.forEach(parameter => {
+      counter++;
+      if (parameter !== 'amount' && parameter !== 'description') {
+        if (parameter === 'place') {
+          parameter = 'wallType';
+          if (counter !== arrayLength) {
+            URL = URL.concat(`${parameter}=${value}&`);
+            return;
+          } else {
+            URL = URL.concat(`${parameter}=${value}`);
+            return;
+          }
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        let arrayValue: string | number = arrayValues[counter - 1];
+        if (typeof (arrayValue) === 'string') {
+          arrayValue = arrayValue.split(' ').join('%20');
+        }
+        if (counter !== arrayLength) {
+          URL = URL.concat(`${parameter}=${arrayValue}&`);
+        } else {
+          URL = URL.concat(`${parameter}=${arrayValue}`);
+        }
+      }
+    });
+    this.imageUrl = URL;
+  }
 
   OpenModalArtist() {
     this.openModal = true;
   }
-
-  user = {
-    _id: '',
-    account: '',
-    updatedAt: '',
-    createdAt: '',
-    avatar: '',
-    bio: '',
-    name: '',
-    type: '',
-    __v: 0,
-    customProfile: '',
-    facebook: '',
-    email: '',
-    instagram: '',
-    telegram: '',
-    twitter: '',
-    webSite: '',
-    role: '',
-  };
-
-  image: IImage = {
-    _id: '',
-    title: '',
-    likes: 0,
-    likers: [''],
-    description: '',
-    tags: [''],
-    nft: {
-      _id: '',
-      image: '',
-      previewImage: '',
-      rawImage: '',
-      parameters: { name: 'fake' },
-    },
-    users: [this.user as IProfile],
-    collectionName: '',
-    collectionOwner: '',
-    owner: '',
-    creator: '',
-  };
-
-  backgroundImage = [
-    {
-      value: '0',
-      label: 'None',
-    },
-    {
-      value: '1',
-      label: 'Wall',
-    },
-    {
-      value: '2',
-      label: 'Big Wall',
-    },
-    {
-      value: '3',
-      label: 'Room',
-    },
-    {
-      value: '4',
-      label: 'Bedroom',
-    },
-    {
-      value: '5',
-      label: 'High-Tech Gallery',
-    },
-    {
-      value: '6',
-      label: 'Open Gallery',
-    },
-    {
-      value: '7',
-      label: 'PsyVerse',
-    },
-  ]
 
   collectionArtController: CollectionArtController = new CollectionArtController();
 
@@ -236,12 +214,9 @@ export default class ViewArt extends Vue {
     return this.$store.state.user.account as string;
   }
 
-  mounted() {
-    void this.getDetailsData();
-  }
-
   async getDetailsData() {
     try {
+      this.loading = true;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const data = await api.get(`images/${this.$route.params.id}`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -249,6 +224,7 @@ export default class ViewArt extends Vue {
       this.likes = this.image.likes;
       this.imageOwner = UserUtils.getUsersByRole(this.image.users as IImageUser[], 'owner')[0];
       this.loadWasLiked();
+      this.imageUrl = this.image.nft.image;
       this.loading = false;
     } catch (e) {
       console.log('e', e);
@@ -319,6 +295,82 @@ export default class ViewArt extends Vue {
   formatAccount() {
     return UserUtils.formatedAccount(this.imageOwner.account);
   }
+
+  user = {
+    _id: '',
+    account: '',
+    updatedAt: '',
+    createdAt: '',
+    avatar: '',
+    bio: '',
+    name: '',
+    type: '',
+    __v: 0,
+    customProfile: '',
+    facebook: '',
+    email: '',
+    instagram: '',
+    telegram: '',
+    twitter: '',
+    webSite: '',
+    role: '',
+  };
+
+  image: IImage = {
+    _id: '',
+    title: '',
+    likes: 0,
+    likers: [''],
+    description: '',
+    tags: [''],
+    nft: {
+      _id: '',
+      image: '',
+      previewImage: '',
+      rawImage: '',
+      parameters: { name: 'fake' },
+    },
+    users: [this.user as IProfile],
+    collectionName: '',
+    collectionOwner: '',
+    owner: '',
+    creator: '',
+  };
+
+  backgroundImage = [
+    {
+      value: '0',
+      label: 'None',
+    },
+    {
+      value: '1',
+      label: 'Wall',
+    },
+    {
+      value: '2',
+      label: 'Big Wall',
+    },
+    {
+      value: '6',
+      label: 'Room',
+    },
+    {
+      value: '3',
+      label: 'Bedroom',
+    },
+    {
+      value: '4',
+      label: 'High-Tech Gallery',
+    },
+    {
+      value: '5',
+      label: 'Open Gallery',
+    },
+    {
+      value: '7',
+      label: 'PsyVerse',
+    },
+  ]
 }
 
 </script>
@@ -345,7 +397,8 @@ export default class ViewArt extends Vue {
 }
 
 .img{
-  height: 50%;
+  max-height: 645px;
+  max-width: 645px;
 }
 
 .text-img{

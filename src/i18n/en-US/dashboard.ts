@@ -153,6 +153,6 @@ export default {
     description: 'Description',
     btnCreatepainter: ' I want to create a painting like that!',
     download: 'Download the raw painting',
-    choiseBackground: 'Do you want to see in other environment?',
+    chooseBackground: 'Do you want to see in other environment?',
   },
 };

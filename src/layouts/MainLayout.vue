@@ -93,13 +93,11 @@ export default class MainLayout extends Vue {
   }
 
   openDrawer() {
-    // console.log(this.leftDrawerOpen);
     this.leftDrawerOpen = true;
   }
 
   openModalArtist() {
     this.openModal = true;
-    console.log('rodando selectArtistModal');
   }
 
   get isConnected() {

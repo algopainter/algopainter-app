@@ -40,6 +40,7 @@
           <q-input
             v-model="formFields.name"
             :label="$t('dashboard.editProfile.name')"
+            :rules="[ val => val && val.length > 0 || 'Field name required']"
           />
           <q-input
             v-model="formFields.email"
@@ -52,7 +53,7 @@
             v-model="formFields.customProfile"
             class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
-            prefix="algopainter.art/user/"
+            prefix="appv2.algopainter.art/user/"
           />
           <q-input
             v-model="formFields.webSite"
@@ -251,14 +252,33 @@ export default class EditProfile extends Vue {
         icon: 'mdi-alert',
       });
       return;
+    } else if (customProfile) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (customProfile[0] === '0' && customProfile[1] === 'x') {
+        Notify.create({
+          message: "Custom URLs may not start with '0x'",
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        return;
+      }
     }
     try {
       this.isLoading = true;
+      this.formFields.name = this.formFields.name?.trim();
       if (!this.formFields.email) {
         this.formFields.email = undefined;
       }
       if (!this.formFields.customProfile) {
         this.formFields.customProfile = undefined;
+      }
+      if (this.formFields.name === '' || this.formFields.name === undefined) {
+        Notify.create({
+          message: 'Field name required!',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        return;
       }
       const data = {
         ...this.formFields,

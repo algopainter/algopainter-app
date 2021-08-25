@@ -1,25 +1,42 @@
 <template>
   <div>
     <div class="row justify-between">
-      <div
-        class="col-lg-6 col-md-6"
-      >
-        <q-skeleton
-          type="text"
-          width="280px"
-        />
+      <div class="row justify-between conteiner-text-share-shele">
+        <div class="row justify-between">
+          <q-skeleton
+            type="text"
+            width="280px"
+            height="80px"
+          />
+        </div>
+        <div>
+          <!--
+            <q-icon
+              name="favorite_border"
+              color="grey-4"
+              class="q-mr-sm q-mt-md"
+              size="30px"
+            />
+            -->
+          <q-icon
+            name="more_horiz"
+            color="grey-4"
+            class=""
+            size="30px"
+          />
+        </div>
       </div>
       <div>
-        <div class="row">
+        <div class="column items-end">
           <q-skeleton
-            class="q-ma-xs btn-newPainting"
+            class="q-mx-md q-my-sm btn-newPainting"
             type="QBtn"
           />
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-11 col-sm-5 col-md-5">
+      <div class="col-xs-12 col-sm-6 col-md-6">
         <div class="row justify-center">
           <q-skeleton
             class="img"
@@ -43,24 +60,8 @@
           />
         </div>
       </div>
-      <div class="col-xs-1 col-sm-1 col-md-1">
-        <!--
-            <q-icon
-              name="favorite_border"
-              color="grey-4"
-              class="q-mr-sm q-mt-md"
-              size="30px"
-            />
-            -->
-        <q-icon
-          name="more_horiz"
-          color="grey-4"
-          class="q-mr-sm q-mt-md"
-          size="30px"
-        />
-      </div>
-      <div class="col-xs-12 col-sm-6 col-md-4 margin">
-        <div class="column items-center">
+      <div class="col-xs-12 col-sm-5 col-md-5 details">
+        <div class="column items-left">
           <div class="col">
             <q-skeleton
               type="text"
@@ -122,14 +123,20 @@ export default class ViewArtSkeleton extends Vue {
 }
 
 .img{
-  width: 105vw;
-  height: 55vh;
-  border-radius:5%
+  width: 100vw;
+  height: 70vh;
 }
 .btn-btnCreatepainter{
   display: flex;
   margin: auto;
   margin-top: 10px
+}
+.conteiner-text-share-shele{
+  width: 50%;
+}
+
+.details{
+  margin-left: 30px;
 }
 
 @media (max-width: 450px) {
@@ -144,6 +151,9 @@ export default class ViewArtSkeleton extends Vue {
 .btn-btnCreatepainter {
   width: 80vw;
   height: 39px;
+}
+.conteiner-text-share-shele{
+  width: 100%;
 }
 }
 </style>

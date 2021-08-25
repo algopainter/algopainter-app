@@ -132,17 +132,14 @@ export default class MyPaint extends Vue {
   };
 
   show() {
-    console.log('teste3333');
     this.$refs.dialog.show();
   }
 
   hide() {
-    console.log('teste');
     this.$refs.dialog.hide();
   }
 
   onDialogHide() {
-    console.log('test7777');
     this.$emit('hide');
   }
 

@@ -31,13 +31,11 @@
         />
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
-            <!--
             <LikeAnimation
               :liked="wasLiked"
               :likes="likes || galleryItem.art.likes"
               @favoriteClicked="favoriteClicked"
             />
-            -->
           </div>
         </div>
       </div>
@@ -106,6 +104,7 @@ export default class GalleryItem extends Vue.with(Props) {
   collectionArtController: CollectionArtController =
     new CollectionArtController();
 
+  likeClicked: boolean = false;
   wasLiked: boolean = false;
 
   likes!: number;
@@ -121,9 +120,12 @@ export default class GalleryItem extends Vue.with(Props) {
   }
 
   favoriteClicked(wasLiked: boolean) {
-    this.$emit('favoriteClicked');
-    if (this.isConnected) {
-      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    if (!this.likeClicked) {
+      this.likeClicked = true;
+      this.$emit('favoriteClicked');
+      if (this.isConnected) {
+        wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+      }
     }
   }
 
@@ -146,10 +148,13 @@ export default class GalleryItem extends Vue.with(Props) {
         (result) => {
           if (result.isFailure) {
             this.like(true);
+            this.likeClicked = false;
           }
+          this.likeClicked = false;
         },
         (error) => {
           console.log('"like" post error: ', error);
+          this.likeClicked = false;
         },
       );
     this.like();
@@ -162,10 +167,13 @@ export default class GalleryItem extends Vue.with(Props) {
         (result) => {
           if (result.isFailure) {
             this.like();
+            this.likeClicked = false;
           }
+          this.likeClicked = false;
         },
         (error) => {
           console.log('"like" delete error: ', error);
+          this.likeClicked = false;
         },
       );
     this.like(true);

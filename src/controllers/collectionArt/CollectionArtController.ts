@@ -49,10 +49,6 @@ export default class CollectionArtController extends BaseController {
       }
 
       const request = this.requestToBeSigned(data, address);
-      console.log({
-        ...request,
-        signature: signatureOrError,
-      });
       const body = JSON.stringify({
         ...request,
         signature: signatureOrError,

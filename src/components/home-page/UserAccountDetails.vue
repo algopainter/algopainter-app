@@ -48,6 +48,7 @@
                 self="top middle"
                 class="bg-primary"
                 :offset="[10, 10]"
+                max-width="400px"
               >
                 {{ $t(userProfile.bio) }}
               </q-tooltip>

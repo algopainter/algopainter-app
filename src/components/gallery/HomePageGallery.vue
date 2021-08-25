@@ -97,10 +97,6 @@ export default class HomePageGallery extends Vue {
         tempImgIdArray.push(item.id);
       });
 
-      // this.imgIdArray.push('61153e624fb5ed1d60bafc85');
-      // this.imgIdArray.push('61153e464fb5ed1d60bafc82');
-      // this.imgIdArray.push('61153e374fb5ed1d60bafc7f');
-
       tempCollectionGallery.forEach((item) => {
         if (this.imgIdArray.includes(item.id) === false) {
           this.currentCollectionGallery.push(item);

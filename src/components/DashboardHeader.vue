@@ -58,7 +58,6 @@ export default class DashboardHeader extends Vue.with(Props) {
   }
 
   moveDrawer() {
-    console.log(this.leftDrawerOpen);
     this.$emit('openDrawer');
   }
 }

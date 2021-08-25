@@ -397,7 +397,8 @@ export default class ViewArt extends Vue {
 }
 
 .img{
-  height: 50%;
+  max-height: 650px;
+  max-width: 650px;
 }
 
 .text-img{

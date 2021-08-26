@@ -121,10 +121,12 @@
               <span class="text-bold">
                 {{ image.nft.parameters.useRandom === 'true' ? $t('dashboard.viewArt.yes') : $t('dashboard.viewArt.no') }}
               </span><br>
-              <span>{{ $t('dashboard.viewArt.probability') }}</span>
-              <span class="text-bold">
-                {{ image.nft.parameters.probability }}
-              </span><br>
+              <div v-if="image.nft.parameters.useRandom === 'true'">
+                <span>{{ $t('dashboard.viewArt.probability') }}</span>
+                <span class="text-bold">
+                  {{ image.nft.parameters.probability }}
+                </span><br>
+              </div>
               <span>{{ $t('dashboard.viewArt.inspiration') }}</span>
               <span class="text-bold">
                 {{ parsedInspiration() }}
@@ -212,22 +214,18 @@ export default class ViewArt extends Vue {
 
   parsedExhibition() {
     switch (this.image.nft.parameters.overlay) {
-      case '0':
-        return 'None';
       case '1':
-        return 'Wall';
+        return 'Splatters and Drips';
       case '2':
-        return 'Big Wall';
+        return 'Dripping Paint';
       case '3':
-        return 'Bedroom';
+        return 'Acrylic';
       case '4':
-        return 'High-Tech Gallery';
+        return 'Freedom';
       case '5':
-        return 'Open Gallery';
-      case '6':
-        return 'Room';
-      case '7':
-        return 'PsyVerse';
+        return 'Heavy Brush';
+      default:
+        return 'Regular';
     }
   }
 

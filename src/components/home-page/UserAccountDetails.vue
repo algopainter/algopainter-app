@@ -130,6 +130,7 @@ export default class UserAccountDetails extends Vue {
     void this.$store.dispatch({
       type: 'collections/getUserItems',
       account: route,
+      page: 1,
     }).then(() => {
       this.loadingUserItems = false;
       this.userItems = this.$store.state.collections.userItems;

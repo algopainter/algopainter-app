@@ -42,7 +42,7 @@
                 </q-tooltip>
               </div>
               <div
-                v-if="profile.bio.length < 140"
+                v-if="profile.bio == null || profile.bio.length < 140"
                 class="text-bio details text-grey-5 text-subtitle2"
               >
                 {{ profile.bio }}

@@ -137,6 +137,8 @@ export default {
     chooseFile: 'Choose File',
     sMedia: 'Social media',
     sChanges: 'Save changes',
+    erroBio: 'The maximum characters amount is 1000',
+    erroName: 'Field name is required and must be less than 32 character long',
   },
   gallery: {
     title: 'Collection',

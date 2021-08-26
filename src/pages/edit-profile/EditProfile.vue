@@ -186,7 +186,7 @@ export default class EditProfile extends Vue {
   }
 
   @Watch('account')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     void this.loadData();
   }
 
@@ -243,8 +243,8 @@ export default class EditProfile extends Vue {
 
   async saveChanges() {
     const allowed: RegExp = /[^a-zA-Z0-9-]/g;
-    const customProfile: string | any = this.formFields.customProfile;
-    const notAllowed = allowed.test(customProfile);
+    const customProfile: string | undefined = this.formFields.customProfile;
+    const notAllowed = customProfile && allowed.test(customProfile);
     if (notAllowed) {
       Notify.create({
         message: 'Custom URLs may only contain "A-Z", "0-9" and "-"',

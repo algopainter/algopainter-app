@@ -133,7 +133,7 @@ export default class AuctionItem extends Vue.with(Props) {
   /* functionCounter: number = 0;
   stopFunction: boolean = false; */
 
-  changeAvatar(bid: any) {
+  changeAvatar(bid: unknown) {
     if (typeof (bid) !== 'undefined') {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       return true;

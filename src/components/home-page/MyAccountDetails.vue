@@ -62,12 +62,12 @@
               >
                 <q-slide-transition>
                   <div v-show="expanded">
-                    <q-card
+                    <div
                       class="text-subtitle2 card-bio"
                       max-width="100px"
                     >
                       {{ $t(profile.bio) }}
-                    </q-card>
+                    </div>
                   </div>
                 </q-slide-transition>
                 <a

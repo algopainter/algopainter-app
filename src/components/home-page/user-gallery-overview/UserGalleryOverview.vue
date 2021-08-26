@@ -31,7 +31,7 @@
     <div v-else>
       <MyGallerySkeleton />
     </div>
-    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none ">
+    <div class="col-11 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none latest-bids">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
@@ -175,4 +175,11 @@ export default class UserGalleryOverview extends Vue {
   border-radius: 20px;
   max-height: 150px;
 }
+
+.latest-bids{
+  @media (max-width: $breakpoint-xs-max) {
+    margin: 0 24px 10px 26px
+  }
+}
+
 </style>

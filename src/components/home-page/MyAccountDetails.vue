@@ -1,115 +1,86 @@
-<template>
-  <div v-if="isConnected">
-    <div v-if="loadingUserItems === false && loadingProfile === false">
-      <div class="row q-col-gutter-xl items-center">
-        <div class="col-12 col-sm-6 col-xl-6">
-          <div class="user-info flex column q-col-gutter-lg">
-            <div class="picture">
-              <q-img
-                v-if="profile.avatar != null"
-                :src="profile.avatar"
-                class="picture-content"
-              />
-              <q-img
-                v-else
-                src="/images/do-utilizador (1).png"
-                class="picture-content"
-              />
-            </div>
-            <div class="user-details">
-              <div
-                class="text-account text-primary text-bold text-h3"
-              >
-                {{ profile.name }}
-                <q-tooltip
-                  anchor="top middle"
-                  self="top middle"
-                  class="bg-primary"
-                  :offset="[10, 10]"
-                >
-                  {{ $t(profile.name) }}
-                </q-tooltip>
-              </div>
-              <div class="text-account details">
-                {{ profile.email }}
-                <q-tooltip
-                  anchor="top middle"
-                  self="top middle"
-                  class="bg-primary"
-                  :offset="[10, 10]"
-                >
-                  {{ $t(profile.email) }}
-                </q-tooltip>
-              </div>
-              <div class="text-account details text-grey-5">
-                {{ profile.bio }}
-                <q-tooltip
-                  anchor="top middle"
-                  self="top middle"
-                  class="bg-primary"
-                  :offset="[10, 10]"
-                  max-width="400px"
-                >
-                  {{ $t(profile.bio) }}
-                </q-tooltip>
-              </div>
-            </div>
+<template v-if="isConnected">
+  <div v-if="loadingUserItems === false && loadingProfile === false">
+    <div class="row q-col-gutter-xl items-center">
+      <div class="col-12 col-sm-6 col-xl-6">
+        <div class="user-info flex column q-col-gutter-lg">
+          <div class="picture">
+            <q-img
+              v-if="profile.avatar != null"
+              :src="profile.avatar"
+              class="picture-content"
+            />
+            <q-img
+              v-else
+              src="/images/do-utilizador (1).png"
+              class="picture-content"
+            />
           </div>
-          <div class="row q-pt-lg q-col-gutter-md">
-            <div class="col-6 col-sm-auto btn-edit">
-              <algo-button
-                class="full-width btn-edit"
-                size="lg"
-                color="primary"
-                to="/edit-profile"
-              >
-                {{ $t('dashboard.homePage.editAccount') }}
-              </algo-button>
+          <div class="user-details">
+            <div class="name text-primary text-bold text-h3">
+              {{ profile.name }}
+            </div>
+            <div class="details">
+              {{ profile.email }}
+            </div>
+            <div class="details text-grey-5">
+              {{ profile.bio }}
             </div>
           </div>
         </div>
-        <div class="col-12 col-sm-6 col-xl-6">
-          <div class="row q-col-gutter-lg">
-            <div class="col-12 col-lg-6 text-primary text-center">
-              <div class="text-h3 text-bold">
-                {{ $t('dashboard.homePage.items') }}
-              </div>
-              <div class="text-h1 text-bold q-py-xl">
-                {{ userItems }}
-              </div>
+        <div class="row q-pt-lg q-col-gutter-md">
+          <div class="col-6 col-sm-auto btn-edit">
+            <algo-button
+              class="full-width btn-edit"
+              size="lg"
+              color="primary"
+              to="/edit-profile"
+            >
+              {{ $t('dashboard.homePage.editAccount') }}
+            </algo-button>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-6">
+        <div class="row q-col-gutter-lg">
+          <div class="col-12 col-lg-6 text-primary text-center">
+            <div class="text-h3 text-bold">
+              {{ $t('dashboard.homePage.items') }}
             </div>
-            <div class="col-12 col-lg-6 text-secondary text-center">
-              <div
-                class="text-h3 text-bold q-py-md"
-              >
-                {{ $t(`dashboard.algop`) }} {{ formattedBalance() }}
-                <q-tooltip
-                  v-if="isConnected"
-                  anchor="top middle"
-                  self="top middle"
-                  class="bg-primary"
-                  :offset="[7, 7]"
-                >
-                  {{ $t(`dashboard.algop`) }} {{ balance }}
-                </q-tooltip>
-              </div>
-              <algo-button
-                size="lg"
-                color="primary"
-                type="a"
-                href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
-                target="_blank"
-              >
-                {{ $t('dashboard.homePage.buyAlgop') }}
-              </algo-button>
+            <div class="text-h1 text-bold q-py-xl">
+              {{ userItems }}
             </div>
+          </div>
+          <div class="col-12 col-lg-6 text-secondary text-center">
+            <div
+              class="text-h3 text-bold q-py-md"
+            >
+              {{ $t(`dashboard.algop`) }} {{ formattedBalance() }}
+              <q-tooltip
+                v-if="isConnected"
+                anchor="top middle"
+                self="top middle"
+                class="bg-primary"
+                :offset="[7, 7]"
+              >
+                {{ $t(`dashboard.algop`) }} {{ balance }}
+              </q-tooltip>
+            </div>
+            <algo-button
+              size="lg"
+              color="primary"
+              type="a"
+              href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
+              target="_blank"
+            >
+              {{ $t('dashboard.homePage.buyAlgop') }}
+            </algo-button>
           </div>
         </div>
       </div>
     </div>
-    <div v-else>
-      <AccountDetailsSkeleton />
-    </div>
+  </div>
+  <div v-else>
+    <AccountDetailsSkeleton />
   </div>
 </template>
 
@@ -186,7 +157,8 @@ export default class AccountDetails extends Vue {
     if (this.isConnected === true) {
       void this.$store.dispatch({
         type: 'collections/getUserItems',
-        account: this.accountAddress,
+        account: this.accountAddress, // id:0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac // this.accountAddress
+        page: 1,
       }).then(() => {
         this.loadingUserItems = false;
         this.userItems = this.$store.state.collections.userItems;

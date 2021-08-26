@@ -2,7 +2,7 @@
   <div>
     <q-page class="row q-pb-lg xl">
       <div
-        v-for="(item, i) in 3"
+        v-for="(item, i) in 9"
         :key="i"
         class="row"
       >
@@ -10,7 +10,7 @@
           <div
             class="flex q-col-gutter-md"
           >
-            <div class="flex">
+            <div class="flex q-ml-md">
               <q-skeleton
                 type="QAvatar"
                 class="q-mr-sm"
@@ -25,12 +25,14 @@
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
+              <!--
               <q-icon
                 name="favorite_border"
                 color="grey-4"
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
+              -->
             </div>
           </div>
           <div class="q-ml-md q-mt-sm">
@@ -59,7 +61,7 @@
     </q-page>
     <q-page class="row q-pb-lg md">
       <div
-        v-for="(item, i) in 2"
+        v-for="(item, i) in 9"
         :key="i"
         class="row"
       >
@@ -82,12 +84,73 @@
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
+              <!--
               <q-icon
                 name="favorite_border"
                 color="grey-4"
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
+              -->
+            </div>
+          </div>
+          <div class="q-ml-md q-mt-sm">
+            <q-skeleton
+              height="250px"
+              width="280px"
+              square
+            />
+          </div>
+          <div class="q-ml-md">
+            <q-skeleton
+              type="text"
+              width="200px"
+            />
+            <q-skeleton
+              type="text"
+              width="200px"
+            />
+            <q-skeleton
+              type="QBtn"
+              class="btn-view"
+            />
+          </div>
+        </div>
+      </div>
+    </q-page>
+    <q-page class="row q-pb-lg mobile-only">
+      <div
+        v-for="(item, i) in 9"
+        :key="i"
+        class="row"
+      >
+        <div class="q-mb-sm">
+          <div
+            class="flex q-col-gutter-md"
+          >
+            <div class="flex">
+              <q-skeleton
+                type="QAvatar"
+                class="q-mr-sm"
+              />
+              <q-skeleton type="QAvatar" />
+            </div>
+
+            <div class=" flex justify-end items-end margin q-gutter-md">
+              <q-icon
+                name="more_horiz"
+                color="grey-4"
+                class="q-mr-sm q-mt-md"
+                size="25px"
+              />
+              <!--
+              <q-icon
+                name="favorite_border"
+                color="grey-4"
+                class="q-mr-sm q-mt-md"
+                size="25px"
+              />
+              -->
             </div>
           </div>
           <div class="q-ml-md q-mt-sm">

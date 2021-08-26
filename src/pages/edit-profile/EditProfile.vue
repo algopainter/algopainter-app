@@ -389,7 +389,6 @@ export default class EditProfile extends Vue {
     } else {
       this.bioResponse = false;
     }
-    console.log(this.bioLength);
   }
 
   sizeName() {
@@ -400,7 +399,6 @@ export default class EditProfile extends Vue {
     } else {
       this.nameResponse = false;
     }
-    console.log(this.nameResponse);
   }
 }
 </script>

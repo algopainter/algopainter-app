@@ -17,14 +17,41 @@
               />
             </div>
             <div class="user-details">
-              <div class="name text-primary text-bold text-h3">
+              <div
+                class="text-account text-primary text-bold text-h3"
+              >
                 {{ profile.name }}
+                <q-tooltip
+                  anchor="top middle"
+                  self="top middle"
+                  class="bg-primary"
+                  :offset="[10, 10]"
+                >
+                  {{ $t(profile.name) }}
+                </q-tooltip>
               </div>
-              <div class="details">
+              <div class="text-account details">
                 {{ profile.email }}
+                <q-tooltip
+                  anchor="top middle"
+                  self="top middle"
+                  class="bg-primary"
+                  :offset="[10, 10]"
+                >
+                  {{ $t(profile.email) }}
+                </q-tooltip>
               </div>
-              <div class="details text-grey-5">
+              <div class="text-account details text-grey-5">
                 {{ profile.bio }}
+                <q-tooltip
+                  anchor="top middle"
+                  self="top middle"
+                  class="bg-primary"
+                  :offset="[10, 10]"
+                  max-width="400px"
+                >
+                  {{ $t(profile.bio) }}
+                </q-tooltip>
               </div>
             </div>
           </div>
@@ -220,5 +247,19 @@ export default class AccountDetails extends Vue {
    @media (max-width: $breakpoint-xs-max){
     width: 100%;
    }
+}
+
+.text-account {
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+  }
+
+  max-width: 600px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>

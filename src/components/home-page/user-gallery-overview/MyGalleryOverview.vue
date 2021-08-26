@@ -26,7 +26,7 @@
         v-else
         class="col-12 col-md-9 col-lg-9"
       >
-        <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
+        <div class="text-h6 text-primary text-center q-pb-md q-mr-xl text-gallery">
           {{ $t('dashboard.homePage.personalNoItems') }}
         </div>
       </div>
@@ -209,6 +209,13 @@ export default class MyGalleryOverview extends Vue {
 body.screen--md, .screen--lg, .screen--xl {
   .latestBids{
     margin: 8px;
+  }
+}
+
+body.screen--sm, .screen--xs {
+  .text-gallery{
+    margin-top: -15px;
+    margin-right: -20px;
   }
 }
 

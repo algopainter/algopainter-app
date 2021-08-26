@@ -59,7 +59,7 @@
     >
       <MyGallerySkeleton />
     </div>
-    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none ">
+    <div class="col-11 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none latest-bids">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>

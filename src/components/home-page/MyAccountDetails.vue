@@ -220,4 +220,18 @@ export default class AccountDetails extends Vue {
     width: 100%;
    }
 }
+
+.text-account {
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+  }
+
+  max-width: 600px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 </style>

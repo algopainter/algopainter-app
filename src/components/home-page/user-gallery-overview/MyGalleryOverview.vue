@@ -282,4 +282,11 @@ body.screen--md, .screen--lg, .screen--xl {
   }
 }
 
+body.screen--sm, .screen--xs {
+  .text-gallery{
+    margin-top: -15px;
+    margin-right: -20px;
+  }
+}
+
 </style>

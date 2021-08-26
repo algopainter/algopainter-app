@@ -31,13 +31,11 @@
         />
         <div class="col-12 col-md-1">
           <div class="col-12 col-md-1">
-            <!--
             <LikeAnimation
               :liked="wasLiked"
               :likes="likes || galleryItem.art.likes"
               @favoriteClicked="favoriteClicked"
             />
-            -->
           </div>
         </div>
       </div>
@@ -111,9 +109,23 @@ export default class GalleryItem extends Vue.with(Props) {
 
   likes!: number;
 
+  mounted() {
+    if (this.isConnected) {
+      void this.loadData();
+    }
+    this.likes = this.galleryItem.art.likes as number;
+  }
+
+  loadData() {
+    this.wasLiked =
+      (this.galleryItem.art.likers as string[]).filter(
+        (liker) => liker.toLowerCase() === this.account,
+      ).length !== 0;
+  }
+
   get account() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/account'];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    return this.$store.getters['user/account'].toLowerCase();
   }
 
   get isConnected() {
@@ -129,18 +141,6 @@ export default class GalleryItem extends Vue.with(Props) {
         wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
       }
     }
-  }
-
-  mounted() {
-    void this.loadData();
-  }
-
-  loadData() {
-    this.wasLiked =
-      (this.galleryItem.art.likers as string[]).filter(
-        (liker) => liker === this.account,
-      ).length !== 0;
-    this.likes = this.galleryItem.art.likes as number;
   }
 
   postFavoriteArt() {

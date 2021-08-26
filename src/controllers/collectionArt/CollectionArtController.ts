@@ -20,10 +20,6 @@ export default class CollectionArtController extends BaseController {
       }
 
       const request = this.requestToBeSigned(data, address);
-      console.log({
-        ...request,
-        signature: signatureOrError,
-      });
       const response = await this.post(`images/${artId}/likes`, {
         ...request,
         signature: signatureOrError,

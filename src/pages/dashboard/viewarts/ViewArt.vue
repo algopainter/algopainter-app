@@ -214,23 +214,6 @@ export default class ViewArt extends Vue {
 
   parsedExhibition() {
     switch (this.image.nft.parameters.overlay) {
-      case '1':
-        return 'Splatters and Drips';
-      case '2':
-        return 'Dripping Paint';
-      case '3':
-        return 'Acrylic';
-      case '4':
-        return 'Freedom';
-      case '5':
-        return 'Heavy Brush';
-      default:
-        return 'Regular';
-    }
-  }
-
-  parsedTechnique() {
-    switch (this.image.nft.parameters.place) {
       case '0':
         return 'None';
       case '1':
@@ -247,6 +230,23 @@ export default class ViewArt extends Vue {
         return 'Room';
       case '7':
         return 'PsyVerse';
+    }
+  }
+
+  parsedTechnique() {
+    switch (this.image.nft.parameters.place) {
+      case '1':
+        return 'Splatters and Drips';
+      case '2':
+        return 'Dripping Paint';
+      case '3':
+        return 'Acrylic';
+      case '4':
+        return 'Freedom';
+      case '5':
+        return 'Heavy Brush';
+      default:
+        return 'Regular';
     }
   }
 

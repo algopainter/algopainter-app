@@ -73,6 +73,7 @@
                 <a
                   v-if="expanded === false"
                   target="_blank"
+                  class="read-more"
                   @click="expanded = !expanded"
                 >
                   {{ $t('dashboard.homePage.btnBioFalse') }}
@@ -80,6 +81,7 @@
                 <a
                   v-if="expanded === true"
                   target="_blank"
+                  class="read-more"
                   @click="expanded = !expanded"
                 >
                   {{ $t('dashboard.homePage.btnBioTrue') }}
@@ -300,4 +302,9 @@ export default class AccountDetails extends Vue {
 .text-bio{
   max-width: 100%;
 }
+
+.read-more{
+  cursor: pointer;
+}
+
 </style>

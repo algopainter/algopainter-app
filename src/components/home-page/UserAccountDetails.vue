@@ -52,13 +52,10 @@
               class="text-primary text-bold text-subtitle2"
             >
               <q-slide-transition>
-                <div v-show="expanded">
-                  <div
-                    class="text-subtitle2 card-bio"
-                    max-width="100px"
-                  >
-                    {{ $t(userProfile.bio) }}
-                  </div>
+                <div
+                  class="text-subtitle2 card-bio q-pa-none"
+                >
+                  {{ sliceBio() }}
                 </div>
               </q-slide-transition>
               <a
@@ -140,6 +137,8 @@ export default class UserAccountDetails extends Vue {
 
   expanded: boolean = false;
 
+  bioInic: string = '';
+
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['user/isConnected'] as boolean;
@@ -172,6 +171,7 @@ export default class UserAccountDetails extends Vue {
       } else {
         this.userProfile = userProfile;
       }
+      this.sliceBio();
     });
   }
 
@@ -200,6 +200,16 @@ export default class UserAccountDetails extends Vue {
       return UserUtils.formatAccountBalance(this.balance, 2);
     } else {
       return null;
+    }
+  }
+
+  sliceBio(): string {
+    const bio = this.userProfile.bio as string;
+    if (!this.expanded) {
+      const bioInic = bio.slice(0, 139);
+      return bioInic;
+    } else {
+      return bio;
     }
   }
 }

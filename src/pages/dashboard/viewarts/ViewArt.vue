@@ -147,6 +147,7 @@
               <span class="text-bold">
                 {{ image.nft.parameters.amount }} {{ $t('dashboard.viewArt.algop') }}
               </span><br>
+              {{ image.nft.parameters }}
             </div>
           </div>
         </div>

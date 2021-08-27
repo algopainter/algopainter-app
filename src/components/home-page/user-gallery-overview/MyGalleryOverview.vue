@@ -53,6 +53,7 @@
           outline
           class="load-more q-px-xl q-mx-auto mobile-only"
           :disable="noMoreImages"
+          :loading="loadingBtn"
           @click="loadMore()"
         />
       </div>
@@ -145,6 +146,7 @@ export default class MyGalleryOverview extends Vue {
   galleryBidClosed = [];
   galleryBidShow = [];
   nullGalleryBidShow: boolean = false;
+  loadingBtn: boolean = false;
   loadingLatestBidsItem: boolean = true;
   loadingGalleryArtsButtons: boolean = true;
 
@@ -250,6 +252,7 @@ export default class MyGalleryOverview extends Vue {
   async loadMore() {
     try {
       this.loadMoreCounter++;
+      this.loadingBtn = true;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const response = await api.get(`users/${this.accountAddress}/images?page=${this.loadMoreCounter}&perPage=9`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -265,6 +268,7 @@ export default class MyGalleryOverview extends Vue {
     } catch (error) {
       console.log('erro no galleryArts');
     }
+    this.loadingBtn = false;
   }
 }
 </script>

@@ -46,6 +46,7 @@
           @click="getGalleryArts(index + 1)"
         />
         <algo-button
+          v-if="nullGalleryArts === false"
           :label="$t('dashboard.homePage.loadMore', {
             msg: btnLoadMoreMsg
           })"

@@ -120,7 +120,6 @@ export default class Gallery extends Vue {
 
   openModalArtist() {
     this.$emit('OpenModalArtist');
-    console.log('Gallery');
   }
 
   favoriteClicked() {
@@ -142,7 +141,6 @@ export default class Gallery extends Vue {
 
   async getCollections() {
     const collections = await new CollectionController().getCollections();
-    console.log('collections', collections);
     if (collections) {
       this.collections = collections; // Simulation of three items received from api, only
       this.currentCollection = collections[0];

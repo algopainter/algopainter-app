@@ -14,7 +14,7 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
       const userItems: string = res.data.count;
       this.commit('collections/SET_USER_ITEMS', userItems);
     } catch (e) {
-      console.log('error msg');
+      console.log('error message - getUserItems');
     }
   },
 };

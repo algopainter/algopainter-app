@@ -66,7 +66,7 @@
         <q-input
           v-model="formFields.bio"
           :label="$t('dashboard.editProfile.bio')"
-          :rules="[ val => val.length < 1000]"
+          :rules="[ val => val.length < 1001]"
           :error-message=" $t('dashboard.editProfile.erroBio')"
           outlined
           class="responsive-input q-col-gutter-x-md q-mt-md"

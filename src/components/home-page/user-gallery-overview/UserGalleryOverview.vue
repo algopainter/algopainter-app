@@ -1,9 +1,25 @@
 <template>
+  <div class="btn-container q-mx-auto flex justify-center items-center">
+    <algo-button
+      :label="$t('dashboard.homePage.gallery')"
+      outline
+      class="algo-button q-px-md q-ml-sm"
+      :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+      @click="getGalleryArts()"
+    />
+    <algo-button
+      :label="$t('dashboard.homePage.onSale')"
+      outline
+      class="algo-button q-px-md q-ml-sm"
+      :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+      @click="getOnSale()"
+    />
+  </div>
   <div
     class="row q-col-gutter-lg"
   >
     <div
-      v-if="loadingGalleryArtsButtons === false"
+      v-if="loadingGalleryArtsButtons === false && currentBtnClicked === 1"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div v-if="loadingGalleryArts === false">
@@ -55,12 +71,20 @@
       </div>
     </div>
     <div
-      v-else
+      v-else-if="currentBtnClicked === 1"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <MyGallerySkeleton />
     </div>
-    <div class="col-11 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none latest-bids">
+    <div
+      v-else
+      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
+      <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
+        {{ $t('dashboard.auctions.coming') }}
+      </p>
+    </div>
+    <div class="col-11 col-md-3 col-lg-3 q-pt-md q-mt-lg column items-center border q-pl-none latest-bids">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
@@ -152,6 +176,9 @@ export default class UserGalleryOverview extends Vue {
   loadMoreCounter: number = 1;
   noMoreImages: boolean = false;
 
+  // Buttons
+  currentBtnClicked: number = 1;
+
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
@@ -166,7 +193,7 @@ export default class UserGalleryOverview extends Vue {
   }
 
   mounted() {
-    void this.getGalleryBidders();
+    // void this.getGalleryBidders();
     void this.getGalleryArts();
   }
 
@@ -193,6 +220,7 @@ export default class UserGalleryOverview extends Vue {
 
   async getGalleryArts(page:number = 1) {
     this.loadingGalleryArts = true;
+    this.currentBtnClicked = 1;
     try {
       this.currentPage = page;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -219,6 +247,11 @@ export default class UserGalleryOverview extends Vue {
     }
   }
 
+  getOnSale() {
+    console.log('Coming soon');
+    this.currentBtnClicked = 2;
+  }
+
   async loadMore() {
     try {
       this.loadMoreCounter++;
@@ -242,6 +275,11 @@ export default class UserGalleryOverview extends Vue {
 </script>
 
 <style lang="scss">
+.btn-container {
+  width: 100%;
+  height: 80px;
+}
+
 .border {
   border: 2px dashed $primary;
   border-radius: 20px;

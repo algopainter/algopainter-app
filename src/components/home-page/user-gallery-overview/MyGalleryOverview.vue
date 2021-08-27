@@ -1,9 +1,25 @@
 <template>
+  <div class="btn-container q-mx-auto flex justify-center items-center">
+    <algo-button
+      :label="$t('dashboard.homePage.gallery')"
+      outline
+      class="algo-button q-px-md q-ml-sm"
+      :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+      @click="getGalleryArts()"
+    />
+    <algo-button
+      :label="$t('dashboard.homePage.onSale')"
+      outline
+      class="algo-button q-px-md q-ml-sm"
+      :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+      @click="getOnSale()"
+    />
+  </div>
   <div
     class="row"
   >
     <div
-      v-if="loadingGalleryArtsButtons === false"
+      v-if="loadingGalleryArtsButtons === false && currentBtnClicked === 1"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div v-if="loadingGalleryArts === false">
@@ -59,10 +75,18 @@
       </div>
     </div>
     <div
-      v-else
+      v-else-if="currentBtnClicked === 1"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <MyGallerySkeleton />
+    </div>
+    <div
+      v-else
+      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
+      <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
+        {{ $t('dashboard.auctions.coming') }}
+      </p>
     </div>
     <div class="col-12 col-md-3 col-lg-3 column items-center border q-pt-md latest-bids">
       <div class="text-h5 text-bold text-primary q-pb-md">
@@ -163,6 +187,9 @@ export default class MyGalleryOverview extends Vue {
   loadMoreCounter: number = 1;
   noMoreImages: boolean = false;
 
+  // Buttons
+  currentBtnClicked: number = 1;
+
   Allbids() {
     this.btnBidsClicked = !this.btnBidsClicked;
     if (this.btnBidsClicked === false) {
@@ -179,7 +206,7 @@ export default class MyGalleryOverview extends Vue {
   }
 
   mounted() {
-    void this.getGalleryBidders();
+    // void this.getGalleryBidders();
     void this.getGalleryArts();
   }
 
@@ -221,9 +248,10 @@ export default class MyGalleryOverview extends Vue {
 
   async getGalleryArts(page:number = 1) {
     this.loadingGalleryArts = true;
+    this.currentBtnClicked = 1;
     try {
       this.currentPage = page;
-      const response = await api.get(`users/${this.accountAddress}/images?page=${page}&perPage=9`);
+      const response = await api.get(`users/0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac/images?page=${page}&perPage=9`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {
@@ -246,6 +274,11 @@ export default class MyGalleryOverview extends Vue {
       this.loadingGalleryArtsButtons = false;
       this.loadingGalleryArts = false;
     }
+  }
+
+  getOnSale() {
+    console.log('Coming soon');
+    this.currentBtnClicked = 2;
   }
 
   async loadMore() {

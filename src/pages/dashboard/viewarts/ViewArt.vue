@@ -230,6 +230,8 @@ export default class ViewArt extends Vue {
         return 'Room';
       case '7':
         return 'PsyVerse';
+      default:
+        return 'None';
     }
   }
 

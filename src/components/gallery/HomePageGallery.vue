@@ -118,7 +118,6 @@ export default class HomePageGallery extends Vue {
     this.btnLoadMoreMsg = 'Load More';
     this.noMoreImages = false;
     this.currentCollection = collection;
-    console.log(this.currentCollection);
     const images = await new CollectionController().getCollectionsImages(collection._id);
     this.currentCollectionGallery = images.map((image) =>
       this.mapImageToGalleryItem(image),

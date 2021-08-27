@@ -46,27 +46,16 @@
                 class="text-bio details text-grey-5 text-subtitle2"
               >
                 {{ profile.bio }}
-                <q-tooltip
-                  anchor="top middle"
-                  self="top middle"
-                  class="bg-primary"
-                  :offset="[10, 10]"
-                  max-width="400px"
-                >
-                  {{ $t(profile.bio) }}
-                </q-tooltip>
               </div>
               <div
                 v-else
-                class="text-primary text-bold text-subtitle2"
+                class="text-primary text-bold text-subtitle2 flex"
               >
                 <q-slide-transition>
-                  <div v-show="expanded">
-                    <div
-                      class="text-subtitle2 card-bio q-pa-none"
-                    >
-                      {{ $t(profile.bio) }}
-                    </div>
+                  <div
+                    class="text-subtitle2 card-bio q-pa-none"
+                  >
+                    {{ sliceBio() }}
                   </div>
                 </q-slide-transition>
                 <a
@@ -179,6 +168,9 @@ export default class AccountDetails extends Vue {
 
   expanded: boolean = false;
 
+  bioInic: string = '';
+  bioEnd: string = '';
+
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['user/isConnected'] as boolean;
@@ -212,6 +204,7 @@ export default class AccountDetails extends Vue {
       }).then(() => {
         this.loadingProfile = false;
         this.profile = this.$store.state.user.profile;
+        this.sliceBio();
       });
     }
   }
@@ -242,6 +235,16 @@ export default class AccountDetails extends Vue {
       return UserUtils.formatAccountBalance(this.balance, 2);
     } else {
       return null;
+    }
+  }
+
+  sliceBio(): string {
+    const bio = this.profile.bio as string;
+    if (!this.expanded) {
+      const bioInic = bio.slice(0, 139);
+      return bioInic;
+    } else {
+      return bio;
     }
   }
 }

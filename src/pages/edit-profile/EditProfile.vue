@@ -40,7 +40,9 @@
           <q-input
             v-model="formFields.name"
             :label="$t('dashboard.editProfile.name')"
-            :rules="[ val => val && val.length > 0 || 'Field name required']"
+            :rules="[ val => val.length < 33 && val.length > 0 || $t('dashboard.editProfile.erroName') ]"
+            maxlength="32"
+            counter
           />
           <q-input
             v-model="formFields.email"
@@ -63,10 +65,14 @@
         </div>
         <q-input
           v-model="formFields.bio"
+          :label="$t('dashboard.editProfile.bio')"
+          :rules="[ val => val.length < 1000]"
+          :error-message=" $t('dashboard.editProfile.erroBio')"
           outlined
           class="responsive-input q-col-gutter-x-md q-mt-md"
           type="textarea"
-          :label="$t('dashboard.editProfile.bio')"
+          maxlength="1000"
+          counter
         />
         <h5 class="text-bold q-mb-none q-ml-md">
           {{ $t('dashboard.editProfile.sMedia') }}
@@ -175,6 +181,9 @@ export default class EditProfile extends Vue {
 
   isLoading: boolean = false;
 
+  bioResponse: boolean = false;
+  nameResponse: boolean = false;
+
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['user/isConnected'] as boolean;
@@ -243,8 +252,11 @@ export default class EditProfile extends Vue {
 
   async saveChanges() {
     const allowed: RegExp = /[^a-zA-Z0-9-]/g;
-    const customProfile: string | undefined = this.formFields.customProfile;
-    const notAllowed = customProfile && allowed.test(customProfile);
+    const customProfile: string | any = this.formFields.customProfile;
+    const notAllowed = allowed.test(customProfile);
+    this.sizeBio();
+    this.sizeName();
+
     if (notAllowed) {
       Notify.create({
         message: 'Custom URLs may only contain "A-Z", "0-9" and "-"',
@@ -266,12 +278,16 @@ export default class EditProfile extends Vue {
     try {
       this.isLoading = true;
       this.formFields.name = this.formFields.name?.trim();
+      this.formFields.bio = this.formFields.bio?.trim();
+
       if (!this.formFields.email) {
         this.formFields.email = undefined;
       }
+
       if (!this.formFields.customProfile) {
         this.formFields.customProfile = undefined;
       }
+
       if (this.formFields.name === '' || this.formFields.name === undefined) {
         Notify.create({
           message: 'Field name required!',
@@ -280,6 +296,24 @@ export default class EditProfile extends Vue {
         });
         return;
       }
+
+      if (this.bioResponse) {
+        Notify.create({
+          message: 'The maximum characters amount is 1000',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        return;
+      }
+      if (this.nameResponse) {
+        Notify.create({
+          message: 'Field name is required and must be less than 32 character long',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        return;
+      }
+
       const data = {
         ...this.formFields,
         salt: nanoid(),
@@ -346,6 +380,28 @@ export default class EditProfile extends Vue {
       textColor: 'primary',
       timeout: 2500,
     });
+  }
+
+  bioLength: string = '';
+
+  sizeBio() {
+    const bioLength = this.formFields.bio as string;
+    const bioSize:number = bioLength.length;
+    if (bioSize > 1000) {
+      this.bioResponse = true;
+    } else {
+      this.bioResponse = false;
+    }
+  }
+
+  sizeName() {
+    const nameLength = this.formFields.name as string;
+    const nameSize:number = nameLength.length;
+    if (nameSize > 32) {
+      this.nameResponse = true;
+    } else {
+      this.nameResponse = false;
+    }
   }
 }
 </script>

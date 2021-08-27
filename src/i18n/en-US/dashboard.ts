@@ -32,6 +32,8 @@ export default {
     personalNoBids: 'You never placed a bid',
     publicNoItems: 'This user does not have items yet',
     personalNoItems: "Ohh! 😔 You don't have any items yet... Why not mint your first artwork?",
+    btnBioFalse: '...Read More',
+    btnBioTrue: 'Show less',
     collectiblesGallery: 'Collection',
     exploreAuctions: 'Explore Auctions',
     gwei: 'Gwei',
@@ -135,6 +137,8 @@ export default {
     chooseFile: 'Choose File',
     sMedia: 'Social media',
     sChanges: 'Save changes',
+    erroBio: 'The maximum characters amount is 1000',
+    erroName: 'Field name is required and must be less than 32 character long',
   },
   gallery: {
     title: 'Collection',

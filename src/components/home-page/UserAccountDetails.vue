@@ -41,7 +41,10 @@
                 {{ $t(userProfile.email) }}
               </q-tooltip>
             </div>
-            <div class="text-account details text-grey-5">
+            <div
+              v-if="userProfile.bio == null"
+              class="text-bio details text-grey-5 text-subtitle2"
+            >
               {{ userProfile.bio }}
               <q-tooltip
                 anchor="top middle"
@@ -52,6 +55,37 @@
               >
                 {{ $t(userProfile.bio) }}
               </q-tooltip>
+            </div>
+            <div
+              v-else
+              class="text-primary text-bold text-subtitle2"
+            >
+              <q-slide-transition>
+                <div v-show="expanded">
+                  <div
+                    class="text-subtitle2 card-bio"
+                    max-width="100px"
+                  >
+                    {{ $t(userProfile.bio) }}
+                  </div>
+                </div>
+              </q-slide-transition>
+              <a
+                v-if="expanded === false"
+                target="_blank"
+                class="read-more"
+                @click="expanded = !expanded"
+              >
+                {{ $t('dashboard.homePage.btnBioFalse') }}
+              </a>
+              <a
+                v-if="expanded === true"
+                target="_blank"
+                class="read-more"
+                @click="expanded = !expanded"
+              >
+                {{ $t('dashboard.homePage.btnBioTrue') }}
+              </a>
             </div>
           </div>
         </div>
@@ -112,6 +146,8 @@ export default class UserAccountDetails extends Vue {
   loadingUserItems: boolean = true;
 
   balance: number = 0;
+
+  expanded: boolean = false;
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -196,17 +232,6 @@ export default class UserAccountDetails extends Vue {
       padding: 2px 0;
       font-size: 1.3rem;
     }
-
-    .country-flag {
-      display: inline-flex;
-      align-items: center;
-
-      img {
-        display: block;
-        height: 20px;
-        margin-right: 6px;
-      }
-    }
   }
 }
 .btn-edit{
@@ -227,5 +252,13 @@ export default class UserAccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.text-bio{
+  max-width: 100%;
+}
+
+.read-more{
+  cursor: pointer;
 }
 </style>

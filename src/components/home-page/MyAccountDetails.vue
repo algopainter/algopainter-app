@@ -41,7 +41,10 @@
                   {{ $t(profile.email) }}
                 </q-tooltip>
               </div>
-              <div class="text-account details text-grey-5">
+              <div
+                v-if="profile.bio == null || profile.bio < 140"
+                class="text-bio details text-grey-5 text-subtitle2"
+              >
                 {{ profile.bio }}
                 <q-tooltip
                   anchor="top middle"
@@ -52,6 +55,37 @@
                 >
                   {{ $t(profile.bio) }}
                 </q-tooltip>
+              </div>
+              <div
+                v-else
+                class="text-primary text-bold text-subtitle2"
+              >
+                <q-slide-transition>
+                  <div v-show="expanded">
+                    <div
+                      class="text-subtitle2 card-bio"
+                      max-width="100px"
+                    >
+                      {{ $t(profile.bio) }}
+                    </div>
+                  </div>
+                </q-slide-transition>
+                <a
+                  v-if="expanded === false"
+                  target="_blank"
+                  class="read-more"
+                  @click="expanded = !expanded"
+                >
+                  {{ $t('dashboard.homePage.btnBioFalse') }}
+                </a>
+                <a
+                  v-if="expanded === true"
+                  target="_blank"
+                  class="read-more"
+                  @click="expanded = !expanded"
+                >
+                  {{ $t('dashboard.homePage.btnBioTrue') }}
+                </a>
               </div>
             </div>
           </div>
@@ -143,6 +177,8 @@ export default class AccountDetails extends Vue {
   loadingUserItems: boolean = true;
 
   balance: number = 0;
+
+  expanded: boolean = false;
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -262,4 +298,13 @@ export default class AccountDetails extends Vue {
   overflow: hidden;
   white-space: nowrap;
 }
+
+.text-bio{
+  max-width: 100%;
+}
+
+.read-more{
+  cursor: pointer;
+}
+
 </style>

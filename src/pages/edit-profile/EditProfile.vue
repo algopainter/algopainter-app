@@ -41,7 +41,8 @@
             v-model="formFields.name"
             :label="$t('dashboard.editProfile.name')"
             :rules="[ val => val.length < 33 && val.length > 0 || $t('dashboard.editProfile.erroName') ]"
-            hint="The maximum character amount is 32"
+            maxlength="32"
+            counter
           />
           <q-input
             v-model="formFields.email"
@@ -66,11 +67,12 @@
           v-model="formFields.bio"
           :label="$t('dashboard.editProfile.bio')"
           :rules="[ val => val.length < 1000]"
-          hint="The maximum character amount is 1000"
           :error-message=" $t('dashboard.editProfile.erroBio')"
           outlined
           class="responsive-input q-col-gutter-x-md q-mt-md"
           type="textarea"
+          maxlength="1000"
+          counter
         />
         <h5 class="text-bold q-mb-none q-ml-md">
           {{ $t('dashboard.editProfile.sMedia') }}

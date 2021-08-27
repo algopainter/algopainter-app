@@ -63,7 +63,7 @@
     >
       <MyGallerySkeleton />
     </div>
-    <div class="col-12 col-md-3 col-lg-3 column items-center border q-pt-md latestBids">
+    <div class="col-12 col-md-3 col-lg-3 column items-center border q-pt-md latest-bids">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
@@ -277,8 +277,8 @@ export default class MyGalleryOverview extends Vue {
 }
 
 body.screen--md, .screen--lg, .screen--xl {
-  .latestBids{
-    margin: 8px;
+  .latest-bids{
+    margin-left: 16px;
   }
 }
 
@@ -286,6 +286,9 @@ body.screen--sm, .screen--xs {
   .text-gallery{
     margin-top: -15px;
     margin-right: -20px;
+  }
+  .latest-bids{
+    margin-left: 0;
   }
 }
 

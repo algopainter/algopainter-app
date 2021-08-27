@@ -91,6 +91,7 @@ export default class HomePageGallery extends Vue {
     if (images.length === 0) {
       this.noMoreImages = true;
       this.btnLoadMoreMsg = 'Nothing else to show';
+      this.loadingBtn = false;
     } else {
       const tempCollectionGallery = images.map((image) =>
         this.mapImageToGalleryItem(image),

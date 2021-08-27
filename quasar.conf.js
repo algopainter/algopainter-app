@@ -59,7 +59,8 @@ module.exports = configure(function(ctx) {
       vueRouterMode: 'history', // available values: 'hash', 'history'
 
       env: {
-        VUE_APP_ALGOPAINTER_API_URL: process.env.VUE_APP_ALGOPAINTER_API_URL,
+        ...require('dotenv').config().parsed,
+        ...process.env,
       },
       // transpile: false,
 

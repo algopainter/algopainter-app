@@ -296,7 +296,7 @@ export default class EditProfile extends Vue {
 
       if (this.bioResponse) {
         Notify.create({
-          message: 'The maximum character amount is 1000',
+          message: 'The maximum characters amount is 1000',
           color: 'red',
           icon: 'mdi-alert',
         });
@@ -304,7 +304,7 @@ export default class EditProfile extends Vue {
       }
       if (this.nameResponse) {
         Notify.create({
-          message: 'The maximum character amount is 32',
+          message: 'Field name is required and must be less than 32 character long',
           color: 'red',
           icon: 'mdi-alert',
         });

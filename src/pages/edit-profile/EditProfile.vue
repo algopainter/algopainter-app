@@ -193,7 +193,7 @@ export default class EditProfile extends Vue {
   }
 
   @Watch('account')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     void this.loadData();
   }
 

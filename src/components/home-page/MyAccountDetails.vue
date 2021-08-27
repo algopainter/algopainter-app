@@ -169,7 +169,6 @@ export default class AccountDetails extends Vue {
   expanded: boolean = false;
 
   bioInic: string = '';
-  bioEnd: string = '';
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

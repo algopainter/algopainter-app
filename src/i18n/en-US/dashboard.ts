@@ -165,5 +165,6 @@ export default {
     algop: '$ ALGOP',
     yes: 'Yes',
     no: 'No',
+    created: 'Created by : ',
   },
 };

@@ -139,6 +139,10 @@
               <span class="text-bold">
                 {{ parsedTechnique() }}
               </span><br>
+              <span>{{ $t('dashboard.viewArt.created') }}</span>
+              <span class="text-bold">
+                {{ image.owner }}
+              </span><br>
               <span>{{ $t('dashboard.viewArt.mint') }}</span>
               <span class="text-bold">
                 {{ image.nft.parameters.amount }} {{ $t('dashboard.viewArt.algop') }}

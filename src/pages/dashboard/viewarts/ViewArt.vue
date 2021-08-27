@@ -133,11 +133,11 @@
               </span><br>
               <span>{{ $t('dashboard.viewArt.exhibition') }}</span>
               <span class="text-bold">
-                {{ parsedExhibition() }}
+                {{ parsedTechnique() }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.technique') }}</span>
               <span class="text-bold">
-                {{ parsedTechnique() }}
+                {{ parsedExhibition() }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.created') }}</span>
               <span class="text-bold">

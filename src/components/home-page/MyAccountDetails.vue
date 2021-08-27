@@ -63,8 +63,7 @@
                 <q-slide-transition>
                   <div v-show="expanded">
                     <div
-                      class="text-subtitle2 card-bio"
-                      max-width="100px"
+                      class="text-subtitle2 card-bio q-pa-none"
                     >
                       {{ $t(profile.bio) }}
                     </div>
@@ -263,19 +262,7 @@ export default class AccountDetails extends Vue {
 
   .user-details {
     .details {
-      padding: 2px 0;
       font-size: 1.3rem;
-    }
-
-    .country-flag {
-      display: inline-flex;
-      align-items: center;
-
-      img {
-        display: block;
-        height: 20px;
-        margin-right: 6px;
-      }
     }
   }
 }
@@ -292,7 +279,6 @@ export default class AccountDetails extends Vue {
   @media (max-width: $breakpoint-xs-max){
     max-width: 75vw;
   }
-
   max-width: 600px;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -305,6 +291,33 @@ export default class AccountDetails extends Vue {
 
 .read-more{
   cursor: pointer;
+}
+
+.text-account {
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+  }
+  max-width: 600px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.card-bio{
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+    padding-right: 10px;
+  }
+
+  max-width: 600px;;
+  text-align: justify;
+  word-break: break-all;
 }
 
 </style>

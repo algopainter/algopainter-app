@@ -82,7 +82,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
         id: await window.web3.eth.net.getId(),
         type: await window.web3.eth.net.getNetworkType(),
       };
-      commit('setIsConnected', true);
+      commit('setIsConnected', Boolean(accounts[0]));
       commit('setAccount', accounts[0]);
       commit('setNetworkInfo', networkInfo);
     };

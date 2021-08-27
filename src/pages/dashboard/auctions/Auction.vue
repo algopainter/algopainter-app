@@ -272,7 +272,6 @@ export default class Auction extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auctionData = data.data as [];
       this.loadingAuctionData = false;
-      console.log(data.data);
     } catch (e) {
       console.log('e', e);
     }

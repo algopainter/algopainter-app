@@ -1,37 +1,66 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 <template>
   <div
     class="row q-col-gutter-lg"
   >
     <div
-      v-if="loadingGalleryArts === false"
+      v-if="loadingGalleryArtsButtons === false"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
-      <div
-        v-if="nullGalleryArts === false"
-        class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
-      >
+      <div v-if="loadingGalleryArts === false">
         <div
-          v-for="(item, index) in galleryArts"
-          :key="index"
+          v-if="nullGalleryArts === false"
+          class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
         >
-          <gallery-item
-            :art="item"
-            :user="true"
-            @favoriteClicked="favoriteClicked"
-          />
+          <div
+            v-for="(item, index) in galleryArts"
+            :key="index"
+          >
+            <gallery-item
+              :art="item"
+              :user="true"
+              @favoriteClicked="favoriteClicked"
+            />
+          </div>
+        </div>
+        <div v-else>
+          <div class="text-h6 text-primary text-center q-pb-md">
+            {{ $t('dashboard.homePage.publicNoItems') }}
+          </div>
         </div>
       </div>
       <div v-else>
-        <div class="text-h6 text-primary text-center q-pb-md">
-          {{ $t('dashboard.homePage.publicNoItems') }}
-        </div>
+        <MyGallerySkeleton />
+      </div>
+      <div class=" q-mx-auto q-mb-md">
+        <q-btn
+          v-for="(btn, index) in showingPages"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4' "
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          :loading="currentPage === index + 1 ? loadingGalleryArts : false"
+          @click="getGalleryArts(index + 1)"
+        />
+        <algo-button
+          v-if="nullGalleryArts === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          @click="loadMore()"
+        />
       </div>
     </div>
-    <div v-else>
+    <div
+      v-else
+      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
       <MyGallerySkeleton />
     </div>
-    <div class="col-12 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none ">
+    <div class="col-11 col-md-3 col-lg-3 q-pt-md column items-center border q-pl-none latest-bids">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
       </div>
@@ -102,21 +131,30 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
   },
 })
 export default class UserGalleryOverview extends Vue {
-  favoriteClicked() {
-    this.$emit('favoriteClicked');
-  }
-
   galleryBid = [];
   loadingGalleryBid: boolean = true;
   galleryBidClosed = [];
   galleryBidShow = [];
   nullGalleryBidShow: boolean = false;
+  loadingGalleryArtsButtons: boolean = true;
 
   btnBidsClicked: boolean = false;
 
   galleryArts:IMyGallery[] = [];
   loadingGalleryArts: boolean = true;
   nullGalleryArts: boolean = false;
+
+  maxPage: number = 1;
+  showingPages: number = 1;
+  currentPage: number | null = 1;
+
+  btnLoadMoreMsg: string = 'Load More';
+  loadMoreCounter: number = 1;
+  noMoreImages: boolean = false;
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
 
   Allbids() {
     this.btnBidsClicked = !this.btnBidsClicked;
@@ -153,15 +191,49 @@ export default class UserGalleryOverview extends Vue {
     }
   }
 
-  async getGalleryArts() {
+  async getGalleryArts(page:number = 1) {
+    this.loadingGalleryArts = true;
     try {
+      this.currentPage = page;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.params.account}/images?order.nft.index=-1`); // 0xddbc5f514f729d47a51030f049a956c5086b20af
-      this.galleryArts = response.data as [];
+      const response = await api.get(`users/${this.$route.params.account}/images?page=${page}&perPage=9`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.maxPage = response.data.pages as number;
+      if (this.maxPage <= 15) {
+        this.showingPages = this.maxPage;
+      } else {
+        this.showingPages = 15;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.galleryArts = response.data.data as [];
       if (this.galleryArts.length === 0) {
         this.nullGalleryArts = true;
+      } else {
+        this.nullGalleryArts = false;
       }
+    } catch (error) {
+      console.log('erro no galleryArts');
+    } finally {
+      this.loadingGalleryArtsButtons = false;
       this.loadingGalleryArts = false;
+    }
+  }
+
+  async loadMore() {
+    try {
+      this.loadMoreCounter++;
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const response = await api.get(`users/${this.$route.params.account}/images?page=${this.loadMoreCounter}&perPage=9`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const tempGalleryArts = response.data.data as [];
+      if (tempGalleryArts.length === 0) {
+        this.noMoreImages = true;
+        this.btnLoadMoreMsg = 'Nothing else to show';
+      } else {
+        tempGalleryArts.forEach((item) => {
+          this.galleryArts.push(item);
+        });
+      }
     } catch (error) {
       console.log('erro no galleryArts');
     }
@@ -174,5 +246,18 @@ export default class UserGalleryOverview extends Vue {
   border: 2px dashed $primary;
   border-radius: 20px;
   max-height: 150px;
+}
+
+.pagination {
+  align-self: center;
+  justify-self: center;
+}
+
+.latest-bids{
+  @media (max-width: $breakpoint-xs-max){
+  margin-left: 25px;
+  margin-right: 25px;
+  }
+  margin-left: 16px;
 }
 </style>

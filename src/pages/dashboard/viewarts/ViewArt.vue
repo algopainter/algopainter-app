@@ -164,9 +164,9 @@ export default class ViewArt extends Vue {
 
   changeBackground(value: string) {
     this.backgroundChange = true;
-    const parameters: Record<string, any> = this.image.nft.parameters;
+    const parameters: Record<string, unknown> = this.image.nft.parameters;
     const arrayKeys = Object.keys(parameters);
-    const arrayValues: any[] = Object.values(parameters);
+    const arrayValues: (string | number)[] = Object.values(parameters) as (string | number)[];
     const arrayLength = arrayKeys.length;
     let URL = 'https://gwei.algopainter.art/?';
     let counter = 0;

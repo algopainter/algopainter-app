@@ -17,14 +17,74 @@
               />
             </div>
             <div class="user-details">
-              <div class="name text-primary text-bold text-h3">
+              <div
+                class="text-account text-primary text-bold text-h3"
+              >
                 {{ profile.name }}
+                <q-tooltip
+                  anchor="top middle"
+                  self="top middle"
+                  class="bg-primary"
+                  :offset="[10, 10]"
+                >
+                  {{ $t(profile.name) }}
+                </q-tooltip>
               </div>
-              <div class="details">
+              <div class="text-account details">
                 {{ profile.email }}
+                <q-tooltip
+                  anchor="top middle"
+                  self="top middle"
+                  class="bg-primary"
+                  :offset="[10, 10]"
+                >
+                  {{ $t(profile.email) }}
+                </q-tooltip>
               </div>
-              <div class="details text-grey-5">
+              <div
+                v-if="profile.bio == null || profile.bio.length < 140"
+                class="text-bio details text-grey-5 text-subtitle2"
+              >
                 {{ profile.bio }}
+                <q-tooltip
+                  anchor="top middle"
+                  self="top middle"
+                  class="bg-primary"
+                  :offset="[10, 10]"
+                  max-width="400px"
+                >
+                  {{ $t(profile.bio) }}
+                </q-tooltip>
+              </div>
+              <div
+                v-else
+                class="text-primary text-bold text-subtitle2"
+              >
+                <q-slide-transition>
+                  <div v-show="expanded">
+                    <div
+                      class="text-subtitle2 card-bio q-pa-none"
+                    >
+                      {{ $t(profile.bio) }}
+                    </div>
+                  </div>
+                </q-slide-transition>
+                <a
+                  v-if="expanded === false"
+                  target="_blank"
+                  class="read-more"
+                  @click="expanded = !expanded"
+                >
+                  {{ $t('dashboard.homePage.btnBioFalse') }}
+                </a>
+                <a
+                  v-if="expanded === true"
+                  target="_blank"
+                  class="read-more"
+                  @click="expanded = !expanded"
+                >
+                  {{ $t('dashboard.homePage.btnBioTrue') }}
+                </a>
               </div>
             </div>
           </div>
@@ -117,6 +177,8 @@ export default class AccountDetails extends Vue {
 
   balance: number = 0;
 
+  expanded: boolean = false;
+
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['user/isConnected'] as boolean;
@@ -128,7 +190,7 @@ export default class AccountDetails extends Vue {
   }
 
   @Watch('accountAddress')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     void this.getProfile();
     void this.getUserItems();
     void this.setAccountBalance();
@@ -200,19 +262,7 @@ export default class AccountDetails extends Vue {
 
   .user-details {
     .details {
-      padding: 2px 0;
       font-size: 1.3rem;
-    }
-
-    .country-flag {
-      display: inline-flex;
-      align-items: center;
-
-      img {
-        display: block;
-        height: 20px;
-        margin-right: 6px;
-      }
     }
   }
 }
@@ -221,4 +271,55 @@ export default class AccountDetails extends Vue {
     width: 100%;
    }
 }
+
+.text-account {
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+  }
+  max-width: 600px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.text-bio{
+  max-width: 100%;
+  word-break: break-all;
+  color: #f4578f;
+}
+
+.read-more{
+  cursor: pointer;
+}
+
+.text-account {
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+  }
+  max-width: 600px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.card-bio{
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+    padding-right: 10px;
+  }
+
+  max-width: 600px;;
+  text-align: justify;
+  word-break: break-all;
+}
+
 </style>

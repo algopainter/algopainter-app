@@ -40,7 +40,10 @@
           <q-input
             v-model="formFields.name"
             :label="$t('dashboard.editProfile.name')"
-            :rules="[ val => val && val.length > 0 || 'Field name required']"
+            :rules="[ name => name.length != 0 && name.length < 33]"
+            :error-message="$t('dashboard.editProfile.erroName')"
+            maxlength="32"
+            counter
           />
           <q-input
             v-model="formFields.email"
@@ -63,10 +66,14 @@
         </div>
         <q-input
           v-model="formFields.bio"
+          :label="$t('dashboard.editProfile.bio')"
+          :rules="[ val => val.length < 1001]"
+          :error-message=" $t('dashboard.editProfile.erroBio')"
           outlined
           class="responsive-input q-col-gutter-x-md q-mt-md"
           type="textarea"
-          :label="$t('dashboard.editProfile.bio')"
+          maxlength="1000"
+          counter
         />
         <h5 class="text-bold q-mb-none q-ml-md">
           {{ $t('dashboard.editProfile.sMedia') }}
@@ -186,7 +193,7 @@ export default class EditProfile extends Vue {
   }
 
   @Watch('account')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     void this.loadData();
   }
 
@@ -266,12 +273,16 @@ export default class EditProfile extends Vue {
     try {
       this.isLoading = true;
       this.formFields.name = this.formFields.name?.trim();
+      this.formFields.bio = this.formFields.bio?.trim();
+
       if (!this.formFields.email) {
         this.formFields.email = undefined;
       }
+
       if (!this.formFields.customProfile) {
         this.formFields.customProfile = undefined;
       }
+
       if (this.formFields.name === '' || this.formFields.name === undefined) {
         Notify.create({
           message: 'Field name required!',
@@ -280,6 +291,7 @@ export default class EditProfile extends Vue {
         });
         return;
       }
+
       const data = {
         ...this.formFields,
         salt: nanoid(),

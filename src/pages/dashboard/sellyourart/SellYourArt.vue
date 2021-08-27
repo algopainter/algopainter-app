@@ -1,162 +1,131 @@
 <template>
-  <div class="row justify-center">
-    <div class="col-xs-12 col-sm-12 col-md-6">
-      <div class="q-pa-md">
-        <account-details />
-        <div class="header q-gutter-md">
-          {{ $t('dashboard.sellYourArt.putMarketplace') }}
-        </div>
-        <div class="row q-gutter-sm justify-center ">
-          <algo-button
-            class="btn-fixed-width"
-            :class="{ btn1: selectBtn == 1 }"
-            :label="$t('dashboard.sellYourArt.FixedPrice')"
-            @click="selectBtn = 1"
-          />
-          <algo-button
-            class="btn-fixed-width"
-            :class="{ btn2: selectBtn == 2 }"
-            :label="$t('dashboard.sellYourArt.Timed')"
-            @click="selectBtn = 2"
-          />
-        </div>
+  <div
+    v-if="loading"
+    class="flex flex-center q-pa-xl"
+  >
+    <q-spinner
+      color="primary"
+      size="80px"
+    />
+  </div>
+  <div
+    v-else
+    class="row reverse-sm q-col-gutter-lg"
+  >
+    <div
+      v-if="image"
+      class="col-12 col-sm-4 image-preview"
+    >
+      <div>
+        <q-img :src="image.nft.previewImage" />
       </div>
-      <div v-if="selectBtn === 1">
-        <div
-          text-subtitle2
-          class="text-weight-bold q-mt-xs q-gutter-md q-px-md"
-        >
-          {{ $t('dashboard.sellYourArt.EnterPrice') }}
+      <div class="title">
+        {{ image.title }}
+      </div>
+      <div class="description">
+        {{ image.description }}
+      </div>
+    </div>
+    <div class="col-12 col-sm-8">
+      <div class="row q-col-gutter-md">
+        <div class="col-12 header">
+          {{ $t('dashboard.sellYourArt.createAuction') }}
         </div>
-        <div>
-          <span class="text-bold">
-            {{ $t('dashboard.sellYourArt.price') }}
-          </span>
+        <div class="col-12">
           <q-input
-            v-model="text"
+            v-model="auction.minimumPrice"
+            :label="$t('dashboard.sellYourArt.minimumPrice')"
             type="number"
-            color="grey-3"
-            label-color="primary"
+            color="primary"
           >
             <template #append>
-              <q-select
-                v-model="coins"
-                :options="options"
+              <q-btn-dropdown
+                color="primary"
+                flat
+                :label="selectedCoinLabel"
               >
-                <template #option="scope">
+                <q-list>
                   <q-item
-                    v-bind="scope.itemProps"
-                    v-on="scope.itemEvents"
+                    v-for="option in options"
+                    :key="option.value"
+                    v-close-popup
+                    clickable
+                    @click="selectCoin(option.value)"
                   >
-                    <img
-                      class="q-mr-xs"
-                      :src="scope.opt.img"
-                    >
-
+                    <q-item-section avatar>
+                      <q-avatar size="sm">
+                        <img :src="option.img">
+                      </q-avatar>
+                    </q-item-section>
                     <q-item-section>
                       <q-item-label>
-                        {{ scope.opt.label }}
+                        {{ option.label }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
-                </template>
-              </q-select>
+                </q-list>
+              </q-btn-dropdown>
             </template>
           </q-input>
-          <div>
-            <div class="row q-pa-xs">
-              <div>
-                <span class="text-bold">
-                  {{ $t('dashboard.sellYourArt.creatorRoyalties') }}
-                </span>
-                <q-select
-                  v-model="investors"
-                  class="select-width q-gutter-x-md"
-                  :options="royalties"
-                >
-                  <template #append>
-                    <q-btn flat>
-                      {{ $t('dashboard.sellYourArt.percent') }}
-                    </q-btn>
-                  </template>
-                </q-select>
-              </div>
-              <div>
-                <span class="text-bold">
-                  {{ $t('dashboard.sellYourArt.investorsRoyalties') }}</span>
-                <q-select
-                  v-model="creator"
-                  class="select-width"
-                  :options="royalties"
-                >
-                  <template #append>
-                    <q-btn flat>
-                      {{ $t('dashboard.sellYourArt.percent') }}
-                    </q-btn>
-                  </template>
-                </q-select>
-              </div>
-            </div>
-            <div class="text-right q-mr-md">
-              <p class="text-bold">
-                {{ $t('dashboard.sellYourArt.service') }}
-              </p>
-              <span>
-                {{ $t('dashboard.sellYourArt.willReceive') }}
-              </span>
-              <span class="text-primary text-bold">
-                {{ $t('dashboard.sellYourArt.ireceive') }}
-              </span>
-              <span class="text-primary text-bold">
-                {{ coins.label }}
-              </span>
-              <span class="text-grey-5">
-                {{ $t('dashboard.sellYourArt.money') }}
-              </span>
-            </div>
-            <div class="row justify-center">
-              <algo-button
-                class="btn-fixed-width q-ma-xs"
-                color="primary"
-                outline
-                :label="$t('dashboard.sellYourArt.cancel')"
-              />
-              <algo-button
-                class="btn-fixed-width q-ma-xs"
-                color="primary"
-                outline
-                :label="$t('dashboard.sellYourArt.register')"
-              />
-            </div>
-          </div>
+        </div>
+        <div class="col-12">
+          <date-time-field
+            v-model="auction.endDate"
+            :options="endDateOptions"
+            :label="$t('dashboard.sellYourArt.endDate')"
+          />
+        </div>
+        <div class="col-12">
+          <q-input
+            v-model="auction.bidBackFee"
+            type="number"
+            :label="$t('dashboard.sellYourArt.bidBackFee')"
+          />
+        </div>
+        <div class="col-12 flex justify-end">
+          <algo-button
+            color="primary"
+            :label="$t('dashboard.sellYourArt.createAuction')"
+            @click="createAuction"
+          />
         </div>
       </div>
-      <div v-if="selectBtn === 2">
-        <!-- page sell auction -->
-      </div>
-    </div>
-    <div>
-      <your-art class="q-ma-sm" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import moment from 'moment';
 
+import { getImage } from 'src/api/images';
+import { IImage } from 'src/models/IImage';
 import AlgoButton from 'components/common/Button.vue';
+import DateTimeField from 'components/fields/DateTimeField.vue';
 
-import YourArt from 'src/components/sellYourArt/YourArt.vue';
+interface INewAuction {
+  minimumPrice: number;
+  endDate: string;
+  coin: string;
+  bidBackFee: number;
+}
 
 @Options({
-  components: { AlgoButton, YourArt },
+  components: {
+    AlgoButton,
+    DateTimeField,
+  },
 })
-export default class sellYourArt extends Vue {
-  investors: null = null;
-  creator: null = null;
-  coins: string = '';
-  text: string = '';
-  selectBtn: number = 1;
+export default class SellYourArt extends Vue {
+  image: IImage | null = null;
+  loading: boolean = false;
+
+  auction: INewAuction = {
+    minimumPrice: 0,
+    endDate: '',
+    coin: '',
+    bidBackFee: 0,
+  };
 
   options = [
     {
@@ -186,46 +155,57 @@ export default class sellYourArt extends Vue {
     },
   ];
 
-  royalties = [
-    {
-      value: 0,
-      label: '0',
-    },
-    {
-      value: 2.5,
-      label: '2.5',
-    },
-    {
-      value: 5,
-      label: '5',
-    },
-    {
-      value: 10,
-      label: '10',
-    },
-  ];
+  get selectedCoinLabel() {
+    const { coin } = this.auction;
+
+    if (!coin) {
+      return this.$t('dashboard.sellYourArt.selectCoin');
+    }
+
+    const selectedOption = this.options.find((option) => option.value === coin);
+
+    if (!selectedOption) {
+      return coin;
+    }
+
+    return selectedOption.label;
+  }
+
+  get nowFormatted() {
+    return moment().format('YYYY/MM/DD');
+  }
+
+  created() {
+    void this.loadImage();
+  }
+
+  async loadImage() {
+    const { id } = this.$route.params;
+
+    this.loading = true;
+
+    this.image = await getImage(id as string);
+
+    this.loading = false;
+  }
+
+  selectCoin(coin: string) {
+    this.auction.coin = coin;
+  }
+
+  endDateOptions(date: string) {
+    return date > this.nowFormatted;
+  }
+
+  createAuction() {}
 }
 </script>
 
 <style lang="scss" scoped>
-.btn-fixed-width {
-  width: 100px;
-  height: 44px;
-  color: #f4538d;
-  border: 1px solid rgb(185, 185, 185);
-}
-
-.btn-fixed-width.btn1 {
-  border: 1px solid #f4538d;
-  color: #f4538d;
-}
-
-.btn-fixed-width.btn2 {
-  border: 1px solid #f4538d;
-  color: #f4538d;
-}
-
-.select-width {
-  width: 200px;
+.image-preview {
+  .title {
+    font-weight: bold;
+    font-size: 1.8rem;
+  }
 }
 </style>

@@ -252,4 +252,12 @@ export default class UserGalleryOverview extends Vue {
   align-self: center;
   justify-self: center;
 }
+
+.latest-bids{
+  @media (max-width: $breakpoint-xs-max){
+  margin-left: 25px;
+  margin-right: 25px;
+  }
+  margin-left: 16px;
+}
 </style>

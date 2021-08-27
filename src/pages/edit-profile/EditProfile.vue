@@ -40,7 +40,8 @@
           <q-input
             v-model="formFields.name"
             :label="$t('dashboard.editProfile.name')"
-            :rules="[ val => val.length < 33 && val.length > 0 || $t('dashboard.editProfile.erroName') ]"
+            :rules="[ name => name.length != 0 && name.length < 33]"
+            :error-message="$t('dashboard.editProfile.erroName')"
             maxlength="32"
             counter
           />
@@ -66,7 +67,7 @@
         <q-input
           v-model="formFields.bio"
           :label="$t('dashboard.editProfile.bio')"
-          :rules="[ val => val.length < 1000]"
+          :rules="[ val => val.length < 1001]"
           :error-message=" $t('dashboard.editProfile.erroBio')"
           outlined
           class="responsive-input q-col-gutter-x-md q-mt-md"
@@ -181,9 +182,6 @@ export default class EditProfile extends Vue {
 
   isLoading: boolean = false;
 
-  bioResponse: boolean = false;
-  nameResponse: boolean = false;
-
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['user/isConnected'] as boolean;
@@ -254,9 +252,6 @@ export default class EditProfile extends Vue {
     const allowed: RegExp = /[^a-zA-Z0-9-]/g;
     const customProfile: string | any = this.formFields.customProfile;
     const notAllowed = allowed.test(customProfile);
-    this.sizeBio();
-    this.sizeName();
-
     if (notAllowed) {
       Notify.create({
         message: 'Custom URLs may only contain "A-Z", "0-9" and "-"',
@@ -291,23 +286,6 @@ export default class EditProfile extends Vue {
       if (this.formFields.name === '' || this.formFields.name === undefined) {
         Notify.create({
           message: 'Field name required!',
-          color: 'red',
-          icon: 'mdi-alert',
-        });
-        return;
-      }
-
-      if (this.bioResponse) {
-        Notify.create({
-          message: 'The maximum characters amount is 1000',
-          color: 'red',
-          icon: 'mdi-alert',
-        });
-        return;
-      }
-      if (this.nameResponse) {
-        Notify.create({
-          message: 'Field name is required and must be less than 32 character long',
           color: 'red',
           icon: 'mdi-alert',
         });
@@ -380,28 +358,6 @@ export default class EditProfile extends Vue {
       textColor: 'primary',
       timeout: 2500,
     });
-  }
-
-  bioLength: string = '';
-
-  sizeBio() {
-    const bioLength = this.formFields.bio as string;
-    const bioSize:number = bioLength.length;
-    if (bioSize > 1000) {
-      this.bioResponse = true;
-    } else {
-      this.bioResponse = false;
-    }
-  }
-
-  sizeName() {
-    const nameLength = this.formFields.name as string;
-    const nameSize:number = nameLength.length;
-    if (nameSize > 32) {
-      this.nameResponse = true;
-    } else {
-      this.nameResponse = false;
-    }
   }
 }
 </script>

@@ -42,19 +42,10 @@
               </q-tooltip>
             </div>
             <div
-              v-if="userProfile.bio == null"
+              v-if="userProfile.bio.length < 140"
               class="text-bio details text-grey-5 text-subtitle2"
             >
               {{ userProfile.bio }}
-              <q-tooltip
-                anchor="top middle"
-                self="top middle"
-                class="bg-primary"
-                :offset="[10, 10]"
-                max-width="400px"
-              >
-                {{ $t(userProfile.bio) }}
-              </q-tooltip>
             </div>
             <div
               v-else
@@ -256,9 +247,36 @@ export default class UserAccountDetails extends Vue {
 
 .text-bio{
   max-width: 100%;
+  word-break: break-all;
 }
 
 .read-more{
   cursor: pointer;
+}
+.text-account {
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+  }
+  max-width: 600px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.card-bio{
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+    padding-right: 10px;
+  }
+
+  max-width: 600px;;
+  text-align: justify;
+  word-break: break-all;
 }
 </style>

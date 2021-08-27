@@ -172,7 +172,7 @@ export default class MyGalleryOverview extends Vue {
   }
 
   @Watch('accountAddress')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     void this.getGalleryBidders();
     void this.getGalleryArts();
   }

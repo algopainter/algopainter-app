@@ -46,7 +46,7 @@ class Props {
   },
 })
 export default class PreviousBidAvatar extends Vue.with(Props) {
-  bidAtInDays(bid: IBid) {
+  bidAtInDays() {
     return 2;
   }
 }

@@ -82,7 +82,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
         id: await window.web3.eth.net.getId(),
         type: await window.web3.eth.net.getNetworkType(),
       };
-      commit('setIsConnected', true);
+      commit('setIsConnected', Boolean(accounts[0]));
       commit('setAccount', accounts[0]);
       commit('setNetworkInfo', networkInfo);
     };
@@ -119,7 +119,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const profile = res.data as [];
       this.commit('user/SET_PROFILE', profile);
-    } catch (e: any) {
+    } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type) {
         this.commit('user/SET_PROFILE', 'empty');

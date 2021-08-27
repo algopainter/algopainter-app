@@ -195,7 +195,7 @@ export default class EditProfile extends Vue {
   }
 
   @Watch('account')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     void this.loadData();
   }
 
@@ -256,6 +256,7 @@ export default class EditProfile extends Vue {
     const notAllowed = allowed.test(customProfile);
     this.sizeBio();
     this.sizeName();
+
     if (notAllowed) {
       Notify.create({
         message: 'Custom URLs may only contain "A-Z", "0-9" and "-"',

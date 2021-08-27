@@ -76,7 +76,7 @@
         </div>
       </div>
       <!--aqui -->
-     <div class="q-mb-sm">
+      <div class="q-mb-sm">
         <!--aqui -->
         <div
           class="flex q-col-gutter-md"
@@ -127,7 +127,7 @@
         </div>
       </div>
       <!--fim-->
-       <div class="q-mb-sm">
+      <div class="q-mb-sm">
         <!--aqui -->
         <div
           class="flex q-col-gutter-md"

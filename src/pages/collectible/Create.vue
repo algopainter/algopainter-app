@@ -241,7 +241,6 @@ export default class Create extends Vue {
   eventPreview(play: string|null) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.imageData = play;
-    console.log(this.imageData);
   }
 
   eventClose(play: string|null) {

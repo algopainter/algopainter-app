@@ -126,7 +126,7 @@ export default class ProfileDropdownButton extends Vue {
   }
 
   @Watch('accountAddress')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     void this.loadUserProfile();
   }
 

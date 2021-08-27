@@ -191,7 +191,7 @@ export default class AccountDetails extends Vue {
   }
 
   @Watch('accountAddress')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     void this.getProfile();
     void this.getUserItems();
     void this.setAccountBalance();

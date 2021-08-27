@@ -88,7 +88,7 @@ export default class MainLayout extends Vue {
   }
 
   @Watch('isConnected')
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     localStorage.isConnected = this.isConnected;
   }
 

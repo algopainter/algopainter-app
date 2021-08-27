@@ -12,25 +12,37 @@
       </q-card-section>
       <q-card-section class="row q-col-gutter-xl q-pa-lg items-center">
         <div
-          class="flex justify-center col-6"
+          v-if="isTrustWallet"
+          class="flex justify-center col-12"
           @click="connectToBlockchain('metamask')"
         >
           <q-img
             class="wallet"
-            src="/images/metamask.png"
+            src="/images/trustwallet-logo.png"
           />
-          <div>{{ $t('dashboard.metaMask') }}</div>
         </div>
-        <div
-          class="flex justify-center col-6"
-          @click="connectToBlockchain('walletConnect')"
-        >
-          <q-img
-            class="wallet"
-            src="/images/walletconnect.png"
-          />
-          <div>{{ $t('dashboard.walletConnect') }}</div>
-        </div>
+        <template v-else>
+          <div
+            class="flex justify-center col-6"
+            @click="connectToBlockchain('metamask')"
+          >
+            <q-img
+              class="wallet"
+              src="/images/metamask.png"
+            />
+            <div>{{ $t('dashboard.metaMask') }}</div>
+          </div>
+          <div
+            class="flex justify-center col-6"
+            @click="connectToBlockchain('walletConnect')"
+          >
+            <q-img
+              class="wallet"
+              src="/images/walletconnect.png"
+            />
+            <div>{{ $t('dashboard.walletConnect') }}</div>
+          </div>
+        </template>
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -54,6 +66,10 @@ export default class ConnectYourWallet extends Vue.with(Props) {
   declare $refs: {
     dialog: QDialog;
   };
+
+  get isTrustWallet(): boolean {
+    return window.ethereum && window.ethereum.isTrust === true;
+  }
 
   mounted() {
     this.show();
@@ -81,7 +97,7 @@ export default class ConnectYourWallet extends Vue.with(Props) {
 
       this.$emit('connected');
     } catch (error) {
-      console.log(error);
+      console.log('error - Connect Your Wallet', error);
     }
   }
 }

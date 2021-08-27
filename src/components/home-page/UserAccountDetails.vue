@@ -261,4 +261,30 @@ export default class UserAccountDetails extends Vue {
 .read-more{
   cursor: pointer;
 }
+.text-account {
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+  }
+  max-width: 600px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.card-bio{
+  @media (max-width: $breakpoint-md){
+    max-width: 40vw;
+  }
+  @media (max-width: $breakpoint-xs-max){
+    max-width: 75vw;
+    padding-right: 10px;
+  }
+
+  max-width: 600px;;
+  text-align: justify;
+  word-break: break-all;
+}
 </style>

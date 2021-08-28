@@ -5,7 +5,7 @@
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-      @click="getGalleryArts()"
+      @click="showGalleryArts()"
     />
     <algo-button
       :label="$t('dashboard.homePage.onSale')"
@@ -41,7 +41,7 @@
         </div>
         <div
           v-else
-          class="col-12 col-md-9 col-lg-9"
+          class="col-12 col-md-9 col-lg-9 q-mt-lg"
         >
           <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
             {{ $t('dashboard.homePage.personalNoItems') }}
@@ -251,7 +251,7 @@ export default class MyGalleryOverview extends Vue {
     this.currentBtnClicked = 1;
     try {
       this.currentPage = page;
-      const response = await api.get(`users/0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac/images?page=${page}&perPage=9`); // this.accountAddress
+      const response = await api.get(`users/${this.accountAddress}/images?page=${page}&perPage=9`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {
@@ -274,6 +274,10 @@ export default class MyGalleryOverview extends Vue {
       this.loadingGalleryArtsButtons = false;
       this.loadingGalleryArts = false;
     }
+  }
+
+  showGalleryArts() {
+    this.currentBtnClicked = 1;
   }
 
   getOnSale() {

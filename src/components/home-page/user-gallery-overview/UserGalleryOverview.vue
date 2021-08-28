@@ -5,7 +5,7 @@
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-      @click="getGalleryArts()"
+      @click="showGalleryArts()"
     />
     <algo-button
       :label="$t('dashboard.homePage.onSale')"
@@ -39,7 +39,7 @@
           </div>
         </div>
         <div v-else>
-          <div class="text-h6 text-primary text-center q-pb-md">
+          <div class="text-h6 text-primary text-center q-pb-md q-mt-lg">
             {{ $t('dashboard.homePage.publicNoItems') }}
           </div>
         </div>
@@ -245,6 +245,10 @@ export default class UserGalleryOverview extends Vue {
       this.loadingGalleryArtsButtons = false;
       this.loadingGalleryArts = false;
     }
+  }
+
+  showGalleryArts() {
+    this.currentBtnClicked = 1;
   }
 
   getOnSale() {

@@ -30,6 +30,11 @@
         :art="art.nft.previewImage"
         :_id="art._id"
       />
+      <LikeAnimation
+        :liked="wasLiked"
+        :likes="likes || art.likes"
+        @favoriteClicked="favoriteClicked"
+      />
     </div>
     <q-img
       class="art-image"
@@ -74,6 +79,8 @@ import { Vue, Options, prop } from 'vue-class-component';
 import { IMyGallery } from 'src/models/IMyGallery';
 import AlgoButton from '../../common/Button.vue';
 import ShareArtIcons from '../../common/ShareArtIcons.vue';
+import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
+import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
 
 class Props {
   art = prop({
@@ -91,10 +98,102 @@ class Props {
   components: {
     AlgoButton,
     ShareArtIcons,
+    LikeAnimation,
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
+  // like feature variables
+  likeClicked: boolean = false;
+  wasLiked: boolean = false;
+  likes!: number;
 
+  collectionArtController: CollectionArtController =
+  new CollectionArtController();
+
+  mounted() {
+    if (this.isConnected) {
+      void this.loadData();
+    }
+    this.likes = this.art.likes;
+  }
+
+  loadData() {
+    this.wasLiked =
+      (this.art.likers as string[]).filter(
+        (liker) => liker.toLowerCase() === this.account,
+      ).length !== 0;
+  }
+
+  get account() {
+    if (this.isConnected) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+      return this.$store.getters['user/account'].toLowerCase();
+    }
+    return null;
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  favoriteClicked(wasLiked: boolean) {
+    if (!this.likeClicked) {
+      this.likeClicked = true;
+      this.$emit('favoriteClicked');
+      if (this.isConnected) {
+        wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+      }
+    }
+  }
+
+  postFavoriteArt() {
+    this.collectionArtController
+      .favoriteArt(this.art._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like(true);
+            this.likeClicked = false;
+          }
+          this.likeClicked = false;
+        },
+        (error) => {
+          console.log('"like" post error: ', error);
+          this.likeClicked = false;
+        },
+      );
+    this.like();
+  }
+
+  deleteFavoriteArt() {
+    this.collectionArtController
+      .deleteFavoriteArt(this.art._id, this.account)
+      .then(
+        (result) => {
+          if (result.isFailure) {
+            this.like();
+            this.likeClicked = false;
+          }
+          this.likeClicked = false;
+        },
+        (error) => {
+          console.log('"like" delete error: ', error);
+          this.likeClicked = false;
+        },
+      );
+    this.like(true);
+  }
+
+  like(undo: boolean = false) {
+    if (undo) {
+      this.wasLiked = false;
+      this.likes--;
+    } else {
+      this.wasLiked = true;
+      this.likes++;
+    }
+  }
 }
 </script>
 

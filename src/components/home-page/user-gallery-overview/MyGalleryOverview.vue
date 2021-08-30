@@ -23,7 +23,7 @@
     class="btn-container q-mx-auto flex justify-center items-center"
   >
     <algo-button
-      :label="$t('dashboard.homePage.gallery') + '(' + contImg + ')' "
+      :label="$t('dashboard.homePage.gallery') + ' (' + contImg + ')' "
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "

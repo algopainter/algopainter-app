@@ -43,7 +43,7 @@
             </div>
             <div
               v-if="userProfile.bio === null || userProfile.bio === undefined || userProfile.bio.length < 140"
-              class="text-bio details text-grey-5 text-subtitle2"
+              class="text-primary text-subtitle2 card-bio q-pa-none q-my-md"
             >
               {{ userProfile.bio }}
             </div>
@@ -244,6 +244,7 @@ export default class UserAccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  line-height: 4rem;
 }
 
 .text-bio{

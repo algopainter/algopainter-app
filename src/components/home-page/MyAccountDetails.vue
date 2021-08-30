@@ -136,7 +136,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
-import { IImageUser } from 'src/models/IImageUser';
+import { IProfile } from 'src/models/IProfile';
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
 import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overview/AccountDetailsSkeleton.vue';
@@ -156,7 +156,7 @@ import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overvi
   },
 })
 export default class AccountDetails extends Vue {
-  profile: IImageUser[] = [];
+  profile: IProfile = {};
   loadingProfile: boolean = true;
 
   userItems = '0';
@@ -200,7 +200,8 @@ export default class AccountDetails extends Vue {
         account: this.accountAddress,
       }).then(() => {
         this.loadingProfile = false;
-        this.profile = this.$store.state.user.profile;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.profile = this.$store.getters['user/GET_PROFILE'] as IProfile;
         this.sliceBio();
       });
     }

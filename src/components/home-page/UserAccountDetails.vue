@@ -54,7 +54,7 @@
               <div
                 class="text-subtitle2 card-bio q-pa-none"
               >
-                {{ sliceBio() }}
+                {{ sliceBio(userProfile.bio) }}
                 <a
                   v-if="expanded === false"
                   target="_blank"
@@ -95,7 +95,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import { IUser } from 'src/models/IUser';
+import { IProfile } from 'src/models/IProfile';
 
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
@@ -116,16 +116,7 @@ import UserAccountDetailsSkeleton from 'src/components/home-page/user-gallery-ov
   },
 })
 export default class UserAccountDetails extends Vue {
-  user: IUser = {
-    id: '1',
-    name: 'Natasha',
-    email: 'natasha.k@gmail.com',
-    age: '27 years',
-    interests: 'abstract, modern, digital, fractal, urban, classic',
-    collections: 8,
-  };
-
-  userProfile: IUser[] = [];
+  userProfile: IProfile = {};
   loadingUserProfile: boolean = true;
 
   userItems = '0';
@@ -136,6 +127,7 @@ export default class UserAccountDetails extends Vue {
   expanded: boolean = false;
 
   bioInic: string = '';
+  slicedBio: string = '';
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -161,15 +153,17 @@ export default class UserAccountDetails extends Vue {
       type: 'user/getUserProfile',
       account: route,
     }).then(() => {
-      this.loadingUserProfile = false;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const userProfile = this.$store.getters['user/GET_USER_PROFILE'] as [];
+      const userProfile = this.$store.getters['user/GET_USER_PROFILE'] as IProfile;
       if (userProfile === undefined) {
-        this.userProfile = [];
+        this.userProfile = {};
       } else {
         this.userProfile = userProfile;
+        if (userProfile.bio) {
+          this.sliceBio(userProfile.bio);
+        }
       }
-      this.sliceBio();
+      this.loadingUserProfile = false;
     });
   }
 
@@ -201,8 +195,7 @@ export default class UserAccountDetails extends Vue {
     }
   }
 
-  sliceBio(): string {
-    const bio = this.userProfile.bio as string;
+  sliceBio(bio: string): string {
     if (!this.expanded) {
       const bioInic = bio.slice(0, 139);
       return bioInic;

@@ -37,6 +37,7 @@ export default {
     collectiblesGallery: 'Collection',
     exploreAuctions: 'Explore Auctions',
     onSale: 'On sale',
+    like: 'Like',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',

@@ -14,6 +14,13 @@
       :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
       @click="getOnSale()"
     />
+    <algo-button
+      :label="$t('dashboard.homePage.like')"
+      outline
+      class="algo-button q-px-md q-ml-sm"
+      :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
+      @click="getLikes()"
+    />
   </div>
   <div
     class="row q-col-gutter-lg"
@@ -78,7 +85,15 @@
       <MyGallerySkeleton />
     </div>
     <div
-      v-else
+      v-else-if="currentBtnClicked === 2"
+      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
+      <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
+        {{ $t('dashboard.auctions.coming') }}
+      </p>
+    </div>
+    <div
+      v-else-if="currentBtnClicked === 3"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
@@ -256,6 +271,10 @@ export default class UserGalleryOverview extends Vue {
   getOnSale() {
     console.log('Coming soon');
     this.currentBtnClicked = 2;
+  }
+
+  getLikes() {
+    this.currentBtnClicked = 3;
   }
 
   async loadMore() {

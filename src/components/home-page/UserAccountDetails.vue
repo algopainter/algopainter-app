@@ -30,7 +30,7 @@
                 {{ $t(userProfile.name) }}
               </q-tooltip>
             </div>
-            <div class="text-subtitle1 card-bio q-pa-none q-my-xs">
+            <div class=" text-account details text-email">
               {{ userProfile.email }}
               <q-tooltip
                 anchor="top middle"

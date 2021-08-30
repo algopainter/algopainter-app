@@ -30,7 +30,7 @@
                   {{ $t(profile.name) }}
                 </q-tooltip>
               </div>
-              <div class="text-account details">
+              <div class="text-account details text-email">
                 {{ profile.email }}
                 <q-tooltip
                   anchor="top middle"
@@ -49,7 +49,7 @@
               </div>
               <div
                 v-else
-                class="text-primary text-bold text-subtitle2"
+                class="text-subtitle2 card-bio q-pa-none"
               >
                 <div
                   class="text-subtitle2 card-bio q-pa-none"
@@ -284,13 +284,14 @@ export default class AccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+
 }
 
 .text-bio{
   max-width: 100%;
   color: #f4578f;
   word-break: break-all;
-
+  color: #BDBDCC;
 }
 
 .read-more{
@@ -311,6 +312,7 @@ export default class AccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  color: #BDBDCC;
 }
 
 .card-bio{
@@ -325,7 +327,11 @@ export default class AccountDetails extends Vue {
   max-width: 600px;;
   text-align: justify;
   word-wrap: normal;
+  color: #BDBDCC;
+}
 
+.text-email{
+  color: black;
 }
 
 </style>

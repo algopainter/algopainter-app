@@ -49,31 +49,29 @@
               </div>
               <div
                 v-else
-                class="text-primary text-bold text-subtitle2 flex"
+                class="text-primary text-bold text-subtitle2"
               >
-                <q-slide-transition>
-                  <div
-                    class="text-subtitle2 card-bio q-pa-none"
+                <div
+                  class="text-subtitle2 card-bio q-pa-none"
+                >
+                  {{ sliceBio() }}
+                  <a
+                    v-if="expanded === false"
+                    target="_blank"
+                    class="read-more"
+                    @click="expanded = !expanded"
                   >
-                    {{ sliceBio() }}
-                  </div>
-                </q-slide-transition>
-                <a
-                  v-if="expanded === false"
-                  target="_blank"
-                  class="read-more"
-                  @click="expanded = !expanded"
-                >
-                  {{ $t('dashboard.homePage.btnBioFalse') }}
-                </a>
-                <a
-                  v-if="expanded === true"
-                  target="_blank"
-                  class="read-more"
-                  @click="expanded = !expanded"
-                >
-                  {{ $t('dashboard.homePage.btnBioTrue') }}
-                </a>
+                    {{ $t('dashboard.homePage.btnBioFalse') }}
+                  </a>
+                  <a
+                    v-if="expanded === true"
+                    target="_blank"
+                    class="read-more"
+                    @click="expanded = !expanded"
+                  >
+                    {{ $t('dashboard.homePage.btnBioTrue') }}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -289,8 +287,9 @@ export default class AccountDetails extends Vue {
 
 .text-bio{
   max-width: 100%;
-  word-break: break-all;
   color: #f4578f;
+  word-break: break-all;
+
 }
 
 .read-more{
@@ -321,7 +320,8 @@ export default class AccountDetails extends Vue {
 
   max-width: 600px;;
   text-align: justify;
-  word-break: break-all;
+  word-wrap: normal;
+
 }
 
 </style>

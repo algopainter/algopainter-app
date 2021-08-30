@@ -30,7 +30,7 @@
                 {{ $t(userProfile.name) }}
               </q-tooltip>
             </div>
-            <div class="text-account details">
+            <div class="details text-email">
               {{ userProfile.email }}
               <q-tooltip
                 anchor="top middle"
@@ -250,7 +250,7 @@ export default class UserAccountDetails extends Vue {
 .text-bio{
   max-width: 100%;
   word-break: break-all;
-  color: #DDDDD9;
+  color: #BDBDCC;
 }
 
 .read-more{
@@ -270,7 +270,7 @@ export default class UserAccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-   color: #BDBDCC;
+  color: #BDBDCC;
 }
 
 .card-bio{
@@ -286,5 +286,9 @@ export default class UserAccountDetails extends Vue {
   text-align: justify;
   word-wrap: normal;
   color: #BDBDCC;
+}
+
+.text-email{
+  color: black;
 }
 </style>

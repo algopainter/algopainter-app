@@ -250,6 +250,7 @@ export default class UserGalleryOverview extends Vue {
       this.currentPage = page;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const response = await api.get(`users/${this.$route.params.account}/images?page=${page}&perPage=9`);
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const imgGet = await api.get(`users/${this.$route.params.account}/images`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
@@ -260,6 +261,7 @@ export default class UserGalleryOverview extends Vue {
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.galleryArts = response.data.data as [];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.contImg = imgGet.headers['x-total-items'] as number;
       if (this.galleryArts.length === 0) {
         this.nullGalleryArts = true;

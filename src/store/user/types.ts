@@ -69,7 +69,7 @@ export interface UserStateInterface {
   account?: string;
   error?: Error;
   networkInfo?: NetworkInfo;
-  profile: [];
+  profile: [] | undefined;
   userAccount?: string;
   userProfile?: [];
 }

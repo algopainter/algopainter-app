@@ -15,6 +15,9 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
   networkInfo(state: UserStateInterface): NetworkInfo|undefined {
     return state.networkInfo;
   },
+  GET_PROFILE(state: UserStateInterface): []|undefined {
+    return state.profile;
+  },
   GET_USER_ACCOUNT(state: UserStateInterface): string|undefined {
     return state.userAccount;
   },

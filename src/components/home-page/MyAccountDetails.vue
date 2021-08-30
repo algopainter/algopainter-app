@@ -46,45 +46,32 @@
                 class="text-bio details text-grey-5 text-subtitle2"
               >
                 {{ profile.bio }}
-                <q-tooltip
-                  anchor="top middle"
-                  self="top middle"
-                  class="bg-primary"
-                  :offset="[10, 10]"
-                  max-width="400px"
-                >
-                  {{ $t(profile.bio) }}
-                </q-tooltip>
               </div>
               <div
                 v-else
                 class="text-primary text-bold text-subtitle2"
               >
-                <q-slide-transition>
-                  <div v-show="expanded">
-                    <div
-                      class="text-subtitle2 card-bio q-pa-none"
-                    >
-                      {{ $t(profile.bio) }}
-                    </div>
-                  </div>
-                </q-slide-transition>
-                <a
-                  v-if="expanded === false"
-                  target="_blank"
-                  class="read-more"
-                  @click="expanded = !expanded"
+                <div
+                  class="text-subtitle2 card-bio q-pa-none"
                 >
-                  {{ $t('dashboard.homePage.btnBioFalse') }}
-                </a>
-                <a
-                  v-if="expanded === true"
-                  target="_blank"
-                  class="read-more"
-                  @click="expanded = !expanded"
-                >
-                  {{ $t('dashboard.homePage.btnBioTrue') }}
-                </a>
+                  {{ sliceBio() }}
+                  <a
+                    v-if="expanded === false"
+                    target="_blank"
+                    class="read-more"
+                    @click="expanded = !expanded"
+                  >
+                    {{ $t('dashboard.homePage.btnBioFalse') }}
+                  </a>
+                  <a
+                    v-if="expanded === true"
+                    target="_blank"
+                    class="read-more"
+                    @click="expanded = !expanded"
+                  >
+                    {{ $t('dashboard.homePage.btnBioTrue') }}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -149,7 +136,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
-import { IImageUser } from 'src/models/IImageUser';
+import { IProfile } from 'src/models/IProfile';
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
 import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overview/AccountDetailsSkeleton.vue';
@@ -169,7 +156,7 @@ import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overvi
   },
 })
 export default class AccountDetails extends Vue {
-  profile: IImageUser[] = [];
+  profile: IProfile = {};
   loadingProfile: boolean = true;
 
   userItems = '0';
@@ -178,6 +165,8 @@ export default class AccountDetails extends Vue {
   balance: number = 0;
 
   expanded: boolean = false;
+
+  bioInic: string = '';
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -211,7 +200,9 @@ export default class AccountDetails extends Vue {
         account: this.accountAddress,
       }).then(() => {
         this.loadingProfile = false;
-        this.profile = this.$store.state.user.profile;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.profile = this.$store.getters['user/GET_PROFILE'] as IProfile;
+        this.sliceBio();
       });
     }
   }
@@ -242,6 +233,16 @@ export default class AccountDetails extends Vue {
       return UserUtils.formatAccountBalance(this.balance, 2);
     } else {
       return null;
+    }
+  }
+
+  sliceBio(): string {
+    const bio = this.profile.bio as string;
+    if (!this.expanded) {
+      const bioInic = bio.slice(0, 139);
+      return bioInic;
+    } else {
+      return bio;
     }
   }
 }
@@ -287,12 +288,16 @@ export default class AccountDetails extends Vue {
 
 .text-bio{
   max-width: 100%;
-  word-break: break-all;
   color: #f4578f;
+  word-break: break-all;
+
 }
 
 .read-more{
   cursor: pointer;
+  color: black;
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .text-account {
@@ -319,7 +324,8 @@ export default class AccountDetails extends Vue {
 
   max-width: 600px;;
   text-align: justify;
-  word-break: break-all;
+  word-wrap: normal;
+
 }
 
 </style>

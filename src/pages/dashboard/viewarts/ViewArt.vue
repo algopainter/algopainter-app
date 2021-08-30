@@ -109,6 +109,45 @@
               {{ $t('dashboard.viewArt.description') }}
             </span>
             <p> {{ image.description }} </p>
+            <div v-if="image.collectionName === 'Gwei'">
+              <p class="text-bold text-primary text-h6">
+                {{ $t('dashboard.viewArt.pararmeters') }}
+              </p>
+              <span>{{ $t('dashboard.viewArt.text') }}</span>
+              <span class="text-bold">
+                {{ image.nft.parameters.text }}
+              </span><br>
+              <span>{{ $t('dashboard.viewArt.randomColor') }}</span>
+              <span class="text-bold">
+                {{ image.nft.parameters.useRandom === 'true' ? $t('dashboard.viewArt.yes') : $t('dashboard.viewArt.no') }}
+              </span><br>
+              <div v-if="image.nft.parameters.useRandom === 'true'">
+                <span>{{ $t('dashboard.viewArt.probability') }}</span>
+                <span class="text-bold">
+                  {{ image.nft.parameters.probability }}
+                </span><br>
+              </div>
+              <span>{{ $t('dashboard.viewArt.inspiration') }}</span>
+              <span class="text-bold">
+                {{ parsedInspiration() }}
+              </span><br>
+              <span>{{ $t('dashboard.viewArt.exhibition') }}</span>
+              <span class="text-bold">
+                {{ parsedTechnique() }}
+              </span><br>
+              <span>{{ $t('dashboard.viewArt.technique') }}</span>
+              <span class="text-bold">
+                {{ parsedExhibition() }}
+              </span><br>
+              <span>{{ $t('dashboard.viewArt.created') }}</span>
+              <span class="text-bold">
+                {{ image.owner }}
+              </span><br>
+              <span>{{ $t('dashboard.viewArt.mint') }}</span>
+              <span class="text-bold">
+                {{ image.nft.parameters.amount }} {{ $t('dashboard.viewArt.algop') }}
+              </span><br>
+            </div>
           </div>
         </div>
       </div>
@@ -156,6 +195,65 @@ export default class ViewArt extends Vue {
 
   mounted() {
     void this.getDetailsData();
+  }
+
+  parsedInspiration() {
+    switch (this.image.nft.parameters.inspiration) {
+      case '0':
+        return 'Random';
+      case '1':
+        return 'Calm';
+      case '2':
+        return 'Colorful blocks';
+      case '3':
+        return 'Colorful paths';
+      case '4':
+        return 'Hot flows';
+      case '5':
+        return 'Galaxy';
+      case '6':
+        return 'Madness';
+    }
+  }
+
+  parsedExhibition() {
+    switch (this.image.nft.parameters.overlay) {
+      case '1':
+        return 'Splatters and Drips';
+      case '2':
+        return 'Dripping Paint';
+      case '3':
+        return 'Acrylic';
+      case '4':
+        return 'Freedom';
+      case '5':
+        return 'Heavy Brush';
+      default:
+        return 'Regular';
+    }
+  }
+
+  parsedTechnique() {
+    switch (this.image.nft.parameters.place) {
+      case '0':
+        return 'None';
+      case '1':
+        return 'Wall';
+      case '2':
+        return 'Big Wall';
+      case '3':
+        return 'Bedroom';
+      case '4':
+        return 'High-Tech Gallery';
+      case '5':
+        return 'Open Gallery';
+      case '6':
+        return 'Room';
+      case '7':
+        return 'PsyVerse';
+      default:
+        return 'None';
+    }
   }
 
   // preciso do id da imagem que ja foi fetched

@@ -30,7 +30,7 @@
                 {{ $t(userProfile.name) }}
               </q-tooltip>
             </div>
-            <div class="text-account details">
+            <div class="details text-email">
               {{ userProfile.email }}
               <q-tooltip
                 anchor="top middle"
@@ -43,40 +43,35 @@
             </div>
             <div
               v-if="userProfile.bio === null || userProfile.bio === undefined || userProfile.bio.length < 140"
-              class="text-bio details text-grey-5 text-subtitle2"
+              class="text-subtitle1 card-bio q-pa-none q-my-md"
             >
               {{ userProfile.bio }}
             </div>
             <div
               v-else
-              class="text-primary text-bold text-subtitle2"
+              class="text-bold text-subtitle1"
             >
-              <q-slide-transition>
-                <div v-show="expanded">
-                  <div
-                    class="text-subtitle2 card-bio"
-                    max-width="100px"
-                  >
-                    {{ $t(userProfile.bio) }}
-                  </div>
-                </div>
-              </q-slide-transition>
-              <a
-                v-if="expanded === false"
-                target="_blank"
-                class="read-more"
-                @click="expanded = !expanded"
+              <div
+                class="text-subtitle2 card-bio q-pa-none"
               >
-                {{ $t('dashboard.homePage.btnBioFalse') }}
-              </a>
-              <a
-                v-if="expanded === true"
-                target="_blank"
-                class="read-more"
-                @click="expanded = !expanded"
-              >
-                {{ $t('dashboard.homePage.btnBioTrue') }}
-              </a>
+                {{ sliceBio(userProfile.bio) }}
+                <a
+                  v-if="expanded === false"
+                  target="_blank"
+                  class="read-more"
+                  @click="expanded = !expanded"
+                >
+                  {{ $t('dashboard.homePage.btnBioFalse') }}
+                </a>
+                <a
+                  v-if="expanded === true"
+                  target="_blank"
+                  class="read-more"
+                  @click="expanded = !expanded"
+                >
+                  {{ $t('dashboard.homePage.btnBioTrue') }}
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -100,7 +95,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import { IUser } from 'src/models/IUser';
+import { IProfile } from 'src/models/IProfile';
 
 import AlgoButton from '../common/Button.vue';
 import UserUtils from 'src/helpers/user';
@@ -121,16 +116,7 @@ import UserAccountDetailsSkeleton from 'src/components/home-page/user-gallery-ov
   },
 })
 export default class UserAccountDetails extends Vue {
-  user: IUser = {
-    id: '1',
-    name: 'Natasha',
-    email: 'natasha.k@gmail.com',
-    age: '27 years',
-    interests: 'abstract, modern, digital, fractal, urban, classic',
-    collections: 8,
-  };
-
-  userProfile: IUser[] = [];
+  userProfile: IProfile = {};
   loadingUserProfile: boolean = true;
 
   userItems = '0';
@@ -139,6 +125,9 @@ export default class UserAccountDetails extends Vue {
   balance: number = 0;
 
   expanded: boolean = false;
+
+  bioInic: string = '';
+  slicedBio: string = '';
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -164,14 +153,17 @@ export default class UserAccountDetails extends Vue {
       type: 'user/getUserProfile',
       account: route,
     }).then(() => {
-      this.loadingUserProfile = false;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const userProfile = this.$store.getters['user/GET_USER_PROFILE'] as [];
+      const userProfile = this.$store.getters['user/GET_USER_PROFILE'] as IProfile;
       if (userProfile === undefined) {
-        this.userProfile = [];
+        this.userProfile = {};
       } else {
         this.userProfile = userProfile;
+        if (userProfile.bio) {
+          this.sliceBio(userProfile.bio);
+        }
       }
+      this.loadingUserProfile = false;
     });
   }
 
@@ -200,6 +192,15 @@ export default class UserAccountDetails extends Vue {
       return UserUtils.formatAccountBalance(this.balance, 2);
     } else {
       return null;
+    }
+  }
+
+  sliceBio(bio: string): string {
+    if (!this.expanded) {
+      const bioInic = bio.slice(0, 139);
+      return bioInic;
+    } else {
+      return bio;
     }
   }
 }
@@ -243,15 +244,20 @@ export default class UserAccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  line-height: 4rem;
 }
 
 .text-bio{
   max-width: 100%;
   word-break: break-all;
+  color: #BDBDCC;
 }
 
 .read-more{
   cursor: pointer;
+  color: black;
+  font-weight: bold;
+  text-decoration: underline;
 }
 .text-account {
   @media (max-width: $breakpoint-md){
@@ -264,6 +270,7 @@ export default class UserAccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  color: #BDBDCC;
 }
 
 .card-bio{
@@ -277,6 +284,11 @@ export default class UserAccountDetails extends Vue {
 
   max-width: 600px;;
   text-align: justify;
-  word-break: break-all;
+  word-wrap: normal;
+  color: #BDBDCC;
+}
+
+.text-email{
+  color: black;
 }
 </style>

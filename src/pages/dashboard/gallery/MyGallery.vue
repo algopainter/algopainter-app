@@ -3,9 +3,6 @@
     <div class="account-details q-pa-lg">
       <account-details />
     </div>
-    <div class="header">
-      {{ $t('dashboard.homePage.myGallery') }}
-    </div>
     <div>
       <MyGalleryOverview />
     </div>

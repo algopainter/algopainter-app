@@ -66,6 +66,7 @@
           outline
           class="load-more q-px-xl q-mx-auto mobile-only"
           :disable="noMoreImages"
+          :loading="loadingBtn"
           @click="loadMore()"
         />
       </div>
@@ -161,6 +162,7 @@ export default class UserGalleryOverview extends Vue {
   galleryBidShow = [];
   nullGalleryBidShow: boolean = false;
   loadingGalleryArtsButtons: boolean = true;
+  loadingBtn: boolean = false;
 
   btnBidsClicked: boolean = false;
 
@@ -259,6 +261,7 @@ export default class UserGalleryOverview extends Vue {
   async loadMore() {
     try {
       this.loadMoreCounter++;
+      this.loadingBtn = true;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const response = await api.get(`users/${this.$route.params.account}/images?page=${this.loadMoreCounter}&perPage=9`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -274,6 +277,7 @@ export default class UserGalleryOverview extends Vue {
     } catch (error) {
       console.log('erro no galleryArts');
     }
+    this.loadingBtn = false;
   }
 }
 </script>

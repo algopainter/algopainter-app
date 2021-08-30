@@ -36,6 +36,7 @@ export default {
     btnBioTrue: 'Show less',
     collectiblesGallery: 'Collection',
     exploreAuctions: 'Explore Auctions',
+    onSale: 'On sale',
     gwei: 'Gwei',
     expressions: 'Expressions',
     monero: 'Monero',

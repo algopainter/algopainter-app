@@ -261,6 +261,9 @@ export default class UserAccountDetails extends Vue {
 
 .read-more{
   cursor: pointer;
+  color: black;
+  font-weight: bold;
+  text-decoration: underline;
 }
 .text-account {
   @media (max-width: $breakpoint-md){

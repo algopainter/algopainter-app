@@ -294,6 +294,9 @@ export default class AccountDetails extends Vue {
 
 .read-more{
   cursor: pointer;
+  color: black;
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .text-account {

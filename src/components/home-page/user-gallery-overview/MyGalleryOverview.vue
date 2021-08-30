@@ -1,7 +1,29 @@
+/* eslint-disable no-new-wrappers */
 <template>
-  <div class="btn-container q-mx-auto flex justify-center items-center">
+  <div v-if="loadingGalleryArts === true">
+    <div class="btn-container q-mx-auto flex justify-center items-center">
+      <algo-button
+        :label="$t('dashboard.homePage.gallery')"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+        @click="showGalleryArts()"
+      />
+      <algo-button
+        :label="$t('dashboard.homePage.onSale')"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+        @click="getOnSale()"
+      />
+    </div>
+  </div>
+  <div
+    v-else
+    class="btn-container q-mx-auto flex justify-center items-center"
+  >
     <algo-button
-      :label="$t('dashboard.homePage.gallery')"
+      :label="$t('dashboard.homePage.gallery') + '(' + contImg + ')' "
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
@@ -22,7 +44,7 @@
       v-if="loadingGalleryArtsButtons === false && currentBtnClicked === 1"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
-      <div v-if="loadingGalleryArts === false">
+      <div>
         <div
           v-if="nullGalleryArts === false"
           class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
@@ -189,6 +211,9 @@ export default class MyGalleryOverview extends Vue {
   loadMoreCounter: number = 1;
   noMoreImages: boolean = false;
 
+  imgData: IMyGallery[] = [];
+  contImg: number = 0;
+
   // Buttons
   currentBtnClicked: number = 1;
 
@@ -253,7 +278,8 @@ export default class MyGalleryOverview extends Vue {
     this.currentBtnClicked = 1;
     try {
       this.currentPage = page;
-      const response = await api.get(`users/${this.accountAddress}/images?page=${page}&perPage=9`); // this.accountAddress
+      const response = await api.get(`users/${this.accountAddress}/images?page=${page}&perPage=9`);
+      const imgGet = await api.get(`users/${this.accountAddress}/images`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {
@@ -264,6 +290,9 @@ export default class MyGalleryOverview extends Vue {
       if (this.isConnected) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.galleryArts = response.data.data as [];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.contImg = imgGet.headers['x-total-items'] as number;
         if (this.galleryArts.length === 0) {
           this.nullGalleryArts = true;
         } else {

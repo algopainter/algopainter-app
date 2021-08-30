@@ -1,7 +1,7 @@
 <template>
   <div v-if="loading === false">
-    <div class="row justify-between">
-      <div class=" col-xs-12 col-sm-6 col-md-6 row justify-between conteiner-text-share">
+    <div class="row justify-between items-center">
+      <div class="col-xs-12 col-sm-6 col-md-6 row justify-between items-center container-text-share">
         <div>
           <p class="text-bold text-h5 text-img">
             {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
@@ -13,14 +13,12 @@
           </q-tooltip>
         </div>
 
-        <div class="">
-          <!--
-            <LikeAnimation
-              :liked="wasLiked"
-              :likes="likes"
-              @favoriteClicked="favoriteClicked"
-            />
-            -->
+        <div class="flex align-center">
+          <LikeAnimation
+            :liked="wasLiked"
+            :likes="likes"
+            @favoriteClicked="favoriteClicked"
+          />
           <ShareArtIcons
             :art="image.nft.image"
             :_id="image._id"
@@ -414,7 +412,7 @@ export default class ViewArt extends Vue {
   margin-top: 10px
 }
 
-.conteiner-text-share{
+.container-text-share{
   width: 50%;
 }
 
@@ -441,7 +439,7 @@ export default class ViewArt extends Vue {
   height: 39px;
 }
 
-.conteiner-text-share{
+.container-text-share{
   width: 100%;
 }
 

@@ -101,7 +101,7 @@
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
-       {{ $t('dashboard.auctions.coming') }}
+        {{ $t('dashboard.auctions.coming') }}
       </p>
     </div>
     <div class="col-12 col-md-3 col-lg-3 column items-center border q-pt-md latest-bids">

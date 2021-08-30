@@ -43,13 +43,13 @@
             </div>
             <div
               v-if="userProfile.bio === null || userProfile.bio === undefined || userProfile.bio.length < 140"
-              class="text-bio details text-grey-5 text-subtitle2"
+              class="text-subtitle1 card-bio q-pa-none q-my-md"
             >
               {{ userProfile.bio }}
             </div>
             <div
               v-else
-              class="text-primary text-bold text-subtitle2"
+              class="text-bold text-subtitle1"
             >
               <div
                 class="text-subtitle2 card-bio q-pa-none"
@@ -244,12 +244,13 @@ export default class UserAccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  line-height: 4rem;
 }
 
 .text-bio{
   max-width: 100%;
   word-break: break-all;
-  color: #f4578f;
+  color: #DDDDD9;
 }
 
 .read-more{
@@ -269,6 +270,7 @@ export default class UserAccountDetails extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+   color: #BDBDCC;
 }
 
 .card-bio{
@@ -283,6 +285,6 @@ export default class UserAccountDetails extends Vue {
   max-width: 600px;;
   text-align: justify;
   word-wrap: normal;
-
+  color: #BDBDCC;
 }
 </style>

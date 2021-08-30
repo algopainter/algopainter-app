@@ -44,7 +44,7 @@
       v-if="loadingGalleryArtsButtons === false && currentBtnClicked === 1"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
-      <div>
+      <div v-if="loadingGalleryArts === false">
         <div
           v-if="nullGalleryArts === false"
           class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"

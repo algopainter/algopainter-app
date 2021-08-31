@@ -1,26 +1,28 @@
 <template>
-  <div class="btn-container q-mx-auto flex justify-center items-center">
-    <algo-button
-      :label="$t('dashboard.homePage.gallery')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-      @click="showGalleryArts()"
-    />
-    <algo-button
-      :label="$t('dashboard.homePage.onSale')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
-      @click="getOnSale()"
-    />
-    <algo-button
-      :label="$t('dashboard.homePage.like')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
-      @click="getLikes()"
-    />
+  <div>
+    <div class="btn-container q-mx-auto flex justify-center items-center">
+      <algo-button
+        :label="$t('dashboard.homePage.gallery') + contImg"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+        @click="showGalleryArts()"
+      />
+      <algo-button
+        :label="$t('dashboard.homePage.onSale')"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+        @click="getOnSale()"
+      />
+      <algo-button
+        :label="$t('dashboard.homePage.like')"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
+        @click="getLikes()"
+      />
+    </div>
   </div>
   <div
     class="row q-col-gutter-lg"
@@ -261,6 +263,9 @@ galleryBid = [];
   // Buttons
   currentBtnClicked: number = 1;
 
+  imgData: IMyGallery[] = [];
+  contImg: string = '';
+
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
@@ -306,7 +311,7 @@ galleryBid = [];
     try {
       this.currentPage = page;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.params.account}/images?page=${page}&perPage=9`);
+      const response = await api.get(`users/${this.$route.params.account}/images?page=${page}&perPage=9`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {
@@ -316,6 +321,10 @@ galleryBid = [];
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.galleryArts = response.data.data as [];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const contImg: number = response.data.count as number;
+      this.contImg = ` (${contImg})`;
+
       if (this.galleryArts.length === 0) {
         this.nullGalleryArts = true;
       } else {
@@ -372,7 +381,7 @@ galleryBid = [];
       this.loadMoreCounterLike++;
       this.loadingBtn = true;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`likes/${this.$route.params.account}?page=${this.loadMoreCounterLike}&perPage=6`);
+      const response = await api.get(`likes/${this.$route.params.account}?page=${this.loadMoreCounterLike}&perPage=9`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const likeMobile = response.data.data as [];
       if (likeMobile.length === 0) {

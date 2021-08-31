@@ -11,14 +11,14 @@
       @click="showGalleryArts()"
     />
     <algo-button
-      :label="$t('dashboard.homePage.onSale')"
+      :label="$t('dashboard.homePage.onSale') + contSale"
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
       @click="getOnSale()"
     />
     <algo-button
-      :label="$t('dashboard.homePage.like')"
+      :label="$t('dashboard.homePage.like') + contLiked"
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
@@ -268,6 +268,8 @@ export default class MyGalleryOverview extends Vue {
 
   imgData: IMyGallery[] = [];
   contImg: string = '';
+  contLiked: string = '';
+  contSale: string = '';
 
   // Buttons
   currentBtnClicked: number = 1;
@@ -289,6 +291,8 @@ export default class MyGalleryOverview extends Vue {
 
   mounted() {
     // void this.getGalleryBidders();
+    void this.getLikes();
+    void this.getOnSale();
     void this.getGalleryArts();
   }
 
@@ -369,6 +373,8 @@ export default class MyGalleryOverview extends Vue {
   getOnSale() {
     console.log('Coming soon');
     this.currentBtnClicked = 2;
+    const contSale: number = 0;
+    this.contSale = `(${contSale})`;
   }
 
   async getLikes(page:number = 1) {
@@ -387,6 +393,10 @@ export default class MyGalleryOverview extends Vue {
       if (this.isConnected) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.likesGallery = response.data.data as [];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const contLiked: number = response.data.count as number;
+        this.contLiked = `(${contLiked})`;
         if (this.likesGallery.length === 0) {
           this.nullTabLike = true;
         } else {

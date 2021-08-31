@@ -101,13 +101,13 @@ class Props {
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
-  collectionArtController: CollectionArtController =
-    new CollectionArtController();
-
+  // like feature variables
   likeClicked: boolean = false;
   wasLiked: boolean = false;
-
   likes!: number;
+
+  collectionArtController: CollectionArtController =
+  new CollectionArtController();
 
   mounted() {
     if (this.isConnected) {

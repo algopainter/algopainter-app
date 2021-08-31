@@ -1,20 +1,39 @@
 <template>
-  <div class="btn-container q-mx-auto flex justify-center items-center">
-    <algo-button
-      :label="$t('dashboard.homePage.gallery')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-      @click="showGalleryArts()"
-    />
-    <algo-button
-      :label="$t('dashboard.homePage.onSale')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
-      @click="getOnSale()"
-    />
+  <div class="btn-container q-mx-auto row items-center justify-center ">
+    <q-select
+      v-model="currentCollection"
+      :options="collectionFilter"
+      color="primary"
+      rounded
+      outlined
+      bottom-slots
+      @update:model-value="getGalleryArts(1, currentCollection.label)"
+    >
+      <template #before>
+        <q-icon
+          name="filter_list"
+          color="primary"
+        />
+      </template>
+    </q-select>
+    <div class="q-mx-auto row items-center justify-center">
+      <algo-button
+        :label="$t('dashboard.homePage.gallery')"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+        @click="showGalleryArts()"
+      />
+      <algo-button
+        :label="$t('dashboard.homePage.onSale')"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+        @click="getOnSale()"
+      />
+    </div>
   </div>
+
   <div
     class="row q-col-gutter-lg"
   >
@@ -181,6 +200,14 @@ export default class UserGalleryOverview extends Vue {
   // Buttons
   currentBtnClicked: number = 1;
 
+  // Filter
+  currentCollection: string = 'All Collections';
+  filteredGallery:IMyGallery[] = [];
+
+  collectionFilter = [
+    { label: 'All Collections' }, { label: 'Gwei' }, { label: 'Expressions' },
+  ]
+
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
@@ -196,7 +223,7 @@ export default class UserGalleryOverview extends Vue {
 
   mounted() {
     // void this.getGalleryBidders();
-    void this.getGalleryArts();
+    void this.getGalleryArts(1, 'All Collections');
   }
 
   async getGalleryBidders() {
@@ -220,33 +247,40 @@ export default class UserGalleryOverview extends Vue {
     }
   }
 
-  async getGalleryArts(page:number = 1) {
+  async getGalleryArts(page:number = 1, collection:string = this.currentCollection) {
+    console.log('currentPage', this.currentPage);
     this.loadingGalleryArts = true;
+    this.currentPage = page;
     this.currentBtnClicked = 1;
-    try {
-      this.currentPage = page;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.params.account}/images?page=${page}&perPage=9`);
+    this.currentCollection = collection;
+    console.log('collection', collection);
+    await this.$store.dispatch({
+      type: 'collections/getUserItems',
+      account: this.$route.params.account,
+      page: page,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      const response = this.$store.getters['collections/GET_IMAGES'];
+      console.log('response', response);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.maxPage = response.data.pages as number;
+      this.maxPage = response.pages as number;
       if (this.maxPage <= 15) {
         this.showingPages = this.maxPage;
       } else {
         this.showingPages = 15;
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.galleryArts = response.data.data as [];
+      this.galleryArts = response.data as [];
       if (this.galleryArts.length === 0) {
         this.nullGalleryArts = true;
       } else {
         this.nullGalleryArts = false;
       }
-    } catch (error) {
-      console.log('erro no galleryArts');
-    } finally {
       this.loadingGalleryArtsButtons = false;
       this.loadingGalleryArts = false;
-    }
+    });
   }
 
   showGalleryArts() {
@@ -283,6 +317,7 @@ export default class UserGalleryOverview extends Vue {
 </script>
 
 <style lang="scss">
+
 .btn-container {
   width: 100%;
   height: 80px;

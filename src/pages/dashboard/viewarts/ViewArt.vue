@@ -256,10 +256,6 @@ export default class ViewArt extends Vue {
     }
   }
 
-  // preciso do id da imagem que ja foi fetched
-  // vou fazer um request para o api https://algopainter-api.netlify.app/api/images/611548094fb5ed1d60bafd0a
-  // Alterar os parâmetros da imagem para ficar igual
-
   changeBackground(value: string) {
     this.backgroundChange = true;
     const parameters: Record<string, unknown> = this.image.nft.parameters;

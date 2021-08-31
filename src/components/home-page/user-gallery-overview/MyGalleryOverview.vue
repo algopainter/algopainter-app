@@ -58,7 +58,7 @@
           :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
           :label="index + 1"
           class="q-mr-xs desktop-only"
-          :loading="currentPage === index + 1 ? loadingGalleryArts : false"
+          :loading="currentPage === index + 2 ? loadingGalleryArts : false"
           @click="getGalleryArts(index + 1)"
         />
         <algo-button
@@ -249,11 +249,13 @@ export default class MyGalleryOverview extends Vue {
   }
 
   async getGalleryArts(page:number = 1) {
+    console.log('currentPage', this.currentPage);
     this.loadingGalleryArts = true;
     this.currentBtnClicked = 1;
     try {
       this.currentPage = page;
-      const response = await api.get(`users/${this.accountAddress}/images?page=${page}&perPage=9`); // this.accountAddress
+      console.log('currentPage', this.currentPage);
+      const response = await api.get(`users/0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac/images?page=${page}&perPage=9`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {

@@ -41,6 +41,7 @@ export default {
     expressions: 'Expressions',
     monero: 'Monero',
     loadMore: '{msg}',
+    filter: 'filter',
     colon: ':',
     symbol: '#',
   },

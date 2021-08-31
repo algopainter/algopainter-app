@@ -9,10 +9,19 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
   async getUserItems(type, value) {
     const account = value.account as string;
     const page = value.page as string;
+    const perPage = value.perPage as string;
+    let collectionName = value.collectionName as string;
     try {
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=9`);
+      console.log('collectionName', collectionName);
+      if (collectionName === undefined || collectionName.toLowerCase() === 'all collections') {
+        collectionName = '';
+        console.log('in');
+      }
+      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${collectionName}`);
       const userItems: string = res.data.count;
+      const images: [] = res.data;
       this.commit('collections/SET_USER_ITEMS', userItems);
+      this.commit('collections/SET_IMAGES', images);
     } catch (e) {
       console.log('error message - getUserItems');
     }

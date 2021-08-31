@@ -12,10 +12,8 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const perPage = value.perPage as string;
     let collectionName = value.collectionName as string;
     try {
-      console.log('collectionName', collectionName);
       if (collectionName === undefined || collectionName.toLowerCase() === 'all collections') {
         collectionName = '';
-        console.log('in');
       }
       const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${collectionName}`);
       const userItems: string = res.data.count;

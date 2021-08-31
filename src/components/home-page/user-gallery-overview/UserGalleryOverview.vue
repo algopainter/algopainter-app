@@ -2,12 +2,30 @@
   <div class="btn-container q-mx-auto row items-center justify-center ">
     <q-select
       v-model="currentCollection"
+      class="desktop-only"
       :options="collectionFilter"
       color="primary"
       rounded
       outlined
       bottom-slots
-      @update:model-value="getGalleryArts(1, currentCollection.label)"
+      @update:model-value="filterCollection(1, currentCollection.label, 'desktop')"
+    >
+      <template #before>
+        <q-icon
+          name="filter_list"
+          color="primary"
+        />
+      </template>
+    </q-select>
+    <q-select
+      v-model="currentCollection"
+      class="mobile-only"
+      :options="collectionFilter"
+      color="primary"
+      rounded
+      outlined
+      bottom-slots
+      @update:model-value="filterCollection(1, currentCollection.label, 'mobile')"
     >
       <template #before>
         <q-icon
@@ -37,7 +55,7 @@
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
-          @click="getLikes()"
+          @click="showLikes()"
         />
       </div>
     </div>
@@ -82,7 +100,7 @@
           :label="index + 1"
           class="q-mr-xs desktop-only"
           :loading="currentPage === index + 1 ? loadingGalleryArts : false"
-          @click="getGalleryArts(index + 1)"
+          @click="getGalleryArts(index + 1, currentCollection.label)"
         />
         <algo-button
           v-if="nullGalleryArts === false"
@@ -94,7 +112,7 @@
           class="load-more q-px-xl q-mx-auto mobile-only"
           :disable="noMoreImages"
           :loading="loadingBtn"
-          @click="loadMore()"
+          @click="loadMore(currentCollection.label)"
         />
       </div>
     </div>
@@ -161,7 +179,7 @@
             :label="index + 1"
             class="q-mr-xs desktop-only"
             :loading="currentPage === index + 1 ? loadingLikes : false"
-            @click="getLikes(index + 1)"
+            @click="getLikes(index + 1, currentCollection.label)"
           />
           <algo-button
             v-if="nullTabLike === false"
@@ -173,7 +191,7 @@
             class="load-more q-px-xl q-mx-auto mobile-only"
             :disable="noMoreImages"
             :loading="loadingBtn"
-            @click="loadMoreLike()"
+            @click="loadMoreLike(currentCollection.label)"
           />
         </div>
       </div>
@@ -238,6 +256,7 @@ import { api } from 'src/boot/axios';
 import { IMyGallery } from 'src/models/IMyGallery';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
+import { Watch } from 'vue-property-decorator';
 
 @Options({
   components: {
@@ -292,6 +311,16 @@ galleryBid = [];
   imgData: IMyGallery[] = [];
   contImg: string = '';
 
+  @Watch('currentCollection')
+  onPropertyChanged() {
+    console.log('this.currentBtnClicked', this.currentBtnClicked);
+    if (this.currentBtnClicked !== 1) {
+      void this.getGalleryArts(1, this.currentCollection, true);
+    } else {
+      void this.getLikes(1, this.currentCollection, true);
+    }
+  }
+
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
@@ -307,9 +336,36 @@ galleryBid = [];
 
   mounted() {
     // void this.getGalleryBidders();
+    void this.getLikes(1, 'All Collections');
     void this.getGalleryArts(1, 'All Collections');
   }
 
+  filterCollection(page: number = 1, currentCollection: string = 'All Collections', device: string) {
+    this.currentCollection = currentCollection;
+    if (device === 'desktop') {
+      if (this.currentBtnClicked === 1) {
+        void this.getGalleryArts(page, currentCollection);
+      } else if (this.currentBtnClicked === 3) {
+        void this.getLikes(page, currentCollection);
+      }
+    } else if (device === 'mobile') {
+      console.log('currentCollection', currentCollection);
+      console.log('device', device);
+      console.log('page', page);
+      console.log('currentBtnClicked', this.currentBtnClicked);
+      this.loadMoreCounter = 0;
+      this.loadMoreCounterLike = 0;
+      this.noMoreImages = false;
+      this.btnLoadMoreMsg = 'Load More';
+      if (this.currentBtnClicked === 1) {
+        void this.loadMore(currentCollection, true);
+      } else if (this.currentBtnClicked === 3) {
+        void this.loadMoreLike(currentCollection, true);
+      }
+    }
+  }
+
+  /*
   async getGalleryBidders() {
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -330,14 +386,15 @@ galleryBid = [];
       console.log('error', e);
     }
   }
+  */
 
-  async getGalleryArts(page:number = 1, collection:string = this.currentCollection) {
-    console.log('currentPage', this.currentPage);
+  async getGalleryArts(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
     this.loadingGalleryArts = true;
     this.currentPage = page;
-    this.currentBtnClicked = 1;
+    if (!watcher) {
+      this.currentBtnClicked = 1;
+    }
     this.currentCollection = collection;
-    console.log('collection', collection);
     await this.$store.dispatch({
       type: 'collections/getUserItems',
       account: this.$route.params.account,
@@ -347,7 +404,6 @@ galleryBid = [];
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       const response = this.$store.getters['collections/GET_IMAGES'];
-      console.log('response', response);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.pages as number;
       if (this.maxPage <= 15) {
@@ -359,7 +415,6 @@ galleryBid = [];
       this.galleryArts = response.data as [];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const contImg: number = response.count as number;
-      console.log('contImg', contImg);
       this.contImg = ` (${contImg})`;
 
       if (this.galleryArts.length === 0) {
@@ -372,28 +427,27 @@ galleryBid = [];
     });
   }
 
-  showGalleryArts() {
-    this.currentBtnClicked = 1;
-  }
-
-  getOnSale() {
-    console.log('Coming soon');
-    this.currentBtnClicked = 2;
-  }
-
-  async getLikes(page:number = 1) {
+  async getLikes(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
     this.loadingLikes = true;
-    this.currentBtnClicked = 3;
+    if (!watcher) {
+      this.currentBtnClicked = 3;
+    }
+    this.currentPage = page;
+    this.currentCollection = collection;
+    if (collection === undefined || collection.toLowerCase() === 'all collections') {
+      collection = '';
+    }
+
     try {
-      this.currentPage = page;
+      const perPage = 9;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`likes/${this.$route.params.account}?page=${page}&perPage=6`);
+      const response = await api.get(`likes/${this.$route.params.account}?page=${page}&perPage=${perPage}&collectionName=${collection}`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {
         this.showingPageslike = this.maxPage;
       } else {
-        this.showingPages = 15;
+        this.showingPageslike = 15;
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.likesGallery = response.data.data as [];
@@ -410,12 +464,66 @@ galleryBid = [];
     }
   }
 
-  async loadMoreLike() {
+  showGalleryArts() {
+    console.log('showGalleryArts');
+    this.currentBtnClicked = 1;
+  }
+
+  getOnSale() {
+    this.currentBtnClicked = 2;
+  }
+
+  showLikes() {
+    this.currentBtnClicked = 3;
+  }
+
+  async loadMore(collection:string = this.currentCollection, filter: boolean = false) {
+    if (filter) {
+      this.loadingGalleryArts = true;
+      this.galleryArts = [];
+    }
+    this.loadMoreCounter++;
+    this.loadingBtn = true;
+    await this.$store.dispatch({
+      type: 'collections/getUserItems',
+      account: this.$route.params.account,
+      page: this.loadMoreCounter,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      const response = this.$store.getters['collections/GET_IMAGES'];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const tempGalleryArts = response.data as [];
+      if (tempGalleryArts.length === 0) {
+        this.noMoreImages = true;
+        this.btnLoadMoreMsg = 'Nothing else to show';
+      } else {
+        tempGalleryArts.forEach((item) => {
+          this.galleryArts.push(item);
+        });
+      }
+      this.loadingBtn = false;
+      this.loadingGalleryArts = false;
+    });
+  }
+
+  async loadMoreLike(collection:string = this.currentCollection, filter: boolean = false) {
+    console.log('collection', collection);
+    if (collection === 'All Collections') {
+      collection = '';
+    }
+    if (filter) {
+      this.loadingLikes = true;
+      this.likesGallery = [];
+    }
+    this.loadMoreCounterLike++;
+    this.loadingBtn = true;
     try {
-      this.loadMoreCounterLike++;
-      this.loadingBtn = true;
+      const perPage = 9;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`likes/${this.$route.params.account}?page=${this.loadMoreCounterLike}&perPage=9`);
+      const response = await api.get(`likes/${this.$route.params.account}?page=${this.loadMoreCounterLike}&perPage=${perPage}&collectionName=${collection}`);
+      console.log('response', response);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const likeMobile = response.data.data as [];
       if (likeMobile.length === 0) {
@@ -428,30 +536,10 @@ galleryBid = [];
       }
     } catch (error) {
       console.log('erro no galleryArts');
+    } finally {
+      this.loadingBtn = false;
+      this.loadingLikes = false;
     }
-    this.loadingBtn = false;
-  }
-
-  async loadMore() {
-    try {
-      this.loadMoreCounter++;
-      this.loadingBtn = true;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.params.account}/images?page=${this.loadMoreCounter}&perPage=9`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const tempGalleryArts = response.data.data as [];
-      if (tempGalleryArts.length === 0) {
-        this.noMoreImages = true;
-        this.btnLoadMoreMsg = 'Nothing else to show';
-      } else {
-        tempGalleryArts.forEach((item) => {
-          this.galleryArts.push(item);
-        });
-      }
-    } catch (error) {
-      console.log('erro no galleryArts');
-    }
-    this.loadingBtn = false;
   }
 }
 </script>

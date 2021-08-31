@@ -14,7 +14,7 @@ export default {
   wrong: 'Wrong Network',
   migrate: 'Migrate to a Binance SmartChain',
   homePage: {
-    title: 'My Account',
+    title: 'My Gallery',
     publicTitle: 'Public Profile',
     editAccount: 'Edit Account',
     sendNewArt: 'Send New Art',

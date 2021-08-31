@@ -1,19 +1,21 @@
 <template>
-  <div class="btn-container q-mx-auto flex justify-center items-center">
-    <algo-button
-      :label="$t('dashboard.homePage.gallery')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-      @click="showGalleryArts()"
-    />
-    <algo-button
-      :label="$t('dashboard.homePage.onSale')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
-      @click="getOnSale()"
-    />
+  <div>
+    <div class="btn-container q-mx-auto flex justify-center items-center">
+      <algo-button
+        :label="$t('dashboard.homePage.gallery') + contImg"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+        @click="showGalleryArts()"
+      />
+      <algo-button
+        :label="$t('dashboard.homePage.onSale')"
+        outline
+        class="algo-button q-px-md q-ml-sm"
+        :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+        @click="getOnSale()"
+      />
+    </div>
   </div>
   <div
     class="row q-col-gutter-lg"
@@ -181,6 +183,9 @@ export default class UserGalleryOverview extends Vue {
   // Buttons
   currentBtnClicked: number = 1;
 
+  imgData: IMyGallery[] = [];
+  contImg: string = '';
+
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
@@ -226,7 +231,7 @@ export default class UserGalleryOverview extends Vue {
     try {
       this.currentPage = page;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.params.account}/images?page=${page}&perPage=9`);
+      const response = await api.get(`users/${this.$route.params.account}/images?page=${page}&perPage=9`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {
@@ -236,6 +241,10 @@ export default class UserGalleryOverview extends Vue {
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.galleryArts = response.data.data as [];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const contImg: number = response.data.count as number;
+      this.contImg = ` (${contImg})`;
+
       if (this.galleryArts.length === 0) {
         this.nullGalleryArts = true;
       } else {

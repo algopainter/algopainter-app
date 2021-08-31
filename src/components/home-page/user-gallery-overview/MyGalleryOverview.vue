@@ -1,7 +1,10 @@
+/* eslint-disable no-new-wrappers */
 <template>
-  <div class="btn-container q-mx-auto flex justify-center items-center">
+  <div
+    class="btn-container q-mx-auto flex justify-center items-center"
+  >
     <algo-button
-      :label="$t('dashboard.homePage.gallery')"
+      :label="$t('dashboard.homePage.gallery') + contImg "
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
@@ -189,6 +192,9 @@ export default class MyGalleryOverview extends Vue {
   loadMoreCounter: number = 1;
   noMoreImages: boolean = false;
 
+  imgData: IMyGallery[] = [];
+  contImg: string = '';
+
   // Buttons
   currentBtnClicked: number = 1;
 
@@ -264,6 +270,10 @@ export default class MyGalleryOverview extends Vue {
       if (this.isConnected) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.galleryArts = response.data.data as [];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const contImg: number = response.data.count as number;
+        this.contImg = ` (${contImg})`;
         if (this.galleryArts.length === 0) {
           this.nullGalleryArts = true;
         } else {

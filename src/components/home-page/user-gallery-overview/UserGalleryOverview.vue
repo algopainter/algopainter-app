@@ -17,23 +17,31 @@
       </template>
     </q-select>
     <div class="q-mx-auto row items-center justify-center">
-      <algo-button
-        :label="$t('dashboard.homePage.gallery')"
-        outline
-        class="algo-button q-px-md q-ml-sm"
-        :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-        @click="showGalleryArts()"
-      />
-      <algo-button
-        :label="$t('dashboard.homePage.onSale')"
-        outline
-        class="algo-button q-px-md q-ml-sm"
-        :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
-        @click="getOnSale()"
-      />
+      <div class="btn-container q-mx-auto flex justify-center items-center">
+        <algo-button
+          :label="$t('dashboard.homePage.gallery') + contImg"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+          @click="showGalleryArts()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.onSale')"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+          @click="getOnSale()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.like')"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
+          @click="getLikes()"
+        />
+      </div>
     </div>
   </div>
-
   <div
     class="row q-col-gutter-lg"
   >
@@ -97,12 +105,78 @@
       <MyGallerySkeleton />
     </div>
     <div
-      v-else
+      v-else-if="currentBtnClicked === 2"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
         {{ $t('dashboard.auctions.coming') }}
       </p>
+    </div>
+    <div
+      v-else-if="currentBtnClicked === 3"
+      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
+      <div
+        v-if=" currentBtnClicked === 3"
+        class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      >
+        <div
+          v-if="loadingLikes === false"
+        >
+          <div
+            v-if="nullTabLike === false"
+            class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+          >
+            <div
+              v-for="(item, index) in likesGallery"
+              :key="index"
+            >
+              <div>
+                <gallery-item
+                  :art="item"
+                  @favoriteClicked="favoriteClicked"
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            v-else
+            class="col-12 col-md-9 col-lg-9 q-mt-lg"
+          >
+            <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
+              {{ $t('dashboard.homePage.noItemaPublic') }}
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+        >
+          <MyGallerySkeleton />
+        </div>
+        <div class=" q-mx-auto q-mb-md">
+          <q-btn
+            v-for="(btn, index) in showingPageslike"
+            :key="index"
+            :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+            :label="index + 1"
+            class="q-mr-xs desktop-only"
+            :loading="currentPage === index + 1 ? loadingLikes : false"
+            @click="getLikes(index + 1)"
+          />
+          <algo-button
+            v-if="nullTabLike === false"
+            :label="$t('dashboard.homePage.loadMore', {
+              msg: btnLoadMoreMsg
+            })"
+            color="primary"
+            outline
+            class="load-more q-px-xl q-mx-auto mobile-only"
+            :disable="noMoreImages"
+            :loading="loadingBtn"
+            @click="loadMoreLike()"
+          />
+        </div>
+      </div>
     </div>
     <div class="col-11 col-md-3 col-lg-3 q-pt-md q-mt-lg column items-center border q-pl-none latest-bids">
       <div class="text-h5 text-bold text-primary q-pb-md">
@@ -175,26 +249,33 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
   },
 })
 export default class UserGalleryOverview extends Vue {
-  galleryBid = [];
+galleryBid = [];
   loadingGalleryBid: boolean = true;
   galleryBidClosed = [];
   galleryBidShow = [];
   nullGalleryBidShow: boolean = false;
-  loadingGalleryArtsButtons: boolean = true;
   loadingBtn: boolean = false;
+  loadingLatestBidsItem: boolean = true;
+  loadingGalleryArtsButtons: boolean = true;
+  loadingLikesButtons: boolean = true;
 
   btnBidsClicked: boolean = false;
 
   galleryArts:IMyGallery[] = [];
+  likesGallery:IMyGallery[] = [];
   loadingGalleryArts: boolean = true;
+  loadingLikes: boolean = true;
   nullGalleryArts: boolean = false;
+  nullTabLike: boolean = false;
 
   maxPage: number = 1;
   showingPages: number = 1;
-  currentPage: number | null = 1;
+  showingPageslike: number = 1;
+  currentPage: number = 1;
 
   btnLoadMoreMsg: string = 'Load More';
   loadMoreCounter: number = 1;
+  loadMoreCounterLike: number = 1;
   noMoreImages: boolean = false;
 
   // Buttons
@@ -207,6 +288,9 @@ export default class UserGalleryOverview extends Vue {
   collectionFilter = [
     { label: 'All Collections' }, { label: 'Gwei' }, { label: 'Expressions' },
   ]
+
+  imgData: IMyGallery[] = [];
+  contImg: string = '';
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
@@ -273,6 +357,11 @@ export default class UserGalleryOverview extends Vue {
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.galleryArts = response.data as [];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const contImg: number = response.count as number;
+      console.log('contImg', contImg);
+      this.contImg = ` (${contImg})`;
+
       if (this.galleryArts.length === 0) {
         this.nullGalleryArts = true;
       } else {
@@ -290,6 +379,57 @@ export default class UserGalleryOverview extends Vue {
   getOnSale() {
     console.log('Coming soon');
     this.currentBtnClicked = 2;
+  }
+
+  async getLikes(page:number = 1) {
+    this.loadingLikes = true;
+    this.currentBtnClicked = 3;
+    try {
+      this.currentPage = page;
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const response = await api.get(`likes/${this.$route.params.account}?page=${page}&perPage=6`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.maxPage = response.data.pages as number;
+      if (this.maxPage <= 15) {
+        this.showingPageslike = this.maxPage;
+      } else {
+        this.showingPages = 15;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.likesGallery = response.data.data as [];
+      if (this.likesGallery.length === 0) {
+        this.nullTabLike = true;
+      } else {
+        this.nullTabLike = false;
+      }
+    } catch (error) {
+      console.log('erro no likesGallery');
+    } finally {
+      this.loadingLikesButtons = false;
+      this.loadingLikes = false;
+    }
+  }
+
+  async loadMoreLike() {
+    try {
+      this.loadMoreCounterLike++;
+      this.loadingBtn = true;
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const response = await api.get(`likes/${this.$route.params.account}?page=${this.loadMoreCounterLike}&perPage=9`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const likeMobile = response.data.data as [];
+      if (likeMobile.length === 0) {
+        this.noMoreImages = true;
+        this.btnLoadMoreMsg = 'Nothing else to show';
+      } else {
+        likeMobile.forEach((i) => {
+          this.likesGallery.push(i);
+        });
+      }
+    } catch (error) {
+      console.log('erro no galleryArts');
+    }
+    this.loadingBtn = false;
   }
 
   async loadMore() {

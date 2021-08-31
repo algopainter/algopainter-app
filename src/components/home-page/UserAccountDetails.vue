@@ -30,7 +30,7 @@
                 {{ $t(userProfile.name) }}
               </q-tooltip>
             </div>
-            <div class="details text-email">
+            <div class=" text-account details text-email">
               {{ userProfile.email }}
               <q-tooltip
                 anchor="top middle"
@@ -43,7 +43,7 @@
             </div>
             <div
               v-if="userProfile.bio === null || userProfile.bio === undefined || userProfile.bio.length < 140"
-              class="text-subtitle1 card-bio q-pa-none q-my-md"
+              class="text-subtitle1 card-bio q-pa-none q-my-xs"
             >
               {{ userProfile.bio }}
             </div>
@@ -52,7 +52,7 @@
               class="text-bold text-subtitle1"
             >
               <div
-                class="text-subtitle2 card-bio q-pa-none"
+                class="text-subtitle2 card-bio q-pa-none q-my-xs"
               >
                 {{ sliceBio(userProfile.bio) }}
                 <a
@@ -223,7 +223,7 @@ export default class UserAccountDetails extends Vue {
 
   .user-details {
     .details {
-      padding: 2px 0;
+      padding: 0;
       font-size: 1.3rem;
     }
   }

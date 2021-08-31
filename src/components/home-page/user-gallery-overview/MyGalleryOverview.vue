@@ -1,29 +1,10 @@
 /* eslint-disable no-new-wrappers */
 <template>
-  <div v-if="loadingGalleryArts === true">
-    <div class="btn-container q-mx-auto flex justify-center items-center">
-      <algo-button
-        :label="$t('dashboard.homePage.gallery')"
-        outline
-        class="algo-button q-px-md q-ml-sm"
-        :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-        @click="showGalleryArts()"
-      />
-      <algo-button
-        :label="$t('dashboard.homePage.onSale')"
-        outline
-        class="algo-button q-px-md q-ml-sm"
-        :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
-        @click="getOnSale()"
-      />
-    </div>
-  </div>
   <div
-    v-else
     class="btn-container q-mx-auto flex justify-center items-center"
   >
     <algo-button
-      :label="$t('dashboard.homePage.gallery') + ' (' + contImg + ')' "
+      :label="$t('dashboard.homePage.gallery') + contImg "
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
@@ -212,7 +193,7 @@ export default class MyGalleryOverview extends Vue {
   noMoreImages: boolean = false;
 
   imgData: IMyGallery[] = [];
-  contImg: number = 0;
+  contImg: string = '';
 
   // Buttons
   currentBtnClicked: number = 1;
@@ -278,8 +259,7 @@ export default class MyGalleryOverview extends Vue {
     this.currentBtnClicked = 1;
     try {
       this.currentPage = page;
-      const response = await api.get(`users/${this.accountAddress}/images?page=${page}&perPage=9`);
-      const imgGet = await api.get(`users/${this.accountAddress}/images`); // this.accountAddress
+      const response = await api.get(`users/${this.accountAddress}/images?page=${page}&perPage=9`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {
@@ -292,7 +272,8 @@ export default class MyGalleryOverview extends Vue {
         this.galleryArts = response.data.data as [];
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.contImg = imgGet.headers['x-total-items'] as number;
+        const contImg: number = response.data.count as number;
+        this.contImg = ` (${contImg})`;
         if (this.galleryArts.length === 0) {
           this.nullGalleryArts = true;
         } else {

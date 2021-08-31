@@ -25,14 +25,12 @@
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
-              <!--
               <q-icon
                 name="favorite_border"
                 color="grey-4"
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
-              -->
             </div>
           </div>
           <div class="q-ml-md q-mt-sm">
@@ -84,14 +82,12 @@
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
-              <!--
               <q-icon
                 name="favorite_border"
                 color="grey-4"
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
-              -->
             </div>
           </div>
           <div class="q-ml-md q-mt-sm">
@@ -143,14 +139,12 @@
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
-              <!--
               <q-icon
                 name="favorite_border"
                 color="grey-4"
                 class="q-mr-sm q-mt-md"
                 size="25px"
               />
-              -->
             </div>
           </div>
           <div class="q-ml-md q-mt-sm">

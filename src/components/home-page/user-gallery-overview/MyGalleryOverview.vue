@@ -24,6 +24,13 @@
       :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
       @click="getLikes()"
     />
+    <algo-button
+      :label="$t('dashboard.homePage.pirs') + contPirs"
+      outline
+      class="algo-button q-px-md q-ml-sm"
+      :color="currentBtnClicked === 4 ? 'primary' : 'grey-5' "
+      @click="showPirs(), getPirs()"
+    />
   </div>
   <div
     class="row"
@@ -92,7 +99,7 @@
       <MyGallerySkeleton />
     </div>
     <div
-      v-else-if="currentBtnClicked === 2"
+      v-if="currentBtnClicked === 2"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
@@ -100,7 +107,7 @@
       </p>
     </div>
     <div
-      v-if=" currentBtnClicked === 3"
+      v-else-if="currentBtnClicked === 3"
       class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div
@@ -148,6 +155,65 @@
         />
         <algo-button
           v-if="nullTabLike === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          :loading="loadingBtn"
+          @click="loadMoreLike()"
+        />
+      </div>
+    </div>
+    <div
+      v-else-if="currentBtnClicked === 4"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
+      <div v-if="pirsConnected">
+        <div
+          v-if="havePirs === true"
+          class="col-md-9 col-lg-9 flex q-col-gutter-md"
+        >
+          <div
+            v-for="(item, index) in galleryArts"
+            :key="index"
+          >
+            <div>
+              <gallery-item
+                :art="item"
+                @favoriteClicked="favoriteClicked"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+          class="text-h6 text-primary text-center q-pb-md"
+        >
+          {{ $t('dashboard.homePage.personalNoPirs') }}
+        </div>
+      </div>
+      <div
+        v-else
+      >
+        <MyGallerySkeleton />
+      </div>
+      <div
+        v-if="havePirs"
+        class="q-mx-auto q-mb-md"
+      >
+        <q-btn
+          v-for="(btn, index) in showingPagesPirs"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          @click="getPirs(index + 1)"
+        />
+        <algo-button
+          v-if="nullTabPirs === false"
           :label="$t('dashboard.homePage.loadMore', {
             msg: btnLoadMoreMsg
           })"
@@ -270,6 +336,12 @@ export default class MyGalleryOverview extends Vue {
   contImg: string = '';
   contLiked: string = '';
   contSale: string = '';
+  contPirs: string = '';
+
+  pirsConnected: boolean = false;
+  havePirs: boolean = false;
+  showingPagesPirs: number = 1;
+  nullTabPirs: boolean = false;
 
   // Buttons
   currentBtnClicked: number = 1;
@@ -294,6 +366,7 @@ export default class MyGalleryOverview extends Vue {
     void this.getLikes();
     void this.getOnSale();
     void this.getGalleryArts();
+    void this.getPirs();
   }
 
   get isConnected() {
@@ -370,6 +443,10 @@ export default class MyGalleryOverview extends Vue {
     this.currentBtnClicked = 1;
   }
 
+  showPirs() {
+    this.currentBtnClicked = 4;
+  }
+
   getOnSale() {
     console.log('Coming soon');
     this.currentBtnClicked = 2;
@@ -408,6 +485,20 @@ export default class MyGalleryOverview extends Vue {
     } finally {
       this.loadingLikesButtons = false;
       this.loadingLikes = false;
+    }
+  }
+
+  getPirs(page:number = 1) {
+    this.currentPage = page;
+    try {
+      this.contPirs = '0';
+      this.contPirs = `(${this.contPirs})`;
+      this.pirsConnected = true;
+    } catch (error) {
+
+    } finally {
+      // eslint-disable-next-line no-unsafe-finally
+      return null;
     }
   }
 

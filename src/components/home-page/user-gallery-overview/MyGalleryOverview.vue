@@ -1,29 +1,65 @@
 /* eslint-disable no-new-wrappers */
 <template>
-  <div
-    class="btn-container q-mx-auto flex justify-center items-center"
-  >
-    <algo-button
-      :label="$t('dashboard.homePage.gallery') + contImg "
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-      @click="showGalleryArts()"
-    />
-    <algo-button
-      :label="$t('dashboard.homePage.onSale')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
-      @click="getOnSale()"
-    />
-    <algo-button
-      :label="$t('dashboard.homePage.like')"
-      outline
-      class="algo-button q-px-md q-ml-sm"
-      :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
-      @click="getLikes()"
-    />
+  <div class="btn-container q-mx-auto row items-center justify-center ">
+    <q-select
+      v-model="currentCollection"
+      class="desktop-only"
+      :options="collectionFilter"
+      color="primary"
+      rounded
+      outlined
+      bottom-slots
+      @update:model-value="filterCollection(1, currentCollection.label, 'desktop')"
+    >
+      <template #before>
+        <q-icon
+          name="filter_list"
+          color="primary"
+        />
+      </template>
+    </q-select>
+    <q-select
+      v-model="currentCollection"
+      class="mobile-only"
+      :options="collectionFilter"
+      color="primary"
+      rounded
+      outlined
+      bottom-slots
+      @update:model-value="filterCollection(1, currentCollection.label, 'mobile')"
+    >
+      <template #before>
+        <q-icon
+          name="filter_list"
+          color="primary"
+        />
+      </template>
+    </q-select>
+    <div class="q-mx-auto row items-center justify-center">
+      <div class="btn-container q-mx-auto flex justify-center items-center">
+        <algo-button
+          :label="$t('dashboard.homePage.gallery') + contImg"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+          @click="showGalleryArts()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.onSale')"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+          @click="showOnSale()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.like')"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
+          @click="showLikes()"
+        />
+      </div>
+    </div>
   </div>
   <div
     class="row"
@@ -69,7 +105,7 @@
           :label="index + 1"
           class="q-mr-xs desktop-only"
           :loading="currentPage === index + 2 ? loadingGalleryArts : false"
-          @click="getGalleryArts(index + 1)"
+          @click="getGalleryArts(index + 1, currentCollection.label)"
         />
         <algo-button
           v-if="nullGalleryArts === false"
@@ -81,7 +117,7 @@
           class="load-more q-px-xl q-mx-auto mobile-only"
           :disable="noMoreImages"
           :loading="loadingBtn"
-          @click="loadMore()"
+          @click="loadMore(currentCollection.label)"
         />
       </div>
     </div>
@@ -144,7 +180,7 @@
           :label="index + 1"
           class="q-mr-xs desktop-only"
           :loading="currentPage === index + 1 ? loadingLikes : false"
-          @click="getLikes(index + 1)"
+          @click="getLikes(index + 1, currentCollection.label)"
         />
         <algo-button
           v-if="nullTabLike === false"
@@ -156,7 +192,7 @@
           class="load-more q-px-xl q-mx-auto mobile-only"
           :disable="noMoreImages"
           :loading="loadingBtn"
-          @click="loadMoreLike()"
+          @click="loadMoreLike(currentCollection.label)"
         />
       </div>
     </div>
@@ -233,10 +269,6 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
   },
 })
 export default class MyGalleryOverview extends Vue {
-  favoriteClicked() {
-    this.$emit('favoriteClicked');
-  }
-
   galleryBid = [];
   loadingGalleryBid: boolean = true;
   galleryBidClosed = [];
@@ -266,30 +298,45 @@ export default class MyGalleryOverview extends Vue {
   loadMoreCounterLike: number = 1;
   noMoreImages: boolean = false;
 
-  imgData: IMyGallery[] = [];
-  contImg: string = '';
-
   // Buttons
   currentBtnClicked: number = 1;
 
-  Allbids() {
-    this.btnBidsClicked = !this.btnBidsClicked;
-    if (this.btnBidsClicked === false) {
-      this.galleryBidShow = this.galleryBidClosed;
-    } else {
-      this.galleryBidShow = this.galleryBid;
-    }
+  // Filter
+  currentCollection: string = 'All Collections';
+  filteredGallery:IMyGallery[] = [];
+
+  collectionFilter = [
+    { label: 'All Collections' }, { label: 'Gwei' }, { label: 'Expressions' },
+  ]
+
+  imgData: IMyGallery[] = [];
+  contImg: string = '';
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
   }
 
   @Watch('accountAddress')
-  onPropertyChanged() {
-    void this.getGalleryBidders();
-    void this.getGalleryArts();
+  onAccountChanged() {
+    // void this.getGalleryBidders();
+    void this.getLikes(1, 'All Collections');
+    void this.getGalleryArts(1, 'All Collections');
+  }
+
+  @Watch('currentCollection')
+  onCollectionChanged() {
+    console.log('this.currentBtnClicked', this.currentBtnClicked);
+    if (this.currentBtnClicked !== 1) {
+      void this.getGalleryArts(1, this.currentCollection, true);
+    } else {
+      void this.getLikes(1, this.currentCollection, true);
+    }
   }
 
   mounted() {
     // void this.getGalleryBidders();
-    void this.getGalleryArts();
+    // void this.getLikes(1, 'All Collections');
+    // void this.getGalleryArts(1, 'All Collections');
   }
 
   get isConnected() {
@@ -302,6 +349,183 @@ export default class MyGalleryOverview extends Vue {
     return this.$store.getters['user/account'] as string;
   }
 
+  filterCollection(page: number = 1, currentCollection: string = 'All Collections', device: string) {
+    this.currentCollection = currentCollection;
+    if (device === 'desktop') {
+      if (this.currentBtnClicked === 1) {
+        void this.getGalleryArts(page, currentCollection);
+      } else if (this.currentBtnClicked === 3) {
+        void this.getLikes(page, currentCollection);
+      }
+    } else if (device === 'mobile') {
+      this.loadMoreCounter = 0;
+      this.loadMoreCounterLike = 0;
+      this.noMoreImages = false;
+      this.btnLoadMoreMsg = 'Load More';
+      if (this.currentBtnClicked === 1) {
+        void this.loadMore(currentCollection, true);
+      } else if (this.currentBtnClicked === 3) {
+        void this.loadMoreLike(currentCollection, true);
+      }
+    }
+  }
+
+  async getGalleryArts(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+    this.loadingGalleryArts = true;
+    this.currentPage = page;
+    if (!watcher) {
+      this.currentBtnClicked = 1;
+    }
+    this.currentCollection = collection;
+    await this.$store.dispatch({
+      type: 'collections/getUserItems',
+      account: '0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac', // this.accountAddress
+      page: page,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      const response = this.$store.getters['collections/GET_IMAGES'];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.maxPage = response.pages as number;
+      if (this.maxPage <= 15) {
+        this.showingPages = this.maxPage;
+      } else {
+        this.showingPages = 15;
+      }
+      if (this.isConnected) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.galleryArts = response.data as [];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const contImg: number = response.count as number;
+        this.contImg = ` (${contImg})`;
+        if (this.galleryArts.length === 0) {
+          this.nullGalleryArts = true;
+        } else {
+          this.nullGalleryArts = false;
+        }
+      }
+      this.loadingGalleryArtsButtons = false;
+      this.loadingGalleryArts = false;
+    });
+  }
+
+  showGalleryArts() {
+    this.currentBtnClicked = 1;
+  }
+
+  showOnSale() {
+    this.currentBtnClicked = 2;
+  }
+
+  showLikes() {
+    this.currentBtnClicked = 3;
+  }
+
+  async getLikes(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+    this.loadingLikes = true;
+    if (!watcher) {
+      this.currentBtnClicked = 3;
+    }
+    this.currentPage = page;
+    this.currentCollection = collection;
+    if (collection === undefined || collection.toLowerCase() === 'all collections') {
+      collection = '';
+    }
+    try {
+      const perPage = 9;
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      this.currentPage = page;
+      const response = await api.get(`likes/${this.accountAddress}?page=${page}&perPage=${perPage}&collectionName=${collection}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.maxPage = response.data.pages as number;
+      if (this.maxPage <= 15) {
+        this.showingPageslike = this.maxPage;
+      } else {
+        this.showingPages = 15;
+      }
+      if (this.isConnected) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.likesGallery = response.data.data as [];
+        if (this.likesGallery.length === 0) {
+          this.nullTabLike = true;
+        } else {
+          this.nullTabLike = false;
+        }
+      }
+    } catch (error) {
+      console.log('erro no likesGallery');
+    } finally {
+      this.loadingLikesButtons = false;
+      this.loadingLikes = false;
+    }
+  }
+
+  async loadMoreLike(collection:string = this.currentCollection, filter: boolean = false) {
+    console.log('in');
+    if (collection === undefined || collection.toLowerCase() === 'all collections') {
+      collection = '';
+    }
+    if (filter) {
+      this.loadingLikes = true;
+      this.likesGallery = [];
+    }
+    this.loadMoreCounterLike++;
+    this.loadingBtn = true;
+    try {
+      const perPage = 9;
+      const response = await api.get(`likes/${this.accountAddress}?page=${this.loadMoreCounterLike}&perPage=${perPage}&collectionName=${collection}`);
+      console.log('response', response);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const likeMobile = response.data.data as [];
+      if (likeMobile.length === 0) {
+        this.noMoreImages = true;
+        this.btnLoadMoreMsg = 'Nothing else to show';
+      } else {
+        likeMobile.forEach((i) => {
+          this.likesGallery.push(i);
+        });
+      }
+    } catch (error) {
+      console.log('erro no galleryArts');
+    } finally {
+      this.loadingBtn = false;
+      this.loadingLikes = false;
+    }
+  }
+
+  async loadMore(collection:string = this.currentCollection, filter: boolean = false) {
+    if (filter) {
+      this.loadingGalleryArts = true;
+      this.galleryArts = [];
+    }
+    this.loadMoreCounter++;
+    this.loadingBtn = true;
+    await this.$store.dispatch({
+      type: 'collections/getUserItems',
+      account: '0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac', // this.accountAddress
+      page: this.loadMoreCounter,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      const response = this.$store.getters['collections/GET_IMAGES'];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const tempGalleryArts = response.data as [];
+      if (tempGalleryArts.length === 0) {
+        this.noMoreImages = true;
+        this.btnLoadMoreMsg = 'Nothing else to show';
+      } else {
+        tempGalleryArts.forEach((item) => {
+          this.galleryArts.push(item);
+        });
+      }
+      this.loadingBtn = false;
+      this.loadingGalleryArts = false;
+    });
+  }
+
+  /*
   async getGalleryBidders() {
     this.loadingGalleryBid = true;
     try {
@@ -327,124 +551,18 @@ export default class MyGalleryOverview extends Vue {
       this.loadingLatestBidsItem = false;
     }
   }
+  */
 
-  async getGalleryArts(page:number = 1) {
-    console.log('currentPage', this.currentPage);
-    this.loadingGalleryArts = true;
-    this.currentBtnClicked = 1;
-    try {
-      this.currentPage = page;
-      console.log('currentPage', this.currentPage);
-      const response = await api.get(`users/0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac/images?page=${page}&perPage=9`); // this.accountAddress
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.maxPage = response.data.pages as number;
-      if (this.maxPage <= 15) {
-        this.showingPages = this.maxPage;
-      } else {
-        this.showingPages = 15;
-      }
-      if (this.isConnected) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.galleryArts = response.data.data as [];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const contImg: number = response.data.count as number;
-        this.contImg = ` (${contImg})`;
-        if (this.galleryArts.length === 0) {
-          this.nullGalleryArts = true;
-        } else {
-          this.nullGalleryArts = false;
-        }
-      }
-    } catch (error) {
-      console.log('error in galleryArts');
-    } finally {
-      this.loadingGalleryArtsButtons = false;
-      this.loadingGalleryArts = false;
+  /*
+  Allbids() {
+    this.btnBidsClicked = !this.btnBidsClicked;
+    if (this.btnBidsClicked === false) {
+      this.galleryBidShow = this.galleryBidClosed;
+    } else {
+      this.galleryBidShow = this.galleryBid;
     }
   }
-
-  showGalleryArts() {
-    this.currentBtnClicked = 1;
-  }
-
-  getOnSale() {
-    console.log('Coming soon');
-    this.currentBtnClicked = 2;
-  }
-
-  async getLikes(page:number = 1) {
-    this.loadingLikes = true;
-    this.currentBtnClicked = 3;
-    try {
-      this.currentPage = page;
-      const response = await api.get(`likes/${this.accountAddress}?page=${page}&perPage=6`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.maxPage = response.data.pages as number;
-      if (this.maxPage <= 15) {
-        this.showingPageslike = this.maxPage;
-      } else {
-        this.showingPages = 15;
-      }
-      if (this.isConnected) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.likesGallery = response.data.data as [];
-        if (this.likesGallery.length === 0) {
-          this.nullTabLike = true;
-        } else {
-          this.nullTabLike = false;
-        }
-      }
-    } catch (error) {
-      console.log('erro no likesGallery');
-    } finally {
-      this.loadingLikesButtons = false;
-      this.loadingLikes = false;
-    }
-  }
-
-  async loadMoreLike() {
-    try {
-      this.loadMoreCounterLike++;
-      this.loadingBtn = true;
-      const response = await api.get(`likes/${this.accountAddress}?page=${this.loadMoreCounterLike}&perPage=9`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const likeMobile = response.data.data as [];
-      if (likeMobile.length === 0) {
-        this.noMoreImages = true;
-        this.btnLoadMoreMsg = 'Nothing else to show';
-      } else {
-        likeMobile.forEach((i) => {
-          this.likesGallery.push(i);
-        });
-      }
-    } catch (error) {
-      console.log('erro no galleryArts');
-    }
-    this.loadingBtn = false;
-  }
-
-  async loadMore() {
-    try {
-      this.loadMoreCounter++;
-      this.loadingBtn = true;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.accountAddress}/images?page=${this.loadMoreCounter}&perPage=9`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const tempGalleryArts = response.data.data as [];
-      if (tempGalleryArts.length === 0) {
-        this.noMoreImages = true;
-        this.btnLoadMoreMsg = 'Nothing else to show';
-      } else {
-        tempGalleryArts.forEach((item) => {
-          this.galleryArts.push(item);
-        });
-      }
-    } catch (error) {
-      console.log('erro no galleryArts');
-    }
-    this.loadingBtn = false;
-  }
+  */
 }
 </script>
 

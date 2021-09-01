@@ -48,7 +48,7 @@
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
-          @click="getOnSale()"
+          @click="showOnSale()"
         />
         <algo-button
           :label="$t('dashboard.homePage.like')"
@@ -268,7 +268,7 @@ import { Watch } from 'vue-property-decorator';
   },
 })
 export default class UserGalleryOverview extends Vue {
-galleryBid = [];
+  galleryBid = [];
   loadingGalleryBid: boolean = true;
   galleryBidClosed = [];
   galleryBidShow = [];
@@ -312,7 +312,7 @@ galleryBid = [];
   contImg: string = '';
 
   @Watch('currentCollection')
-  onPropertyChanged() {
+  onCollectionChanged() {
     console.log('this.currentBtnClicked', this.currentBtnClicked);
     if (this.currentBtnClicked !== 1) {
       void this.getGalleryArts(1, this.currentCollection, true);
@@ -323,15 +323,6 @@ galleryBid = [];
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
-  }
-
-  Allbids() {
-    this.btnBidsClicked = !this.btnBidsClicked;
-    if (this.btnBidsClicked === false) {
-      this.galleryBidShow = this.galleryBidClosed;
-    } else {
-      this.galleryBidShow = this.galleryBid;
-    }
   }
 
   mounted() {
@@ -364,29 +355,6 @@ galleryBid = [];
       }
     }
   }
-
-  /*
-  async getGalleryBidders() {
-    try {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`bids?bidder=${this.$route.params.account}`);
-      this.galleryBid = response.data as [];
-      if (this.galleryBid.length !== 0) {
-        this.galleryBidClosed = [
-          this.galleryBid[0],
-          this.galleryBid[1],
-          this.galleryBid[2],
-        ];
-      } else {
-        this.nullGalleryBidShow = true;
-      }
-      this.galleryBidShow = this.galleryBidClosed;
-      this.loadingGalleryBid = false;
-    } catch (e) {
-      console.log('error', e);
-    }
-  }
-  */
 
   async getGalleryArts(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
     this.loadingGalleryArts = true;
@@ -437,7 +405,6 @@ galleryBid = [];
     if (collection === undefined || collection.toLowerCase() === 'all collections') {
       collection = '';
     }
-
     try {
       const perPage = 9;
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -469,7 +436,7 @@ galleryBid = [];
     this.currentBtnClicked = 1;
   }
 
-  getOnSale() {
+  showOnSale() {
     this.currentBtnClicked = 2;
   }
 
@@ -510,9 +477,6 @@ galleryBid = [];
 
   async loadMoreLike(collection:string = this.currentCollection, filter: boolean = false) {
     console.log('collection', collection);
-    if (collection === 'All Collections') {
-      collection = '';
-    }
     if (filter) {
       this.loadingLikes = true;
       this.likesGallery = [];
@@ -541,6 +505,40 @@ galleryBid = [];
       this.loadingLikes = false;
     }
   }
+
+  /*
+  Allbids() {
+    this.btnBidsClicked = !this.btnBidsClicked;
+    if (this.btnBidsClicked === false) {
+      this.galleryBidShow = this.galleryBidClosed;
+    } else {
+      this.galleryBidShow = this.galleryBid;
+    }
+  }
+  */
+
+  /*
+  async getGalleryBidders() {
+    try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const response = await api.get(`bids?bidder=${this.$route.params.account}`);
+      this.galleryBid = response.data as [];
+      if (this.galleryBid.length !== 0) {
+        this.galleryBidClosed = [
+          this.galleryBid[0],
+          this.galleryBid[1],
+          this.galleryBid[2],
+        ];
+      } else {
+        this.nullGalleryBidShow = true;
+      }
+      this.galleryBidShow = this.galleryBidClosed;
+      this.loadingGalleryBid = false;
+    } catch (e) {
+      console.log('error', e);
+    }
+  }
+  */
 }
 </script>
 

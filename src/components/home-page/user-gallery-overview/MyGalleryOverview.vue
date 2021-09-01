@@ -451,7 +451,7 @@ export default class MyGalleryOverview extends Vue {
     console.log('Coming soon');
     this.currentBtnClicked = 2;
     const contSale: number = 0;
-    this.contSale = `(${contSale})`;
+    this.contSale = ` (${contSale})`;
   }
 
   async getLikes(page:number = 1) {
@@ -473,7 +473,7 @@ export default class MyGalleryOverview extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const contLiked: number = response.data.count as number;
-        this.contLiked = `(${contLiked})`;
+        this.contLiked = ` (${contLiked})`;
         if (this.likesGallery.length === 0) {
           this.nullTabLike = true;
         } else {
@@ -492,7 +492,7 @@ export default class MyGalleryOverview extends Vue {
     this.currentPage = page;
     try {
       this.contPirs = '0';
-      this.contPirs = `(${this.contPirs})`;
+      this.contPirs = ` (${this.contPirs})`;
       this.pirsConnected = true;
     } catch (error) {
 

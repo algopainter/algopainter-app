@@ -30,12 +30,12 @@
   >
     <div
       v-if="loadingGalleryArtsButtons === false && currentBtnClicked === 1"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class=" col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div v-if="loadingGalleryArts === false">
         <div
           v-if="nullGalleryArts === false"
-          class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+          class="col-md-9 col-lg-9 flex q-col-gutter-md"
         >
           <div
             v-for="(item, index) in galleryArts"
@@ -51,11 +51,11 @@
         </div>
         <div
           v-else
-          class="col-12 col-md-9 col-lg-9 q-mt-lg"
+          class="col-md-9 col-sm-12 col-lg-9 q-mt-lg"
         >
-          <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
+          <p class="text-h6 text-primary text-center q-pb-md text-noItems">
             {{ $t('dashboard.homePage.personalNoItems') }}
-          </div>
+          </p>
         </div>
       </div>
       <div v-else>
@@ -101,14 +101,14 @@
     </div>
     <div
       v-if=" currentBtnClicked === 3"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div
         v-if="loadingLikes === false"
       >
         <div
           v-if="nullTabLike === false"
-          class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+          class=" col-md-9 col-lg-9 flex q-col-gutter-md"
         >
           <div
             v-for="(item, index) in likesGallery"
@@ -124,9 +124,9 @@
         </div>
         <div
           v-else
-          class="col-12 col-md-9 col-lg-9 q-mt-lg"
+          class=" col-md-9 col-lg-9 q-mt-lg"
         >
-          <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
+          <div class="text-h6 text-primary text-center q-pb-md">
             {{ $t('dashboard.homePage.noItems') }}
           </div>
         </div>
@@ -466,6 +466,17 @@ body.screen--sm, .screen--xs {
   }
   .latest-bids{
     margin-left: 0;
+  }
+  .text-noItems{
+    align-items: center;
+    width: 100%;
+    margin: 0;
+  }
+  .btn-container{
+    height: 50%;
+  }
+  .algo-button{
+    margin-bottom: 10px;
   }
 }
 

@@ -10,18 +10,24 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const account = value.account as string;
     const page = value.page as string;
     const perPage = value.perPage as string;
-    let collectionName = value.collectionName as string;
+    const collectionName = value.collectionName as string;
+    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
     try {
-      if (collectionName === undefined || collectionName.toLowerCase() === 'all collections') {
-        collectionName = '';
-      }
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${collectionName}`);
+      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}`);
       const userItems: string = res.data.count;
       const images: [] = res.data;
       this.commit('collections/SET_USER_ITEMS', userItems);
       this.commit('collections/SET_IMAGES', images);
     } catch (e) {
       console.log('error message - getUserItems');
+    }
+  },
+  async getAllCollections(type, value) {
+    try {
+      const res = await api.get('collections');
+      this.commit('collections/SET_COLLECTIONS', res);
+    } catch (e) {
+      console.log('error message - allCollections');
     }
   },
 };

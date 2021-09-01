@@ -24,6 +24,9 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
   GET_USER_PROFILE(state: UserStateInterface): []|undefined {
     return state.userProfile;
   },
+  GET_USER_LIKES(state: UserStateInterface): []|undefined {
+    return state.userLikes;
+  },
 };
 
 export default getters;

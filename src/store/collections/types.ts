@@ -4,4 +4,5 @@ export interface CollectionsStateInterface {
     topBuyers: [],
     userItems: string,
     images: [],
+    collections: [],
 }

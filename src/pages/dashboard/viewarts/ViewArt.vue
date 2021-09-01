@@ -109,7 +109,7 @@
             <p> {{ image.description }} </p>
             <div v-if="image.collectionName === 'Gwei'">
               <p class="text-bold text-primary text-h6">
-                {{ $t('dashboard.viewArt.pararmeters') }}
+                {{ $t('dashboard.viewArt.parameters') }}
               </p>
               <span>{{ $t('dashboard.viewArt.text') }}</span>
               <span class="text-bold">

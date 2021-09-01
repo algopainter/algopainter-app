@@ -1,31 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div class="btn-container q-mx-auto row items-center justify-center ">
     <q-select
       v-model="currentCollection"
-      class="desktop-only"
       :options="collectionFilter"
       color="primary"
+      :loading="getCollectionsLoading"
       rounded
       outlined
       bottom-slots
-      @update:model-value="filterCollection(1, currentCollection.label, 'desktop')"
-    >
-      <template #before>
-        <q-icon
-          name="filter_list"
-          color="primary"
-        />
-      </template>
-    </q-select>
-    <q-select
-      v-model="currentCollection"
-      class="mobile-only"
-      :options="collectionFilter"
-      color="primary"
-      rounded
-      outlined
-      bottom-slots
-      @update:model-value="filterCollection(1, currentCollection.label, 'mobile')"
+      @update:model-value="filterCollection(1, currentCollection.label)"
     >
       <template #before>
         <q-icon
@@ -44,14 +28,14 @@
           @click="showGalleryArts()"
         />
         <algo-button
-          :label="$t('dashboard.homePage.onSale')"
+          :label="$t('dashboard.homePage.onSale') + contSale"
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
           @click="showOnSale()"
         />
         <algo-button
-          :label="$t('dashboard.homePage.like')"
+          :label="$t('dashboard.homePage.like') + contLiked"
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
@@ -65,7 +49,7 @@
   >
     <div
       v-if="loadingGalleryArtsButtons === false && currentBtnClicked === 1"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class=" col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div v-if="loadingGalleryArts === false">
         <div
@@ -90,9 +74,13 @@
         </div>
       </div>
       <div v-else>
-        <MyGallerySkeleton />
+        <MyGallerySkeleton
+          :buttons="false"
+        />
       </div>
-      <div class=" q-mx-auto q-mb-md">
+      <div
+        class=" q-mx-auto q-mb-md"
+      >
         <q-btn
           v-for="(btn, index) in showingPages"
           :key="index"
@@ -118,13 +106,15 @@
     </div>
     <div
       v-else-if="currentBtnClicked === 1"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
-      <MyGallerySkeleton />
+      <MyGallerySkeleton
+        :buttons="true"
+      />
     </div>
     <div
       v-else-if="currentBtnClicked === 2"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
         {{ $t('dashboard.auctions.coming') }}
@@ -132,68 +122,67 @@
     </div>
     <div
       v-else-if="currentBtnClicked === 3"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div
-        v-if=" currentBtnClicked === 3"
-        class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+        v-if="loadingLikes === false"
       >
         <div
-          v-if="loadingLikes === false"
+          v-if="nullTabLike === false"
+          class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
         >
           <div
-            v-if="nullTabLike === false"
-            class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+            v-for="(item, index) in likesGallery"
+            :key="index"
           >
-            <div
-              v-for="(item, index) in likesGallery"
-              :key="index"
-            >
-              <div>
-                <gallery-item
-                  :art="item"
-                  @favoriteClicked="favoriteClicked"
-                />
-              </div>
-            </div>
-          </div>
-          <div
-            v-else
-            class="col-12 col-md-9 col-lg-9 q-mt-lg"
-          >
-            <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
-              {{ $t('dashboard.homePage.noItemaPublic') }}
+            <div>
+              <gallery-item
+                :art="item"
+                @favoriteClicked="favoriteClicked"
+              />
             </div>
           </div>
         </div>
         <div
           v-else
+          class="col-md-9 col-lg-9 q-mt-lg"
         >
-          <MyGallerySkeleton />
+          <div class="text-h6 text-primary text-center q-pb-md q-mt-lg">
+            {{ $t('dashboard.homePage.noItemPublic') }}
+          </div>
         </div>
-        <div class=" q-mx-auto q-mb-md">
-          <q-btn
-            v-for="(btn, index) in showingPageslike"
-            :key="index"
-            :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
-            :label="index + 1"
-            class="q-mr-xs desktop-only"
-            :loading="currentPage === index + 1 ? loadingLikes : false"
-            @click="getLikes(index + 1, currentCollection.label)"
-          />
-          <algo-button
-            v-if="nullTabLike === false"
-            :label="$t('dashboard.homePage.loadMore', {
-              msg: btnLoadMoreMsg
-            })"
-            color="primary"
-            outline
-            class="load-more q-px-xl q-mx-auto mobile-only"
-            :disable="noMoreImages"
-            :loading="loadingBtn"
-            @click="loadMoreLike(currentCollection.label)"
-          />
-        </div>
+      </div>
+      <div
+        v-else
+      >
+        <MyGallerySkeleton
+          :buttons="false"
+        />
+      </div>
+      <div
+        class="q-mx-auto q-mb-md"
+      >
+        <q-btn
+          v-for="(btn, index) in showingPageslike"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          :loading="currentPage === index + 1 ? loadingLikes : false"
+          @click="getLikes(index + 1, currentCollection.label)"
+        />
+        <algo-button
+          v-if="nullTabLike === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          :loading="loadingBtn"
+          @click="loadMoreLike(currentCollection.label)"
+        />
       </div>
     </div>
     <div class="col-11 col-md-3 col-lg-3 q-pt-md q-mt-lg column items-center border q-pl-none latest-bids">
@@ -249,11 +238,11 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
-import { api } from 'src/boot/axios';
 import { IMyGallery } from 'src/models/IMyGallery';
+import { ICollection } from 'src/models/ICollection';
+import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 import { Watch } from 'vue-property-decorator';
@@ -304,16 +293,28 @@ export default class UserGalleryOverview extends Vue {
   currentCollection: string = 'All Collections';
   filteredGallery:IMyGallery[] = [];
 
-  collectionFilter = [
-    { label: 'All Collections' }, { label: 'Gwei' }, { label: 'Expressions' },
-  ]
+  collectionFilter: unknown[] = [{ label: 'All Collections' }];
+  getCollectionsLoading: boolean = true;
 
   imgData: IMyGallery[] = [];
   contImg: string = '';
+  contLiked: string = '';
+  contSale: string = '';
 
+  // Gets all images in the background
+  mounted() {
+    // void this.getGalleryBidders();
+    void this.getLikes(1, this.currentCollection);
+    void this.getGalleryArts(1, this.currentCollection);
+    void this.getCollections();
+    // temporary until there's an API for onsale images
+    const contSale: number = 0;
+    this.contSale = `(${contSale})`;
+  }
+
+  // If the filter changes, the filter is also applied in the other tabs in the background
   @Watch('currentCollection')
   onCollectionChanged() {
-    console.log('this.currentBtnClicked', this.currentBtnClicked);
     if (this.currentBtnClicked !== 1) {
       void this.getGalleryArts(1, this.currentCollection, true);
     } else {
@@ -321,18 +322,29 @@ export default class UserGalleryOverview extends Vue {
     }
   }
 
-  favoriteClicked() {
-    this.$emit('favoriteClicked');
+  // Get all available collections and put in the filter dropdown
+  async getCollections() {
+    this.getCollectionsLoading = true;
+    await this.$store.dispatch({
+      type: 'collections/getAllCollections',
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = this.$store.getters['collections/GET_COLLECTIONS'] as IAxios;
+      const collectionFilter = response.data;
+      collectionFilter.forEach((item: ICollection) => {
+        this.collectionFilter.push({ label: item.title });
+      });
+      this.getCollectionsLoading = false;
+    });
   }
 
-  mounted() {
-    // void this.getGalleryBidders();
-    void this.getLikes(1, 'All Collections');
-    void this.getGalleryArts(1, 'All Collections');
-  }
-
-  filterCollection(page: number = 1, currentCollection: string = 'All Collections', device: string) {
+  // Filter's action after user chooses an option
+  filterCollection(page: number = 1, currentCollection: string = 'All Collections') {
+    // Updated the current collection to trigger the 'currentCollection' watcher
     this.currentCollection = currentCollection;
+    // Checks if the user is on a desktop or mobile to call the apropriate function
+    const device = (window.innerWidth <= 768) ? 'mobile' : 'desktop';
+
     if (device === 'desktop') {
       if (this.currentBtnClicked === 1) {
         void this.getGalleryArts(page, currentCollection);
@@ -340,10 +352,6 @@ export default class UserGalleryOverview extends Vue {
         void this.getLikes(page, currentCollection);
       }
     } else if (device === 'mobile') {
-      console.log('currentCollection', currentCollection);
-      console.log('device', device);
-      console.log('page', page);
-      console.log('currentBtnClicked', this.currentBtnClicked);
       this.loadMoreCounter = 0;
       this.loadMoreCounterLike = 0;
       this.noMoreImages = false;
@@ -356,13 +364,13 @@ export default class UserGalleryOverview extends Vue {
     }
   }
 
+  // Gets all items that the user possess on desktop -> pagination method
   async getGalleryArts(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
     this.loadingGalleryArts = true;
     this.currentPage = page;
     if (!watcher) {
       this.currentBtnClicked = 1;
     }
-    this.currentCollection = collection;
     await this.$store.dispatch({
       type: 'collections/getUserItems',
       account: this.$route.params.account,
@@ -370,19 +378,16 @@ export default class UserGalleryOverview extends Vue {
       perPage: '9',
       collectionName: collection,
     }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-      const response = this.$store.getters['collections/GET_IMAGES'];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.maxPage = response.pages as number;
+      const response = this.$store.getters['collections/GET_IMAGES'] as IAxiosPaginated;
+      this.maxPage = response.pages;
       if (this.maxPage <= 15) {
         this.showingPages = this.maxPage;
       } else {
         this.showingPages = 15;
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.galleryArts = response.data as [];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const contImg: number = response.count as number;
+      const contImg: number = response.count;
       this.contImg = ` (${contImg})`;
 
       if (this.galleryArts.length === 0) {
@@ -395,55 +400,42 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
+  // Gets all items liked by the user on desktop -> pagination method
   async getLikes(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
     this.loadingLikes = true;
     if (!watcher) {
       this.currentBtnClicked = 3;
     }
     this.currentPage = page;
-    this.currentCollection = collection;
-    if (collection === undefined || collection.toLowerCase() === 'all collections') {
-      collection = '';
-    }
-    try {
-      const perPage = 9;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`likes/${this.$route.params.account}?page=${page}&perPage=${perPage}&collectionName=${collection}`);
+    await this.$store.dispatch({
+      type: 'user/getUserLikes',
+      account: this.$route.params.account,
+      page: page,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.maxPage = response.data.pages as number;
+      const response = this.$store.getters['user/GET_USER_LIKES'] as IAxiosPaginated;
+      this.maxPage = response.pages;
       if (this.maxPage <= 15) {
         this.showingPageslike = this.maxPage;
       } else {
         this.showingPageslike = 15;
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.likesGallery = response.data.data as [];
+      this.likesGallery = response.data as [];
+      const contLiked: number = response.count;
+      this.contLiked = `(${contLiked})`;
       if (this.likesGallery.length === 0) {
         this.nullTabLike = true;
       } else {
         this.nullTabLike = false;
       }
-    } catch (error) {
-      console.log('erro no likesGallery');
-    } finally {
       this.loadingLikesButtons = false;
       this.loadingLikes = false;
-    }
+    });
   }
 
-  showGalleryArts() {
-    console.log('showGalleryArts');
-    this.currentBtnClicked = 1;
-  }
-
-  showOnSale() {
-    this.currentBtnClicked = 2;
-  }
-
-  showLikes() {
-    this.currentBtnClicked = 3;
-  }
-
+  // Gets all items that the user possess on mobile -> load more method
   async loadMore(collection:string = this.currentCollection, filter: boolean = false) {
     if (filter) {
       this.loadingGalleryArts = true;
@@ -458,10 +450,9 @@ export default class UserGalleryOverview extends Vue {
       perPage: '9',
       collectionName: collection,
     }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-      const response = this.$store.getters['collections/GET_IMAGES'];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const tempGalleryArts = response.data as [];
+      const response = this.$store.getters['collections/GET_IMAGES'] as IAxiosPaginated;
+      const tempGalleryArts = response.data;
       if (tempGalleryArts.length === 0) {
         this.noMoreImages = true;
         this.btnLoadMoreMsg = 'Nothing else to show';
@@ -475,21 +466,26 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
+  // Gets all items liked by the user on mobile -> load more method
   async loadMoreLike(collection:string = this.currentCollection, filter: boolean = false) {
-    console.log('collection', collection);
     if (filter) {
       this.loadingLikes = true;
       this.likesGallery = [];
     }
     this.loadMoreCounterLike++;
     this.loadingBtn = true;
-    try {
-      const perPage = 9;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`likes/${this.$route.params.account}?page=${this.loadMoreCounterLike}&perPage=${perPage}&collectionName=${collection}`);
-      console.log('response', response);
+    await this.$store.dispatch({
+      type: 'user/getUserLikes',
+      account: this.$route.params.account,
+      page: this.loadMoreCounterLike,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const likeMobile = response.data.data as [];
+      const response = this.$store.getters['user/GET_USER_LIKES'] as IAxiosPaginated;
+      const contLiked: number = response.count;
+      const likeMobile = response.data as [];
+      this.contLiked = `(${contLiked})`;
       if (likeMobile.length === 0) {
         this.noMoreImages = true;
         this.btnLoadMoreMsg = 'Nothing else to show';
@@ -498,12 +494,25 @@ export default class UserGalleryOverview extends Vue {
           this.likesGallery.push(i);
         });
       }
-    } catch (error) {
-      console.log('erro no galleryArts');
-    } finally {
       this.loadingBtn = false;
       this.loadingLikes = false;
-    }
+    });
+  }
+
+  favoriteClicked() {
+    this.$emit('favoriteClicked');
+  }
+
+  showGalleryArts() {
+    this.currentBtnClicked = 1;
+  }
+
+  showOnSale() {
+    this.currentBtnClicked = 2;
+  }
+
+  showLikes() {
+    this.currentBtnClicked = 3;
   }
 
   /*
@@ -547,6 +556,14 @@ export default class UserGalleryOverview extends Vue {
 .btn-container {
   width: 100%;
   height: 80px;
+  @media (max-width: $breakpoint-xs-max){
+    height: 50%;
+  }
+}
+.algo-button{
+  @media (max-width: $breakpoint-xs-max){
+    margin-bottom: 10px;
+  }
 }
 
 .border {

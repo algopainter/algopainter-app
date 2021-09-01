@@ -23,6 +23,9 @@ const mutation: MutationTree<UserStateInterface> = {
   SET_USER_PROFILE(state: UserStateInterface, payload: []) {
     state.userProfile = payload;
   },
+  SET_USER_LIKES(state: UserStateInterface, payload: []) {
+    state.userLikes = payload;
+  },
 };
 
 export default mutation;

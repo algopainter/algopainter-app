@@ -9,6 +9,9 @@ const getters: GetterTree<CollectionsStateInterface, StateInterface> = {
   GET_IMAGES(state: CollectionsStateInterface): [] {
     return state.images;
   },
+  GET_COLLECTIONS(state: CollectionsStateInterface): [] {
+    return state.collections;
+  },
 };
 
 export default getters;

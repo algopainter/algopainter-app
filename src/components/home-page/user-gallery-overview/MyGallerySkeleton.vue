@@ -171,6 +171,31 @@
         </div>
       </div>
     </q-page>
+    <q-page
+      class="mobile-only row justify-center"
+    >
+      <q-skeleton
+        type="QBtn"
+        class="btn-load-more q-my-lg"
+      />
+    </q-page>
+    <q-page
+      class="desktop-only row justify-center q-gutter-sm"
+    >
+      <div
+        v-for="(item, i) in 5"
+        :key="i"
+        class="desktop-only"
+      >
+        <div>
+          <q-skeleton
+            type="QBtn"
+            width="40px"
+            height="40px"
+          />
+        </div>
+      </div>
+    </q-page>
   </div>
 </template>
 
@@ -180,6 +205,9 @@ export default class MyGallerySkeleton extends Vue {}
 </script>
 
 <style lang="scss" scoped>
+.btn-load-more {
+  width: 130px;
+}
 .category {
   font-weight: bold;
 }

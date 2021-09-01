@@ -9,14 +9,14 @@
         @click="showGalleryArts()"
       />
       <algo-button
-        :label="$t('dashboard.homePage.onSale')"
+        :label="$t('dashboard.homePage.onSale') + contSale"
         outline
         class="algo-button q-px-md q-ml-sm"
         :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
         @click="getOnSale()"
       />
       <algo-button
-        :label="$t('dashboard.homePage.like')"
+        :label="$t('dashboard.homePage.like') + contLiked"
         outline
         class="algo-button q-px-md q-ml-sm"
         :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
@@ -29,7 +29,7 @@
   >
     <div
       v-if="loadingGalleryArtsButtons === false && currentBtnClicked === 1"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class=" col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div v-if="loadingGalleryArts === false">
         <div
@@ -82,13 +82,13 @@
     </div>
     <div
       v-else-if="currentBtnClicked === 1"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <MyGallerySkeleton />
     </div>
     <div
       v-else-if="currentBtnClicked === 2"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
         {{ $t('dashboard.auctions.coming') }}
@@ -96,18 +96,18 @@
     </div>
     <div
       v-else-if="currentBtnClicked === 3"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class=" col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div
         v-if=" currentBtnClicked === 3"
-        class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+        class=" col-md-9 col-lg-9 flex q-col-gutter-md"
       >
         <div
           v-if="loadingLikes === false"
         >
           <div
             v-if="nullTabLike === false"
-            class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+            class=" col-md-9 col-lg-9 flex q-col-gutter-md"
           >
             <div
               v-for="(item, index) in likesGallery"
@@ -123,9 +123,9 @@
           </div>
           <div
             v-else
-            class="col-12 col-md-9 col-lg-9 q-mt-lg"
+            class="col-md-9 col-lg-9 q-mt-lg"
           >
-            <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
+            <div class="text-h6 text-primary text-center q-pb-md">
               {{ $t('dashboard.homePage.noItemaPublic') }}
             </div>
           </div>
@@ -265,6 +265,8 @@ galleryBid = [];
 
   imgData: IMyGallery[] = [];
   contImg: string = '';
+  contLiked: string = '';
+  contSale: string = '';
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
@@ -281,6 +283,8 @@ galleryBid = [];
 
   mounted() {
     // void this.getGalleryBidders();
+    void this.getLikes();
+    void this.getOnSale();
     void this.getGalleryArts();
   }
 
@@ -345,6 +349,8 @@ galleryBid = [];
   getOnSale() {
     console.log('Coming soon');
     this.currentBtnClicked = 2;
+    const contSale: number = 0;
+    this.contSale = `(${contSale})`;
   }
 
   async getLikes(page:number = 1) {
@@ -363,6 +369,10 @@ galleryBid = [];
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.likesGallery = response.data.data as [];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const contLiked: number = response.data.count as number;
+      this.contLiked = `(${contLiked})`;
       if (this.likesGallery.length === 0) {
         this.nullTabLike = true;
       } else {
@@ -426,6 +436,14 @@ galleryBid = [];
 .btn-container {
   width: 100%;
   height: 80px;
+  @media (max-width: $breakpoint-xs-max){
+    height: 50%;
+  }
+}
+.algo-button{
+  @media (max-width: $breakpoint-xs-max){
+    margin-bottom: 10px;
+  }
 }
 
 .border {

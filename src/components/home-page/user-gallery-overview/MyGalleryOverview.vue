@@ -11,14 +11,14 @@
       @click="showGalleryArts()"
     />
     <algo-button
-      :label="$t('dashboard.homePage.onSale')"
+      :label="$t('dashboard.homePage.onSale') + contSale"
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
       @click="getOnSale()"
     />
     <algo-button
-      :label="$t('dashboard.homePage.like')"
+      :label="$t('dashboard.homePage.like') + contLiked"
       outline
       class="algo-button q-px-md q-ml-sm"
       :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
@@ -30,12 +30,12 @@
   >
     <div
       v-if="loadingGalleryArtsButtons === false && currentBtnClicked === 1"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class=" col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div v-if="loadingGalleryArts === false">
         <div
           v-if="nullGalleryArts === false"
-          class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+          class="col-md-9 col-lg-9 flex q-col-gutter-md"
         >
           <div
             v-for="(item, index) in galleryArts"
@@ -51,11 +51,11 @@
         </div>
         <div
           v-else
-          class="col-12 col-md-9 col-lg-9 q-mt-lg"
+          class="col-md-9 col-sm-12 col-lg-9 q-mt-lg"
         >
-          <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
+          <p class="text-h6 text-primary text-center q-pb-md text-noItems">
             {{ $t('dashboard.homePage.personalNoItems') }}
-          </div>
+          </p>
         </div>
       </div>
       <div v-else>
@@ -101,14 +101,14 @@
     </div>
     <div
       v-if=" currentBtnClicked === 3"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div
         v-if="loadingLikes === false"
       >
         <div
           v-if="nullTabLike === false"
-          class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+          class=" col-md-9 col-lg-9 flex q-col-gutter-md"
         >
           <div
             v-for="(item, index) in likesGallery"
@@ -124,9 +124,9 @@
         </div>
         <div
           v-else
-          class="col-12 col-md-9 col-lg-9 q-mt-lg"
+          class=" col-md-9 col-lg-9 q-mt-lg"
         >
-          <div class="text-h6 text-primary text-center q-pb-md q-mr-xl">
+          <div class="text-h6 text-primary text-center q-pb-md">
             {{ $t('dashboard.homePage.noItems') }}
           </div>
         </div>
@@ -268,6 +268,8 @@ export default class MyGalleryOverview extends Vue {
 
   imgData: IMyGallery[] = [];
   contImg: string = '';
+  contLiked: string = '';
+  contSale: string = '';
 
   // Buttons
   currentBtnClicked: number = 1;
@@ -289,6 +291,8 @@ export default class MyGalleryOverview extends Vue {
 
   mounted() {
     // void this.getGalleryBidders();
+    void this.getLikes();
+    void this.getOnSale();
     void this.getGalleryArts();
   }
 
@@ -369,6 +373,8 @@ export default class MyGalleryOverview extends Vue {
   getOnSale() {
     console.log('Coming soon');
     this.currentBtnClicked = 2;
+    const contSale: number = 0;
+    this.contSale = `(${contSale})`;
   }
 
   async getLikes(page:number = 1) {
@@ -387,6 +393,10 @@ export default class MyGalleryOverview extends Vue {
       if (this.isConnected) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.likesGallery = response.data.data as [];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const contLiked: number = response.data.count as number;
+        this.contLiked = `(${contLiked})`;
         if (this.likesGallery.length === 0) {
           this.nullTabLike = true;
         } else {
@@ -466,6 +476,17 @@ body.screen--sm, .screen--xs {
   }
   .latest-bids{
     margin-left: 0;
+  }
+  .text-noItems{
+    align-items: center;
+    width: 100%;
+    margin: 0;
+  }
+  .btn-container{
+    height: 50%;
+  }
+  .algo-button{
+    margin-bottom: 10px;
   }
 }
 

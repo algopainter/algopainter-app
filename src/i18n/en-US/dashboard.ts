@@ -14,7 +14,7 @@ export default {
   wrong: 'Wrong Network',
   migrate: 'Migrate to a Binance SmartChain',
   homePage: {
-    title: 'My Account',
+    title: 'My Gallery',
     publicTitle: 'Public Profile',
     editAccount: 'Edit Account',
     sendNewArt: 'Send New Art',
@@ -133,15 +133,15 @@ export default {
   },
   editProfile: {
     title: 'Edit Profile',
-    name: 'Name:',
+    name: 'Display name',
     email: 'Email (public information to contact you):',
     custom: 'Custom URL',
     webSite: 'Website or portfolio:',
-    bio: 'Bio:',
+    bio: 'How about talking a little about yourself?',
     chooseFile: 'Choose File',
     sMedia: 'Social media',
     sChanges: 'Save changes',
-    erroBio: 'The maximum characters amount is 1000',
+    erroBio: 'Description" must be less than or equal to 1000 characters long',
     erroName: 'Field name is required and must be less than 32 character long',
   },
   gallery: {

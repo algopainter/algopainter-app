@@ -74,6 +74,7 @@
           type="textarea"
           maxlength="1000"
           counter
+          autogrow
         />
         <h5 class="text-bold q-mb-none q-ml-md">
           {{ $t('dashboard.editProfile.sMedia') }}

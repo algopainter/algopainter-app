@@ -3,4 +3,6 @@ export interface CollectionsStateInterface {
     topSellers: [],
     topBuyers: [],
     userItems: string,
+    images: [],
+    collections: [],
 }

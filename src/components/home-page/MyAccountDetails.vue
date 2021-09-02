@@ -213,9 +213,12 @@ export default class AccountDetails extends Vue {
       void this.$store.dispatch({
         type: 'collections/getUserItems',
         account: this.accountAddress,
+        page: 1,
+        perPage: '9',
       }).then(() => {
         this.loadingUserItems = false;
-        this.userItems = this.$store.state.collections.userItems;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.userItems = this.$store.getters['collections/GET_USER_ITEMS'] as string;
       });
     }
   }

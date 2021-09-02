@@ -171,15 +171,17 @@
         </div>
       </div>
     </q-page>
-    <q-page
+    <div
+      v-if="buttons === true"
       class="mobile-only row justify-center"
     >
       <q-skeleton
         type="QBtn"
         class="btn-load-more q-my-lg"
       />
-    </q-page>
-    <q-page
+    </div>
+    <div
+      v-if="buttons === true"
       class="desktop-only row justify-center q-gutter-sm"
     >
       <div
@@ -195,13 +197,18 @@
           />
         </div>
       </div>
-    </q-page>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component';
-export default class MyGallerySkeleton extends Vue {}
+import { Vue, prop } from 'vue-class-component';
+class Props {
+  buttons = prop({
+    type: Boolean,
+  });
+}
+export default class MyGallerySkeleton extends Vue.with(Props) {}
 </script>
 
 <style lang="scss" scoped>

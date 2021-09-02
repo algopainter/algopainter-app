@@ -9,6 +9,7 @@ function state(): UserStateInterface {
     profile: [],
     userAccount: undefined,
     userProfile: undefined,
+    userLikes: undefined,
   };
 }
 

@@ -1,27 +1,47 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
-  <div>
-    <div class="btn-container q-mx-auto flex justify-center items-center">
-      <algo-button
-        :label="$t('dashboard.homePage.gallery') + contImg"
-        outline
-        class="algo-button q-px-md q-ml-sm"
-        :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
-        @click="showGalleryArts()"
-      />
-      <algo-button
-        :label="$t('dashboard.homePage.onSale') + contSale"
-        outline
-        class="algo-button q-px-md q-ml-sm"
-        :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
-        @click="getOnSale()"
-      />
-      <algo-button
-        :label="$t('dashboard.homePage.like') + contLiked"
-        outline
-        class="algo-button q-px-md q-ml-sm"
-        :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
-        @click="getLikes()"
-      />
+  <div class="btn-container q-mx-auto row items-center justify-center ">
+    <q-select
+      v-model="currentCollection"
+      :options="collectionFilter"
+      color="primary"
+      :loading="getCollectionsLoading"
+      rounded
+      outlined
+      bottom-slots
+      @update:model-value="filterCollection(1, currentCollection.label)"
+    >
+      <template #before>
+        <q-icon
+          name="filter_list"
+          color="primary"
+        />
+      </template>
+    </q-select>
+    <div class="q-mx-auto row items-center justify-center">
+      <div class="btn-container q-mx-auto flex justify-center items-center">
+        <algo-button
+          :label="$t('dashboard.homePage.gallery') + contImg"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 1 ? 'primary' : 'grey-5' "
+          @click="showGalleryArts()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.onSale') + contSale"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 2 ? 'primary' : 'grey-5' "
+          @click="showOnSale()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.like') + contLiked"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
+          @click="showLikes()"
+        />
+      </div>
     </div>
   </div>
   <div
@@ -54,9 +74,13 @@
         </div>
       </div>
       <div v-else>
-        <MyGallerySkeleton />
+        <MyGallerySkeleton
+          :buttons="false"
+        />
       </div>
-      <div class=" q-mx-auto q-mb-md">
+      <div
+        class=" q-mx-auto q-mb-md"
+      >
         <q-btn
           v-for="(btn, index) in showingPages"
           :key="index"
@@ -64,7 +88,7 @@
           :label="index + 1"
           class="q-mr-xs desktop-only"
           :loading="currentPage === index + 1 ? loadingGalleryArts : false"
-          @click="getGalleryArts(index + 1)"
+          @click="getGalleryArts(index + 1, currentCollection.label)"
         />
         <algo-button
           v-if="nullGalleryArts === false"
@@ -76,7 +100,7 @@
           class="load-more q-px-xl q-mx-auto mobile-only"
           :disable="noMoreImages"
           :loading="loadingBtn"
-          @click="loadMore()"
+          @click="loadMore(currentCollection.label)"
         />
       </div>
     </div>
@@ -84,7 +108,9 @@
       v-else-if="currentBtnClicked === 1"
       class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
-      <MyGallerySkeleton />
+      <MyGallerySkeleton
+        :buttons="true"
+      />
     </div>
     <div
       v-else-if="currentBtnClicked === 2"
@@ -96,68 +122,67 @@
     </div>
     <div
       v-else-if="currentBtnClicked === 3"
-      class=" col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div
-        v-if=" currentBtnClicked === 3"
-        class=" col-md-9 col-lg-9 flex q-col-gutter-md"
+        v-if="loadingLikes === false"
       >
         <div
-          v-if="loadingLikes === false"
+          v-if="nullTabLike === false"
+          class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
         >
           <div
-            v-if="nullTabLike === false"
-            class=" col-md-9 col-lg-9 flex q-col-gutter-md"
+            v-for="(item, index) in likesGallery"
+            :key="index"
           >
-            <div
-              v-for="(item, index) in likesGallery"
-              :key="index"
-            >
-              <div>
-                <gallery-item
-                  :art="item"
-                  @favoriteClicked="favoriteClicked"
-                />
-              </div>
-            </div>
-          </div>
-          <div
-            v-else
-            class="col-md-9 col-lg-9 q-mt-lg"
-          >
-            <div class="text-h6 text-primary text-center q-pb-md">
-              {{ $t('dashboard.homePage.noItemaPublic') }}
+            <div>
+              <gallery-item
+                :art="item"
+                @favoriteClicked="favoriteClicked"
+              />
             </div>
           </div>
         </div>
         <div
           v-else
+          class="col-md-9 col-lg-9 q-mt-lg"
         >
-          <MyGallerySkeleton />
+          <div class="text-h6 text-primary text-center q-pb-md q-mt-lg">
+            {{ $t('dashboard.homePage.noItemPublic') }}
+          </div>
         </div>
-        <div class=" q-mx-auto q-mb-md">
-          <q-btn
-            v-for="(btn, index) in showingPageslike"
-            :key="index"
-            :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
-            :label="index + 1"
-            class="q-mr-xs desktop-only"
-            :loading="currentPage === index + 1 ? loadingLikes : false"
-            @click="getLikes(index + 1)"
-          />
-          <algo-button
-            v-if="nullTabLike === false"
-            :label="$t('dashboard.homePage.loadMore', {
-              msg: btnLoadMoreMsg
-            })"
-            color="primary"
-            outline
-            class="load-more q-px-xl q-mx-auto mobile-only"
-            :disable="noMoreImages"
-            :loading="loadingBtn"
-            @click="loadMoreLike()"
-          />
-        </div>
+      </div>
+      <div
+        v-else
+      >
+        <MyGallerySkeleton
+          :buttons="false"
+        />
+      </div>
+      <div
+        class="q-mx-auto q-mb-md"
+      >
+        <q-btn
+          v-for="(btn, index) in showingPageslike"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          :loading="currentPage === index + 1 ? loadingLikes : false"
+          @click="getLikes(index + 1, currentCollection.label)"
+        />
+        <algo-button
+          v-if="nullTabLike === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          :loading="loadingBtn"
+          @click="loadMoreLike(currentCollection.label)"
+        />
       </div>
     </div>
     <div class="col-11 col-md-3 col-lg-3 q-pt-md q-mt-lg column items-center border q-pl-none latest-bids">
@@ -213,13 +238,14 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
-import { api } from 'src/boot/axios';
 import { IMyGallery } from 'src/models/IMyGallery';
+import { ICollection } from 'src/models/ICollection';
+import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
+import { Watch } from 'vue-property-decorator';
 
 @Options({
   components: {
@@ -231,7 +257,7 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
   },
 })
 export default class UserGalleryOverview extends Vue {
-galleryBid = [];
+  galleryBid = [];
   loadingGalleryBid: boolean = true;
   galleryBidClosed = [];
   galleryBidShow = [];
@@ -263,15 +289,233 @@ galleryBid = [];
   // Buttons
   currentBtnClicked: number = 1;
 
+  // Filter
+  currentCollection: string = 'All Collections';
+  filteredGallery:IMyGallery[] = [];
+
+  collectionFilter: unknown[] = [{ label: 'All Collections' }];
+  getCollectionsLoading: boolean = true;
+
   imgData: IMyGallery[] = [];
   contImg: string = '';
   contLiked: string = '';
   contSale: string = '';
 
+  // Gets all images in the background
+  mounted() {
+    // void this.getGalleryBidders();
+    void this.getLikes(1, this.currentCollection);
+    void this.getGalleryArts(1, this.currentCollection);
+    void this.getCollections();
+    // temporary until there's an API for onsale images
+    const contSale: number = 0;
+    this.contSale = `(${contSale})`;
+  }
+
+  // If the filter changes, the filter is also applied in the other tabs in the background
+  @Watch('currentCollection')
+  onCollectionChanged() {
+    if (this.currentBtnClicked !== 1) {
+      void this.getGalleryArts(1, this.currentCollection, true);
+    } else {
+      void this.getLikes(1, this.currentCollection, true);
+    }
+  }
+
+  // Get all available collections and put in the filter dropdown
+  async getCollections() {
+    this.getCollectionsLoading = true;
+    await this.$store.dispatch({
+      type: 'collections/getAllCollections',
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = this.$store.getters['collections/GET_COLLECTIONS'] as IAxios;
+      const collectionFilter = response.data;
+      collectionFilter.forEach((item: ICollection) => {
+        this.collectionFilter.push({ label: item.title });
+      });
+      this.getCollectionsLoading = false;
+    });
+  }
+
+  // Filter's action after user chooses an option
+  filterCollection(page: number = 1, currentCollection: string = 'All Collections') {
+    // Updated the current collection to trigger the 'currentCollection' watcher
+    this.currentCollection = currentCollection;
+    // Checks if the user is on a desktop or mobile to call the apropriate function
+    const device = (window.innerWidth <= 768) ? 'mobile' : 'desktop';
+
+    if (device === 'desktop') {
+      if (this.currentBtnClicked === 1) {
+        void this.getGalleryArts(page, currentCollection);
+      } else if (this.currentBtnClicked === 3) {
+        void this.getLikes(page, currentCollection);
+      }
+    } else if (device === 'mobile') {
+      this.loadMoreCounter = 0;
+      this.loadMoreCounterLike = 0;
+      this.noMoreImages = false;
+      this.btnLoadMoreMsg = 'Load More';
+      if (this.currentBtnClicked === 1) {
+        void this.loadMore(currentCollection, true);
+      } else if (this.currentBtnClicked === 3) {
+        void this.loadMoreLike(currentCollection, true);
+      }
+    }
+  }
+
+  // Gets all items that the user possess on desktop -> pagination method
+  async getGalleryArts(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+    this.loadingGalleryArts = true;
+    this.currentPage = page;
+    if (!watcher) {
+      this.currentBtnClicked = 1;
+    }
+    await this.$store.dispatch({
+      type: 'collections/getUserItems',
+      account: this.$route.params.account,
+      page: page,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = this.$store.getters['collections/GET_IMAGES'] as IAxiosPaginated;
+      this.maxPage = response.pages;
+      if (this.maxPage <= 15) {
+        this.showingPages = this.maxPage;
+      } else {
+        this.showingPages = 15;
+      }
+      this.galleryArts = response.data as [];
+      const contImg: number = response.count;
+      this.contImg = ` (${contImg})`;
+
+      if (this.galleryArts.length === 0) {
+        this.nullGalleryArts = true;
+      } else {
+        this.nullGalleryArts = false;
+      }
+      this.loadingGalleryArtsButtons = false;
+      this.loadingGalleryArts = false;
+    });
+  }
+
+  // Gets all items liked by the user on desktop -> pagination method
+  async getLikes(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+    this.loadingLikes = true;
+    if (!watcher) {
+      this.currentBtnClicked = 3;
+    }
+    this.currentPage = page;
+    await this.$store.dispatch({
+      type: 'user/getUserLikes',
+      account: this.$route.params.account,
+      page: page,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = this.$store.getters['user/GET_USER_LIKES'] as IAxiosPaginated;
+      this.maxPage = response.pages;
+      if (this.maxPage <= 15) {
+        this.showingPageslike = this.maxPage;
+      } else {
+        this.showingPageslike = 15;
+      }
+      this.likesGallery = response.data as [];
+      const contLiked: number = response.count;
+      this.contLiked = `(${contLiked})`;
+      if (this.likesGallery.length === 0) {
+        this.nullTabLike = true;
+      } else {
+        this.nullTabLike = false;
+      }
+      this.loadingLikesButtons = false;
+      this.loadingLikes = false;
+    });
+  }
+
+  // Gets all items that the user possess on mobile -> load more method
+  async loadMore(collection:string = this.currentCollection, filter: boolean = false) {
+    if (filter) {
+      this.loadingGalleryArts = true;
+      this.galleryArts = [];
+    }
+    this.loadMoreCounter++;
+    this.loadingBtn = true;
+    await this.$store.dispatch({
+      type: 'collections/getUserItems',
+      account: this.$route.params.account,
+      page: this.loadMoreCounter,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = this.$store.getters['collections/GET_IMAGES'] as IAxiosPaginated;
+      const tempGalleryArts = response.data;
+      if (tempGalleryArts.length === 0) {
+        this.noMoreImages = true;
+        this.btnLoadMoreMsg = 'Nothing else to show';
+      } else {
+        tempGalleryArts.forEach((item) => {
+          this.galleryArts.push(item);
+        });
+      }
+      this.loadingBtn = false;
+      this.loadingGalleryArts = false;
+    });
+  }
+
+  // Gets all items liked by the user on mobile -> load more method
+  async loadMoreLike(collection:string = this.currentCollection, filter: boolean = false) {
+    if (filter) {
+      this.loadingLikes = true;
+      this.likesGallery = [];
+    }
+    this.loadMoreCounterLike++;
+    this.loadingBtn = true;
+    await this.$store.dispatch({
+      type: 'user/getUserLikes',
+      account: this.$route.params.account,
+      page: this.loadMoreCounterLike,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = this.$store.getters['user/GET_USER_LIKES'] as IAxiosPaginated;
+      const contLiked: number = response.count;
+      const likeMobile = response.data as [];
+      this.contLiked = `(${contLiked})`;
+      if (likeMobile.length === 0) {
+        this.noMoreImages = true;
+        this.btnLoadMoreMsg = 'Nothing else to show';
+      } else {
+        likeMobile.forEach((i) => {
+          this.likesGallery.push(i);
+        });
+      }
+      this.loadingBtn = false;
+      this.loadingLikes = false;
+    });
+  }
+
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
 
+  showGalleryArts() {
+    this.currentBtnClicked = 1;
+  }
+
+  showOnSale() {
+    this.currentBtnClicked = 2;
+  }
+
+  showLikes() {
+    this.currentBtnClicked = 3;
+  }
+
+  /*
   Allbids() {
     this.btnBidsClicked = !this.btnBidsClicked;
     if (this.btnBidsClicked === false) {
@@ -280,14 +524,9 @@ galleryBid = [];
       this.galleryBidShow = this.galleryBid;
     }
   }
+  */
 
-  mounted() {
-    // void this.getGalleryBidders();
-    void this.getLikes();
-    void this.getOnSale();
-    void this.getGalleryArts();
-  }
-
+  /*
   async getGalleryBidders() {
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -308,131 +547,12 @@ galleryBid = [];
       console.log('error', e);
     }
   }
-
-  async getGalleryArts(page:number = 1) {
-    this.loadingGalleryArts = true;
-    this.currentBtnClicked = 1;
-    try {
-      this.currentPage = page;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.params.account}/images?page=${page}&perPage=9`); // this.accountAddress
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.maxPage = response.data.pages as number;
-      if (this.maxPage <= 15) {
-        this.showingPages = this.maxPage;
-      } else {
-        this.showingPages = 15;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.galleryArts = response.data.data as [];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const contImg: number = response.data.count as number;
-      this.contImg = ` (${contImg})`;
-
-      if (this.galleryArts.length === 0) {
-        this.nullGalleryArts = true;
-      } else {
-        this.nullGalleryArts = false;
-      }
-    } catch (error) {
-      console.log('erro no galleryArts');
-    } finally {
-      this.loadingGalleryArtsButtons = false;
-      this.loadingGalleryArts = false;
-    }
-  }
-
-  showGalleryArts() {
-    this.currentBtnClicked = 1;
-  }
-
-  getOnSale() {
-    console.log('Coming soon');
-    this.currentBtnClicked = 2;
-    const contSale: number = 0;
-    this.contSale = `(${contSale})`;
-  }
-
-  async getLikes(page:number = 1) {
-    this.loadingLikes = true;
-    this.currentBtnClicked = 3;
-    try {
-      this.currentPage = page;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`likes/${this.$route.params.account}?page=${page}&perPage=6`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.maxPage = response.data.pages as number;
-      if (this.maxPage <= 15) {
-        this.showingPageslike = this.maxPage;
-      } else {
-        this.showingPages = 15;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.likesGallery = response.data.data as [];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const contLiked: number = response.data.count as number;
-      this.contLiked = `(${contLiked})`;
-      if (this.likesGallery.length === 0) {
-        this.nullTabLike = true;
-      } else {
-        this.nullTabLike = false;
-      }
-    } catch (error) {
-      console.log('erro no likesGallery');
-    } finally {
-      this.loadingLikesButtons = false;
-      this.loadingLikes = false;
-    }
-  }
-
-  async loadMoreLike() {
-    try {
-      this.loadMoreCounterLike++;
-      this.loadingBtn = true;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`likes/${this.$route.params.account}?page=${this.loadMoreCounterLike}&perPage=9`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const likeMobile = response.data.data as [];
-      if (likeMobile.length === 0) {
-        this.noMoreImages = true;
-        this.btnLoadMoreMsg = 'Nothing else to show';
-      } else {
-        likeMobile.forEach((i) => {
-          this.likesGallery.push(i);
-        });
-      }
-    } catch (error) {
-      console.log('erro no galleryArts');
-    }
-    this.loadingBtn = false;
-  }
-
-  async loadMore() {
-    try {
-      this.loadMoreCounter++;
-      this.loadingBtn = true;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`users/${this.$route.params.account}/images?page=${this.loadMoreCounter}&perPage=9`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const tempGalleryArts = response.data.data as [];
-      if (tempGalleryArts.length === 0) {
-        this.noMoreImages = true;
-        this.btnLoadMoreMsg = 'Nothing else to show';
-      } else {
-        tempGalleryArts.forEach((item) => {
-          this.galleryArts.push(item);
-        });
-      }
-    } catch (error) {
-      console.log('erro no galleryArts');
-    }
-    this.loadingBtn = false;
-  }
+  */
 }
 </script>
 
 <style lang="scss">
+
 .btn-container {
   width: 100%;
   height: 80px;

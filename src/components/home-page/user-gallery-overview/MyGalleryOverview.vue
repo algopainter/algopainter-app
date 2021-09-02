@@ -340,7 +340,7 @@ export default class MyGalleryOverview extends Vue {
 
   pirsConnected: boolean = false;
   havePirs: boolean = true;
-  showingPagesPirs: number = 9;
+  showingPagesPirs: number = 8;
   nullTabPirs: boolean = false;
 
   // Buttons
@@ -410,7 +410,7 @@ export default class MyGalleryOverview extends Vue {
     this.currentBtnClicked = 1;
     try {
       this.currentPage = page;
-      const response = await api.get(`users/0x7A8476832Eb89189F0aDbC183A1B70C447Bb311a/images?page=${page}&perPage=9`); // this.accountAddress
+      const response = await api.get(`users/${this.accountAddress}/images?page=${page}&perPage=9`); // this.accountAddress
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.maxPage = response.data.pages as number;
       if (this.maxPage <= 15) {

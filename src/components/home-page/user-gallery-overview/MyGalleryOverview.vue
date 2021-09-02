@@ -339,7 +339,7 @@ export default class MyGalleryOverview extends Vue {
   contPirs: string = '';
 
   pirsConnected: boolean = false;
-  havePirs: boolean = true;
+  havePirs: boolean = false;
   showingPagesPirs: number = 8;
   nullTabPirs: boolean = false;
 

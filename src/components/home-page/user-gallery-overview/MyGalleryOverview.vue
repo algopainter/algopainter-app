@@ -41,6 +41,13 @@
           :color="currentBtnClicked === 3 ? 'primary' : 'grey-5' "
           @click="showLikes()"
         />
+        <algo-button
+          :label="$t('dashboard.homePage.pirs') + contPirs"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 4 ? 'primary' : 'grey-5' "
+          @click="showLikes()"
+        />
       </div>
     </div>
   </div>
@@ -368,6 +375,8 @@ export default class MyGalleryOverview extends Vue {
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
   getCollectionsLoading: boolean = true;
 
+  pirs:boolean = false;
+
   // Gets all images in the background
   mounted() {
     void this.getLikes(1, 'All Collections');
@@ -475,10 +484,6 @@ export default class MyGalleryOverview extends Vue {
       this.loadingGalleryArts = false;
     });
   }
-  
-  showPirs() {
-    this.currentBtnClicked = 4;
-  }
 
   getOnSale() {
     console.log('Coming soon');
@@ -584,6 +589,21 @@ export default class MyGalleryOverview extends Vue {
     });
   }
 
+  getPirs(page:number = 1) {
+    this.currentPage = page;
+    try {
+      this.contPirs = '0';
+      this.contPirs = ` (${this.contPirs})`;
+      this.pirsConnected = true;
+      this.pirs = true;
+    } catch (error) {
+
+    } finally {
+      // eslint-disable-next-line no-unsafe-finally
+      return null;
+    }
+  }
+
   // Checks if the user is connected
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -610,6 +630,10 @@ export default class MyGalleryOverview extends Vue {
 
   showLikes() {
     this.currentBtnClicked = 3;
+  }
+
+  showPirs() {
+    this.currentBtnClicked = 4;
   }
 
   /*

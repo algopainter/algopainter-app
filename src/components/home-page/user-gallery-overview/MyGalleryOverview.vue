@@ -46,7 +46,14 @@
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 4 ? 'primary' : 'grey-5' "
-          @click="showLikes()"
+          @click="showPirs()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.bid') + contBid"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 5 ? 'primary' : 'grey-5' "
+          @click="getBid()"
         />
       </div>
     </div>
@@ -194,19 +201,18 @@
     </div>
     <div
       v-else-if="currentBtnClicked === 4"
-      class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div v-if="pirsConnected">
         <div
           v-if="havePirs === true"
-          class="col-md-9 col-lg-9 flex q-col-gutter-md"
+          class="col-md-6 col-lg-6 flex q-col-gutter-md justify-between"
         >
           <div
             v-for="(item, index) in galleryArts"
             :key="index"
           >
             <div>
-              <gallery-item
+              <gallery-select
                 :art="item"
                 @favoriteClicked="favoriteClicked"
               />
@@ -251,54 +257,63 @@
         />
       </div>
     </div>
-    <div class="col-12 col-md-3 col-lg-3 column items-center border q-pt-md latest-bids">
-      <div class="text-h5 text-bold text-primary q-pb-md">
-        {{ $t('dashboard.homePage.latestBids') }}
-      </div>
-      <div>
-        <p class="q-mt-md text-primary text-bold text-h5">
-          {{ $t('dashboard.auctions.coming') }}
-        </p>
-      </div>
-      <!--
-      <div v-if="loadingLatestBidsItem === false">
+    <div
+      v-else-if="currentBtnClicked === 5"
+    >
+      <div v-if="bidConnect">
         <div
-          v-for="(bid, i) in galleryBidShow"
-          :key="i"
-          class="column q-col-gutter-md"
+          v-if="haveBid"
+          class="col-md-6 col-lg-6 flex q-col-gutter-md justify-between"
         >
-          <div v-if="bid != undefined">
-            <LatestBidsItem
-              :bid="bid"
-            />
+          <div
+            v-for="(item, index) in galleryArts"
+            :key="index"
+          >
+            <div>
+              <gallery-select
+                :art="item"
+                @favoriteClicked="favoriteClicked"
+              />
+            </div>
           </div>
         </div>
-        <div v-if="nullGalleryBidShow === true">
-          <div class="flex q-mb-md">
-            {{ $t('dashboard.homePage.personalNoBids') }}
-          </div>
-        </div>
-        <div class="q-pt-md row justify-center">
-          <algo-button
-            v-if="btnBidsClicked"
-            color="primary"
-            @click="Allbids()"
-          >
-            {{ $t('dashboard.homePage.seeLess') }}
-          </algo-button>
-          <algo-button
-            v-else
-            color="primary"
-            @click="Allbids()"
-          >
-            {{ $t('dashboard.homePage.seeAllBids') }}
-          </algo-button>
+        <div
+          v-else
+          class="text-h6 text-primary text-center q-pb-md"
+        >
+          {{ $t('dashboard.homePage.personalNoBid') }}
         </div>
       </div>
-      <div v-else>
-        <LatestBidsItemSkeleton />
+      <div
+        v-else
+      >
+        <MyGallerySkeleton />
       </div>
-      -->
+      <div
+        v-if="havePirs"
+        class="q-mx-auto q-mb-md"
+      >
+        <q-btn
+          v-for="(btn, index) in showingPagesPirs"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          @click="getPirs(index + 1)"
+        />
+        <algo-button
+          v-if="nullTabPirs === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          :loading="loadingBtn"
+          @click="loadMoreLike()"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -311,6 +326,7 @@ import { IMyGallery } from 'src/models/IMyGallery';
 import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import { ICollection } from 'src/models/ICollection';
 import GalleryItem from './GalleryItem.vue';
+import GallerySelect from './GallerySelect.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
@@ -319,6 +335,7 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
   components: {
     AlgoButton,
     GalleryItem,
+    GallerySelect,
     LatestBidsItem,
     LatestBidsItemSkeleton,
     MyGallerySkeleton,
@@ -361,7 +378,8 @@ export default class MyGalleryOverview extends Vue {
   contPirs: string = '';
 
   pirsConnected: boolean = false;
-  havePirs: boolean = false;
+  havePirs: boolean = true;
+  pirs:boolean = false;
   showingPagesPirs: number = 8;
   nullTabPirs: boolean = false;
 
@@ -375,7 +393,9 @@ export default class MyGalleryOverview extends Vue {
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
   getCollectionsLoading: boolean = true;
 
-  pirs:boolean = false;
+  contBid: string = '';
+  bidConnect: boolean = false;
+  haveBid: boolean = false;
 
   // Gets all images in the background
   mounted() {
@@ -457,7 +477,7 @@ export default class MyGalleryOverview extends Vue {
     }
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: this.accountAddress,
+      account: '0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac',
       page: page,
       perPage: '9',
       collectionName: collection,
@@ -539,7 +559,7 @@ export default class MyGalleryOverview extends Vue {
     this.loadingBtn = true;
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: this.accountAddress,
+      account: 0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac,
       page: this.loadMoreCounter,
       perPage: '9',
       collectionName: collection,
@@ -596,6 +616,21 @@ export default class MyGalleryOverview extends Vue {
       this.contPirs = ` (${this.contPirs})`;
       this.pirsConnected = true;
       this.pirs = true;
+    } catch (error) {
+
+    } finally {
+      // eslint-disable-next-line no-unsafe-finally
+      return null;
+    }
+  }
+
+  getBid() {
+    this.currentBtnClicked = 5;
+    try {
+      this.contBid = '0';
+      this.contBid = ` (${this.contBid})`;
+      this.bidConnect = true;
+      this.haveBid = true;
     } catch (error) {
 
     } finally {

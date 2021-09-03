@@ -1,5 +1,5 @@
 <template>
-  <div class="header size q-mx-auto q-mb-lg">
+  <div class="header size q-mb-lg">
     <q-select
       v-model="currentFilter"
       :options="filterOptions"
@@ -81,8 +81,8 @@ export default class HomePageGallery extends Vue {
   imgIdArray: string[] = [];
 
   // Filter
-  currentFilter: string = '';
-  filterOptions: any[] = [];
+  currentFilter: string = 'All Collections';
+  filterOptions: any[] = [{ label: 'All Collections', id: '' }];
   currentCollectionId: string = '';
 
   filterCollection(currentCollection: string = '') {
@@ -101,7 +101,11 @@ export default class HomePageGallery extends Vue {
   async loadMore() {
     this.loadMoreCounter++;
     this.loadingBtn = true;
-    const images = await new CollectionController().getCollectionsImages(this.currentCollectionId, this.loadMoreCounter);
+
+    const images = (this.currentFilter.toLowerCase() === 'all collections')
+      ? await new CollectionController().getAllImages(this.loadMoreCounter)
+      : await new CollectionController().getCollectionsImages(this.currentCollectionId, this.loadMoreCounter);
+
     if (images.length === 0) {
       this.btnLoadMoreMsg = 'Nothing else to show';
     } else {
@@ -129,7 +133,11 @@ export default class HomePageGallery extends Vue {
     this.imgIdArray = [];
     this.loadMoreCounter = 1;
     this.btnLoadMoreMsg = 'Load More';
-    const images = await new CollectionController().getCollectionsImages(this.currentCollectionId);
+
+    const images = (this.currentFilter.toLowerCase() === 'all collections')
+      ? await new CollectionController().getAllImages()
+      : await new CollectionController().getCollectionsImages(this.currentCollectionId);
+
     this.currentCollectionGallery = images.map((image) =>
       this.mapImageToGalleryItem(image),
     );
@@ -149,11 +157,14 @@ export default class HomePageGallery extends Vue {
       collections.forEach((item: ICollection) => {
         this.filterOptions.push({ label: item.title, id: item._id });
       });
-    }
-    if (collections) {
-      const images = await new CollectionController().getCollectionsImages(collections[0]._id);
+
       this.currentCollectionId = collections[0]._id;
-      this.currentFilter = collections[0].title;
+
+      const images = (this.currentFilter.toLowerCase() === 'all collections')
+        ? await new CollectionController().getAllImages()
+        : await new CollectionController().getCollectionsImages('');
+
+      this.currentFilter = 'All Collections';
       this.currentCollectionGallery = images.map((image) =>
         this.mapImageToGalleryItem(image),
       );

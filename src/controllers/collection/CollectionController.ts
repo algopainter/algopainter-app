@@ -21,4 +21,13 @@ export default class CollectionController extends BaseController {
       return [];
     }
   }
+
+  async getAllImages(page: number = 1, perPage: number = 24) {
+    try {
+      const result = await this.get(`images?page=${page}&perPage=${perPage}&order.nft.index=-1`);
+      return result.data.data as IImage[];
+    } catch (error) {
+      return [];
+    }
+  }
 }

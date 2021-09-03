@@ -312,7 +312,6 @@ export default class UserGalleryOverview extends Vue {
     // temporary until there's an API for onsale images
     const contSale: number = 0;
     this.galleryButtons[1].cont = `(${contSale})`;
-    console.log('currentBtnClicked', this.currentBtnClicked);
   }
 
   // If the filter changes, the filter is also applied in the other tabs in the background

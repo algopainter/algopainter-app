@@ -23,6 +23,8 @@ export default {
     myGallery: 'My Gallery',
     gallery: 'Gallery',
     pirs: 'PIRS',
+    bid: 'Bid Back',
+    personalNoBid: 'No have Bid Back 😔',
     pirsVal: '{creators} creators / {investors} investors',
     sell: 'SELL',
     latestBids: 'Latest bids',
@@ -48,6 +50,7 @@ export default {
     filter: 'filter',
     colon: ':',
     symbol: '#',
+    stakeAlgo: 'Stake ALGOP',
   },
   newPainting: {
     title: 'New Painting',

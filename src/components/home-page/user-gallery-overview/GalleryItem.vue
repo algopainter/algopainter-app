@@ -47,7 +47,7 @@
       <q-tooltip
         class="bg-primary"
       >
-        {{ art.description }}
+        {{ art.title }}
       </q-tooltip>
       <algoButton
         icon="visibility"

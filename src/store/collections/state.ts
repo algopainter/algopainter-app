@@ -6,6 +6,8 @@ function state(): CollectionsStateInterface {
     topSellers: [],
     topBuyers: [],
     userItems: '',
+    images: [],
+    collections: [],
   };
 }
 

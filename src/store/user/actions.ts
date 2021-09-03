@@ -152,7 +152,22 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       const userAccount = res.data.account as [];
       this.commit('user/SET_USER_ACCOUNT', userAccount);
     } catch (e) {
-      console.log('error message - getUserProfile');
+      console.log('error message - getAccountBasedOnCustomUrl');
+    }
+  },
+  async getUserLikes(type, value: Record<string, unknown>) {
+    const account = value.account as string;
+    const page = value.page as number;
+    const perPage = value.perPage as string;
+    const collectionName = value.collectionName as string;
+    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    try {
+      const res = await api.get(`likes/${account}?page=${page}&perPage=${perPage}&collectionName=${currentCollection}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const userLikes = res.data as [];
+      this.commit('user/SET_USER_LIKES', userLikes);
+    } catch (e) {
+      console.log('error message - getUserLikes');
     }
   },
 };

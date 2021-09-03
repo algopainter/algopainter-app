@@ -109,7 +109,7 @@
             <p> {{ image.description }} </p>
             <div v-if="image.collectionName === 'Gwei'">
               <p class="text-bold text-primary text-h6">
-                {{ $t('dashboard.viewArt.pararmeters') }}
+                {{ $t('dashboard.viewArt.parameters') }}
               </p>
               <span>{{ $t('dashboard.viewArt.text') }}</span>
               <span class="text-bold">
@@ -253,10 +253,6 @@ export default class ViewArt extends Vue {
         return 'None';
     }
   }
-
-  // preciso do id da imagem que ja foi fetched
-  // vou fazer um request para o api https://algopainter-api.netlify.app/api/images/611548094fb5ed1d60bafd0a
-  // Alterar os parâmetros da imagem para ficar igual
 
   changeBackground(value: string) {
     this.backgroundChange = true;

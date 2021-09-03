@@ -72,6 +72,7 @@ export interface UserStateInterface {
   profile: [] | undefined;
   userAccount?: string;
   userProfile?: [];
+  userLikes?: [] | undefined;
 }
 
 export interface IWeb3Provider {

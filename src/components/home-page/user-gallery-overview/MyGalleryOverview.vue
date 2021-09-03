@@ -115,7 +115,7 @@
       />
     </div>
     <div
-      v-else-if="currentBtnClicked === 2"
+      v-if="currentBtnClicked === 2"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
@@ -123,7 +123,7 @@
       </p>
     </div>
     <div
-      v-if=" currentBtnClicked === 3"
+      v-else-if="currentBtnClicked === 3"
       class="col-md-9 col-lg-9 flex q-col-gutter-md"
     >
       <div
@@ -182,6 +182,65 @@
           :disable="noMoreImages"
           :loading="loadingBtn"
           @click="loadMoreLike(currentCollection.label)"
+        />
+      </div>
+    </div>
+    <div
+      v-else-if="currentBtnClicked === 4"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
+      <div v-if="pirsConnected">
+        <div
+          v-if="havePirs === true"
+          class="col-md-9 col-lg-9 flex q-col-gutter-md"
+        >
+          <div
+            v-for="(item, index) in galleryArts"
+            :key="index"
+          >
+            <div>
+              <gallery-item
+                :art="item"
+                @favoriteClicked="favoriteClicked"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+          class="text-h6 text-primary text-center q-pb-md"
+        >
+          {{ $t('dashboard.homePage.personalNoPirs') }}
+        </div>
+      </div>
+      <div
+        v-else
+      >
+        <MyGallerySkeleton />
+      </div>
+      <div
+        v-if="havePirs"
+        class="q-mx-auto q-mb-md"
+      >
+        <q-btn
+          v-for="(btn, index) in showingPagesPirs"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          @click="getPirs(index + 1)"
+        />
+        <algo-button
+          v-if="nullTabPirs === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          :loading="loadingBtn"
+          @click="loadMoreLike()"
         />
       </div>
     </div>
@@ -292,6 +351,12 @@ export default class MyGalleryOverview extends Vue {
   contImg: string = '';
   contLiked: string = '';
   contSale: string = '';
+  contPirs: string = '';
+
+  pirsConnected: boolean = false;
+  havePirs: boolean = false;
+  showingPagesPirs: number = 8;
+  nullTabPirs: boolean = false;
 
   // Buttons
   currentBtnClicked: number = 1;
@@ -319,6 +384,7 @@ export default class MyGalleryOverview extends Vue {
     // void this.getGalleryBidders();
     void this.getLikes(1, 'All Collections');
     void this.getGalleryArts(1, 'All Collections');
+    void this.getPirs();
   }
 
   // If the filter changes, the filter is also applied in the other tabs in the background
@@ -409,6 +475,17 @@ export default class MyGalleryOverview extends Vue {
       this.loadingGalleryArts = false;
     });
   }
+  
+  showPirs() {
+    this.currentBtnClicked = 4;
+  }
+
+  getOnSale() {
+    console.log('Coming soon');
+    this.currentBtnClicked = 2;
+    const contSale: number = 0;
+    this.contSale = ` (${contSale})`;
+  }
 
   // Gets all items liked by the user on desktop -> pagination method
   async getLikes(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
@@ -435,7 +512,7 @@ export default class MyGalleryOverview extends Vue {
       if (this.isConnected) {
         this.likesGallery = response.data;
         const contLiked: number = response.count;
-        this.contLiked = `(${contLiked})`;
+        this.contLiked = ` (${contLiked})`;
         if (this.likesGallery.length === 0) {
           this.nullTabLike = true;
         } else {

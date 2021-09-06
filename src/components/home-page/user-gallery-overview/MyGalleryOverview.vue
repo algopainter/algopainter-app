@@ -214,6 +214,7 @@
             <div>
               <gallery-select
                 :art="item"
+                :select="currentBtnClicked"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -477,7 +478,7 @@ export default class MyGalleryOverview extends Vue {
     }
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: '0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac',
+      account: this.accountAddress,
       page: page,
       perPage: '9',
       collectionName: collection,
@@ -559,7 +560,7 @@ export default class MyGalleryOverview extends Vue {
     this.loadingBtn = true;
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: 0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac,
+      account: this.accountAddress,
       page: this.loadMoreCounter,
       perPage: '9',
       collectionName: collection,

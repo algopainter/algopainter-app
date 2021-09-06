@@ -3,6 +3,7 @@
     ref="dialog"
     v-model="modal"
     @hide="onDialogHide"
+    class="
   >
     <q-card class="q-pa-md">
       <p class="text-bold text-h6">
@@ -48,6 +49,7 @@
               color="primary"
               class=""
               :label="$t('dashboard.stackModalAlgop.cancel')"
+              v-close-popup
             />
             <algo-button
               type="submit"

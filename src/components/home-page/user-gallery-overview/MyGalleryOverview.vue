@@ -478,7 +478,7 @@ export default class MyGalleryOverview extends Vue {
     }
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: this.accountAddress,
+      account: '0x7A8476832Eb89189F0aDbC183A1B70C447Bb311a',
       page: page,
       perPage: '9',
       collectionName: collection,

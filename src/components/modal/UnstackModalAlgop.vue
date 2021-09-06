@@ -41,6 +41,7 @@
               type="submit"
               color="primary"
               class=""
+              v-close-popup
               :label="$t('dashboard.stackModalAlgop.cancel')"
             />
             <algo-button

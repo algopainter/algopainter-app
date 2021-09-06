@@ -2,10 +2,12 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
+    class="q-gutter-md"
     @hide="onDialogHide"
-    class="
   >
-    <q-card class="q-pa-md">
+    <q-card
+      class="q-pa-md"
+    >
       <p class="text-bold text-h6">
         {{ $t('dashboard.stackModalAlgop.title') }}
       </p>
@@ -45,11 +47,11 @@
           </div>
           <div class="q-gutter-sm row justify-center">
             <algo-button
+              v-close-popup
               type="submit"
               color="primary"
               class=""
               :label="$t('dashboard.stackModalAlgop.cancel')"
-              v-close-popup
             />
             <algo-button
               type="submit"

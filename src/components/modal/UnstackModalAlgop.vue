@@ -38,10 +38,10 @@
           </q-input>
           <div class="q-gutter-sm row justify-center">
             <algo-button
+              v-close-popup
               type="submit"
               color="primary"
               class=""
-              v-close-popup
               :label="$t('dashboard.stackModalAlgop.cancel')"
             />
             <algo-button

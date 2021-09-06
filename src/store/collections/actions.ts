@@ -13,7 +13,7 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const collectionName = value.collectionName as string;
     const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
     try {
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}`);
+      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&order.nft.index=-1&collectionName=${currentCollection}`);
       const userItems: string = res.data.count;
       const images: [] = res.data;
       this.commit('collections/SET_USER_ITEMS', userItems);

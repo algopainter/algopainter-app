@@ -234,13 +234,14 @@
       </div>
       <div
         v-if="havePirs"
-        class="q-mx-auto q-mb-md"
+        class=" row flex justify-center q-mt-md q-mb-md"
       >
         <q-btn
           v-for="(btn, index) in showingPagesPirs"
           :key="index"
           :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
           :label="index + 1"
+          :loading="currentPage === index + 1 ? loadingGalleryArts : false"
           class="q-mr-xs desktop-only"
           @click="getPirs(index + 1)"
         />
@@ -292,7 +293,7 @@
       </div>
       <div
         v-if="havePirs"
-        class="q-mx-auto q-mb-md"
+        class="row flex justify-center q-mt-md q-mb-md q-mb-md"
       >
         <q-btn
           v-for="(btn, index) in showingPagesPirs"

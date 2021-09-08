@@ -4,7 +4,7 @@
       v-model="currentFilter"
       :options="filterOptions"
       color="primary"
-      :loading="loading"
+      :loading="loadingGalleryImages"
       rounded
       outlined
       bottom-slots
@@ -19,29 +19,27 @@
     </q-select>
   </div>
   <div class="space" />
-  <div v-if="!loading">
+  <div v-if="!loadingGalleryImages">
     <q-page class="q-gutter-lg q-pb-lg">
-      <div class="flex justify-center">
+      <q-infinite-scroll
+        class="flex justify-center"
+        @load="loadMore"
+      >
         <gallery-item
           v-for="galleryItem in currentCollectionGallery"
           :key="galleryItem.id"
           :gallery-item="galleryItem"
           @favoriteClicked="favoriteClicked"
         />
-      </div>
-      <div class="footer">
-        <algo-button
-          :label="$t('dashboard.homePage.loadMore', {
-            msg: btnLoadMoreMsg
-          })"
+      </q-infinite-scroll>
+      <div
+        v-if="!loadedAllItems"
+        class="row justify-center q-my-md footer"
+      >
+        <q-spinner-dots
           color="primary"
-          outline
-          class="load-more q-px-xl q-mx-auto"
-          :disable="btnLoadMoreMsg !== 'Load More'"
-          :loading="loadingBtn"
-          @click="loadMore()"
+          size="40px"
         />
-        <!-- to="/gallery" -->
       </div>
     </q-page>
   </div>
@@ -54,7 +52,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
+import { Notify } from 'quasar';
 import { IGallery } from 'src/models/IGallery';
 import { GalleryItem } from 'components/gallery';
 import AlgoButton from 'components/common/Button.vue';
@@ -74,8 +72,8 @@ import HomePageGallerySkeleton from 'components/gallery/galleryItem/HomePageGall
 })
 export default class HomePageGallery extends Vue {
   currentCollectionGallery: IGallery[] = [];
-  loading: boolean = true;
-  loadingBtn: boolean = false;
+  loadingGalleryImages: boolean = true;
+  loadedAllItems: boolean = false;
   loadMoreCounter: number = 1;
   btnLoadMoreMsg: string = 'Load More';
   imgIdArray: string[] = [];
@@ -87,6 +85,7 @@ export default class HomePageGallery extends Vue {
 
   filterCollection(currentCollection: string = '') {
     this.currentFilter = currentCollection;
+    this.loadedAllItems = false;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     this.currentCollectionId = this.filterOptions.find(x => x.label === currentCollection).id;
     this.loadMoreCounter = 0;
@@ -98,16 +97,22 @@ export default class HomePageGallery extends Vue {
     this.$emit('favoriteClicked');
   }
 
-  async loadMore() {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  async loadMore(index: number, done: Function) {
     this.loadMoreCounter++;
-    this.loadingBtn = true;
 
     const images = (this.currentFilter.toLowerCase() === 'all collections')
       ? await new CollectionController().getAllImages(this.loadMoreCounter)
       : await new CollectionController().getCollectionsImages(this.currentCollectionId, this.loadMoreCounter);
 
     if (images.length === 0) {
-      this.btnLoadMoreMsg = 'Nothing else to show';
+      Notify.create({
+        message: "That's all for now!",
+        color: 'green',
+        icon: 'mdi-check-all',
+      });
+      this.loadedAllItems = true;
+      done(true);
     } else {
       const tempCollectionGallery = images.map((image) =>
         this.mapImageToGalleryItem(image),
@@ -124,12 +129,12 @@ export default class HomePageGallery extends Vue {
           this.imgIdArray.push(item.id);
         }
       });
+      done();
     }
-    this.loadingBtn = false;
   }
 
   async collectionClicked() {
-    this.loading = true;
+    this.loadingGalleryImages = true;
     this.imgIdArray = [];
     this.loadMoreCounter = 1;
     this.btnLoadMoreMsg = 'Load More';
@@ -144,7 +149,7 @@ export default class HomePageGallery extends Vue {
     this.currentCollectionGallery.forEach((item) => {
       this.imgIdArray.push(item.id);
     });
-    this.loading = false;
+    this.loadingGalleryImages = false;
   }
 
   mounted() {
@@ -172,7 +177,7 @@ export default class HomePageGallery extends Vue {
     this.currentCollectionGallery.forEach((item) => {
       this.imgIdArray.push(item.id);
     });
-    this.loading = false;
+    this.loadingGalleryImages = false;
   }
 
   mapImageToGalleryItem(image: IImage) {

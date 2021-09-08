@@ -24,6 +24,7 @@
           <q-input
             v-model="number"
             type="number"
+            rounded
             outlined
             suffix="$ALGOP"
             :rules="[val => !!val || 'No Tokens to stake.']"

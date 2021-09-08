@@ -20,6 +20,7 @@
           </div>
           <q-input
             v-model="number"
+            type="number"
             rounded
             outlined
             suffix="$ALGOP"

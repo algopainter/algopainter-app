@@ -113,8 +113,7 @@ export default class MainLayout extends Vue {
   }
 
   refreshWrongChainDialog() {
-    const validID = process.env.NODE_ENV === 'production' ? 56 : 97;
-    this.showWrongChainDialog = (this.networkInfo?.id !== validID);
+    this.showWrongChainDialog = (this.networkInfo?.id !== 56 && this.networkInfo?.id !== 97);
   }
 
   pageOptionClicked(page: string) {

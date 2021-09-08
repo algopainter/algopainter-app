@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import { api } from 'src/boot/axios';
 // import { provider as Provider } from 'web3-core';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { getWalletConnectConfig } from 'src/eth/Config';
 
 enum WalletEnum {
   METAMASK = 'metamask',
@@ -35,13 +36,7 @@ const connectionFlows = {
   },
 
   walletConnect: async(): Promise<IWeb3Provider> => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const provider: IWeb3Provider = new WalletConnectProvider({
-      rpc: {
-        56: 'https://bsc-dataseed.binance.org/',
-      },
-      chainId: 56,
-    }) as unknown as IWeb3Provider;
+    const provider: IWeb3Provider = new WalletConnectProvider(getWalletConnectConfig()) as unknown as IWeb3Provider;
 
     await provider.enable();
 

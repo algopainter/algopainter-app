@@ -113,7 +113,7 @@ export default class MainLayout extends Vue {
   }
 
   refreshWrongChainDialog() {
-    this.showWrongChainDialog = (this.networkInfo?.id !== 56);
+    this.showWrongChainDialog = (this.networkInfo?.id !== 56 && this.networkInfo?.id !== 97);
   }
 
   pageOptionClicked(page: string) {

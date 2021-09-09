@@ -46,7 +46,14 @@
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 4 ? 'primary' : 'grey-5' "
-          @click="showLikes()"
+          @click="showPirs(), getPirs()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.bid') + contBid"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 5 ? 'primary' : 'grey-5' "
+          @click="getBid()"
         />
       </div>
     </div>
@@ -251,55 +258,6 @@
         />
       </div>
     </div>
-    <div class="col-12 col-md-3 col-lg-3 column items-center border q-pt-md latest-bids">
-      <div class="text-h5 text-bold text-primary q-pb-md">
-        {{ $t('dashboard.homePage.latestBids') }}
-      </div>
-      <div>
-        <p class="q-mt-md text-primary text-bold text-h5">
-          {{ $t('dashboard.auctions.coming') }}
-        </p>
-      </div>
-      <!--
-      <div v-if="loadingLatestBidsItem === false">
-        <div
-          v-for="(bid, i) in galleryBidShow"
-          :key="i"
-          class="column q-col-gutter-md"
-        >
-          <div v-if="bid != undefined">
-            <LatestBidsItem
-              :bid="bid"
-            />
-          </div>
-        </div>
-        <div v-if="nullGalleryBidShow === true">
-          <div class="flex q-mb-md">
-            {{ $t('dashboard.homePage.personalNoBids') }}
-          </div>
-        </div>
-        <div class="q-pt-md row justify-center">
-          <algo-button
-            v-if="btnBidsClicked"
-            color="primary"
-            @click="Allbids()"
-          >
-            {{ $t('dashboard.homePage.seeLess') }}
-          </algo-button>
-          <algo-button
-            v-else
-            color="primary"
-            @click="Allbids()"
-          >
-            {{ $t('dashboard.homePage.seeAllBids') }}
-          </algo-button>
-        </div>
-      </div>
-      <div v-else>
-        <LatestBidsItemSkeleton />
-      </div>
-      -->
-    </div>
   </div>
 </template>
 
@@ -312,6 +270,7 @@ import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import { ICollection } from 'src/models/ICollection';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
+import GallerySelect from './GallerySelect.vue';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 
@@ -322,6 +281,7 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
     LatestBidsItem,
     LatestBidsItemSkeleton,
     MyGallerySkeleton,
+    GallerySelect,
   },
 })
 export default class MyGalleryOverview extends Vue {
@@ -376,6 +336,9 @@ export default class MyGalleryOverview extends Vue {
   getCollectionsLoading: boolean = true;
 
   pirs:boolean = false;
+  contBid: string = '';
+  bidConnect: boolean = false;
+  haveBid: boolean = false;
 
   // Gets all images in the background
   mounted() {
@@ -634,6 +597,21 @@ export default class MyGalleryOverview extends Vue {
 
   showPirs() {
     this.currentBtnClicked = 4;
+  }
+
+  getBid() {
+    this.currentBtnClicked = 5;
+    try {
+      this.contBid = '0';
+      this.contBid = ` (${this.contBid})`;
+      this.bidConnect = true;
+      this.haveBid = true;
+    } catch (error) {
+
+    } finally {
+      // eslint-disable-next-line no-unsafe-finally
+      return null;
+    }
   }
 
   /*

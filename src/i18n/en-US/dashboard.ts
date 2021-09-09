@@ -23,7 +23,7 @@ export default {
     myGallery: 'My Gallery',
     gallery: 'Gallery',
     pirs: 'PIRS',
-    bid: 'Bid Back',
+    bid: 'BidBack',
     personalNoBid: 'No have BidBack 😔',
     pirsVal: '{creators} creators / {investors} investors',
     sell: 'SELL',

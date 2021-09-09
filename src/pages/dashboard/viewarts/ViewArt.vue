@@ -418,6 +418,7 @@ export default class ViewArt extends Vue {
     nft: {
       _id: '',
       image: '',
+      index: 1,
       previewImage: '',
       rawImage: '',
       parameters: { name: 'fake' },

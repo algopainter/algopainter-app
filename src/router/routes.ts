@@ -90,7 +90,7 @@ const routes: RouteRecordRaw[] = [
       },
       */
       {
-        path: 'sell-your-art',
+        path: 'sell-your-art/:id',
         component: () => import('pages/dashboard/sellyourart/SellYourArt.vue'),
         meta: {
           title: i18n.global.t('dashboard.sellYourArt.title'),

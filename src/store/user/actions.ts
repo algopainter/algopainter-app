@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import { api } from 'src/boot/axios';
 // import { provider as Provider } from 'web3-core';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { getWalletConnectConfig } from 'src/eth/Config';
 
 enum WalletEnum {
   METAMASK = 'metamask',
@@ -35,13 +36,7 @@ const connectionFlows = {
   },
 
   walletConnect: async(): Promise<IWeb3Provider> => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const provider: IWeb3Provider = new WalletConnectProvider({
-      rpc: {
-        56: 'https://bsc-dataseed.binance.org/',
-      },
-      chainId: 56,
-    }) as unknown as IWeb3Provider;
+    const provider: IWeb3Provider = new WalletConnectProvider(getWalletConnectConfig()) as unknown as IWeb3Provider;
 
     await provider.enable();
 
@@ -57,7 +52,7 @@ const clear = (commit: Commit, error?: Error) => {
 };
 
 const actions: ActionTree<UserStateInterface, StateInterface> = {
-  async connectToWallet({ commit }, wallet: WalletEnum) {
+  async connectToWallet({ commit, dispatch }, wallet: WalletEnum) {
     localStorage.wallet = wallet;
     const providerFlow = connectionFlows[wallet];
 
@@ -67,49 +62,50 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
 
     const provider = await providerFlow();
 
-    const commitUserData = async(commit: Commit) => {
-      let accounts;
-
-      try {
-        accounts = await provider.request({
-          method: 'eth_requestAccounts',
-        });
-      } catch {
-        accounts = await window.web3.eth.getAccounts();
-      }
-
-      const networkInfo = {
-        id: await window.web3.eth.net.getId(),
-        type: await window.web3.eth.net.getNetworkType(),
-      };
-      commit('setIsConnected', Boolean(accounts[0]));
-      commit('setAccount', accounts[0]);
-      commit('setNetworkInfo', networkInfo);
-    };
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     provider.on('accountsChanged', (_accounts: Array<string>) => {
-      void commitUserData(commit);
+      void dispatch('updateConnectedUser', provider);
     });
 
     provider.on('chainChanged', () => {
-      // window.location.reload();
-      void commitUserData(commit);
+      void dispatch('updateConnectedUser', provider);
     });
 
     provider.on('disconnect', () => {
       clear(commit);
     });
 
-    // replaces deprecated web3 object for a stable one from cdn
     window.web3 = new Web3(provider as never);
 
     try {
-      void commitUserData(commit);
+      await dispatch('updateConnectedUser', provider);
     } catch (error) {
       clear(commit, error);
     }
   },
+
+  async updateConnectedUser({ commit }, provider: IWeb3Provider) {
+    let accounts: string[];
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      accounts = await provider.request({
+        method: 'eth_requestAccounts',
+      }) as string[];
+    } catch {
+      accounts = await window.web3.eth.getAccounts();
+    }
+
+    const networkInfo = {
+      id: await window.web3.eth.net.getId(),
+      type: await window.web3.eth.net.getNetworkType(),
+    };
+
+    commit('setIsConnected', Boolean(accounts[0]));
+    commit('setAccount', accounts[0]);
+    commit('setNetworkInfo', networkInfo);
+  },
+
   async getProfile(type, value) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const account = value.account as string;
@@ -128,6 +124,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       }
     }
   },
+
   async getUserProfile(type, value) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const account = value.account as string;
@@ -142,6 +139,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       console.log('error message - getUserProfile');
     }
   },
+
   async getAccountBasedOnCustomUrl(type, value) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const customUrl = value.customUrl as string;

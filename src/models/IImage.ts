@@ -9,7 +9,7 @@ export interface INFTArtist extends IImageUser {
 export interface IImageNFTInfo {
   _id: string;
   image: string;
-  index?: number;
+  index: number;
   previewImage: string;
   rawImage: string;
   parameters: Record<string, unknown>;

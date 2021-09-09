@@ -15,6 +15,7 @@ export default class AlgoPainterTokenProxy {
   declare algoPainter: {
     methods: {
       balanceOf(address: string): ContractSendMethod;
+      ownerOf(index: number): ContractSendMethod;
     };
   };
 
@@ -28,5 +29,11 @@ export default class AlgoPainterTokenProxy {
 
   async balanceOf(address: string) {
     return this.algoPainter.methods.balanceOf(address).call();
+  }
+
+  async ownerOf(index: number): Promise<boolean> {
+    const response: unknown = await this.algoPainter.methods.ownerOf(index).call();
+
+    return response as boolean;
   }
 }

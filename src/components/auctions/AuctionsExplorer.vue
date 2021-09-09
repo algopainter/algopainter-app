@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import { IAuctionItem2 } from 'src/models/IAuctionItem2';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
 import 'vue3-carousel/dist/carousel.css';
@@ -57,7 +57,7 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
   },
 })
 export default class AuctionsExplorer extends Vue {
-  areHot: IAuctionItem2[] = [];
+  areHot: IAuctionItem[] = [];
   hotBidsLoading: boolean = true;
 
   mounted() {

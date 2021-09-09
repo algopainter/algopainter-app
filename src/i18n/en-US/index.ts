@@ -6,6 +6,7 @@ export default {
     coinSymbol: '$ALGOP',
     bidBack: 'BidBack',
     placeABid: 'PLACE A BID',
+    ok: 'Ok',
   },
   dashboard,
   createCollectible,

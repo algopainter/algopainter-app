@@ -11,7 +11,7 @@
       <auctions-explorer @favoriteClicked="favoriteClicked" />
     </div>
     -->
-    <div class="header gallery q-mb-lg">
+    <div class="header q-mb-sm">
       {{ $t('dashboard.homePage.collectiblesGallery') }}
     </div>
     <div>
@@ -48,10 +48,7 @@ export default class HomePage extends Vue {
 }
 
 .header {
-  margin-bottom: 1.5rem
+  margin-bottom: 1.0rem
 }
 
-.header.gallery{
-  padding-bottom: 1rem;
-}
 </style>

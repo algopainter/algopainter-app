@@ -21,6 +21,7 @@ export default {
     items: 'Items',
     buyAlgop: 'Buy $ALGOP  ',
     myGallery: 'My Gallery',
+    btnName: { },
     gallery: 'Gallery',
     pirs: 'PIRS',
     bid: 'BidBack',

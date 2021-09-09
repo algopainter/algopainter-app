@@ -195,7 +195,6 @@ export default class GalleryItem extends Vue.with(Props) {
   }
 
   openAuctionModal() {
-    console.log('btnClicked');
     void this.$store.dispatch('auctions/openAuctionModal');
   }
 }

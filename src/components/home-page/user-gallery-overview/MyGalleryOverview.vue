@@ -479,7 +479,7 @@ export default class MyGalleryOverview extends Vue {
     }
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: '0x7A8476832Eb89189F0aDbC183A1B70C447Bb311a',
+      account: '0x2a28593abb56b0f425fed25d4dcc0ff7dddedabf',
       page: page,
       perPage: '9',
       collectionName: collection,
@@ -561,7 +561,7 @@ export default class MyGalleryOverview extends Vue {
     this.loadingBtn = true;
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: this.accountAddress,
+      account: this.accountAddress, 
       page: this.loadMoreCounter,
       perPage: '9',
       collectionName: collection,

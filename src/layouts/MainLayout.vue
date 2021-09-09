@@ -98,7 +98,8 @@ export default class MainLayout extends Vue {
   }
 
   get openAuctionModal() {
-    return this.$store.getters['auctions/openAuctionModal'];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['auctions/openAuctionModal'] as boolean;
   }
 
   openDrawer() {

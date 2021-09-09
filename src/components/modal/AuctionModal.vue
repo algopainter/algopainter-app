@@ -2,34 +2,56 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
-    @hide="onDialogHide"
+    @hide="onDialogHide; openAuctionModal()"
   >
-    <q-card class="q-pa-md">
+    <q-card class="q-pa-lg q-mb-sm">
       <p class="row justify-center text-h5">
-        {{ $t('dashboard.selectAlgoP') }}
+        {{ $t('dashboard.auctions.auctionController') }}
       </p>
-      <div class="row">
-        <q-btn
-          round
-          type="a"
-          href="https://app.algopainter.art/paintings/new"
-          target="_blank"
-        >
-          <q-avatar
-            size="250px"
-            class="avatar"
-          >
-            <img
-              width="150px"
-              class="img"
-              src="/images/gwei.png"
-            >
-          </q-avatar>
-        </q-btn>
+      <div class="column">
+        <div class="row">
+          <p>{{ testValue + ' ' + $t('dashboard.auctions.BNBearned') }}</p>
+        </div>
+        <div class="row">
+          <q-input
+            unmasked-value
+            placeholder="0.000"
+          />
+          <algoButton
+            class="q-my-md action"
+            color="primary"
+            :label="$t('dashboard.auctions.harvest')"
+          />
+        </div>
+        <div class="row">
+          <p>{{ testValue + ' ' + $t('dashboard.auctions.stakedAlgop') }}</p>
+        </div>
+        <div class="row">
+          <q-input
+            unmasked-value
+            placeholder="0.000"
+          />
+          <div class="row ">
+            <div>
+              <q-btn
+                class="q-my-md q-mx-sm action"
+                color="primary"
+                :label="$t('dashboard.auctions.minusSymbol')"
+                rounded
+              />
+              <q-btn
+                class="q-my-md action"
+                color="primary"
+                :label="$t('dashboard.auctions.plusSymbol')"
+                rounded
+              />
+            </div>
+          </div>
+        </div>
         <algoButton
-          class="q-my-md action full-width"
+          class="q-my-md action"
           color="primary"
-          :label="$t('dashboard.homePage.sell')"
+          :label="$t('dashboard.auctions.claim')"
         />
       </div>
     </q-card>
@@ -55,6 +77,7 @@ class Props {
 export default class AuctionModal extends Vue.with(Props) {
   modal: boolean = false;
   testMessage: string = 'Stack Algop';
+  testValue: number = 0;
 
   show() {
     this.$refs.dialog.show();
@@ -62,6 +85,10 @@ export default class AuctionModal extends Vue.with(Props) {
 
   hide() {
     this.$refs.dialog.hide();
+  }
+
+  openAuctionModal() {
+    void this.$store.dispatch('auctions/openAuctionModal');
   }
 
   onDialogHide() {
@@ -80,6 +107,10 @@ export default class AuctionModal extends Vue.with(Props) {
 <style scoped>
 .avatar {
   width: 250px;
+}
+
+p {
+  margin: 0px;
 }
 
 @media (max-width: 450px) {

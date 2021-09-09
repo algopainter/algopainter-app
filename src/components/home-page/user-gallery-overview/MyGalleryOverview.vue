@@ -260,7 +260,7 @@
       </div>
     </div>
     <div
-      v-else-if="currentBtnClicked === 5"
+      v-else-if="currentBtnClicked === 5 "
     >
       <div v-if="bidConnect">
         <div

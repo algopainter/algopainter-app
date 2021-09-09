@@ -4,7 +4,7 @@
       <q-img
         class="previewImage"
         :src="art.nft.previewImage"
-        alt="img art"
+        alt="img art" 
       />
     </div>
     <div class="col-12 col-md-6 col-lg-6 q-gutter-xl">

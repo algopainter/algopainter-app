@@ -206,15 +206,16 @@
       <div v-if="pirsConnected">
         <div
           v-if="havePirs === true"
-          class="col-md-9 col-lg-9 flex q-col-gutter-md"
+          class="col-md-6 col-lg-6 flex q-col-gutter-md justify-between"
         >
           <div
             v-for="(item, index) in galleryArts"
             :key="index"
           >
             <div>
-              <gallery-item
+              <gallery-select
                 :art="item"
+                :select="currentBtnClicked"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -235,6 +236,64 @@
       <div
         v-if="havePirs"
         class="q-mx-auto q-mb-md"
+      >
+        <q-btn
+          v-for="(btn, index) in showingPagesPirs"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          @click="getPirs(index + 1)"
+        />
+        <algo-button
+          v-if="nullTabPirs === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          :loading="loadingBtn"
+          @click="loadMoreLike()"
+        />
+      </div>
+    </div>
+    <div
+      v-else-if="currentBtnClicked === 5"
+    >
+      <div v-if="bidConnect">
+        <div
+          v-if="haveBid"
+          class="col-md-6 col-lg-6 flex q-col-gutter-md justify-between"
+        >
+          <div
+            v-for="(item, index) in galleryArts"
+            :key="index"
+          >
+            <div>
+              <gallery-select
+                :art="item"
+                @favoriteClicked="favoriteClicked"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+          class="text-h6 text-primary text-center q-pb-md"
+        >
+          {{ $t('dashboard.homePage.personalNoBid') }}
+        </div>
+      </div>
+      <div
+        v-else
+      >
+        <MyGallerySkeleton />
+      </div>
+      <div
+        v-if="havePirs"
+        class="row flex justify-center q-mt-md q-mb-md q-mb-md"
       >
         <q-btn
           v-for="(btn, index) in showingPagesPirs"
@@ -559,6 +618,7 @@ export default class MyGalleryOverview extends Vue {
       this.contPirs = ` (${this.contPirs})`;
       this.pirsConnected = true;
       this.pirs = true;
+      this.havePirs = true;
     } catch (error) {
 
     } finally {

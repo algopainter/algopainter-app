@@ -46,7 +46,7 @@
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 4 ? 'primary' : 'grey-5' "
-          @click="showPirs()"
+          @click="showPirs(), getPirs()"
         />
         <algo-button
           :label="$t('dashboard.homePage.bid') + contBid"
@@ -260,7 +260,7 @@
       </div>
     </div>
     <div
-      v-else-if="currentBtnClicked === 5 "
+      v-else-if="currentBtnClicked === 5"
     >
       <div v-if="bidConnect">
         <div
@@ -337,10 +337,10 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
   components: {
     AlgoButton,
     GalleryItem,
-    GallerySelect,
     LatestBidsItem,
     LatestBidsItemSkeleton,
     MyGallerySkeleton,
+    GallerySelect,
   },
 })
 export default class MyGalleryOverview extends Vue {

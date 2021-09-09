@@ -107,6 +107,7 @@ export default {
     endDate: 'End date',
     selectCoin: 'Select a coin',
     bidBackFee: 'BidBack fee',
+    ireceive: '0.225',
   },
   auctionPage: {
     title: 'Auction',

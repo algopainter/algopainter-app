@@ -118,6 +118,7 @@ import AlgoPainterAuctionSystemProxy, {
   TokenType,
 } from 'src/eth/AlgoPainterAuctionSystemProxy';
 import AlgoPainterItemProxy from 'src/eth/AlgoPainterItemProxy';
+import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
 import { NetworkInfo } from 'src/store/user/types';
 
 import AlgoButton from 'components/common/Button.vue';
@@ -133,8 +134,6 @@ interface INewAuction {
 interface IAllowedTokens {
   [key: string]: boolean;
 }
-
-const AUCTION_SYSTEM_ADDRESS = process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS as string;
 
 @Options({
   components: {
@@ -202,6 +201,10 @@ export default class SellYourArt extends Vue {
     },
   ];
 
+  get auctionSystemContractAddress() {
+    return getAuctionSystemContractByNetworkId(this.networkInfo.id);
+  }
+
   get allowedCoins() {
     return this.rawCoinsOptions.filter((rawCoin) => {
       return this.allowedTokens[rawCoin.tokenAddress];
@@ -242,9 +245,7 @@ export default class SellYourArt extends Vue {
       return this.$router.push('/');
     }
 
-    this.auctionSystem = new AlgoPainterAuctionSystemProxy(
-      AUCTION_SYSTEM_ADDRESS,
-    );
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
 
     void this.loadImage();
     void this.loadAvailableTokens();
@@ -297,14 +298,14 @@ export default class SellYourArt extends Vue {
     }
 
     const contractApproved = await this.artTokenContract
-      .isApprovedForAll(this.userAccount, AUCTION_SYSTEM_ADDRESS);
+      .isApprovedForAll(this.userAccount, this.auctionSystemContractAddress);
 
     if (contractApproved) {
       return;
     }
 
     return this.artTokenContract.setApprovalForAll(
-      AUCTION_SYSTEM_ADDRESS,
+      this.auctionSystemContractAddress,
       true,
       this.userAccount,
     );

@@ -88,6 +88,9 @@ export default {
     },
     explore: 'Explore',
     otherFilter: 'Other Filter',
+    info: 'Info',
+    bids: 'Bids',
+    history: 'History',
   },
   sellYourArt: {
     title: 'Sell your Art',

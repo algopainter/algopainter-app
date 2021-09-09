@@ -25,6 +25,7 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
     return state.userProfile;
   },
   GET_USER_LIKES(state: UserStateInterface): []|undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return state.userLikes;
   },
 };

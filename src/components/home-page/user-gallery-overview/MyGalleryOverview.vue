@@ -46,7 +46,7 @@
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 4 ? 'primary' : 'grey-5' "
-          @click="showPirs()"
+          @click="showPirs(), getPirs()"
         />
         <algo-button
           :label="$t('dashboard.homePage.bid') + contBid"

@@ -70,7 +70,6 @@ export default class MainLayout extends Vue {
 
   beforeMount() {
     this.headerMenu();
-    this.walletAutomaticConnect();
   }
 
   headerMenu() {
@@ -78,12 +77,6 @@ export default class MainLayout extends Vue {
       this.leftDrawerOpen = false;
     } else {
       this.leftDrawerOpen = true;
-    }
-  }
-
-  walletAutomaticConnect() {
-    if (localStorage.isConnected) {
-      void this.$store.dispatch('user/connectToWallet', localStorage.wallet);
     }
   }
 

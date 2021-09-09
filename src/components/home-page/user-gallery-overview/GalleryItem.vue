@@ -49,25 +49,24 @@
       >
         {{ art.title }}
       </q-tooltip>
-      <algoButton
-        icon="visibility"
-        class="full-width q-my-md"
-        color="primary"
-        :label="$t('dashboard.auctionPage.btnView')"
-        :to="`/collections/${art._id}`"
-      />
-      <!--
-      <q-btn
-        v-if="user === false"
-        class="sell-action"
-        to="/sell-your-art"
-        flat
-        color="positive"
-      >
-        {{ $t('dashboard.homePage.sell') }}
-        <q-icon name="mdi-arrow-right" />
-      </q-btn>
-      -->
+      <div class="item-actions row q-col-gutter-md">
+        <div class="col-auto">
+          <algoButton
+            icon="visibility"
+            class="q-my-md action"
+            color="primary"
+            :to="`/collections/${art._id}`"
+          />
+        </div>
+        <div class="col">
+          <algoButton
+            class="q-my-md action full-width"
+            color="primary"
+            :label="$t('dashboard.homePage.sell')"
+            :to="`/sell-your-art/${art._id}`"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -284,6 +283,12 @@ export default class GalleryItem extends Vue.with(Props) {
 
     &:hover {
       opacity: 0.6;
+    }
+  }
+
+  .item-actions {
+    .action {
+      min-width: unset;
     }
   }
 }

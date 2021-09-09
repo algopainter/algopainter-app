@@ -88,7 +88,7 @@
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 
-import { IAuctionItem2 } from 'src/models/IAuctionItem2';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
@@ -96,7 +96,7 @@ import CollectionArtController from 'src/controllers/collectionArt/CollectionArt
 
 class Props {
   isHot = prop({
-    type: Object as PropType<IAuctionItem2>,
+    type: Object as PropType<IAuctionItem>,
     required: true,
   });
 }

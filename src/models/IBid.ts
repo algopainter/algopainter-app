@@ -1,12 +1,21 @@
-import Moment from 'moment';
-
-import { IArt } from './IArt';
-import { IUser } from './IUser';
-
 export interface IBid {
-  id: string;
-  art: IArt,
-  user?: IUser,
-  price: number;
-  bidAt: Moment.Moment;
+  amount: number;
+  bidder: {
+    _id: string;
+    account: string;
+    avatar: string;
+    bio: string;
+    createdAt: string;
+    name: string;
+    networks: {
+      name: string,
+      type: string,
+      url: string,
+    }
+    role: string;
+    type: string,
+    updatedAt: string;
+  }
+  createdAt: string;
+  tokenSymbol: string;
 }

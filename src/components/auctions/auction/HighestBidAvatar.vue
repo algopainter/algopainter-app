@@ -1,50 +1,58 @@
 <template>
-  <avatar-section
-    class="q-py-md"
-    :image-url="bid.bidder.avatar"
-    size="68px"
-  >
-    <template #title>
-      <div class="text-h6 text-white text-bold">
+  <div class="highest-bid row q-pa-sm">
+    <div class="col-auto q-pr-sm">
+      <q-avatar
+        size="58px"
+        round
+      >
+        <img :src="bid.bidder.avatar">
+      </q-avatar>
+    </div>
+    <div class="col row items-center">
+      <div class="title col-12 text-white text-bold">
         <i18n-t keypath="dashboard.auctionPage.highestBidBy">
           <template #highestBidBy>
-            <span class="title-color">{{ bid.bidder.name }}</span>
+            <span class="username">
+              {{ bid.bidder.name }}
+            </span>
           </template>
         </i18n-t>
       </div>
-    </template>
-    <template #subTitle>
-      <div class="price text-bold text-h6">
+      <div class="col-12 price text-bold">
         {{ $n(bid.amount, 'currency') }}
       </div>
-    </template>
-  </avatar-section>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { IBid } from 'src/models/IBid';
-import { Options, prop, Vue } from 'vue-class-component';
-import { PropType } from 'vue';
-import AvatarSection from 'src/components/AvatarSection.vue';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 
-class Props {
-  bid = prop({
-    type: Object as PropType<IBid>,
-    required: true,
-  });
-}
+import { IBid } from 'src/models/IBid';
+import AvatarSection from 'src/components/AvatarSection.vue';
 
 @Options({
   components: {
     AvatarSection,
   },
 })
-export default class HighestBidAvatar extends Vue.with(Props) {}
-</script>
-<style scoped>
-.title-color {
-  color: #333333;
+export default class HighestBidAvatar extends Vue {
+  @Prop({ required: true }) bid!: IBid;
 }
+</script>
+<style lang="scss" scoped>
+.highest-bid {
+  background: $primary;
+  border-radius: 6px;
+  font-size: 1.2rem;
+}
+
+.title {
+  .username {
+    color: #333333;
+  }
+}
+
 .price {
   color: #FFCB00;
 }

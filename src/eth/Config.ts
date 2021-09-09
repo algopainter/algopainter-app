@@ -28,3 +28,10 @@ export function getWalletConnectConfig(): IWalletConnectProviderOptions {
     };
   }
 }
+
+export function getAuctionSystemContractByNetworkId(id: number): string {
+  switch (id) {
+    default:
+      return process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS as string;
+  }
+}

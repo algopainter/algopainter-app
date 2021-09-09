@@ -15,7 +15,6 @@ const mutation: MutationTree<AuctionStateInterface> = {
     state.allBids = payload as [];
   },
   SET_OPEN_AUCTION_MODAL(state: AuctionStateInterface) {
-    console.log('mutations');
     state.openAuctionModal = !state.openAuctionModal;
   },
 };

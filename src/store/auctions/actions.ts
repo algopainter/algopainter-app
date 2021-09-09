@@ -53,7 +53,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
   openAuctionModal() {
-    console.log('actions');
     this.commit('auctions/SET_OPEN_AUCTION_MODAL');
   },
 };

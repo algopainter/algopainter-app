@@ -91,10 +91,7 @@ export default class MainLayout extends Vue {
 
   @Watch('openAuctionModal')
   onOpenAuctionModalChanged() {
-    console.log('watcher');
     this.isAuctionModalOpen = this.openAuctionModal;
-    console.log('this.isAuctionModalOpen', this.isAuctionModalOpen);
-    console.log('this.openAuctionModal', this.openAuctionModal);
   }
 
   get openAuctionModal() {

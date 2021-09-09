@@ -91,6 +91,8 @@ export default {
     info: 'Info',
     bids: 'Bids',
     history: 'History',
+    '+',
+    
   },
   sellYourArt: {
     title: 'Sell your Art',

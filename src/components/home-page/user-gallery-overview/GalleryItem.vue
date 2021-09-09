@@ -63,7 +63,7 @@
             class="q-my-md action full-width"
             color="primary"
             :label="$t('dashboard.homePage.sell')"
-            :to="`/sell-your-art/${art._id}`"
+            @click="openAuctionModal"
           />
         </div>
       </div>
@@ -192,6 +192,11 @@ export default class GalleryItem extends Vue.with(Props) {
       this.wasLiked = true;
       this.likes++;
     }
+  }
+
+  openAuctionModal() {
+    console.log('btnClicked');
+    void this.$store.dispatch('auctions/openAuctionModal');
   }
 }
 </script>

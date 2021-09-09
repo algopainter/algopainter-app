@@ -52,6 +52,10 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       console.log('success msg');
     }
   },
+  openAuctionModal() {
+    console.log('actions');
+    this.commit('auctions/SET_OPEN_AUCTION_MODAL');
+  },
 };
 
 export default actions;

@@ -38,7 +38,7 @@ export interface IAuctionItem {
   item: {
     likes: number;
     likers: string[];
-    previewImageUrl: string;
+    previewImage: string;
     tags: string[];
     title: string;
     _id: string;
@@ -101,6 +101,7 @@ export interface IAuctionItem {
       type: string,
       url: string,
     }
+    customProfile: string,
     _id: string;
   }];
   _v: number;

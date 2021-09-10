@@ -3,12 +3,12 @@
     <div class="art-header flex q-pb-sm">
       <div class="users flex q-pb-sm">
         <div
-          v-for="(bid, index) in isHot.bids"
+          v-for="(bid, index) in isHot"
           :key="index"
         >
-          <router-link :to="{path: 'user-gallery', query: { customProfile: bid.bidder.account }}">
+        <!-- <router-link :to="{path: 'user-gallery', query: { customProfile: bid.users.name}}">
             <q-avatar
-              v-if="changeAvatar(bid.bidder)"
+              v-if="changeAvatar(bid.users.avatar)"
               size="lg"
               round
             >
@@ -21,13 +21,13 @@
                 {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
               </q-tooltip>
             </q-avatar>
-          </router-link>
+          </router-link> -->
         </div>
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
         <ShareArtIcons
-          :art="previewImageUrl"
+          :art="previewImage"
           :is-hot="isHot._id"
         />
         <div class="col-12 col-md-1 flex">
@@ -41,7 +41,7 @@
     </div>
     <q-img
       class="art-image"
-      :src="previewImageUrl"
+      :src="isHot.item.previewImage"
     />
     <div class="details flex q-pa-sm">
       <div>
@@ -59,16 +59,16 @@
       <div>
         <div class="flex items-center q-col-gutter-sm">
           <div class="price">
-            <div>{{ isHot.bids[0].tokenSymbol + ' ' + isHot.bids[0].amount }}</div>
+            <div>{{ isHot.bids.tokenSymbol + ' ' + isHot.bids.amount }}</div>
           </div>
         </div>
       </div>
 
       <div class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
-          <template #highestBid>
+          <!-- <template #highestBid>
             <b class="text-primary">{{ `${isHot.highestBid.amount} ${isHot.highestBid.tokenSymbol}` }}</b>
-          </template>
+          </template> -->
         </i18n-t>
       </div>
       <div class="flex">
@@ -129,34 +129,36 @@ export default class AuctionItem extends Vue.with(Props) {
   }
 
   loading: boolean = true;
-  previewImageUrl: string = '';
+  previewImage: string = '';
   /* functionCounter: number = 0;
   stopFunction: boolean = false; */
 
-  changeAvatar(bid: unknown) {
-    if (typeof (bid) !== 'undefined') {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return true;
-    }
-    return false;
-  }
+  // changeAvatar(bid: unknown) {
+  //   if (typeof (bid) !== 'undefined') {
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  //     return 'src/assets/do-utilizador.png';
+  //   } else {
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+  //     return this.isHot.users.avatar;
+  //   }
+  // }
 
   mounted() {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     setTimeout(this.showRun, 0);
-    void this.loadData();
+    // void this.loadData();
   }
 
-  loadData() {
-    this.wasLiked =
-      this.isHot.item.likers.filter((liker) => liker === this.account)
-        .length !== 0;
-    this.likes = this.isHot.item.likes;
-  }
+  // loadData() {
+  //   this.wasLiked =
+  //     this.isHot.item.likers.filter((liker) => liker === this.account)
+  //       .length !== 0;
+  //   this.likes = this.isHot.item.likes;
+  // }
 
   showRun() {
     this.loading = false;
-    this.previewImageUrl = this.isHot.item.previewImageUrl;
+    this.previewImage = this.isHot.item.previewImage;
   }
 
   favoriteClicked(wasLiked: boolean) {

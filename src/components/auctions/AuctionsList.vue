@@ -255,9 +255,7 @@ export default class AuctionsList extends Vue {
     }).then(() => {
       this.areHot = this.$store.state.auctions.hotBids;
       this.findHotBids();
-      console.log('areHOt', this.areHot);
       this.hotBidsLoading = false;
-      console.log('hotBidsLoading', this.hotBidsLoading);
     });
   }
 

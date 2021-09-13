@@ -3,25 +3,25 @@
     <div class="art-header flex q-pb-sm">
       <div class="users flex q-pb-sm">
         <div
-          v-for="(bid, index) in isHot"
+          v-for="(bid, index) in isHot.users"
           :key="index"
         >
-        <!-- <router-link :to="{path: 'user-gallery', query: { customProfile: bid.users.name}}">
+          <router-link :to="{path: 'user-gallery', query: { customProfile: bid.name}}">
             <q-avatar
-              v-if="changeAvatar(bid.users.avatar)"
+              v-if="changeAvatar(bid.avatar)"
               size="lg"
               round
             >
               <img
-                :src="bid.bidder.avatar"
+                :src="bid.avatar || '/placeholder-images/do-utilizador.png'"
               >
               <q-tooltip
                 class="bg-primary"
               >
-                {{ bid.bidder.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.bidder.name }}
+                {{ bid.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.name }}
               </q-tooltip>
             </q-avatar>
-          </router-link> -->
+          </router-link>
         </div>
       </div>
       <q-space />
@@ -56,19 +56,24 @@
           {{ isHot.item.title }}
         </q-tooltip>
       </div>
-      <div>
-        <div class="flex items-center q-col-gutter-sm">
-          <div class="price">
-            <div>{{ isHot.bids.tokenSymbol + ' ' + isHot.bids.amount }}</div>
-          </div>
-        </div>
-      </div>
-
       <div class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
-          <!-- <template #highestBid>
-            <b class="text-primary">{{ `${isHot.highestBid.amount} ${isHot.highestBid.tokenSymbol}` }}</b>
-          </template> -->
+          <template #highestBid>
+            <div class="flex items-center q-col-gutter-sm q-ml-xs">
+              <div
+                v-if="isHot.bids === undefined"
+                class="price"
+              >
+                <div>{{ isHot.bids.tokenSymbol + ' ' + isHot.bids.amount }}</div>
+              </div>
+              <div
+                v-else
+                class="price"
+              >
+                <div>{{ isHot.minimumBid.tokenSymbol + ' ' + isHot.minimumBid.amount }}</div>
+              </div>
+            </div>
+          </template>
         </i18n-t>
       </div>
       <div class="flex">
@@ -118,6 +123,13 @@ export default class AuctionItem extends Vue.with(Props) {
 
   likes!: number;
 
+  loading: boolean = true;
+  previewImage: string = '';
+  bidderTrue: string = '';
+
+  // usersOwner: unknown;
+  // isHotUnkown: unknown;
+
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/isConnected'];
@@ -128,25 +140,20 @@ export default class AuctionItem extends Vue.with(Props) {
     return this.$store.getters['user/account'];
   }
 
-  loading: boolean = true;
-  previewImage: string = '';
-  /* functionCounter: number = 0;
-  stopFunction: boolean = false; */
-
-  // changeAvatar(bid: unknown) {
-  //   if (typeof (bid) !== 'undefined') {
-  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  //     return 'src/assets/do-utilizador.png';
-  //   } else {
-  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-  //     return this.isHot.users.avatar;
-  //   }
-  // }
-
   mounted() {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     setTimeout(this.showRun, 0);
     // void this.loadData();
+  }
+  /* functionCounter: number = 0;
+  stopFunction: boolean = false; */
+
+  changeAvatar(bid: unknown) {
+    if (typeof (bid) !== 'undefined') {
+      return 'src/assets/do-utilizador.png';
+    } else {
+      return this.isHot.users;
+    }
   }
 
   // loadData() {

@@ -56,6 +56,7 @@
           {{ isHot.item.title }}
         </q-tooltip>
       </div>
+
       <div class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
           <template #highestBid>
@@ -77,11 +78,10 @@
         </i18n-t>
       </div>
       <div class="flex">
-        <q-btn
-          flat
+        <algo-button
+          class="btn-place-a-bid"
           color="primary"
           :label="$t('common.placeABid')"
-          icon-right="mdi-arrow-right"
           :to="`/auctions/${isHot._id}`"
         />
       </div>
@@ -276,6 +276,10 @@ export default class AuctionItem extends Vue.with(Props) {
     b {
       margin-left: 5px;
     }
+  }
+
+  .btn-place-a-bid{
+    width: 300px;
   }
 }
 

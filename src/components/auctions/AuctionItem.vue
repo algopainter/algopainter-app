@@ -6,7 +6,7 @@
           v-for="(bid, index) in isHot.users"
           :key="index"
         >
-          <router-link :to="{path: 'user-gallery', query: { customProfile: bid.name}}">
+          <router-link :to="{name: 'customUrl', params: { customUrl: bid.customProfile || bid.account } }">
             <q-avatar
               v-if="changeAvatar(bid.avatar)"
               size="lg"

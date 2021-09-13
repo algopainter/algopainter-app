@@ -90,7 +90,7 @@ export default {
   },
   auctions: {
     title: 'Auctions',
-    hotBids: 'Hot Bids 🔥',
+    hotBids: 'Auctions 🔥',
     highestBid: 'Highest Bid {highestBid}',
     topSellers: {
       top: 'Top {sellers}',

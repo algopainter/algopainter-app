@@ -42,7 +42,7 @@
           <CarouselSkeleton />
         </div>
       </div>
-      <div
+      <!-- <div
         class="row q-pt-xl"
       >
         <div class="header">
@@ -203,7 +203,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>

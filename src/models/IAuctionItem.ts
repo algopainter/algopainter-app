@@ -1,9 +1,12 @@
 import { IBid } from './IBid';
 
 export interface IAuctionItem {
+  _id: string;
+  index: number;
   bids: {
     amount: number;
     bidder: {
+      _id: string;
       account: string;
       avatar: string;
       bio: string;
@@ -17,7 +20,6 @@ export interface IAuctionItem {
       role: string;
       type: string,
       updatedAt: string;
-      _id: string;
     }
     createdAt: string;
     tokenSymbol: string;
@@ -36,12 +38,16 @@ export interface IAuctionItem {
   highestBid: IBid;
   isHot: boolean;
   item: {
+    _id: string;
     likes: number;
     likers: string[];
+    image: string;
     previewImage: string;
+    previewImageUrl: string;
     tags: string[];
     title: string;
-    _id: string;
+    collectionName: string;
+    collectionOwner: string;
   }
   lowestBid: {
     amount: number;
@@ -67,6 +73,7 @@ export interface IAuctionItem {
   minimumBid: {
     amount: number;
     bidder: {
+      _id: string;
       account: string;
       avatar: string;
       bio: string;
@@ -80,7 +87,6 @@ export interface IAuctionItem {
       role: string;
       type: string,
       updatedAt: string;
-      _id: string;
     }
     createdAt: string;
     tokenSymbol: string;
@@ -105,5 +111,4 @@ export interface IAuctionItem {
     _id: string;
   }];
   _v: number;
-  _id: string;
 }

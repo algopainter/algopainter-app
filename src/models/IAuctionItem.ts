@@ -95,18 +95,19 @@ export interface IAuctionItem {
   updatedAt: string;
   users: [{
     account: string;
+    createdAt: string;
+    type: string;
+    role: string;
+    name: string;
+    updatedAt: string;
     avatar: string;
     bio: string;
-    createdAt: string;
-    name: string;
     networks: {
       name: string,
       type: string,
       url: string,
     }
-    role: string;
-    type: string;
-    updatedAt: string;
+    customProfile: string,
     _id: string;
   }];
   _v: number;

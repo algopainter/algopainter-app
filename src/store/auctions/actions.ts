@@ -6,7 +6,7 @@ import { api } from 'src/boot/axios';
 const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getHotBids() {
     try {
-      const res = await api.get('auctions?page=1&isHot=true');
+      const res = await api.get('auctions');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const hotBids = res.data as [];
       this.commit('auctions/SET_HOT_BIDS', hotBids);

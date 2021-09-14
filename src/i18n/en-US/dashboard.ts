@@ -13,6 +13,9 @@ export default {
   selectAlgoP: 'Select an AlgoPainter',
   wrong: 'Wrong Network',
   migrate: 'Migrate to a Binance SmartChain',
+  commingSoon: 'For now, there are no auctions available. Stay tuned they will soon show up here!',
+  sellerSoon: 'Nothing around here yet, but we will see the top sellers here soon!',
+  buyerSoon: 'Nothing around here yet, but we will see the top buyers here soon!',
   homePage: {
     title: 'My Gallery',
     publicTitle: 'Public Profile',
@@ -87,8 +90,7 @@ export default {
   },
   auctions: {
     title: 'Auctions',
-    hotBids: 'Hot Bids 🔥',
-    coming: 'Coming soon...',
+    hotBids: 'Auctions 🔥',
     highestBid: 'Highest Bid {highestBid}',
     topSellers: {
       top: 'Top {sellers}',

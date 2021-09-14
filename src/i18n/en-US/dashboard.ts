@@ -121,6 +121,7 @@ export default {
     placeABid: 'Place a Bid',
     btnView: 'View Art',
     symbol: '#',
+    amount: 'Amount',
   },
   editProfile: {
     title: 'Edit Profile',

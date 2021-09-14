@@ -5,7 +5,7 @@
         size="44px"
         round
       >
-        <img :src="user.avatar">
+        <img :src="user.avatar || '/placeholder-images/do-utilizador.png'">
       </q-avatar>
     </div>
     <div class="col row items-center user-type">
@@ -35,6 +35,16 @@ export default class AuctionUserCard extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.highest-bid {
+  padding: 6px;
+  border-radius: 12px;
+
+  &:hover {
+    background: $grey-2;
+    cursor: pointer;
+  }
+}
+
 .user-type {
   font-weight: bold;
   font-size: 1.2rem;

@@ -23,6 +23,7 @@ export default class AlgoPainterAuctionSystemProxy {
         tokenPriceAddress: string,
         bidBackFee: number,
       ): ContractSendMethod;
+      bid(auctionId: number, amount: number): ContractSendMethod;
     };
   };
 
@@ -60,6 +61,15 @@ export default class AlgoPainterAuctionSystemProxy {
       endTime,
       tokenPriceAddress,
       bidBackFee,
+    ).send({ from });
+
+    return response;
+  }
+
+  async bid(auctionId: number, amount: number, from: string): Promise<unknown> {
+    const response: unknown = await this.smartContract.methods.bid(
+      auctionId,
+      amount,
     ).send({ from });
 
     return response;

@@ -1,8 +1,8 @@
 <template>
   <q-page class="q-gutter-lg q-pb-lg">
-    <div class="account-details q-pa-lg">
+    <q-card class="account-details q-pa-lg">
       <account-details />
-    </div>
+    </q-card>
     <div>
       <MyGalleryOverview />
     </div>
@@ -27,7 +27,6 @@ export default class MyGallery extends Vue {
 
 <style lang="scss" scoped>
 .account-details {
-  border: 2px dashed $primary;
   border-radius: 20px;
 }
 </style>

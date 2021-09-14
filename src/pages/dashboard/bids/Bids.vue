@@ -1,10 +1,11 @@
 <template>
-  <div
+  <q-card
     v-for="(bid, index) in auctionsBid"
     :key="index"
     class="row justify-center container-bids"
+    bordered
   >
-    <div class="col-xs-12 col-sm-12 col-md-8">
+    <div class="col-xs-12 col-sm-12 col-md-7">
       <div class="row q-gutter-md">
         <q-img
           class="img"
@@ -40,7 +41,7 @@
               </router-link>
             </div>
           </div>
-          <div class="row q-mt-md q-gutter-sm">
+          <div class="row q-mt-md q-gutter-sm text-center">
             <div class="col">
               <div class="text-bold">
                 {{ $t('dashboard.bid.winBid') }}
@@ -54,8 +55,6 @@
             </div>
 
             <q-separator
-              spaced="md"
-              color="grey"
               vertical
               inset
             />
@@ -77,7 +76,11 @@
         </div>
       </div>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-4">
+    <q-separator
+      vertical
+      inset
+    />
+    <div class="col-xs-12 col-sm-12 col-md-4 col column justify-center ">
       <div class="text-bold text-h5 row justify-center">
         {{ $t('dashboard.bid.youNow') }}
       </div>
@@ -92,7 +95,7 @@
         />
       </div>
     </div>
-  </div>
+  </q-card>
 </template>
 
 <script lang="ts">
@@ -127,7 +130,6 @@ getBids() {
 .container-bids{
   max-width: 100%;
   max-height: 100%;
-  border: 2px dashed $primary;
   border-radius: 20px;
   padding: 20px;
 }

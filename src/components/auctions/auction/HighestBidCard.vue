@@ -26,20 +26,15 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
 import { IBid } from 'src/models/IBid';
-import AvatarSection from 'src/components/AvatarSection.vue';
 
-@Options({
-  components: {
-    AvatarSection,
-  },
-})
-export default class HighestBidAvatar extends Vue {
+export default class HighestBidCard extends Vue {
   @Prop({ required: true }) bid!: IBid;
 }
 </script>
+
 <style lang="scss" scoped>
 .highest-bid {
   background: $primary;

@@ -149,14 +149,14 @@ export default class AuctionItem extends Vue.with(Props) {
 
   loadData() {
     this.wasLiked =
-      this.isHot.item.likers.filter((liker) => liker === this.account)
+      this.isHot.likers.filter((liker) => liker === this.account)
         .length !== 0;
-    this.likes = this.isHot.item.likes;
+    this.likes = this.isHot.likes;
   }
 
   showRun() {
     this.loading = false;
-    this.previewImageUrl = this.isHot.item.previewImageUrl;
+    this.previewImageUrl = this.isHot.item.previewImage;
   }
 
   favoriteClicked(wasLiked: boolean) {

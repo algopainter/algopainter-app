@@ -49,21 +49,41 @@
       >
         {{ art.title }}
       </q-tooltip>
-      <div class="item-actions row q-col-gutter-md">
+      <div class="item-actions row q-col-gutter-md justify-center">
         <div class="col-auto">
           <algoButton
             icon="visibility"
             class="q-my-md action"
+            :label="[ btnName ? null : $t('dashboard.auctionPage.btnView') ]"
+            :class="[ btnName ? null : 'q-px-xl' ]"
             color="primary"
             :to="`/collections/${art._id}`"
           />
         </div>
-        <div class="col">
+        <div
+          v-if="btnName"
+          class="col"
+        >
           <algoButton
+            v-if="btnName === 'dashboard.auctions.stackAlgop'"
             class="q-my-md action full-width"
             color="primary"
-            :label="$t('dashboard.homePage.sell')"
+            :label="$t(btnName)"
             @click="openAuctionModal"
+          />
+          <algoButton
+            v-else-if="btnName === 'dashboard.auctions.goToAuction'"
+            class="q-my-md action full-width"
+            color="primary"
+            :label="$t(btnName)"
+            :to="`/auctions/${art._id}`"
+          />
+          <algoButton
+            v-else
+            class="q-my-md action full-width"
+            color="primary"
+            :label="$t(btnName)"
+            :to="`/sell-your-art/${art._id}`"
           />
         </div>
       </div>
@@ -92,6 +112,16 @@ class Props {
     required: false,
     default: false,
   });
+
+  btnName = prop({
+    type: String,
+    required: false,
+  });
+
+  artIds = prop({
+    type: Object as PropType<{itemId: string, auctionId: string}[]>,
+    required: false,
+  });
 }
 @Options({
   components: {
@@ -105,15 +135,32 @@ export default class GalleryItem extends Vue.with(Props) {
   likeClicked: boolean = false;
   wasLiked: boolean = false;
   likes!: number;
+  goToAuctionId: string = '';
 
   collectionArtController: CollectionArtController =
   new CollectionArtController();
 
   mounted() {
+    console.log('item', this.art);
     if (this.isConnected) {
       void this.loadData();
     }
     this.likes = this.art.likes;
+    void this.goToAuction();
+  }
+
+  goToAuction() {
+    console.log('this.art', this.art);
+    console.log('this.artIds', this.artIds);
+    if (this.artIds) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      this.artIds.forEach((item: {itemId: string, auctionId: string}) => {
+        if (item.itemId === this.art._id) {
+          this.goToAuctionId = item.auctionId;
+        }
+      });
+    }
+    console.log('this.goToAuctionId', this.goToAuctionId);
   }
 
   loadData() {

@@ -6,6 +6,7 @@ function state(): AuctionStateInterface {
     topSellers: [],
     topBuyers: [],
     allBids: [],
+    onSale: [],
     openAuctionModal: false,
   };
 }

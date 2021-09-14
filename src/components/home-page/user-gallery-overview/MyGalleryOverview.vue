@@ -46,7 +46,14 @@
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === 4 ? 'primary' : 'grey-5' "
-          @click="showPirs()"
+          @click="showPirs(), getPirs()"
+        />
+        <algo-button
+          :label="$t('dashboard.homePage.bid') + contBid"
+          outline
+          class="algo-button q-px-md q-ml-sm"
+          :color="currentBtnClicked === 5 ? 'primary' : 'grey-5' "
+          @click="getBid()"
         />
       </div>
     </div>
@@ -70,6 +77,7 @@
             <div>
               <gallery-item
                 :art="item"
+                :btn-name="'dashboard.homePage.sell'"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -121,6 +129,7 @@
         :buttons="true"
       />
     </div>
+    <!--
     <div
       v-if="currentBtnClicked === 2"
       class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
@@ -128,6 +137,72 @@
       <p class="q-mt-lg text-primary text-bold text-h5 q-mx-auto">
         {{ $t('dashboard.auctions.coming') }}
       </p>
+    </div>
+    -->
+    <div
+      v-else-if="loadingOnSaleButtons === false && currentBtnClicked === 2"
+      class="col-md-9 col-lg-9 flex q-col-gutter-md"
+    >
+      <div
+        v-if="loadingOnSale === false"
+      >
+        <div
+          v-if="nullTabOnSale === false"
+          class=" col-md-9 col-lg-9 flex q-col-gutter-md"
+        >
+          <div
+            v-for="(item, index) in onSaleGallery"
+            :key="index"
+          >
+            <div>
+              <gallery-item
+                :art="item"
+                :art-ids="onSaleGalleryIds"
+                :btn-name="'dashboard.homePage.goToAuction'"
+                @favoriteClicked="favoriteClicked"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+          class=" col-md-9 col-lg-9 q-mt-lg"
+        >
+          <div class="text-h6 text-primary text-center q-pb-md">
+            {{ $t('dashboard.homePage.noItems') }}
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+      >
+        <MyGallerySkeleton
+          :buttons="false"
+        />
+      </div>
+      <div class=" q-mx-auto q-mb-md">
+        <q-btn
+          v-for="(btn, index) in showingPageslike"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          :loading="currentPage === index + 1 ? loadingLikes : false"
+          @click="getLikes(index + 1, currentCollection.label)"
+        />
+        <algo-button
+          v-if="nullTabLike === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          :loading="loadingBtn"
+          @click="loadMoreLike(currentCollection.label)"
+        />
+      </div>
     </div>
     <div
       v-else-if="currentBtnClicked === 3"
@@ -199,7 +274,7 @@
       <div v-if="pirsConnected">
         <div
           v-if="havePirs === true"
-          class="col-md-9 col-lg-9 flex q-col-gutter-md"
+          class="col-md-6 col-lg-6 flex q-col-gutter-md justify-between"
         >
           <div
             v-for="(item, index) in galleryArts"
@@ -208,6 +283,7 @@
             <div>
               <gallery-item
                 :art="item"
+                :btn-name="'dashboard.auctions.stackAlgop'"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -251,54 +327,64 @@
         />
       </div>
     </div>
-    <div class="col-12 col-md-3 col-lg-3 column items-center border q-pt-md latest-bids">
-      <div class="text-h5 text-bold text-primary q-pb-md">
-        {{ $t('dashboard.homePage.latestBids') }}
-      </div>
-      <div>
-        <p class="q-mt-md text-primary text-bold text-h5">
-          {{ $t('dashboard.auctions.coming') }}
-        </p>
-      </div>
-      <!--
-      <div v-if="loadingLatestBidsItem === false">
+    <div
+      v-else-if="currentBtnClicked === 5"
+    >
+      <div v-if="bidConnect">
         <div
-          v-for="(bid, i) in galleryBidShow"
-          :key="i"
-          class="column q-col-gutter-md"
+          v-if="haveBid"
+          class="col-md-6 col-lg-6 flex q-col-gutter-md justify-between"
         >
-          <div v-if="bid != undefined">
-            <LatestBidsItem
-              :bid="bid"
-            />
+          <div
+            v-for="(item, index) in galleryArts"
+            :key="index"
+          >
+            <div>
+              <gallery-item
+                :art="item"
+                :btn-name="'dashboard.auctions.stackAlgop'"
+                @favoriteClicked="favoriteClicked"
+              />
+            </div>
           </div>
         </div>
-        <div v-if="nullGalleryBidShow === true">
-          <div class="flex q-mb-md">
-            {{ $t('dashboard.homePage.personalNoBids') }}
-          </div>
-        </div>
-        <div class="q-pt-md row justify-center">
-          <algo-button
-            v-if="btnBidsClicked"
-            color="primary"
-            @click="Allbids()"
-          >
-            {{ $t('dashboard.homePage.seeLess') }}
-          </algo-button>
-          <algo-button
-            v-else
-            color="primary"
-            @click="Allbids()"
-          >
-            {{ $t('dashboard.homePage.seeAllBids') }}
-          </algo-button>
+        <div
+          v-else
+          class="text-h6 text-primary text-center q-pb-md"
+        >
+          {{ $t('dashboard.homePage.personalNoBid') }}
         </div>
       </div>
-      <div v-else>
-        <LatestBidsItemSkeleton />
+      <div
+        v-else
+      >
+        <MyGallerySkeleton />
       </div>
-      -->
+      <div
+        v-if="havePirs"
+        class="row flex justify-center q-mt-md q-mb-md q-mb-md"
+      >
+        <q-btn
+          v-for="(btn, index) in showingPagesPirs"
+          :key="index"
+          :color="currentPage === index + 1 ? 'primary' : 'grey-4'"
+          :label="index + 1"
+          class="q-mr-xs desktop-only"
+          @click="getPirs(index + 1)"
+        />
+        <algo-button
+          v-if="nullTabPirs === false"
+          :label="$t('dashboard.homePage.loadMore', {
+            msg: btnLoadMoreMsg
+          })"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto mobile-only"
+          :disable="noMoreImages"
+          :loading="loadingBtn"
+          @click="loadMoreLike()"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -308,13 +394,14 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import AlgoButton from 'components/common/Button.vue';
 import { IMyGallery } from 'src/models/IMyGallery';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import { ICollection } from 'src/models/ICollection';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
+import GallerySelect from './GallerySelect.vue';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
-
 @Options({
   components: {
     AlgoButton,
@@ -322,6 +409,7 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
     LatestBidsItem,
     LatestBidsItemSkeleton,
     MyGallerySkeleton,
+    GallerySelect,
   },
 })
 export default class MyGalleryOverview extends Vue {
@@ -334,65 +422,59 @@ export default class MyGalleryOverview extends Vue {
   loadingLatestBidsItem: boolean = true;
   loadingGalleryArtsButtons: boolean = true;
   loadingLikesButtons: boolean = true;
-
   btnBidsClicked: boolean = false;
-
   galleryArts:IMyGallery[] = [];
   likesGallery:IMyGallery[] = [];
   loadingGalleryArts: boolean = true;
   loadingLikes: boolean = true;
   nullGalleryArts: boolean = false;
   nullTabLike: boolean = false;
-
-  maxPage: number = 1;
   showingPages: number = 1;
   showingPageslike: number = 1;
   currentPage: number = 1;
-
   btnLoadMoreMsg: string = 'Load More';
   loadMoreCounter: number = 1;
   loadMoreCounterLike: number = 1;
   noMoreImages: boolean = false;
-
   imgData: IMyGallery[] = [];
   contImg: string = '';
   contLiked: string = '';
   contSale: string = '';
   contPirs: string = '';
-
   pirsConnected: boolean = false;
   havePirs: boolean = false;
   showingPagesPirs: number = 8;
   nullTabPirs: boolean = false;
-
+  onSaleAuction: IAuctionItem[] = [];
+  loadingOnSale: boolean = true;
+  loadingOnSaleButtons: boolean = true;
+  nullTabOnSale: boolean = false;
+  onSaleGalleryIds: {itemId: string, auctionId: string}[] = [];
+  onSaleGallery: IMyGallery[] = [];
   // Buttons
   currentBtnClicked: number = 1;
-
   // Filter
   currentCollection: string = 'All Collections';
   filteredGallery:IMyGallery[] = [];
-
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
   getCollectionsLoading: boolean = true;
-
   pirs:boolean = false;
-
+  contBid: string = '';
+  bidConnect: boolean = false;
+  haveBid: boolean = false;
   // Gets all images in the background
   mounted() {
+    void this.getCollections();
     void this.getLikes(1, 'All Collections');
     void this.getGalleryArts(1, 'All Collections');
-    void this.getCollections();
-    // temporary until there's an API for onsale images
-    const contSale: number = 0;
-    this.contSale = `(${contSale})`;
   }
 
   // Gets all images in the background if account changes and in mounted
   @Watch('accountAddress')
   onAccountChanged() {
     // void this.getGalleryBidders();
-    void this.getLikes(1, 'All Collections');
     void this.getGalleryArts(1, 'All Collections');
+    void this.getLikes(1, 'All Collections');
     void this.getPirs();
   }
 
@@ -401,7 +483,11 @@ export default class MyGalleryOverview extends Vue {
   onCollectionChanged() {
     if (this.currentBtnClicked !== 1) {
       void this.getGalleryArts(1, this.currentCollection, true);
-    } else {
+    }
+    if (this.currentBtnClicked !== 2) {
+      void this.getOnSale(1, this.currentCollection, true);
+    }
+    if (this.currentBtnClicked !== 3) {
       void this.getLikes(1, this.currentCollection, true);
     }
   }
@@ -428,7 +514,6 @@ export default class MyGalleryOverview extends Vue {
     this.currentCollection = currentCollection;
     // Checks if the user is on a desktop or mobile to call the apropriate function
     const device = (window.innerWidth <= 768) ? 'mobile' : 'desktop';
-
     if (device === 'desktop') {
       if (this.currentBtnClicked === 1) {
         void this.getGalleryArts(page, currentCollection);
@@ -457,39 +542,60 @@ export default class MyGalleryOverview extends Vue {
     }
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: '0x2a28593abb56b0f425fed25d4dcc0ff7dddedabf',
+      account: '0x3249341a70324baf2c92367889335fc560c012ff', // this.accountAddress,
       page: page,
       perPage: '9',
       collectionName: collection,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const response = this.$store.getters['collections/GET_IMAGES'] as IAxiosPaginated;
-      this.maxPage = response.pages;
-      if (this.maxPage <= 15) {
-        this.showingPages = this.maxPage;
-      } else {
-        this.showingPages = 15;
-      }
       if (this.isConnected) {
         this.galleryArts = response.data as [];
         const contImg: number = response.count;
         this.contImg = ` (${contImg})`;
-        if (this.galleryArts.length === 0) {
-          this.nullGalleryArts = true;
-        } else {
-          this.nullGalleryArts = false;
-        }
+        this.nullGalleryArts = (this.galleryArts.length === 0);
+        void this.getOnSale(1, 'All Collections', true);
       }
       this.loadingGalleryArtsButtons = false;
       this.loadingGalleryArts = false;
     });
   }
 
-  getOnSale() {
-    console.log('Coming soon');
-    this.currentBtnClicked = 2;
-    const contSale: number = 0;
-    this.contSale = ` (${contSale})`;
+  async getOnSale(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+    this.loadingOnSale = true;
+    if (!watcher) {
+      this.currentBtnClicked = 2;
+    }
+    this.currentPage = page;
+    await this.$store.dispatch({
+      type: 'auctions/getOnSale',
+      account: '0x3249341a70324baf2c92367889335fc560c012ff', // this.accountAddress
+      page: page,
+      perPage: '9',
+      collectionName: collection,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = this.$store.getters['auctions/getOnSale'] as IAxiosPaginated;
+      if (this.isConnected) {
+        this.onSaleAuction = response.data;
+        this.onSaleAuction.forEach((item: IAuctionItem) => {
+          this.onSaleGalleryIds.push({ itemId: item.item._id, auctionId: item._id });
+        });
+        this.galleryArts.forEach((itemA: IMyGallery) => {
+          this.onSaleGalleryIds.forEach((itemB: {itemId: string, auctionId: string}) => {
+            if (itemA._id === itemB.itemId) {
+              this.onSaleGallery.push(itemA);
+            }
+          });
+        });
+        console.log('onSaleGalleryIds', this.onSaleGalleryIds);
+        const contSale: number = response.count;
+        this.contSale = ` (${contSale})`;
+        this.nullTabOnSale = (this.onSaleAuction.length === 0);
+      }
+      this.loadingOnSale = false;
+      this.loadingOnSaleButtons = false;
+    });
   }
 
   // Gets all items liked by the user on desktop -> pagination method
@@ -508,12 +614,6 @@ export default class MyGalleryOverview extends Vue {
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const response = this.$store.getters['user/GET_USER_LIKES'] as IAxiosPaginated;
-      this.maxPage = response.pages;
-      if (this.maxPage <= 15) {
-        this.showingPageslike = this.maxPage;
-      } else {
-        this.showingPages = 15;
-      }
       if (this.isConnected) {
         this.likesGallery = response.data;
         const contLiked: number = response.count;
@@ -539,7 +639,7 @@ export default class MyGalleryOverview extends Vue {
     this.loadingBtn = true;
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: this.accountAddress, 
+      account: this.accountAddress,
       page: this.loadMoreCounter,
       perPage: '9',
       collectionName: collection,
@@ -596,8 +696,8 @@ export default class MyGalleryOverview extends Vue {
       this.contPirs = ` (${this.contPirs})`;
       this.pirsConnected = true;
       this.pirs = true;
+      this.havePirs = true;
     } catch (error) {
-
     } finally {
       // eslint-disable-next-line no-unsafe-finally
       return null;
@@ -636,6 +736,19 @@ export default class MyGalleryOverview extends Vue {
     this.currentBtnClicked = 4;
   }
 
+  getBid() {
+    this.currentBtnClicked = 5;
+    try {
+      this.contBid = '0';
+      this.contBid = ` (${this.contBid})`;
+      this.bidConnect = true;
+      this.haveBid = true;
+    } catch (error) {
+    } finally {
+      // eslint-disable-next-line no-unsafe-finally
+      return null;
+    }
+  }
   /*
   async getGalleryBidders() {
     this.loadingGalleryBid = true;
@@ -663,7 +776,6 @@ export default class MyGalleryOverview extends Vue {
     }
   }
   */
-
   /*
   Allbids() {
     this.btnBidsClicked = !this.btnBidsClicked;
@@ -683,13 +795,11 @@ export default class MyGalleryOverview extends Vue {
   border-radius: 20px;
   max-height: 150px;
 }
-
 body.screen--md, .screen--lg, .screen--xl {
   .latest-bids{
     margin-left: 16px;
   }
 }
-
 body.screen--sm, .screen--xs {
   .text-gallery{
     margin-top: -15px;
@@ -710,5 +820,4 @@ body.screen--sm, .screen--xs {
     margin-bottom: 10px;
   }
 }
-
 </style>

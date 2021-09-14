@@ -74,7 +74,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 
-import { IAuctionItem } from 'src/models/IAuctionItem';
 import { getAuctionDetails } from 'src/api/auctions';
 import AuctionInfo from './tabs/AuctionInfo.vue';
 
@@ -85,7 +84,7 @@ import AuctionInfo from './tabs/AuctionInfo.vue';
 })
 export default class Auction extends Vue {
   loading: boolean = false;
-  auction: IAuctionItem | null = null;
+  auction: unknown[] = [];
   tab: string = 'info';
 
   created() {
@@ -124,7 +123,7 @@ export default class Auction extends Vue {
           createdAt: '2021',
           tokenSymbol: 'ALGOP',
         },
-      } as IAuctionItem;
+      } as unknown as [];
 
       this.loading = false;
     } catch {

@@ -2,6 +2,7 @@ export default {
   myCollection: 'my collection',
   auction: 'auction',
   create: 'create',
+  
   connectToYourWallet: 'Connect wallet',
   walletConnect: 'WalletConnect',
   metaMask: 'MetaMask',
@@ -177,5 +178,17 @@ export default {
     yes: 'Yes',
     no: 'No',
     created: 'Created by : ',
+  },
+  bid: {
+    title: 'Bids',
+    congratulations: 'Congratulations, you won the auction for this artwork. Now, claim your NFT and add it to your collection.',
+    youNow: 'You now!',
+    clain: 'Clain your NFT',
+    winBid: 'Winning bid',
+    auctionEnd: 'Auction ended',
+    eth: '1.0 ETH',
+    money: '$500.00',
+    data: 'Jan 13',
+    2020: '2020',
   },
 };

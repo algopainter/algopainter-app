@@ -3,4 +3,5 @@ export interface AuctionStateInterface {
     topSellers: [],
     topBuyers: [],
     allBids: [],
+    bids: [],
 }

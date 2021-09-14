@@ -53,7 +53,12 @@
               </div>
             </div>
 
-            <q-separator spaced="md" color="grey" vertical inset />
+            <q-separator
+              spaced="md"
+              color="grey"
+              vertical
+              inset
+            />
 
             <div class="col">
               <div>
@@ -93,7 +98,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import { IAuctionItem } from 'src/models/IAuctionItem';
-import { api } from 'src/boot/axios';
 import AlgoButton from 'components/common/Button.vue';
 
 @Options({
@@ -105,18 +109,17 @@ import AlgoButton from 'components/common/Button.vue';
 export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
 
-mounted(): void {
+mounted() {
   void this.getBids();
 }
 
-async getBids() {
-  try {
-    const result = await api.get('auctions');
-    this.auctionsBid = result.data as [];
-    console.log(this.auctionsBid);
-  } catch (e) {
-    console.log('e', e);
-  }
+getBids() {
+  void this.$store.dispatch({
+    type: 'auctions/getBids',
+  }).then(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    this.auctionsBid = this.$store.getters['auctions/getBids'] as [];
+  });
 }
 }
 </script>

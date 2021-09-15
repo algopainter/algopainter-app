@@ -1,101 +1,116 @@
 <template>
-  <q-card
-    v-for="(bid, index) in auctionsBid"
-    :key="index"
-    class="row justify-center container-bids"
-    bordered
-  >
-    <div class="col-xs-12 col-sm-12 col-md-7">
-      <div class="row q-gutter-md">
-        <q-img
-          class="img"
-          :src="bid.item.previewImage"
-        />
-        <div class="text-title">
-          <p class="text-bold">
-            {{ bid.item.title }}
-          </p>
-          <p>
-            {{ bid.item.description }}
-          </p>
-          <div class="row q-gutter-sm">
-            <div
-              v-for="(user, i) in bid.users"
-              :key="i"
-              class="row"
-            >
-              <router-link :to="{name: 'customUrl', params: { customUrl: user.customProfile || user.account } }">
-                <q-avatar
-                  size="lg"
-                  round
-                >
-                  <img
-                    :src="user.avatar || '/placeholder-images/do-utilizador.png'"
-                  >
-                  <q-tooltip
-                    class="bg-primary"
-                  >
-                    {{ user.role }}{{ $t('dashboard.homePage.colon') }} {{ user.name }}
-                  </q-tooltip>
-                </q-avatar>
-              </router-link>
-            </div>
-          </div>
-          <div class="row q-mt-md q-gutter-sm text-center">
-            <div class="col">
-              <div class="text-bold">
-                {{ $t('dashboard.bid.winBid') }}
-              </div>
-              <div class="text-bold">
-                {{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
-              </div>
-              <div>
-                {{ $t('dashboard.bid.money') }}
-              </div>
-            </div>
+  <div v-if="loading === false">
+    <div v-if="auctionsBid.length === 0">
+      <div
+        class="text-h5 q-mt-lg text-primary text-center"
+      >
+        {{ $t('dashboard.bid.noBids') }}
+      </div>
+      <div class="text-bold text-h5 text-center">
+        {{ $t('dashboard.bid.goingOnce') }}
+      </div>
+    </div>
 
-            <q-separator
-              vertical
-              inset
+    <div v-else>
+      <q-card
+        v-for="(bid, index) in auctionsBid"
+        :key="index"
+        class="row justify-center container-bids"
+        bordered
+      >
+        <div class="col-xs-12 col-sm-12 col-md-7">
+          <div class="row q-gutter-md">
+            <q-img
+              class="img"
+              :src="bid.item.previewImage"
             />
+            <div class="text-title">
+              <p class="text-bold">
+                {{ bid.item.title }}
+              </p>
+              <p>
+                {{ bid.item.description }}
+              </p>
+              <div class="row q-gutter-sm">
+                <div
+                  v-for="(user, i) in bid.users"
+                  :key="i"
+                  class="row"
+                >
+                  <router-link :to="{name: 'customUrl', params: { customUrl: user.customProfile || user.account } }">
+                    <q-avatar
+                      size="lg"
+                      round
+                    >
+                      <img
+                        :src="user.avatar || '/placeholder-images/do-utilizador.png'"
+                      >
+                      <q-tooltip
+                        class="bg-primary"
+                      >
+                        {{ user.role }}{{ $t('dashboard.homePage.colon') }} {{ user.name }}
+                      </q-tooltip>
+                    </q-avatar>
+                  </router-link>
+                </div>
+              </div>
+              <div class="row q-mt-md q-gutter-sm text-center">
+                <div class="col">
+                  <div class="text-bold">
+                    {{ $t('dashboard.bid.winBid') }}
+                  </div>
+                  <div class="text-bold">
+                    {{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
+                  </div>
+                  <div>
+                    {{ $t('dashboard.bid.money') }}
+                  </div>
+                </div>
 
-            <div class="col">
-              <div>
-                <div class="text-bold">
-                  {{ $t('dashboard.bid.auctionEnd') }}
-                </div>
-                <div class="text-bold">
-                  {{ expirationDayMounth }}
-                </div>
-                <div>
-                  {{ expirationYear }}
+                <q-separator
+                  vertical
+                  inset
+                />
+
+                <div class="col">
+                  <div>
+                    <div class="text-bold">
+                      {{ $t('dashboard.bid.auctionEnd') }}
+                    </div>
+                    <div class="text-bold">
+                      {{ expirationDayMounth }}
+                    </div>
+                    <div>
+                      {{ expirationYear }}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <q-separator
-      vertical
-      inset
-    />
-    <div class="col-xs-12 col-sm-12 col-md-4 col column justify-center ">
-      <div class="text-bold text-h5 row justify-center">
-        {{ $t('dashboard.bid.youNow') }}
-      </div>
-      <div class="text-bold row text-center">
-        {{ $t('dashboard.bid.congratulations') }}
-      </div>
-      <div class="row justify-center q-mt-md">
-        <algo-button
-          size="lg"
-          color="primary"
-          :label="$t('dashboard.bid.clain')"
+        <q-separator
+          vertical
+          inset
         />
-      </div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col column justify-center ">
+          <div class="text-bold text-h5 row justify-center">
+            {{ $t('dashboard.bid.youNow') }}
+          </div>
+          <div class="text-bold row text-center">
+            {{ $t('dashboard.bid.congratulations') }}
+          </div>
+          <div class="row justify-center q-mt-md">
+            <algo-button
+              size="lg"
+              color="primary"
+              :label="$t('dashboard.bid.clain')"
+            />
+          </div>
+        </div>
+      </q-card>
     </div>
-  </q-card>
+  </div>
 </template>
 
 <script lang="ts">
@@ -117,6 +132,7 @@ lastBid: IAuctionItem[] = [];
 lastBidLength: number = 0;
 expirationDayMounth: string | unknown = '';
 expirationYear: string | unknown = '';
+loading: boolean = true;
 
 @Watch('accountAdress')
 onPropertyChanged() {
@@ -140,6 +156,7 @@ getBids() {
   }).then(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
+    this.loading = false;
     this.getLastBid(0);
     this.dataMoment();
   });

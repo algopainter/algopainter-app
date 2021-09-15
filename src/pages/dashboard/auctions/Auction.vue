@@ -94,7 +94,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 
-import { getAuctionDetails } from 'src/api/auctions';
 import AlgoButton from 'components/common/Button.vue';
 import HighestBidCard from 'components/auctions/auction/HighestBidCard.vue';
 import NewBidDialog from 'components/auctions/auction/NewBidDialog.vue';
@@ -127,7 +126,7 @@ export default class Auction extends Vue {
     void this.getAuctionData();
   }
 
-  async getAuctionData() {
+  getAuctionData() {
     try {
       this.loading = true;
 

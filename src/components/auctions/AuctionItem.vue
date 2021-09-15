@@ -140,11 +140,6 @@ export default class AuctionItem extends Vue.with(Props) {
     return this.$store.getters['user/account'];
   }
 
-  mounted() {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    setTimeout(this.showRun, 0);
-    // void this.loadData();
-  }
   /* functionCounter: number = 0;
   stopFunction: boolean = false; */
 
@@ -171,8 +166,7 @@ export default class AuctionItem extends Vue.with(Props) {
 
   showRun() {
     this.loading = false;
-    this.previewImageUrl = this.isHot.item.previewImage;
-
+    this.previewImage = this.isHot.item.previewImage;
   }
 
   favoriteClicked(wasLiked: boolean) {

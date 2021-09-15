@@ -237,6 +237,7 @@
         />
       </div>
     </div>
+  <!--
     <div class="col-11 col-md-3 col-lg-3 q-pt-md q-mt-lg column items-center border q-pl-none latest-bids">
       <div class="text-h5 text-bold text-primary q-pb-md">
         {{ $t('dashboard.homePage.latestBids') }}
@@ -246,7 +247,6 @@
           {{ $t('dashboard.auctions.coming') }}
         </p>
       </div>
-      <!--
       <div v-if="loadingGalleryBid === false">
         <div
           v-for="(bid, i) in galleryBidShow"
@@ -282,8 +282,9 @@
       <div v-else>
         <LatestBidsItemSkeleton />
       </div>
-      -->
+
     </div>
+  -->
   </div>
 </template>
 
@@ -558,7 +559,7 @@ export default class UserGalleryOverview extends Vue {
     this.loadMoreBtn = true;
     await this.$store.dispatch({
       type: 'collections/getUserOnSale',
-      account: this.$route.params.account, // this.$route.params.account,
+      account: this.$route.params.account,
       page: this.loadMoreCounterOnSale,
       perPage: '9',
       collectionName: collection,

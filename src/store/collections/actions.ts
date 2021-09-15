@@ -38,7 +38,7 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const collectionName = value.collectionName as string;
     const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
     try {
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}`); // &onSale=true
+      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=true`);
       const images: [] = res.data;
       this.commit('collections/SET_USER_ON_SALE', images);
     } catch (e) {

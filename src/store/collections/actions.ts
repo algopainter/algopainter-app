@@ -23,7 +23,7 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
       console.log('error message - getUserItems');
     }
   },
-  async getAllCollections(type, value) {
+  async getAllCollections() {
     try {
       const res = await api.get('collections');
       this.commit('collections/SET_COLLECTIONS', res);

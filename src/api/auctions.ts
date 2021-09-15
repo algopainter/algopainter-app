@@ -5,3 +5,9 @@ export async function getAuctionDetails(id: string): Promise<unknown[]> {
 
   return response.data as unknown[];
 }
+
+export async function getBids(id: string): Promise<IBid[]> {
+  const response = await api.get<IBid[]>(`auctions/${id}/bids`);
+
+  return response.data;
+}

@@ -2,7 +2,7 @@
   <q-form
     @submit="onSubmit"
   >
-    <div class="form row">
+    <q-card class="form row">
       <div class="col-xs-12 col-sm-12 col-md-3">
         <div class="column items-center q-gutter-md">
           <div class="col q-mt-xl">
@@ -149,7 +149,7 @@
           @click="saveChanges"
         />
       </div>
-    </div>
+    </q-card>
     <q-inner-loading :showing="isLoading">
       <q-spinner-gears
         size="50px"
@@ -364,8 +364,7 @@ export default class EditProfile extends Vue {
 </script>
 <style lang="scss" scoped>
 .form{
-    border: dashed 2px #f4538d;
-    border-radius: 20px;
+  border-radius: 20px;
 }
 
 input[type='file'] {

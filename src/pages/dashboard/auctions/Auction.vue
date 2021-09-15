@@ -2,10 +2,22 @@
   <q-page
     class="q-page q-gutter-lg q-pb-lg"
   >
-    <div class="row">
+    <div
+      v-if="loading"
+      class="flex flex-center q-pa-xl"
+    >
+      <q-spinner
+        size="80px"
+        color="primary"
+      />
+    </div>
+    <div
+      v-else-if="auction"
+      class="row"
+    >
       <div class="col-12 col-sm">
         <q-img
-          src="https://ipfs.io/ipfs/QmWifvG21jySfTYfVtub9PrGVcXZS3VYRuP2bTdFKb531q"
+          :src="auction.item.image"
         />
       </div>
       <q-separator
@@ -13,30 +25,9 @@
         vertical
       />
       <div class="col-12 col-sm-8">
-        <div
-          v-if="loading"
-          class="fit flex flex-center"
-        >
-          <q-spinner
-            size="80px"
-            color="primary"
-          />
-        </div>
-        <div
-          v-else-if="auction"
-          class="row q-col-gutter-md"
-        >
+        <div class="row q-col-gutter-md">
           <div class="col-12 header">
             {{ auction.item.title }}
-          </div>
-          <div class="col-12 flex q-col-gutter-sm tags">
-            <div
-              v-for="tag in auction.item.tags"
-              :key="tag"
-              class="tag text-grey-5"
-            >
-              {{ `#${tag}` }}
-            </div>
           </div>
           <div class="col-12">
             <q-tabs
@@ -56,6 +47,14 @@
                 {{ $t('dashboard.auctions.history') }}
               </q-tab>
             </q-tabs>
+            <div
+              v-if="auction.highestBid"
+              class="q-mt-md"
+            >
+              <highest-bid-card
+                :bid="auction.highestBid"
+              />
+            </div>
             <q-tab-panels v-model="tab">
               <q-tab-panel
                 class="q-pa-none q-pt-md"
@@ -63,7 +62,28 @@
               >
                 <auction-info :auction="auction" />
               </q-tab-panel>
+              <q-tab-panel
+                class="q-pa-none q-pt-md"
+                name="bids"
+              >
+                <bids-list :auction="auction" />
+              </q-tab-panel>
+              <q-tab-panel
+                class="q-pa-none q-pt-md"
+                name="history"
+              >
+                <auction-history :users="auction.users" />
+              </q-tab-panel>
             </q-tab-panels>
+          </div>
+          <div class="col-12">
+            <algo-button
+              class="full-width q-py-sm"
+              color="primary"
+              outline
+              :label="$t('dashboard.auctionPage.placeABid')"
+              @click="openPlaceBidDialog"
+            />
           </div>
         </div>
       </div>
@@ -75,11 +95,21 @@
 import { Vue, Options } from 'vue-class-component';
 
 import { getAuctionDetails } from 'src/api/auctions';
+import AlgoButton from 'components/common/Button.vue';
+import HighestBidCard from 'components/auctions/auction/HighestBidCard.vue';
+import NewBidDialog from 'components/auctions/auction/NewBidDialog.vue';
+
 import AuctionInfo from './tabs/AuctionInfo.vue';
+import BidsList from './tabs/BidsList.vue';
+import AuctionHistory from './tabs/AuctionHistory.vue';
 
 @Options({
   components: {
+    AlgoButton,
+    HighestBidCard,
     AuctionInfo,
+    BidsList,
+    AuctionHistory,
   },
 })
 export default class Auction extends Vue {
@@ -87,12 +117,17 @@ export default class Auction extends Vue {
   auction: unknown[] = [];
   tab: string = 'info';
 
-  created() {
-    const { id: auctionId } = this.$route.params;
-    void this.getAuctionData(auctionId as string);
+  get auctionId(): string {
+    const { id } = this.$route.params;
+
+    return id as string;
   }
 
-  async getAuctionData(auctionId: string) {
+  created() {
+    void this.getAuctionData();
+  }
+
+  async getAuctionData() {
     try {
       this.loading = true;
 
@@ -127,12 +162,23 @@ export default class Auction extends Vue {
 
       this.loading = false;
     } catch {
-      this.auction = await getAuctionDetails(auctionId);
       this.loading = false;
     }
+  }
+
+  openPlaceBidDialog() {
+    this.$q.dialog({
+      component: NewBidDialog,
+      componentProps: {
+        auction: this.auction,
+      },
+    });
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.q-tabs {
+  font-weight: bold;
+}
 </style>

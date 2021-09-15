@@ -13,6 +13,9 @@ export default {
   selectAlgoP: 'Select an AlgoPainter',
   wrong: 'Wrong Network',
   migrate: 'Migrate to a Binance SmartChain',
+  commingSoon: 'For now, there are no auctions available. Stay tuned they will soon show up here!',
+  sellerSoon: 'Nothing around here yet, but we will see the top sellers here soon!',
+  buyerSoon: 'Nothing around here yet, but we will see the top buyers here soon!',
   homePage: {
     title: 'My Gallery',
     publicTitle: 'Public Profile',
@@ -92,8 +95,7 @@ export default {
   },
   auctions: {
     title: 'Auctions',
-    hotBids: 'Hot Bids 🔥',
-    coming: 'Coming soon...',
+    hotBids: 'Auctions 🔥',
     highestBid: 'Highest Bid {highestBid}',
     topSellers: {
       top: 'Top {sellers}',
@@ -148,6 +150,7 @@ export default {
     placeABid: 'Place a Bid',
     btnView: 'View Art',
     symbol: '#',
+    amount: 'Amount',
   },
   editProfile: {
     title: 'Edit Profile',
@@ -192,5 +195,17 @@ export default {
     yes: 'Yes',
     no: 'No',
     created: 'Created by : ',
+  },
+  bid: {
+    title: 'Bids',
+    congratulations: 'Congratulations, you won the auction for this artwork. Now, claim your NFT and add it to your collection.',
+    youNow: 'You now!',
+    clain: 'Clain your NFT',
+    winBid: 'Winning bid',
+    auctionEnd: 'Auction ended',
+    eth: '1.0 ETH',
+    money: '$500.00',
+    data: 'Jan 13',
+    2020: '2020',
   },
 };

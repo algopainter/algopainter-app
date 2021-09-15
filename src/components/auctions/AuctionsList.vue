@@ -1,199 +1,211 @@
 <template>
-  <!--
-  <q-page class="q-gutter-lg q-pb-lg">
-  -->
-  <div>
-    <div class="header">
-      {{ $t('dashboard.auctions.hotBids') }}
-    </div>
+  <div class="q-gutter-lg q-pb-lg">
     <div>
-      <p class="q-mt-lg text-primary text-bold text-h5">
-        {{ $t('dashboard.auctions.coming') }}
-      </p>
-    </div>
-    <!--
-    <div
-      v-if="hotBidsLoading === false"
-    >
-      <carousel
-        :items-to-show="4"
-        :wrap-around="true"
-        :breakpoints="breakpoints"
-      >
-        <slide
-          v-for="(isHot, index) in areHot"
-          :key="index"
-        >
-          <auction-item
-            :is-hot="isHot"
-            @favoriteClicked="favoriteClicked()"
-          />
-        </slide>
-
-        <template #addons>
-          <navigation
-            class="navigation"
-          />
-        </template>
-      </carousel>
-    </div>
-    <div
-      v-else
-      class="flex items-center justify-center"
-    >
-      <CarouselSkeleton />
-    </div>
-    -->
-    <!--
-    <div class="row q-pt-xl">
       <div class="header">
-        <i18n-t keypath="dashboard.auctions.topSellers.top">
-          <template #sellers>
-            <span class="text-primary">
-              {{ currentOptionsTop.label }}
-            </span>
-          </template>
-        </i18n-t>
+        {{ $t('dashboard.auctions.hotBids') }}
       </div>
-      <div>
-        <q-select
-          v-model="currentOptionsTop"
-          hide-selected
-          class="text-primary"
-          borderless
-          :options="optionsTop"
-          behavior="menu"
-          dense
-        />
+      <div v-if="notHaveHot">
+        <p class="q-mt-lg text-primary text-bold text-h5">
+          {{ $t('dashboard.commingSoon') }}
+        </p>
       </div>
-    </div>
-    <div v-if="currentOptionsTop.id === 1">
-      <div
-        v-if="topSellersLoading === false"
-        class="top-sellers q-pb-md"
-      >
-        <div class="flex q-col-gutter-xl">
-          <div
-            v-for="(seller, index) in topSellers"
-            :key="index"
-          >
-            <div class="flex q-col-gutter-md items-center">
-              <div class="text-h6 text-bold">
-                {{ index + 1 }}
-              </div>
-              <div>
-                <router-link :to="{path: 'user-gallery', query: { customProfile: seller.account }}">
-                  <q-avatar
-                    round
-                    size="64px"
-                  >
-                    <img
-                      v-if="seller.avatar != ''"
-                      :src="seller.avatar"
-                    >
-                    <img
-                      v-else
-                      src="/images/do-utilizador (1).png"
-                    >
-                  </q-avatar>
-                </router-link>
-              </div>
-              <div>
-                <div class="text-h5 text-bold">
-                  {{ seller.name }}
-                </div>
-                <div>{{ $n(seller.amount, 'currency',) }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="flex"
-      >
+      <div v-else>
         <div
-          v-for="(item, index) in 5"
-          :key="index"
+          v-if="hotBidsLoading === false"
         >
-          <q-card
-            flat
-            style="width: 235px"
-            class="q-ml-sm q-my-sm"
+          <carousel
+            :items-to-show="4"
+            :wrap-around="true"
+            :breakpoints="breakpoints"
           >
-            <q-item>
-              <q-item-section avatar>
-                <q-skeleton
-                  type="QAvatar"
-                  animation="fade"
-                />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>
-                  <q-skeleton
-                    type="text"
-                    animation="fade"
-                  />
-                </q-item-label>
-                <q-item-label caption>
-                  <q-skeleton
-                    type="text"
-                    animation="fade"
-                  />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-card>
+            <slide
+              v-for="(isHot, index) in areHot"
+              :key="index"
+            >
+              <auction-item
+                :is-hot="isHot"
+                @favoriteClicked="favoriteClicked()"
+              />
+            </slide>
+
+            <template #addons>
+              <navigation
+                class="navigation"
+              />
+            </template>
+          </carousel>
+        </div>
+        <div
+          v-else
+          class="flex items-center justify-center"
+        >
+          <CarouselSkeleton />
         </div>
       </div>
-    </div>
-    <div v-if="currentOptionsTop.id === 2">
-      <div
-        v-if="topBuyersLoading === false"
-        class="top-sellers q-pb-xl"
+      <!-- <div
+        class="row q-pt-xl"
       >
-        <div class="flex q-col-gutter-xl">
+        <div class="header">
+          <i18n-t keypath="dashboard.auctions.topSellers.top">
+            <template #sellers>
+              <span class="text-primary">
+                {{ currentOptionsTop.label }}
+              </span>
+            </template>
+          </i18n-t>
+        </div>
+        <div>
+          <q-select
+            v-model="currentOptionsTop"
+            hide-selected
+            class="text-primary"
+            borderless
+            :options="optionsTop"
+            behavior="menu"
+            dense
+          />
+        </div>
+      </div>
+      <div v-if="currentOptionsTop.id === 1">
+        <div
+          v-if="topSellersLoading === false"
+          class="top-sellers"
+        >
+          <div v-if="haveTopSellers === false">
+            <p class="q-mt-lg text-primary text-bold text-h5">
+              {{ $t('dashboard.sellerSoon') }}
+            </p>
+          </div>
           <div
-            v-for="(buyer, index) in topBuyers"
-            :key="index"
+            v-else
+            class="flex q-col-gutter-xl"
           >
-            <div class="flex q-col-gutter-md items-center">
-              <div class="text-h6 text-bold">
-                {{ index + 1 }}
-              </div>
-              <div>
-                <router-link :to="{path: 'user-gallery', query: { customProfile: buyer.account }}">
-                  <q-avatar
-                    round
-                    size="64px"
-                  >
-                    <img
-                      v-if="buyer.avatar != ''"
-                      :src="buyer.avatar"
-                    >
-                    <img
-                      v-else
-                      src="/images/do-utilizador (1).png"
-                    >
-                  </q-avatar>
-                </router-link>
-              </div>
-              <div>
-                <div class="text-h5 text-bold">
-                  {{ buyer.name }}
+            <div
+              v-for="(seller, index) in topSellers"
+              :key="index"
+            >
+              <div class="flex q-col-gutter-md items-center">
+                <div class="text-h6 text-bold">
+                  {{ index + 1 }}
                 </div>
-                <div>{{ $n(buyer.amount, 'currency') }}</div>
+                <div>
+                  <router-link :to="{path: 'user-gallery', query: { customProfile: seller.account }}">
+                    <q-avatar
+                      round
+                      size="64px"
+                    >
+                      <img
+                        v-if="seller.avatar != ''"
+                        :src="seller.avatar"
+                      >
+                      <img
+                        v-else
+                        src="/images/do-utilizador (1).png"
+                      >
+                    </q-avatar>
+                  </router-link>
+                </div>
+                <div>
+                  <div class="text-h5 text-bold">
+                    {{ seller.name }}
+                  </div>
+                  <div>{{ $n(seller.amount, 'currency',) }}</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div
+          v-else
+          class="flex"
+        >
+          <div
+            v-for="(item, index) in 5"
+            :key="index"
+          >
+            <q-card
+              flat
+              style="width: 235px"
+              class="q-ml-sm q-my-sm"
+            >
+              <q-item>
+                <q-item-section avatar>
+                  <q-skeleton
+                    type="QAvatar"
+                    animation="fade"
+                  />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    <q-skeleton
+                      type="text"
+                      animation="fade"
+                    />
+                  </q-item-label>
+                  <q-item-label caption>
+                    <q-skeleton
+                      type="text"
+                      animation="fade"
+                    />
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-card>
+          </div>
+        </div>
       </div>
+      <div v-if="currentOptionsTop.id === 2">
+        <div
+          v-if="topBuyersLoading === false"
+          class="top-sellers"
+        >
+          <div v-if="haveTopBuyers === false">
+            <p class="q-mt-lg text-primary text-bold text-h5">
+              {{ $t('dashboard.buyerSoon') }}
+            </p>
+          </div>
+          <div
+            v-else
+            class="flex q-col-gutter-xl"
+          >
+            <div
+              v-for="(buyer, index) in topBuyers"
+              :key="index"
+            >
+              <div class="flex q-col-gutter-md items-center">
+                <div class="text-h6 text-bold">
+                  {{ index + 1 }}
+                </div>
+                <div>
+                  <router-link :to="{path: 'user-gallery', query: { customProfile: buyer.account }}">
+                    <q-avatar
+                      round
+                      size="64px"
+                    >
+                      <img
+                        v-if="buyer.avatar != ''"
+                        :src="buyer.avatar"
+                      >
+                      <img
+                        v-else
+                        src="/images/do-utilizador (1).png"
+                      >
+                    </q-avatar>
+                  </router-link>
+                </div>
+                <div>
+                  <div class="text-h5 text-bold">
+                    {{ buyer.name }}
+                  </div>
+                  <div>{{ $n(buyer.amount, 'currency') }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>-->
     </div>
-    -->
   </div>
-  <!--
-    </q-page>
-    -->
 </template>
 
 <script lang="ts">
@@ -227,6 +239,10 @@ export default class AuctionsList extends Vue {
   topBuyers: ITopSellersBuyers[] = [];
   topBuyersLoading: boolean = true;
 
+  notHaveHot: boolean = false;
+  haveTopSellers: boolean = false;
+  haveTopBuyers: boolean = false;
+
   mounted() {
     void this.getHotBids();
     void this.getTopSellers();
@@ -237,9 +253,14 @@ export default class AuctionsList extends Vue {
     void this.$store.dispatch({
       type: 'auctions/getHotBids',
     }).then(() => {
-      this.hotBidsLoading = false;
       this.areHot = this.$store.state.auctions.hotBids;
+      this.findHotBids();
+      this.hotBidsLoading = false;
     });
+  }
+
+  findHotBids() {
+    this.areHot.length === 0 ? this.notHaveHot = true : this.notHaveHot = false;
   }
 
   getTopSellers() {
@@ -248,7 +269,12 @@ export default class AuctionsList extends Vue {
     }).then(() => {
       this.topSellersLoading = false;
       this.topSellers = this.$store.state.auctions.topSellers;
+      this.findTopSellers();
     });
+  }
+
+  findTopSellers() {
+    this.topSellers.length === 0 ? this.haveTopSellers = false : this.haveTopSellers = true;
   }
 
   getTopBuyers() {
@@ -257,7 +283,12 @@ export default class AuctionsList extends Vue {
     }).then(() => {
       this.topBuyersLoading = false;
       this.topBuyers = this.$store.state.auctions.topBuyers;
+      this.findTopBuyers();
     });
+  }
+
+  findTopBuyers() {
+    this.topBuyers.length === 0 ? this.haveTopBuyers = false : this.haveTopBuyers = true;
   }
 
   favoriteClicked() {
@@ -281,29 +312,9 @@ export default class AuctionsList extends Vue {
     },
     1450: {
       itemsToShow: 4,
-      snapAlign: 'start',
+      snapAlign: 'center',
     },
   };
-
-  categories: unknown[] = [{
-    id: '1',
-    label: 'Digital',
-  }, {
-    id: '2',
-    label: 'Photo',
-  }, {
-    id: '3',
-    label: 'Classic',
-  }, {
-    id: '4',
-    label: 'Modern',
-  }, {
-    id: '5',
-    label: 'Abstract',
-  }, {
-    id: '6',
-    label: 'Fractal',
-  }];
 
   optionsTop: unknown[] = [
     {
@@ -354,5 +365,4 @@ export default class AuctionsList extends Vue {
   width: 35px;
   height: 35px;
 }
-
 </style>

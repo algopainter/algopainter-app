@@ -1,7 +1,10 @@
 export interface IAuctionItem {
+  _id: string;
+  index: number;
   bids: {
     amount: number;
     bidder: {
+      _id: string;
       account: string;
       avatar: string;
       bio: string;
@@ -15,7 +18,6 @@ export interface IAuctionItem {
       role: string;
       type: string,
       updatedAt: string;
-      _id: string;
     }
     createdAt: string;
     tokenSymbol: string;
@@ -38,7 +40,8 @@ export interface IAuctionItem {
     previewImage: string;
     rawImage: string;
     title: string;
-    _id: string;
+    collectionName: string;
+    collectionOwner: string;
   }
   likers: string[];
   likes: number;
@@ -58,5 +61,4 @@ export interface IAuctionItem {
     role: string;
   }];
   _v: number;
-  _id: string;
 }

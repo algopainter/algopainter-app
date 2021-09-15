@@ -567,7 +567,7 @@ export default class MyGalleryOverview extends Vue {
     }
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: '0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac', // this.accountAddress,
+      account: this.accountAddress,
       page: page,
       perPage: '9',
       collectionName: collection,
@@ -594,7 +594,7 @@ export default class MyGalleryOverview extends Vue {
     }
     await this.$store.dispatch({
       type: 'collections/getUserOnSale',
-      account: '0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac', // this.accountAddress
+      account: this.accountAddress,
       page: page,
       perPage: '9',
       collectionName: collection,
@@ -648,7 +648,7 @@ export default class MyGalleryOverview extends Vue {
     this.loadMoreBtn = true;
     await this.$store.dispatch({
       type: 'collections/getUserItems',
-      account: '0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac', // this.accountAddress
+      account: this.accountAddress,
       page: this.loadMoreCounter,
       perPage: '9',
       collectionName: collection,
@@ -681,7 +681,7 @@ export default class MyGalleryOverview extends Vue {
     this.loadMoreBtn = true;
     await this.$store.dispatch({
       type: 'collections/getUserOnSale',
-      account: '0xf92464b48cc7cd8b17ec8c1f28a5c370be3baeac', // this.accountAddress
+      account: this.accountAddress,
       page: this.loadMoreCounterOnSale,
       perPage: '9',
       collectionName: collection,

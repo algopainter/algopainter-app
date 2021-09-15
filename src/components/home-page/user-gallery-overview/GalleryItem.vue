@@ -49,20 +49,42 @@
       >
         {{ art.title }}
       </q-tooltip>
-      <div class="item-actions row q-col-gutter-md">
+      <div class="item-actions row q-col-gutter-md justify-center">
         <div class="col-auto">
           <algoButton
             icon="visibility"
             class="q-my-md action"
+            :label="[ btnName ? null : $t('dashboard.auctionPage.btnView') ]"
+            :class="[ btnName ? null : 'q-px-xl' ]"
             color="primary"
             :to="`/collections/${art._id}`"
           />
         </div>
-        <div class="col">
+        <div
+          v-if="btnName"
+          class="col"
+        >
           <algoButton
+            v-if="btnName === 'dashboard.auctions.stackAlgop'"
             class="q-my-md action full-width"
             color="primary"
-            :label="$t('dashboard.homePage.sell')"
+            :label="$t(btnName)"
+            @click="openAuctionModal"
+          />
+          <div v-else-if="btnName === 'dashboard.homePage.goToAuction'">
+            <algoButton
+              class="q-my-md action full-width"
+              color="primary"
+              :label="$t(btnName)"
+              :to="`/auctions/${goToAuctionId}`"
+              :disable="loadingGoToAuctionId"
+            />
+          </div>
+          <algoButton
+            v-else
+            class="q-my-md action full-width"
+            color="primary"
+            :label="$t(btnName)"
             :to="`/sell-your-art/${art._id}`"
           />
         </div>
@@ -92,6 +114,11 @@ class Props {
     required: false,
     default: false,
   });
+
+  btnName = prop({
+    type: String,
+    required: false,
+  });
 }
 @Options({
   components: {
@@ -105,6 +132,8 @@ export default class GalleryItem extends Vue.with(Props) {
   likeClicked: boolean = false;
   wasLiked: boolean = false;
   likes!: number;
+  goToAuctionId: string | undefined = undefined;
+  loadingGoToAuctionId: boolean = true;
 
   collectionArtController: CollectionArtController =
   new CollectionArtController();
@@ -114,6 +143,20 @@ export default class GalleryItem extends Vue.with(Props) {
       void this.loadData();
     }
     this.likes = this.art.likes;
+    void this.goToAuction();
+  }
+
+  async goToAuction() {
+    this.goToAuctionId = undefined;
+    this.loadingGoToAuctionId = true;
+    await this.$store.dispatch({
+      type: 'auctions/getOnSale',
+      itemId: this.art._id,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      this.goToAuctionId = this.$store.getters['auctions/getAuctionId'] as string | undefined;
+      this.loadingGoToAuctionId = false;
+    });
   }
 
   loadData() {
@@ -192,6 +235,10 @@ export default class GalleryItem extends Vue.with(Props) {
       this.wasLiked = true;
       this.likes++;
     }
+  }
+
+  openAuctionModal() {
+    void this.$store.dispatch('auctions/openAuctionModal');
   }
 }
 </script>

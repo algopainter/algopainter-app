@@ -156,16 +156,23 @@ export default class AuctionItem extends Vue.with(Props) {
     }
   }
 
-  // loadData() {
-  //   this.wasLiked =
-  //     this.isHot.item.likers.filter((liker) => liker === this.account)
-  //       .length !== 0;
-  //   this.likes = this.isHot.item.likes;
-  // }
+  mounted() {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    setTimeout(this.showRun, 0);
+    void this.loadData();
+  }
+
+  loadData() {
+    this.wasLiked =
+      this.isHot.likers.filter((liker) => liker === this.account)
+        .length !== 0;
+    this.likes = this.isHot.likes;
+  }
 
   showRun() {
     this.loading = false;
-    this.previewImage = this.isHot.item.previewImage;
+    this.previewImageUrl = this.isHot.item.previewImage;
+
   }
 
   favoriteClicked(wasLiked: boolean) {

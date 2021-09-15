@@ -94,7 +94,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 
-import { IAuctionItem } from 'src/models/IAuctionItem';
 import { getAuctionDetails } from 'src/api/auctions';
 import AlgoButton from 'components/common/Button.vue';
 import HighestBidCard from 'components/auctions/auction/HighestBidCard.vue';
@@ -115,7 +114,7 @@ import AuctionHistory from './tabs/AuctionHistory.vue';
 })
 export default class Auction extends Vue {
   loading: boolean = false;
-  auction: IAuctionItem | null = null;
+  auction: unknown[] = [];
   tab: string = 'info';
 
   get auctionId(): string {
@@ -132,7 +131,34 @@ export default class Auction extends Vue {
     try {
       this.loading = true;
 
-      this.auction = await getAuctionDetails(this.auctionId);
+      // this.auction = await getAuctionDetails(auctionId);
+      this.auction = {
+        item: {
+          title: 'Abstract Art',
+          tags: ['Art', 'Abstract', 'AI'],
+        },
+        highestBid: {
+          amount: 100,
+          bidder: {
+            _id: '123',
+            account: 'account',
+            avatar: 'http://localhost:8080/img/ALGOP.svg',
+            bio: 'bio',
+            createdAt: '2021',
+            name: 'HighUser',
+            networks: {
+              name: 'network',
+              type: 'type',
+              url: 'url',
+            },
+            role: 'role',
+            type: 'type',
+            updatedAt: '2021',
+          },
+          createdAt: '2021',
+          tokenSymbol: 'ALGOP',
+        },
+      } as unknown as [];
 
       this.loading = false;
     } catch {

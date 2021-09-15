@@ -12,6 +12,9 @@ const getters: GetterTree<CollectionsStateInterface, StateInterface> = {
   GET_COLLECTIONS(state: CollectionsStateInterface): [] {
     return state.collections;
   },
+  GET_USER_ON_SALE(state: CollectionsStateInterface): [] {
+    return state.userOnSale;
+  },
 };
 
 export default getters;

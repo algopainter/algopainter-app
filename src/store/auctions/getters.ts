@@ -3,11 +3,14 @@ import { StateInterface } from '..';
 import { AuctionStateInterface } from './types';
 
 const getters: GetterTree<AuctionStateInterface, StateInterface> = {
-  getAllBids(state: AuctionStateInterface): [] |undefined {
+  getAllBids(state: AuctionStateInterface): [] | undefined {
     return state.allBids;
   },
-  getBids(state: AuctionStateInterface): [] |undefined {
-    return state.bids;
+  getAuctionId(state: AuctionStateInterface): string | undefined {
+    return state.auctionId;
+  },
+  openAuctionModal(state: AuctionStateInterface): boolean {
+    return state.openAuctionModal;
   },
 };
 

@@ -13,6 +13,7 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const collectionName = value.collectionName as string;
     const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
     try {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}`);
       const userItems: string = res.data.count;
       const images: [] = res.data;
@@ -28,6 +29,20 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
       this.commit('collections/SET_COLLECTIONS', res);
     } catch (e) {
       console.log('error message - allCollections');
+    }
+  },
+  async getUserOnSale(type, value) {
+    const account = value.account as string;
+    const page = value.page as string;
+    const perPage = value.perPage as string;
+    const collectionName = value.collectionName as string;
+    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    try {
+      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}`); // &onSale=true
+      const images: [] = res.data;
+      this.commit('collections/SET_USER_ON_SALE', images);
+    } catch (e) {
+      console.log('error message - getUserItems');
     }
   },
 };

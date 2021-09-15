@@ -29,6 +29,7 @@
         />
         <wrong-chain-dialog v-if="showWrongChainDialog" />
         <NewPaintingModal v-model="openModal" />
+        <AuctionModal v-model="isAuctionModalOpen" />
       </q-page-container>
     </q-layout>
   </div>
@@ -42,6 +43,7 @@ import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
 import WrongChainDialog from 'components/common/WrongChainDialog.vue';
 import { Watch } from 'vue-property-decorator';
 import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
+import AuctionModal from 'src/components/modal/AuctionModal.vue';
 
 @Options({
   components: {
@@ -50,6 +52,7 @@ import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
     ConnectYourWallet,
     WrongChainDialog,
     NewPaintingModal,
+    AuctionModal,
   },
   watch: {
     isConnected: ['refreshModal'],
@@ -65,6 +68,7 @@ export default class MainLayout extends Vue {
   openModal: boolean = false;
   showModal: boolean = false;
   showWrongChainDialog: boolean = false;
+  isAuctionModalOpen: boolean = false;
   page: string = '';
   artistModal: boolean = false;
 
@@ -81,8 +85,18 @@ export default class MainLayout extends Vue {
   }
 
   @Watch('isConnected')
-  onPropertyChanged() {
+  onIsConnectedChanged() {
     localStorage.isConnected = this.isConnected;
+  }
+
+  @Watch('openAuctionModal')
+  onOpenAuctionModalChanged() {
+    this.isAuctionModalOpen = this.openAuctionModal;
+  }
+
+  get openAuctionModal() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['auctions/openAuctionModal'] as boolean;
   }
 
   openDrawer() {

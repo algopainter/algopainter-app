@@ -11,6 +11,9 @@ const mutation: MutationTree<CollectionsStateInterface> = {
   SET_COLLECTIONS(state: CollectionsStateInterface, payload) {
     state.collections = payload as [];
   },
+  SET_USER_ON_SALE(state: CollectionsStateInterface, payload) {
+    state.userOnSale = payload as [];
+  },
 };
 
 export default mutation;

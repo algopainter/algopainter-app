@@ -65,10 +65,10 @@
                   {{ $t('dashboard.bid.auctionEnd') }}
                 </div>
                 <div class="text-bold">
-                  {{ bid.expirationDt }}
+                  {{ expirationDayMounth }}
                 </div>
                 <div>
-                  {{ bid.expirationDt }}
+                  {{ expirationYear }}
                 </div>
               </div>
             </div>
@@ -103,6 +103,7 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
+import Moment from 'moment';
 
 @Options({
   components: {
@@ -114,6 +115,8 @@ export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
 lastBid: IAuctionItem[] = [];
 lastBidLength: number = 0;
+expirationDayMounth: string | unknown = '';
+expirationYear: string | unknown = '';
 
 @Watch('accountAdress')
 onPropertyChanged() {
@@ -137,15 +140,23 @@ getBids() {
   }).then(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
-    this.getLastBid();
+    this.getLastBid(0);
+    this.dataMoment();
   });
 }
 
-getLastBid() {
+getLastBid(index: number) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  const lastBidAuctions = this.auctionsBid[0].bids;
+  const lastBidAuctions = this.auctionsBid[index].bids;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   this.lastBidLength = lastBidAuctions.length - 1;
+}
+
+dataMoment() {
+  const dayMounth = this.auctionsBid[0].expirationDt;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
+  this.expirationDayMounth = Moment(dayMounth).format('DD MMM');
+  this.expirationYear = Moment(dayMounth).format('YYYY');
 }
 }
 </script>

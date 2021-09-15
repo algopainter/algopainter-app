@@ -47,7 +47,7 @@
                 {{ $t('dashboard.bid.winBid') }}
               </div>
               <div class="text-bold">
-                {{ $t('dashboard.bid.eth') }}
+                {{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
               </div>
               <div>
                 {{ $t('dashboard.bid.money') }}
@@ -65,10 +65,10 @@
                   {{ $t('dashboard.bid.auctionEnd') }}
                 </div>
                 <div class="text-bold">
-                  {{ $t('dashboard.bid.data') }}
+                  {{ bid.expirationDt }}
                 </div>
                 <div>
-                  {{ $t('dashboard.bid.2020') }}
+                  {{ bid.expirationDt }}
                 </div>
               </div>
             </div>
@@ -100,6 +100,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 
@@ -111,18 +112,40 @@ import AlgoButton from 'components/common/Button.vue';
 
 export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
+lastBid: IAuctionItem[] = [];
+lastBidLength: number = 0;
+
+@Watch('accountAdress')
+onPropertyChanged() {
+  void this.getBids();
+}
 
 mounted() {
   void this.getBids();
 }
 
+get accountAdress() {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  return this.$store.getters['user/account'] as string;
+}
+
 getBids() {
   void this.$store.dispatch({
     type: 'auctions/getBids',
+    account: this.accountAdress,
+
   }).then(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    this.auctionsBid = this.$store.getters['auctions/getBids'] as [];
+    this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
+    this.getLastBid();
   });
+}
+
+getLastBid() {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  const lastBidAuctions = this.auctionsBid[0].bids;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  this.lastBidLength = lastBidAuctions.length - 1;
 }
 }
 </script>

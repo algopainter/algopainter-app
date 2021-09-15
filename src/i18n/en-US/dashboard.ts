@@ -185,9 +185,8 @@ export default {
     clain: 'Clain your NFT',
     winBid: 'Winning bid',
     auctionEnd: 'Auction ended',
-    eth: '1.0 ETH',
     money: '$500.00',
-    data: 'Jan 13',
-    2020: '2020',
+    noBids: 'No bids here yet...',
+    goingOnce: 'Going once, going twice, sold!',
   },
 };

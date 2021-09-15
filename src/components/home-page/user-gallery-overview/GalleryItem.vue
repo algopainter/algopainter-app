@@ -71,13 +71,15 @@
             :label="$t(btnName)"
             @click="openAuctionModal"
           />
-          <algoButton
-            v-else-if="btnName === 'dashboard.auctions.goToAuction'"
-            class="q-my-md action full-width"
-            color="primary"
-            :label="$t(btnName)"
-            :to="`/auctions/${art._id}`"
-          />
+          <div v-else-if="btnName === 'dashboard.homePage.goToAuction'">
+            <algoButton
+              class="q-my-md action full-width"
+              color="primary"
+              :label="$t(btnName)"
+              :to="`/auctions/${goToAuctionId}`"
+              :disable="loadingGoToAuctionId"
+            />
+          </div>
           <algoButton
             v-else
             class="q-my-md action full-width"
@@ -117,11 +119,6 @@ class Props {
     type: String,
     required: false,
   });
-
-  artIds = prop({
-    type: Object as PropType<{itemId: string, auctionId: string}[]>,
-    required: false,
-  });
 }
 @Options({
   components: {
@@ -135,13 +132,13 @@ export default class GalleryItem extends Vue.with(Props) {
   likeClicked: boolean = false;
   wasLiked: boolean = false;
   likes!: number;
-  goToAuctionId: string = '';
+  goToAuctionId: string | undefined = undefined;
+  loadingGoToAuctionId: boolean = true;
 
   collectionArtController: CollectionArtController =
   new CollectionArtController();
 
   mounted() {
-    console.log('item', this.art);
     if (this.isConnected) {
       void this.loadData();
     }
@@ -149,18 +146,17 @@ export default class GalleryItem extends Vue.with(Props) {
     void this.goToAuction();
   }
 
-  goToAuction() {
-    console.log('this.art', this.art);
-    console.log('this.artIds', this.artIds);
-    if (this.artIds) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      this.artIds.forEach((item: {itemId: string, auctionId: string}) => {
-        if (item.itemId === this.art._id) {
-          this.goToAuctionId = item.auctionId;
-        }
-      });
-    }
-    console.log('this.goToAuctionId', this.goToAuctionId);
+  async goToAuction() {
+    this.goToAuctionId = undefined;
+    this.loadingGoToAuctionId = true;
+    await this.$store.dispatch({
+      type: 'auctions/getOnSale',
+      itemId: this.art._id,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      this.goToAuctionId = this.$store.getters['auctions/getAuctionId'] as string | undefined;
+      this.loadingGoToAuctionId = false;
+    });
   }
 
   loadData() {

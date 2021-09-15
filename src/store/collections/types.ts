@@ -5,4 +5,5 @@ export interface CollectionsStateInterface {
     userItems: string,
     images: [],
     collections: [],
+    userOnSale: [],
 }

@@ -3,6 +3,6 @@ export interface AuctionStateInterface {
     topSellers: [],
     topBuyers: [],
     allBids: [],
-    onSale: [],
+    auctionId: string | undefined,
     openAuctionModal: boolean;
 }

@@ -71,6 +71,12 @@ export default class SideBar extends Vue {
           this.$emit('openModalArtist');
         },
       },
+      {
+        icon: require('../assets/icons/auction.svg'),
+        label: 'Bids',
+        to: '/bids',
+        onClick: () => undefined,
+      },
     ];
   }
 }

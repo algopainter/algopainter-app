@@ -52,6 +52,17 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       console.log('success msg');
     }
   },
+  async getBids() {
+    try {
+      const result = await api.get('auctions');
+      const bids = result.data as [];
+      this.commit('auctions/SET_BIDS', bids);
+    } catch (e) {
+      console.log('error getAuction msg');
+    } finally {
+      console.log('success msg');
+    }
+  },
 };
 
 export default actions;

@@ -46,6 +46,13 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/components/auctions/AuctionsList.vue'),
       },
       {
+        path: 'bids',
+        component: () => import('src/pages/dashboard/bids/Bids.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.bid.title'),
+        },
+      },
+      {
         path: 'create-collectible',
         component: () => import('src/pages/collectible/Index.vue'),
         meta: {

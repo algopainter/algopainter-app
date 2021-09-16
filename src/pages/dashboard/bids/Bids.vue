@@ -72,9 +72,6 @@
                       </q-tooltip>
                     </div>
                   </div>
-                  <div>
-                    {{ $t('dashboard.bid.money') }}
-                  </div>
                 </div>
 
                 <q-separator
@@ -129,6 +126,7 @@ import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import Moment from 'moment';
+import UserUtils from 'src/helpers/user';
 
 @Options({
   components: {
@@ -151,6 +149,7 @@ onPropertyChanged() {
 
 mounted() {
   void this.getBids();
+  void this.formattedBalance();
 }
 
 get accountAdress() {
@@ -182,6 +181,13 @@ dataMoment(index: number) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
   this.expirationDayMounth = Moment(dayMounth).format('DD MMM');
   this.expirationYear = Moment(dayMounth).format('YYYY');
+}
+
+formattedBalance() {
+  // eslint-disable-next-line no-undef, @typescript-eslint/no-unsafe-member-access
+  console.log('balance', UserUtils.formatAccountBalance(300000000000000000000, 2));
+  // eslint-disable-next-line no-undef, @typescript-eslint/no-unsafe-member-access
+  // return UserUtils.formatAccountBalance(this.auctionsBid.bids[this.lastBidLength].amount, 2);
 }
 }
 </script>

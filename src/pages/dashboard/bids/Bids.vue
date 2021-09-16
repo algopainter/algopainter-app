@@ -64,11 +64,11 @@
                       {{ getLastBid(index) }}{{ bid.bids[lastBidLength].tokenSymbol }}
                     </div>
                     <div class="text-amount">
-                      {{ bidValue(bid.bids[lastBidLength].amount) }}
+                      {{ bidCorreting(bid.bids[lastBidLength].amount) }}
                       <q-tooltip
                         class="bg-primary"
                       >
-                        {{ bid.bids[lastBidLength].tokenSymbol }} {{ bidValue(bid.bids[lastBidLength].amount) }}
+                        {{ bid.bids[lastBidLength].tokenSymbol }} {{ bidCorreting(bid.bids[lastBidLength].amount) }}
                       </q-tooltip>
                     </div>
                   </div>
@@ -182,13 +182,11 @@ dataMoment(index: number) {
   this.expirationYear = Moment(dayMounth).format('YYYY');
 }
 
-bidValue(bids: number) {
+bidCorreting(bids: number) {
   const amount = blockchainToCurrency(
     bids,
     18,
   );
-  console.log('bids', bids);
-
   return amount;
 }
 }

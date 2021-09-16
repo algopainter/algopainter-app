@@ -60,7 +60,7 @@
                     {{ $t('dashboard.bid.winBid') }}
                   </div>
                   <div class="text-bold">
-                    {{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
+                    {{ getLastBid(index) }}{{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
                   </div>
                   <div>
                     {{ $t('dashboard.bid.money') }}
@@ -78,7 +78,7 @@
                       {{ $t('dashboard.bid.auctionEnd') }}
                     </div>
                     <div class="text-bold">
-                      {{ expirationDayMounth }}
+                      {{ dataMoment(index) }}{{ expirationDayMounth }}
                     </div>
                     <div>
                       {{ expirationYear }}
@@ -157,8 +157,6 @@ getBids() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
     this.loading = false;
-    this.getLastBid(0);
-    this.dataMoment();
   });
 }
 
@@ -169,8 +167,8 @@ getLastBid(index: number) {
   this.lastBidLength = lastBidAuctions.length - 1;
 }
 
-dataMoment() {
-  const dayMounth = this.auctionsBid[0].expirationDt;
+dataMoment(index: number) {
+  const dayMounth = this.auctionsBid[index].expirationDt;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
   this.expirationDayMounth = Moment(dayMounth).format('DD MMM');
   this.expirationYear = Moment(dayMounth).format('YYYY');

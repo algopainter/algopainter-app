@@ -2,7 +2,7 @@ export const auctionCoins = [
   {
     value: '1',
     label: 'BTC',
-    tokenAddress: '0xf16ccc72a44edb06e75c652706eddae5736ef1b9',
+    tokenAddress: '0xF16cCC72a44EdB06E75C652706eddAE5736eF1b9',
     decimalPlaces: 8,
     img: '/images/BTC.svg',
   },
@@ -23,7 +23,7 @@ export const auctionCoins = [
   {
     value: '4',
     label: 'ETH',
-    tokenAddress: '0x4fac0386c4045b52756b206db3148201e42b3f62',
+    tokenAddress: '0x4FAC0386c4045b52756B206Db3148201E42b3f62',
     decimalPlaces: 18,
     img: '/images/ETH.svg',
   },

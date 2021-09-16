@@ -44,7 +44,6 @@ export interface IAuctionItem {
   likes: number;
   minimumBid: {
     amount: number;
-    tokenPriceAddress: string;
     tokenSymbol: string;
     tokenPriceAddress: string;
   }

@@ -19,6 +19,7 @@ export interface IAuctionItem {
     }
     createdAt: string;
     tokenSymbol: string;
+    length: number;
   }
   ended: boolean;
   expirationDt: string;

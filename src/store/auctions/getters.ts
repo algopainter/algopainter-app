@@ -12,6 +12,9 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   openAuctionModal(state: AuctionStateInterface): boolean {
     return state.openAuctionModal;
   },
+  getBids(state: AuctionStateInterface): [] |undefined {
+    return state.bids;
+  },
 };
 
 export default getters;

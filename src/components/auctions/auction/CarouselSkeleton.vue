@@ -27,12 +27,14 @@
               class="q-mr-sm"
               size="30px"
             />
+            <!--
             <q-icon
               name="favorite_border"
               color="grey-4"
               class="q-mr-sm"
               size="30px"
             />
+            -->
           </div>
         </div>
       </q-item>
@@ -97,12 +99,14 @@
               class="q-mr-sm"
               size="30px"
             />
+            <!--
             <q-icon
               name="favorite_border"
               color="grey-4"
               class="q-mr-sm"
               size="30px"
             />
+            -->
           </div>
         </div>
       </q-item>
@@ -167,12 +171,14 @@
               class="q-mr-sm"
               size="30px"
             />
+            <!--
             <q-icon
               name="favorite_border"
               color="grey-4"
               class="q-mr-sm"
               size="30px"
             />
+            -->
           </div>
         </div>
       </q-item>
@@ -237,12 +243,14 @@
               class="q-mr-sm"
               size="30px"
             />
+            <!--
             <q-icon
               name="favorite_border"
               color="grey-4"
               class="q-mr-sm"
               size="30px"
             />
+            -->
           </div>
         </div>
       </q-item>
@@ -307,12 +315,14 @@
               class="q-mr-sm"
               size="30px"
             />
+            <!--
             <q-icon
               name="favorite_border"
               color="grey-4"
               class="q-mr-sm"
               size="30px"
             />
+            -->
           </div>
         </div>
       </q-item>

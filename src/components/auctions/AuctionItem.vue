@@ -30,13 +30,15 @@
           :art="previewImage"
           :is-hot="isHot._id"
         />
+        <!--
         <div class="col-12 col-md-1 flex">
           <LikeAnimation
-            :likes="likes || isHot.item.likes"
+            :likes="likes || isHot.likes"
             :liked="wasLiked"
             @favoriteClicked="favoriteClicked"
           />
         </div>
+        -->
       </div>
     </div>
     <q-img
@@ -48,7 +50,7 @@
         <div
           class="name"
         >
-          {{ isHot.item.title }}
+          {{ $t('dashboard.homePage.symbol') }}{{ isHot.item.index }} {{ isHot.item.title }}
         </div>
         <q-tooltip
           class="bg-primary"

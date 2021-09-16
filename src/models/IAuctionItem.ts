@@ -39,16 +39,15 @@ export interface IAuctionItem {
   highestBid: IBid;
   isHot: boolean;
   item: {
-    _id: string;
-    likes: number;
-    likers: string[];
-    image: string;
-    previewImage: string;
-    previewImageUrl: string;
-    tags: string[];
-    title: string;
     collectionName: string;
     collectionOwner: string;
+    description: string;
+    image: string;
+    index: number;
+    previewImage: string;
+    rawImage: string;
+    title: string;
+    _id: string;
   }
   lowestBid: {
     amount: number;

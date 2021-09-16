@@ -14,7 +14,7 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}`);
+      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=false`); // &onSale=false
       const userItems: string = res.data.count;
       const images: [] = res.data;
       this.commit('collections/SET_USER_ITEMS', userItems);

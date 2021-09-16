@@ -59,8 +59,18 @@
                   <div class="text-bold">
                     {{ $t('dashboard.bid.winBid') }}
                   </div>
-                  <div class="text-bold">
-                    {{ getLastBid(index) }}{{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
+                  <div class="text-bold row">
+                    <div>
+                      {{ getLastBid(index) }}{{ bid.bids[lastBidLength].tokenSymbol }}
+                    </div>
+                    <div class="text-amount">
+                      {{ bid.bids[lastBidLength].amount }}
+                      <q-tooltip
+                        class="bg-primary"
+                      >
+                        {{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
+                      </q-tooltip>
+                    </div>
                   </div>
                   <div>
                     {{ $t('dashboard.bid.money') }}
@@ -194,6 +204,15 @@ dataMoment(index: number) {
   @media (max-width: $breakpoint-xs-max) {
     width: 100%;
   }
+}
+
+.text-amount{
+  margin-left: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 50px;
 }
 
 </style>

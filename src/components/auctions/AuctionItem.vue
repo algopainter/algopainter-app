@@ -60,18 +60,20 @@
       <div class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
           <template #highestBid>
-            <div class="flex items-center q-col-gutter-sm q-ml-xs">
+            <div
+              class="flex items-center q-col-gutter-sm q-ml-xs"
+            >
               <div
-                v-if="isHot.bids === undefined"
+                v-if="lastValueBid < 0"
                 class="price"
               >
-                <div>{{ isHot.bids.tokenSymbol + ' ' + isHot.bids.amount }}</div>
+                <div>{{ isHot.minimumBid.tokenSymbol + ' ' + isHot.minimumBid.amount }}</div>
               </div>
               <div
                 v-else
                 class="price"
               >
-                <div>{{ isHot.minimumBid.tokenSymbol + ' ' + isHot.minimumBid.amount }}</div>
+                {{ isHot.bids[lastValueBid].tokenSymbol + ' ' + isHot.bids[lastValueBid].amount }}
               </div>
             </div>
           </template>
@@ -126,6 +128,8 @@ export default class AuctionItem extends Vue.with(Props) {
   loading: boolean = true;
   previewImage: string = '';
   bidderTrue: string = '';
+  lastBidLength: number = 0;
+  lastValueBid: number = 0;
 
   // usersOwner: unknown;
   // isHotUnkown: unknown;
@@ -155,6 +159,7 @@ export default class AuctionItem extends Vue.with(Props) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     setTimeout(this.showRun, 0);
     void this.loadData();
+    void this.lastBid();
   }
 
   loadData() {
@@ -218,6 +223,11 @@ export default class AuctionItem extends Vue.with(Props) {
       this.wasLiked = true;
       this.likes++;
     }
+  }
+
+  lastBid() {
+    const bidLength = this.isHot.bids.length;
+    this.lastValueBid = bidLength - 1;
   }
 }
 </script>

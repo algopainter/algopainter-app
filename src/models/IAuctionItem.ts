@@ -46,6 +46,7 @@ export interface IAuctionItem {
     amount: number;
     tokenPriceAddress: string;
     tokenSymbol: string;
+    tokenPriceAddress: string;
   }
   owner: string;
   startDt: string;

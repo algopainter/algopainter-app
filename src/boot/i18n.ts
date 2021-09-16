@@ -12,7 +12,8 @@ const i18n = createI18n({
         currencyDisplay: 'code',
       },
       decimal: {
-        style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2,
+        style: 'decimal',
+        minimumFractionDigits: 2,
       },
       percent: {
         style: 'percent',

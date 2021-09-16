@@ -17,7 +17,7 @@ export default class AlgoPainterTokenProxy {
       balanceOf(address: string): ContractSendMethod;
       ownerOf(index: number): ContractSendMethod;
       allowance(owner: string, spender: string): ContractSendMethod;
-      approve(spender: string, amount: number): ContractSendMethod;
+      approve(spender: string, amount: number | string): ContractSendMethod;
     };
   };
 
@@ -39,25 +39,23 @@ export default class AlgoPainterTokenProxy {
     return response as boolean;
   }
 
-  async allowance(owner: string, spender: string): Promise<unknown> {
+  async allowance(owner: string, spender: string): Promise<number> {
     const response: unknown = await this.algoPainter.methods.allowance(
       owner,
       spender,
     ).call();
 
-    return response;
+    return Number(response);
   }
 
-  async approve(
+  approve(
     spender: string,
-    amount: number,
+    amount: number | string,
     from: string,
-  ): Promise<unknown> {
-    const response: unknown = await this.algoPainter.methods.approve(
+  ) {
+    return this.algoPainter.methods.approve(
       spender,
       amount,
     ).send({ from });
-
-    return response;
   }
 }

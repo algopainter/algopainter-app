@@ -5,7 +5,7 @@
         size="58px"
         round
       >
-        <img :src="bid.bidder.avatar">
+        <img :src="bid.avatar || '/placeholder-images/do-utilizador.png'">
       </q-avatar>
     </div>
     <div class="col row items-center">
@@ -13,13 +13,13 @@
         <i18n-t keypath="dashboard.auctionPage.highestBidBy">
           <template #highestBidBy>
             <span class="username">
-              {{ bid.bidder.name }}
+              {{ bid.name || bid.account }}
             </span>
           </template>
         </i18n-t>
       </div>
       <div class="col-12 price text-bold">
-        {{ $n(bid.amount, 'currency') }}
+        {{ `${bidValue} ${bid.tokenSymbol}` }}
       </div>
     </div>
   </div>
@@ -29,9 +29,35 @@
 import { Vue, Prop } from 'vue-property-decorator';
 
 import { IBid } from 'src/models/IBid';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import { auctionCoins } from 'src/helpers/auctionCoins';
 
 export default class HighestBidCard extends Vue {
   @Prop({ required: true }) bid!: IBid;
+  @Prop({ required: true }) tokenPriceAddress!: string;
+
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      return coin.tokenAddress.toLowerCase() === this.tokenPriceAddress;
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
+
+  get bidValue() {
+    const amount = blockchainToCurrency(
+      this.bid.amount,
+      this.coinDetails.decimalPlaces,
+    );
+
+    return this.$n(amount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
 }
 </script>
 

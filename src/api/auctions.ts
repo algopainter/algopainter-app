@@ -1,10 +1,12 @@
 import { api } from 'boot/axios';
+
+import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IBid } from 'src/models/IBid';
 
-export async function getAuctionDetails(id: string): Promise<unknown[]> {
-  const response = await api.get(`auctions/${id}`);
+export async function getAuctionDetails(id: string): Promise<IAuctionItem> {
+  const response = await api.get<IAuctionItem>(`auctions/${id}`);
 
-  return response.data as unknown[];
+  return response.data;
 }
 
 export async function getBids(id: string): Promise<IBid[]> {

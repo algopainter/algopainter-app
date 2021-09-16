@@ -53,6 +53,7 @@
             >
               <highest-bid-card
                 :bid="auction.highestBid"
+                :token-price-address="auction.minimumBid.tokenPriceAddress"
               />
             </div>
             <q-tab-panels v-model="tab">
@@ -94,6 +95,8 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 
+import { IAuctionItem } from 'src/models/IAuctionItem';
+import { getAuctionDetails } from 'src/api/auctions';
 import AlgoButton from 'components/common/Button.vue';
 import HighestBidCard from 'components/auctions/auction/HighestBidCard.vue';
 import NewBidDialog from 'components/auctions/auction/NewBidDialog.vue';
@@ -113,7 +116,7 @@ import AuctionHistory from './tabs/AuctionHistory.vue';
 })
 export default class Auction extends Vue {
   loading: boolean = false;
-  auction: unknown[] = [];
+  auction: IAuctionItem | null = null;
   tab: string = 'info';
 
   get auctionId(): string {
@@ -126,38 +129,11 @@ export default class Auction extends Vue {
     void this.getAuctionData();
   }
 
-  getAuctionData() {
+  async getAuctionData() {
     try {
       this.loading = true;
 
-      // this.auction = await getAuctionDetails(auctionId);
-      this.auction = {
-        item: {
-          title: 'Abstract Art',
-          tags: ['Art', 'Abstract', 'AI'],
-        },
-        highestBid: {
-          amount: 100,
-          bidder: {
-            _id: '123',
-            account: 'account',
-            avatar: 'http://localhost:8080/img/ALGOP.svg',
-            bio: 'bio',
-            createdAt: '2021',
-            name: 'HighUser',
-            networks: {
-              name: 'network',
-              type: 'type',
-              url: 'url',
-            },
-            role: 'role',
-            type: 'type',
-            updatedAt: '2021',
-          },
-          createdAt: '2021',
-          tokenSymbol: 'ALGOP',
-        },
-      } as unknown as [];
+      this.auction = await getAuctionDetails(this.auctionId);
 
       this.loading = false;
     } catch {

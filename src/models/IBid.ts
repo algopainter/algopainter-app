@@ -1,21 +1,10 @@
 export interface IBid {
+  _id: string;
   amount: number;
-  bidder: {
-    _id: string;
-    account: string;
-    avatar: string;
-    bio: string;
-    createdAt: string;
-    name: string;
-    networks: {
-      name: string,
-      type: string,
-      url: string,
-    }
-    role: string;
-    type: string,
-    updatedAt: string;
-  }
+  account: string;
+  avatar: string;
+  name: string;
   createdAt: string;
   tokenSymbol: string;
+  tokenAddress: string;
 }

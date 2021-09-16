@@ -75,7 +75,7 @@
                 v-else
                 class="price"
               >
-                {{ isHot.bids[lastValueBid].tokenSymbol + ' ' + isHot.bids[lastValueBid].amount }}
+                {{ isHot.bids[lastValueBid].tokenSymbol + ' ' + bidValue(isHot.bids[lastValueBid].amount ) }}
               </div>
             </div>
           </template>
@@ -102,6 +102,7 @@ import AlgoButton from 'components/common/Button.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 
 class Props {
   isHot = prop({
@@ -230,6 +231,16 @@ export default class AuctionItem extends Vue.with(Props) {
   lastBid() {
     const bidLength = this.isHot.bids.length;
     this.lastValueBid = bidLength - 1;
+  }
+
+  bidValue(bids: number) {
+    const amount = blockchainToCurrency(
+      bids,
+      18,
+    );
+    console.log('bids', bids);
+
+    return amount;
   }
 }
 </script>

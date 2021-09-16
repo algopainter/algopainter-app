@@ -64,11 +64,11 @@
                       {{ getLastBid(index) }}{{ bid.bids[lastBidLength].tokenSymbol }}
                     </div>
                     <div class="text-amount">
-                      {{ bid.bids[lastBidLength].amount }}
+                      {{ bidValue(bid.bids[lastBidLength].amount) }}
                       <q-tooltip
                         class="bg-primary"
                       >
-                        {{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
+                        {{ bid.bids[lastBidLength].tokenSymbol }} {{ bidValue(bid.bids[lastBidLength].amount) }}
                       </q-tooltip>
                     </div>
                   </div>
@@ -126,6 +126,7 @@ import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import Moment from 'moment';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 
 @Options({
   components: {
@@ -179,6 +180,16 @@ dataMoment(index: number) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
   this.expirationDayMounth = Moment(dayMounth).format('DD MMM');
   this.expirationYear = Moment(dayMounth).format('YYYY');
+}
+
+bidValue(bids: number) {
+  const amount = blockchainToCurrency(
+    bids,
+    18,
+  );
+  console.log('bids', bids);
+
+  return amount;
 }
 }
 </script>

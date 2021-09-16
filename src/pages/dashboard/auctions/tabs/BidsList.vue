@@ -76,6 +76,7 @@ export default class BidsList extends Vue {
 
       this.loading = false;
     } catch {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.bids = await getBids(this.auction._id);
       this.loading = false;
     }

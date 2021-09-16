@@ -140,11 +140,6 @@ export default class AuctionItem extends Vue.with(Props) {
     return this.$store.getters['user/account'];
   }
 
-  mounted() {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    setTimeout(this.showRun, 0);
-    // void this.loadData();
-  }
   /* functionCounter: number = 0;
   stopFunction: boolean = false; */
 
@@ -156,12 +151,18 @@ export default class AuctionItem extends Vue.with(Props) {
     }
   }
 
-  // loadData() {
-  //   this.wasLiked =
-  //     this.isHot.item.likers.filter((liker) => liker === this.account)
-  //       .length !== 0;
-  //   this.likes = this.isHot.item.likes;
-  // }
+  mounted() {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    setTimeout(this.showRun, 0);
+    void this.loadData();
+  }
+
+  loadData() {
+    this.wasLiked =
+      this.isHot.likers.filter((liker) => liker === this.account)
+        .length !== 0;
+    this.likes = this.isHot.likes;
+  }
 
   showRun() {
     this.loading = false;

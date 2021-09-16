@@ -458,6 +458,7 @@ export default class UserGalleryOverview extends Vue {
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const response = this.$store.getters['collections/GET_IMAGES'] as IAxiosPaginated;
+      console.log('response', response);
       this.galleryTabs[0].data = response.data as [];
       this.galleryTabs[0].cont = response.count;
       this.galleryTabs[0].contLabel = ` (${response.count})`;

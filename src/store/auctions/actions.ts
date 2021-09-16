@@ -54,11 +54,10 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
-  async getBids() {
-  // async getBids(type, value) {
+  async getBids(type, value) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    // const account = value.account as string;
-    const account = '0x3249341a70324baf2c92367889335fc560c012ff';
+    const account = value.account as string;
+
     try {
       const result = await api.get(`users/${account}/auctions/biding`);
       const bids = result.data as [];

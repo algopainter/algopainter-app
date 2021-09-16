@@ -71,12 +71,15 @@ export interface IAuctionItem {
     createdAt: string;
     tokenSymbol: string;
   }
+  likers: string[];
+  likes: number;
   minimumBid: {
     amount: number;
     createdAt: string;
     tokenSymbol: string;
     tokenPriceAddress: string;
   }
+  owner: string;
   startDt: string;
   updatedAt: string;
   users: [{
@@ -85,6 +88,7 @@ export interface IAuctionItem {
     bio: string;
     createdAt: string;
     name: string;
+    customProfile: string;
     networks: {
       name: string,
       type: string,

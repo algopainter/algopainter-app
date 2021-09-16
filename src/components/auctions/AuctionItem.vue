@@ -238,8 +238,6 @@ export default class AuctionItem extends Vue.with(Props) {
       bids,
       18,
     );
-    console.log('bids', bids);
-
     return amount;
   }
 }

@@ -54,7 +54,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
-   async getBids() {
+  async getBids() {
   // async getBids(type, value) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     // const account = value.account as string;

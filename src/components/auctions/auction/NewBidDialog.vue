@@ -1,7 +1,7 @@
 <template>
   <q-dialog
     ref="dialogRef"
-    :persistent="persistent"
+    :persistent="placingBid"
     @hide="onDialogHide"
   >
     <q-card class="place-bid-card">
@@ -32,6 +32,15 @@
         </div>
       </q-card-section>
     </q-card>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
+      <new-bid-status-card
+        :bid-status="placingBidStatus"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
   </q-dialog>
 </template>
 
@@ -40,16 +49,31 @@ import { Vue, Options, Ref, Prop } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import { mapGetters } from 'vuex';
 
+import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
+import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
 import { NetworkInfo } from 'src/store/user/types';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
-import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
-import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
+import NewBidStatusCard from './NewBidStatusCard.vue';
+import { auctionCoins } from 'src/helpers/auctionCoins';
+
+enum PlacingBidStatus {
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  PlaceBidAwaitingInput,
+  PlaceBidAwaitingConfirmation,
+  PlaceBidError,
+  BidCreated,
+}
 
 @Options({
   components: {
     AlgoButton,
+    NewBidStatusCard,
   },
   computed: {
     ...mapGetters('user', {
@@ -69,13 +93,25 @@ export default class NewBidDialog extends Vue {
 
   bidValue: string = '';
   placingBid: boolean = false;
-
-  get persistent() {
-    return this.placingBid;
-  }
+  placingBidStatus: PlacingBidStatus | null = null;
+  displayingStatus: boolean = false;
 
   get auctionSystemContractAddress() {
     return getAuctionSystemContractByNetworkId(this.networkInfo.id);
+  }
+
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      const { tokenPriceAddress } = this.auction.minimumBid;
+
+      return coin.tokenAddress.toLowerCase() === tokenPriceAddress;
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
   }
 
   mounted() {
@@ -96,44 +132,68 @@ export default class NewBidDialog extends Vue {
     this.$emit('hide');
   }
 
-  async approveContractTransfer() {
+  async approveContractTransfer(amount: number) {
+    this.placingBidStatus = PlacingBidStatus.CheckingAllowance;
+
     const allowance = await this.algopToken
       .allowance(this.userAccount, this.auctionSystemContractAddress);
 
-    console.log({ allowance: Number(allowance) });
+    if (allowance < amount) {
+      this.placingBidStatus = PlacingBidStatus.IncreateAllowanceAwaitingInput;
 
-    if (Number(allowance) === 0) {
       await this.algopToken.approve(
         this.auctionSystemContractAddress,
-        100000000,
-        // Number.MAX_SAFE_INTEGER,
+        amount.toString(),
         this.userAccount,
-      );
+      ).on('error', () => {
+        this.placingBidStatus = PlacingBidStatus.IncreateAllowanceError;
+      }).on('transactionHash', () => {
+        this.placingBidStatus =
+          PlacingBidStatus.IncreateAllowanceAwaitingConfirmation;
+      });
     }
   }
 
   async placeBid() {
     try {
       this.placingBid = true;
+      this.displayingStatus = true;
 
-      await this.approveContractTransfer();
+      const decimalPlaces = this.coinDetails.decimalPlaces;
+
+      const bidAmount = currencyToBlockchain(
+        Number(this.bidValue),
+        decimalPlaces,
+      );
+
+      await this.approveContractTransfer(bidAmount);
+
+      this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingInput;
 
       await this.auctionSystem.bid(
         this.auction.index,
-        Number(this.bidValue),
+        bidAmount.toString(),
         this.userAccount,
-      );
-
-      console.log({
-        index: this.auction.index,
-        bidValue: Number(this.bidValue),
-        userAccount: this.userAccount,
+      ).on('error', () => {
+        this.placingBidStatus = PlacingBidStatus.PlaceBidError;
+      }).on('transactionHash', () => {
+        this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingConfirmation;
       });
+
+      this.placingBidStatus = PlacingBidStatus.BidCreated;
 
       this.placingBid = false;
     } catch (error) {
       console.log(error);
       this.placingBid = false;
+    }
+  }
+
+  onCloseStatusDialog() {
+    this.displayingStatus = false;
+
+    if (this.placingBidStatus === PlacingBidStatus.BidCreated) {
+      this.hide();
     }
   }
 }

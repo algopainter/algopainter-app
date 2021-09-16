@@ -53,6 +53,7 @@
             >
               <highest-bid-card
                 :bid="auction.highestBid"
+                :token-price-address="auction.minimumBid.tokenPriceAddress"
               />
             </div>
             <q-tab-panels v-model="tab">

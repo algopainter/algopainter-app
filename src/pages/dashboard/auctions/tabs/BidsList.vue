@@ -2,25 +2,34 @@
   <div>
     <div
       v-if="loading"
-      class="flex flex-center"
+      class="flex flex-center q-pa-lg"
     >
       <q-spinner
         size="80px"
         color="primary"
       />
     </div>
-    <div
-      v-else
-      class="row q-col-gutter-md"
-    >
+    <div v-else>
       <div
-        v-for="bid in bids"
-        :key="bid.id"
-        class="col-12"
+        v-if="bids.length === 0"
+        class="empty-state"
       >
-        <bid-item
-          :bid="bid"
-        />
+        {{ $t('dashboard.auctionPage.noBids') }}
+      </div>
+      <div
+        v-else
+        class="row q-col-gutter-md"
+      >
+        <div
+          v-for="bid in filteredBids"
+          :key="bid._id"
+          class="col-12"
+        >
+          <bid-item
+            :bid="bid"
+            :token-price-address="auction.minimumBid.tokenPriceAddress"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -28,6 +37,7 @@
 
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
+import { reverse, dropLast } from 'ramda';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IBid } from 'src/models/IBid';
@@ -47,6 +57,12 @@ export default class BidsList extends Vue {
   loading: boolean = false;
   bids: IBid[] = [];
 
+  get filteredBids() {
+    return reverse(
+      dropLast(1, this.bids),
+    );
+  }
+
   created() {
     void this.loadBids();
   }
@@ -55,31 +71,22 @@ export default class BidsList extends Vue {
     try {
       this.loading = true;
 
-      this.bids = [
-        {
-          amount: 100,
-          bidder: {
-            name: 'João',
-            avatar: '/img/ALGOP.svg',
-          },
-          tokenSymbol: 'ALGOP',
-        },
-        {
-          amount: 50,
-          bidder: {
-            name: 'Paulo',
-            avatar: '/img/ALGOP.svg',
-          },
-          tokenSymbol: 'ALGOP',
-        },
-      ] as IBid[];
+      this.bids = await getBids(this.auction._id);
 
       this.loading = false;
     } catch {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      this.bids = await getBids(this.auction._id);
       this.loading = false;
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.empty-state {
+  padding: 16px;
+  color: $primary;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+</style>

@@ -112,6 +112,7 @@ import { Options, Vue } from 'vue-class-component';
 import { mapGetters } from 'vuex';
 import moment from 'moment';
 
+import { auctionCoins } from 'src/helpers/auctionCoins';
 import { getImage } from 'src/api/images';
 import { IImage } from 'src/models/IImage';
 import AlgoPainterAuctionSystemProxy, {
@@ -168,45 +169,12 @@ export default class SellYourArt extends Vue {
 
   creatingAuction: boolean = false;
 
-  rawCoinsOptions = [
-    {
-      value: '1',
-      label: 'BTC',
-      tokenAddress: '',
-      img: '/images/BTC.svg',
-    },
-    {
-      value: '2',
-      label: 'BNB',
-      tokenAddress: '',
-      img: '/images/BNB.svg',
-    },
-    {
-      value: '3',
-      label: 'ALGOP',
-      tokenAddress: '0x01A9188076f1231dF2215F67b6A63231fE5e293E',
-      img: '/images/ALGOP.svg',
-    },
-    {
-      value: '4',
-      label: 'ETH',
-      tokenAddress: '',
-      img: '/images/ETH.svg',
-    },
-    {
-      value: '5',
-      label: 'DASH',
-      tokenAddress: '',
-      img: '/images/DASH.svg',
-    },
-  ];
-
   get auctionSystemContractAddress() {
     return getAuctionSystemContractByNetworkId(this.networkInfo.id);
   }
 
   get allowedCoins() {
-    return this.rawCoinsOptions.filter((rawCoin) => {
+    return auctionCoins.filter((rawCoin) => {
       return this.allowedTokens[rawCoin.tokenAddress];
     });
   }

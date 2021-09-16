@@ -20,6 +20,9 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_OPEN_AUCTION_MODAL(state: AuctionStateInterface) {
     state.openAuctionModal = !state.openAuctionModal;
   },
+  SET_BIDS(state: AuctionStateInterface, payload) {
+    state.bids = payload as [];
+  },
 };
 
 export default mutation;

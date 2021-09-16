@@ -23,6 +23,7 @@ export interface IAuctionItem {
     }
     createdAt: string;
     tokenSymbol: string;
+    length: number;
   }
   categories: string[];
   createdAt: string;

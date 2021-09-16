@@ -54,7 +54,7 @@
                   </router-link>
                 </div>
               </div>
-              <div class="row q-mt-md q-gutter-sm text-center">
+              <div class="row q-mt-xl q-gutter-sm text-center">
                 <div class="col">
                   <div class="text-bold">
                     {{ $t('dashboard.bid.winBid') }}

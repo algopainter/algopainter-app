@@ -61,9 +61,12 @@
                   </div>
                   <div class="text-bold row">
                     <div>
-                      {{ getLastBid(index) }}{{ bid.bids[lastBidLength].tokenSymbol }}
+                      {{ bid.bids[index].tokenSymbol }}
                     </div>
-                    <div class="text-amount">
+                    <div
+                      class="text-amount"
+                      v-on="getLastBid(index)"
+                    >
                       {{ bidCorreting(bid.bids[lastBidLength].amount) }}
                       <q-tooltip
                         class="bg-primary"
@@ -84,11 +87,13 @@
                     <div class="text-bold">
                       {{ $t('dashboard.bid.auctionEnd') }}
                     </div>
-                    <div class="text-bold">
-                      {{ dataMoment(index) }}{{ expirationDayMounth }}
+                    <div
+                      class="text-bold"
+                    >
+                      {{ dataMoment(auctionsBid[index].expirationDt, 'MMM DD') }}
                     </div>
                     <div>
-                      {{ expirationYear }}
+                      {{ dataMoment(auctionsBid[index].expirationDt, 'YYYY') }}
                     </div>
                   </div>
                 </div>
@@ -125,7 +130,7 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
-import Moment from 'moment';
+import moment from 'moment';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 
 @Options({
@@ -136,10 +141,7 @@ import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 
 export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
-lastBid: IAuctionItem[] = [];
-lastBidLength: number = 0;
-expirationDayMounth: string | unknown = '';
-expirationYear: string | unknown = '';
+lastBidLength?: number;
 loading: boolean = true;
 
 @Watch('accountAdress')
@@ -168,18 +170,12 @@ getBids() {
 }
 
 getLastBid(index: number) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   const lastBidAuctions = this.auctionsBid[index].bids;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   this.lastBidLength = lastBidAuctions.length - 1;
-  // eslint-disable-next-line no-undef, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
 }
 
-dataMoment(index: number) {
-  const dayMounth = this.auctionsBid[index].expirationDt;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
-  this.expirationDayMounth = Moment(dayMounth).format('DD MMM');
-  this.expirationYear = Moment(dayMounth).format('YYYY');
+dataMoment(index: number, format: string) {
+  return moment(index).format(format);
 }
 
 bidCorreting(bids: number) {
@@ -197,6 +193,7 @@ bidCorreting(bids: number) {
   max-height: 100%;
   border-radius: 20px;
   padding: 20px;
+  margin: 10px;
 }
 .img{
   width: 250px;

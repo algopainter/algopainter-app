@@ -3,28 +3,7 @@ import { IBid } from './IBid';
 export interface IAuctionItem {
   _id: string;
   index: number;
-  bids: {
-    amount: number;
-    bidder: {
-      _id: string;
-      account: string;
-      avatar: string;
-      bio: string;
-      createdAt: string;
-      name: string;
-      networks: {
-        name: string,
-        type: string,
-        url: string,
-      }
-      role: string;
-      type: string,
-      updatedAt: string;
-    }
-    createdAt: string;
-    tokenSymbol: string;
-    length: number;
-  }
+  bids: IBid[];
   categories: string[];
   createdAt: string;
   expirationDt: string;

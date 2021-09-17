@@ -11,7 +11,7 @@
     </div>
     <div v-else>
       <div
-        v-if="bids.length === 0"
+        v-if="auction.bids.length === 0"
         class="empty-state"
       >
         {{ $t('dashboard.auctionPage.noBids') }}
@@ -40,8 +40,6 @@ import { Vue, Options, Prop } from 'vue-property-decorator';
 import { reverse, dropLast } from 'ramda';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
-import { IBid } from 'src/models/IBid';
-import { getBids } from 'src/api/auctions';
 import AuctionUserCard from 'components/auctions/auction/AuctionUserCard.vue';
 import BidItem from 'components/auctions/auction/BidItem.vue';
 
@@ -55,28 +53,11 @@ export default class BidsList extends Vue {
   @Prop({ required: true }) auction!: IAuctionItem;
 
   loading: boolean = false;
-  bids: IBid[] = [];
 
   get filteredBids() {
     return reverse(
-      dropLast(1, this.bids),
+      dropLast(1, this.auction.bids),
     );
-  }
-
-  created() {
-    void this.loadBids();
-  }
-
-  async loadBids() {
-    try {
-      this.loading = true;
-
-      this.bids = await getBids(this.auction._id);
-
-      this.loading = false;
-    } catch {
-      this.loading = false;
-    }
   }
 }
 </script>

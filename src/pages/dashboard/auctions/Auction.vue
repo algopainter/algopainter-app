@@ -118,6 +118,7 @@ export default class Auction extends Vue {
   loading: boolean = false;
   auction: IAuctionItem | null = null;
   tab: string = 'info';
+  reloadInterval: number | undefined;
 
   get auctionId(): string {
     const { id } = this.$route.params;
@@ -129,11 +130,25 @@ export default class Auction extends Vue {
     void this.getAuctionData();
   }
 
+  mounted() {
+    this.reloadInterval = setInterval(() => {
+      void this.loadAuctionDetails();
+    }, 15000) as unknown as number;
+  }
+
+  unmounted() {
+    clearInterval(this.reloadInterval);
+  }
+
+  async loadAuctionDetails() {
+    this.auction = await getAuctionDetails(this.auctionId);
+  }
+
   async getAuctionData() {
     try {
       this.loading = true;
 
-      this.auction = await getAuctionDetails(this.auctionId);
+      await this.loadAuctionDetails();
 
       this.loading = false;
     } catch {

@@ -69,13 +69,13 @@
                 v-if="lastValueBid < 0"
                 class="price"
               >
-                <div>{{ isHot.minimumBid.tokenSymbol + ' ' + isHot.minimumBid.amount }}</div>
+                <div>{{ isHot.minimumBid.tokenSymbol + ' ' + bidValue(isHot.minimumBid.amount) }}</div>
               </div>
               <div
                 v-else
                 class="price"
               >
-                {{ isHot.bids[lastValueBid].tokenSymbol + ' ' + bidValue(isHot.bids[lastValueBid].amount ) }}
+                {{ isHot.bids[lastValueBid].tokenSymbol + ' ' + bidValue(isHot.bids[lastValueBid].amount) }}
               </div>
             </div>
           </template>
@@ -103,6 +103,7 @@ import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import { auctionCoins } from 'src/helpers/auctionCoins';
 
 class Props {
   isHot = prop({
@@ -233,12 +234,29 @@ export default class AuctionItem extends Vue.with(Props) {
     this.lastValueBid = bidLength - 1;
   }
 
+  get coinDetails() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const coin = auctionCoins.find((coin) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      return coin.tokenAddress.toLowerCase() === this.isHot.minimumBid.tokenPriceAddress;
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
+
   bidValue(bids: number) {
     const amount = blockchainToCurrency(
       bids,
-      18,
+      this.coinDetails.decimalPlaces,
     );
-    return amount;
+    return this.$n(amount, 'decimal', {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 }
 </script>

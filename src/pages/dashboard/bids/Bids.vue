@@ -64,7 +64,7 @@
                       {{ bid.bids[index].tokenSymbol }}
                     </div>
                     <div
-                      class="text-amount"
+                      class="text-amount "
                       v-on="getLastBid(index)"
                     >
                       {{ bidCorreting(bid.bids[lastBidLength].amount) }}
@@ -183,7 +183,9 @@ bidCorreting(bids: number) {
     bids,
     18,
   );
-  return amount;
+  return this.$n(amount, 'decimal', {
+    maximumFractionDigits: 18,
+  } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 }
 </script>

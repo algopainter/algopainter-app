@@ -24,7 +24,7 @@ export const auctionCoins = [
     value: '4',
     label: 'ETH',
     tokenAddress: '0x4FAC0386c4045b52756B206Db3148201E42b3f62',
-    decimalPlaces: 18,
+    decimalPlaces: 8,
     img: '/images/ETH.svg',
   },
   {

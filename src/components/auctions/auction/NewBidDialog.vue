@@ -53,6 +53,7 @@ import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
+import { numberToString } from 'src/helpers/format/numberToString';
 import { NetworkInfo } from 'src/store/user/types';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
@@ -143,7 +144,7 @@ export default class NewBidDialog extends Vue {
 
       await this.algopToken.approve(
         this.auctionSystemContractAddress,
-        amount.toString(),
+        numberToString(amount),
         this.userAccount,
       ).on('error', () => {
         this.placingBidStatus = PlacingBidStatus.IncreateAllowanceError;
@@ -172,7 +173,7 @@ export default class NewBidDialog extends Vue {
 
       await this.auctionSystem.bid(
         this.auction.index,
-        bidAmount.toString(),
+        numberToString(bidAmount),
         this.userAccount,
       ).on('error', () => {
         this.placingBidStatus = PlacingBidStatus.PlaceBidError;
@@ -184,7 +185,7 @@ export default class NewBidDialog extends Vue {
 
       this.placingBid = false;
     } catch (error) {
-      console.log(error);
+      this.placingBidStatus = PlacingBidStatus.PlaceBidError;
       this.placingBid = false;
     }
   }

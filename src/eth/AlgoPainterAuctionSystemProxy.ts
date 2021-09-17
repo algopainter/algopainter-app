@@ -18,7 +18,7 @@ export default class AlgoPainterAuctionSystemProxy {
         tokenType: TokenType,
         contractAddress: string,
         tokenId: number,
-        minimumAmount: number,
+        minimumAmount: string,
         endTime: number,
         tokenPriceAddress: string,
         bidBackFee: number,
@@ -43,17 +43,17 @@ export default class AlgoPainterAuctionSystemProxy {
     return response as string[];
   }
 
-  async createAuction(
+  createAuction(
     tokenType: number,
     contractAddress: string,
     tokenId: number,
-    minimumAmount: number,
+    minimumAmount: string,
     endTime: number,
     tokenPriceAddress: string,
     bidBackFee: number,
     from: string,
-  ): Promise<unknown> {
-    const response: unknown = await this.smartContract.methods.createAuction(
+  ) {
+    return this.smartContract.methods.createAuction(
       tokenType,
       contractAddress,
       tokenId,
@@ -62,8 +62,6 @@ export default class AlgoPainterAuctionSystemProxy {
       tokenPriceAddress,
       bidBackFee,
     ).send({ from });
-
-    return response;
   }
 
   bid(auctionId: number, amount: string, from: string) {

@@ -88,13 +88,6 @@
             :label="$t('dashboard.sellYourArt.endDate')"
           />
         </div>
-        <div class="col-12">
-          <q-input
-            v-model="auction.bidBackFee"
-            type="number"
-            :label="$t('dashboard.sellYourArt.bidBackFee')"
-          />
-        </div>
         <div class="col-12 flex justify-end">
           <algo-button
             color="primary"
@@ -104,6 +97,15 @@
         </div>
       </div>
     </div>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
+      <create-auction-status-card
+        :create-auction-status="createAuctionStatus"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
   </div>
 </template>
 
@@ -113,6 +115,8 @@ import { mapGetters } from 'vuex';
 import moment from 'moment';
 
 import { auctionCoins } from 'src/helpers/auctionCoins';
+import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
+import { numberToString } from 'src/helpers/format/numberToString';
 import { getImage } from 'src/api/images';
 import { IImage } from 'src/models/IImage';
 import AlgoPainterAuctionSystemProxy, {
@@ -124,6 +128,8 @@ import { NetworkInfo } from 'src/store/user/types';
 
 import AlgoButton from 'components/common/Button.vue';
 import DateTimeField from 'components/fields/DateTimeField.vue';
+import CreateAuctionStatusCard
+  from 'components/auctions/auction/CreateAuctionStatusCard.vue';
 
 interface INewAuction {
   minimumPrice: number;
@@ -136,10 +142,22 @@ interface IAllowedTokens {
   [key: string]: boolean;
 }
 
+enum CreatingAuctionStatus {
+  CheckingContractApproved,
+  ContractApprovedAwaitingInput,
+  ContractApprovedAwaitingConfirmation,
+  ContractApprovedError,
+  CreateAuctionAwaitingInput,
+  CreateAuctionAwaitingConfirmation,
+  CreateAuctionError,
+  AuctionCreated,
+}
+
 @Options({
   components: {
     AlgoButton,
     DateTimeField,
+    CreateAuctionStatusCard,
   },
   computed: {
     ...mapGetters('user', {
@@ -168,6 +186,8 @@ export default class SellYourArt extends Vue {
   allowedTokens: IAllowedTokens = {};
 
   creatingAuction: boolean = false;
+  displayingStatus: boolean = false;
+  createAuctionStatus: CreatingAuctionStatus | null = null;
 
   get auctionSystemContractAddress() {
     return getAuctionSystemContractByNetworkId(this.networkInfo.id);
@@ -261,9 +281,7 @@ export default class SellYourArt extends Vue {
   }
 
   async approveContract() {
-    if (!this.image) {
-      return;
-    }
+    this.createAuctionStatus = CreatingAuctionStatus.CheckingContractApproved;
 
     const contractApproved = await this.artTokenContract
       .isApprovedForAll(this.userAccount, this.auctionSystemContractAddress);
@@ -272,16 +290,25 @@ export default class SellYourArt extends Vue {
       return;
     }
 
-    return this.artTokenContract.setApprovalForAll(
+    this.createAuctionStatus =
+      CreatingAuctionStatus.ContractApprovedAwaitingInput;
+
+    await this.artTokenContract.setApprovalForAll(
       this.auctionSystemContractAddress,
       true,
       this.userAccount,
-    );
+    ).on('confirmation', () => {
+      this.createAuctionStatus =
+        CreatingAuctionStatus.ContractApprovedAwaitingConfirmation;
+    }).on('error', () => {
+      this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedError;
+    });
   }
 
   async createAuction() {
     try {
       this.creatingAuction = true;
+      this.displayingStatus = true;
 
       if (!this.image || !this.selectedCoin) {
         return;
@@ -289,24 +316,51 @@ export default class SellYourArt extends Vue {
 
       await this.approveContract();
 
-      const { minimumPrice, endDate, bidBackFee } = this.auction;
+      const { minimumPrice, endDate } = this.auction;
+      const { decimalPlaces } = this.selectedCoin;
 
-      const response = await this.auctionSystem.createAuction(
+      const minimumPriceFormatted = currencyToBlockchain(
+        Number(minimumPrice),
+        decimalPlaces,
+      );
+
+      this.createAuctionStatus =
+        CreatingAuctionStatus.CreateAuctionAwaitingInput;
+
+      await this.auctionSystem.createAuction(
         TokenType.ERC721,
         this.image.collectionOwner,
         this.image.nft.index,
-        minimumPrice,
+        numberToString(minimumPriceFormatted),
         moment(endDate, 'DD/MM/YYYY').endOf('day').unix(),
         this.selectedCoin.tokenAddress,
-        bidBackFee,
+        0,
         this.userAccount,
-      );
+      ).on('transactionHash', () => {
+        this.createAuctionStatus =
+          CreatingAuctionStatus.CreateAuctionAwaitingConfirmation;
+      }).on('error', () => {
+        this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionError;
+      });
 
-      console.log({ response });
+      this.createAuctionStatus = CreatingAuctionStatus.AuctionCreated;
 
       this.creatingAuction = false;
     } catch {
       this.creatingAuction = false;
+    }
+  }
+
+  onCloseStatusDialog() {
+    this.displayingStatus = false;
+
+    if (this.createAuctionStatus === CreatingAuctionStatus.AuctionCreated) {
+      this.$q.notify({
+        type: 'positive',
+        message: 'Auction created successfully',
+      });
+
+      void this.$router.push('/');
     }
   }
 }

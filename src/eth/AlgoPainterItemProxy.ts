@@ -8,7 +8,6 @@ export default class AlgoPainterItemProxy {
     methods: {
       ownerOf(index: number): ContractSendMethod;
       isApprovedForAll(owner: string, operator: string): ContractSendMethod;
-      approve(address: string, tokenID: number): ContractSendMethod;
       setApprovalForAll(address: string, approved: boolean): ContractSendMethod;
     };
   };
@@ -34,25 +33,13 @@ export default class AlgoPainterItemProxy {
     return response as boolean;
   }
 
-  async approve(
-    address: string,
-    tokenID: number,
-    from: string,
-  ): Promise<unknown> {
-    const response: unknown = await this.algoPainter.methods
-      .approve(address, tokenID).send({ from });
-
-    return response as string;
-  }
-
-  async setApprovalForAll(
+  setApprovalForAll(
     address: string,
     approved: boolean,
     from: string,
-  ): Promise<unknown> {
-    const response: unknown = await this.algoPainter.methods
-      .setApprovalForAll(address, approved).send({ from });
-
-    return response;
+  ) {
+    return this.algoPainter.methods
+      .setApprovalForAll(address, approved)
+      .send({ from });
   }
 }

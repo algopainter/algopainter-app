@@ -19,7 +19,7 @@
             :breakpoints="breakpoints"
           >
             <slide
-              v-for="(isHot, index) in areHot"
+              v-for="(isHot, index) in auctions"
               :key="index"
             >
               <auction-item
@@ -231,6 +231,7 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 })
 export default class AuctionsList extends Vue {
   areHot: IAuctionItem[] = [];
+  auctions: IAuctionItem[] = [];
   hotBidsLoading: boolean = true;
 
   topSellers: ITopSellersBuyers[] = [];
@@ -254,6 +255,9 @@ export default class AuctionsList extends Vue {
       type: 'auctions/getHotBids',
     }).then(() => {
       this.areHot = this.$store.state.auctions.hotBids;
+      this.auctions = this.areHot.filter(function(items) {
+        return items.ended === false;
+      });
       this.findHotBids();
       this.hotBidsLoading = false;
     });

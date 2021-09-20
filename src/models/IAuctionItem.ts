@@ -17,6 +17,7 @@ export interface IAuctionItem {
   }
   highestBid: IBid;
   isHot: boolean;
+  ended: boolean;
   item: {
     collectionName: string;
     collectionOwner: string;

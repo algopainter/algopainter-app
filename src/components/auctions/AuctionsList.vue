@@ -217,6 +217,7 @@ import AlgoButton from 'components/common/Button.vue';
 import 'vue3-carousel/dist/carousel.css';
 import CarouselSkeleton from 'components/auctions/auction/CarouselSkeleton.vue';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
+import moment from 'moment';
 
 @Options({
   components: {
@@ -243,7 +244,7 @@ export default class AuctionsList extends Vue {
   notHaveHot: boolean = false;
   haveTopSellers: boolean = false;
   haveTopBuyers: boolean = false;
-
+  hots: number = 0;
   mounted() {
     void this.getHotBids();
     void this.getTopSellers();
@@ -255,8 +256,10 @@ export default class AuctionsList extends Vue {
       type: 'auctions/getHotBids',
     }).then(() => {
       this.areHot = this.$store.state.auctions.hotBids;
+      console.log(this.areHot);
       this.auctions = this.areHot.filter(function(items) {
-        return items.ended === false;
+        const isEnded = moment().isAfter(items.expirationDt);
+        return isEnded === false;
       });
       this.findHotBids();
       this.hotBidsLoading = false;

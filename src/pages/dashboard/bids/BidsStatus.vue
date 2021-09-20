@@ -1,5 +1,5 @@
 <template>
-  <div v-on="getEndedAuction(), getHighBid()">
+  <div v-on="getEndedAuction()">
     <div
       v-if="auctionEnded === true && isMyBid === true"
       class="col-xs-12 col-sm-12 col-md-4 col column justify-center "
@@ -22,7 +22,7 @@
     </div>
     <!-- 2 -->
     <div
-      v-if-else="auctionEnded === false && isMyBid === true"
+      v-else-if="auctionEnded === false && isMyBid === true"
       class="col-xs-12 col-sm-12 col-md-4 col column justify-center "
     >
       <div
@@ -43,7 +43,7 @@
     </div>
     <!-- 3 -->
     <div
-      v-if-else="auctionEnded === false && isMyBid === false"
+      v-else-if="auctionEnded === false && isMyBid === false"
       class="col-xs-12 col-sm-12 col-md-4 col column justify-center "
     >
       <div
@@ -64,7 +64,7 @@
     </div>
     <!-- 4 -->
     <div
-      v-if-else="auctionEnded === true && isMyBid === false"
+      v-else-if="auctionEnded === true && isMyBid === false"
       class="col-xs-12 col-sm-12 col-md-4 col column justify-center "
     >
       <div
@@ -109,6 +109,7 @@ export default class BidsStatus extends Vue.with(Props) {
 
   getEndedAuction() {
     this.auctionEnded = this.bidsAuctions.ended;
+    this.getHighBid();
   }
 
   getHighBid() {

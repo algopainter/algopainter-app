@@ -105,21 +105,11 @@
           vertical
           inset
         />
-        <div class="col-xs-12 col-sm-12 col-md-4 col column justify-center ">
-          <div class="text-bold text-h5 row justify-center">
-            {{ $t('dashboard.bid.youNow') }}
-          </div>
-          <div class="text-bold row text-center">
-            {{ $t('dashboard.bid.congratulations') }}
-          </div>
-          <div class="row justify-center q-mt-md">
-            <algo-button
-              size="lg"
-              color="primary"
-              :label="$t('dashboard.bid.clain')"
-            />
-          </div>
-        </div>
+        <BidsStatus
+          :index="index"
+          :auctions-bid="auctionsBid"
+          :account-adress="accountAdress"
+        />
       </q-card>
     </div>
   </div>
@@ -132,10 +122,12 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import moment from 'moment';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import BidsStatus from './BidsStatus.vue';
 
 @Options({
   components: {
     AlgoButton,
+    BidsStatus,
   },
 })
 
@@ -143,6 +135,8 @@ export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
 lastBidLength?: number;
 loading: boolean = true;
+statusAuction: boolean = false;
+isMyBid: boolean = false;
 
 @Watch('accountAdress')
 onPropertyChanged() {
@@ -187,6 +181,13 @@ bidCorreting(bids: number) {
     maximumFractionDigits: 18,
   } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 }
+
+  // if(leilao acabou || ele for o maior bid){
+  //  fimleilao = 0
+  // } if-else(leilao ainda nao acabou || vc foi o maior lance){
+  //  fimleilao = 1
+  // }
+  // }
 }
 </script>
 <style lang="scss">

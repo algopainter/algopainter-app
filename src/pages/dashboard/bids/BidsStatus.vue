@@ -1,7 +1,5 @@
 <template>
-  <div
-    v-on="getEndedAuction(index), getHighBid(index)"
-  >
+  <div>
     {{ index }} {{ isMyBid }} {{ statusAuction }}
     <div
       v-if="statusAuction === false && isMyBid === true"
@@ -76,22 +74,22 @@ export default class BidsStatus extends Vue.with(Props) {
   //   console.log(this.auctionsBid[index]);
   // }
 
-  getEndedAuction(index: number) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    this.statusAuction = this.auctionsBid[index].ended;
-  }
+  // getEndedAuction(index: number) {
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  //   this.statusAuction = this.auctionsBid[index].ended;
+  // }
 
-  getHighBid(index: number) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const highBid = this.auctionsBid[index].highestBid.account;
+  // getHighBid(index: number) {
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //   const highBid = this.auctionsBid[index].highestBid.account;
 
-    if (highBid === this.accountAdress) {
-      this.isMyBid = true;
-    } else {
-      this.isMyBid = false;
-    }
-    console.log(this.isMyBid);
-  }
+  //   if (highBid === this.accountAdress) {
+  //     this.isMyBid = true;
+  //   } else {
+  //     this.isMyBid = false;
+  //   }
+  //   console.log(this.isMyBid);
+  // }
 }
 </script>
 <style scoped>

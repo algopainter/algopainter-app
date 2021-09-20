@@ -18,7 +18,9 @@
         class="row justify-center container-bids"
         bordered
       >
-        <div class="col-xs-12 col-sm-12 col-md-7">
+        <div
+          class="col-xs-12 col-sm-12 col-md-7"
+        >
           <BidsInfor
             :bids-auctions="bid"
             :index="index"
@@ -28,9 +30,13 @@
           vertical
           inset
         />
-        <BidsStatus
-          :bids-auctions="bid"
-        />
+        <div
+          class="col-xs-12 col-sm-12 col-md-4 row items-center q-mx-lg"
+        >
+          <BidsStatus
+            :bids-auctions="bid"
+          />
+        </div>
       </q-card>
     </div>
   </div>
@@ -55,7 +61,6 @@ import BidsInfor from './BidsInfor.vue';
 
 export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
-lastBidLength?: number;
 loading: boolean = true;
 dias: number = 0
 
@@ -82,11 +87,6 @@ getBids() {
     this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
     this.loading = false;
   });
-}
-
-getLastBid(index: number) {
-  const lastBidAuctions = this.auctionsBid[index].bids;
-  this.lastBidLength = lastBidAuctions.length - 1;
 }
 
   // dataMoment(index: number, format: string) {
@@ -141,9 +141,9 @@ getLastBid(index: number) {
 </script>
 <style lang="scss">
 .container-bids{
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 20px;
+//   max-width: 100%;
+//   max-height: 100%;
+//   border-radius: 20px;
   padding: 20px;
   margin: 10px;
 }

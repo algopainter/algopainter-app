@@ -73,7 +73,7 @@
                 class="q-pa-none q-pt-md"
                 name="history"
               >
-                <auction-history :users="auction.users" />
+                <auction-history :auction="auction" />
               </q-tab-panel>
             </q-tab-panels>
           </div>

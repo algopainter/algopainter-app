@@ -130,6 +130,7 @@ export default {
     creatingAuction: 'Creating auction',
     statuses: {
       contractApprove: 'Approve contract',
+      checkingContractApproved: 'Verifying if the contract is already approved',
       approveContractInput: 'Interact with your wallet to approve the auction smart contract',
       approveContractConfirmation: 'Awaiting for the blockchain confirmation',
       approveContractError: 'An error ocurred while trying to approve the auction smart contract',
@@ -152,6 +153,7 @@ export default {
     previousBid: 'Offered {bidPrice} for {bidAtInDays} days ago',
     previousBidBy: 'by {name}',
     noBids: 'There are no bids yet',
+    noOldOwners: 'There are no old owners yet',
     owner: 'Owner',
     oldOwner: 'Old Owner',
     previousOwners: 'Previous Owners',

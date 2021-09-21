@@ -59,11 +59,21 @@
                   <div class="text-bold">
                     {{ $t('dashboard.bid.winBid') }}
                   </div>
-                  <div class="text-bold">
-                    {{ getLastBid(index) }}{{ bid.bids[lastBidLength].tokenSymbol }} {{ bid.bids[lastBidLength].amount }}
-                  </div>
-                  <div>
-                    {{ $t('dashboard.bid.money') }}
+                  <div class="text-bold row">
+                    <div>
+                      {{ bid.bids[index].tokenSymbol }}
+                    </div>
+                    <div
+                      class="text-amount "
+                      v-on="getLastBid(index)"
+                    >
+                      {{ bidCorreting(bid.bids[lastBidLength].amount) }}
+                      <q-tooltip
+                        class="bg-primary"
+                      >
+                        {{ bid.bids[lastBidLength].tokenSymbol }} {{ bidCorreting(bid.bids[lastBidLength].amount) }}
+                      </q-tooltip>
+                    </div>
                   </div>
                 </div>
 
@@ -77,11 +87,13 @@
                     <div class="text-bold">
                       {{ $t('dashboard.bid.auctionEnd') }}
                     </div>
-                    <div class="text-bold">
-                      {{ dataMoment(index) }}{{ expirationDayMounth }}
+                    <div
+                      class="text-bold"
+                    >
+                      {{ dataMoment(auctionsBid[index].expirationDt, 'MMM DD') }}
                     </div>
                     <div>
-                      {{ expirationYear }}
+                      {{ dataMoment(auctionsBid[index].expirationDt, 'YYYY') }}
                     </div>
                   </div>
                 </div>
@@ -93,21 +105,11 @@
           vertical
           inset
         />
-        <div class="col-xs-12 col-sm-12 col-md-4 col column justify-center ">
-          <div class="text-bold text-h5 row justify-center">
-            {{ $t('dashboard.bid.youNow') }}
-          </div>
-          <div class="text-bold row text-center">
-            {{ $t('dashboard.bid.congratulations') }}
-          </div>
-          <div class="row justify-center q-mt-md">
-            <algo-button
-              size="lg"
-              color="primary"
-              :label="$t('dashboard.bid.clain')"
-            />
-          </div>
-        </div>
+        <BidsStatus
+          :index="index"
+          :auctions-bid="auctionsBid"
+          :account-adress="accountAdress"
+        />
       </q-card>
     </div>
   </div>
@@ -118,21 +120,23 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
-import Moment from 'moment';
+import moment from 'moment';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import BidsStatus from './BidsStatus.vue';
 
 @Options({
   components: {
     AlgoButton,
+    BidsStatus,
   },
 })
 
 export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
-lastBid: IAuctionItem[] = [];
-lastBidLength: number = 0;
-expirationDayMounth: string | unknown = '';
-expirationYear: string | unknown = '';
+lastBidLength?: number;
 loading: boolean = true;
+statusAuction: boolean = false;
+isMyBid: boolean = false;
 
 @Watch('accountAdress')
 onPropertyChanged() {
@@ -152,7 +156,6 @@ getBids() {
   void this.$store.dispatch({
     type: 'auctions/getBids',
     account: this.accountAdress,
-
   }).then(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
@@ -161,18 +164,30 @@ getBids() {
 }
 
 getLastBid(index: number) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   const lastBidAuctions = this.auctionsBid[index].bids;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   this.lastBidLength = lastBidAuctions.length - 1;
 }
 
-dataMoment(index: number) {
-  const dayMounth = this.auctionsBid[index].expirationDt;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
-  this.expirationDayMounth = Moment(dayMounth).format('DD MMM');
-  this.expirationYear = Moment(dayMounth).format('YYYY');
+dataMoment(index: number, format: string) {
+  return moment(index).format(format);
 }
+
+bidCorreting(bids: number) {
+  const amount = blockchainToCurrency(
+    bids,
+    18,
+  );
+  return this.$n(amount, 'decimal', {
+    maximumFractionDigits: 18,
+  } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
+  // if(leilao acabou || ele for o maior bid){
+  //  fimleilao = 0
+  // } if-else(leilao ainda nao acabou || vc foi o maior lance){
+  //  fimleilao = 1
+  // }
+  // }
 }
 </script>
 <style lang="scss">
@@ -181,6 +196,7 @@ dataMoment(index: number) {
   max-height: 100%;
   border-radius: 20px;
   padding: 20px;
+  margin: 10px;
 }
 .img{
   width: 250px;
@@ -194,6 +210,15 @@ dataMoment(index: number) {
   @media (max-width: $breakpoint-xs-max) {
     width: 100%;
   }
+}
+
+.text-amount{
+  margin-left: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 50px;
 }
 
 </style>

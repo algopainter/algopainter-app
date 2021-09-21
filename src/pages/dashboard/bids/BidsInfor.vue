@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
-  <div class="row q-gutter-md">
+  <div
+    class="row q-gutter-md"
+    v-on="getLastBid()"
+  >
     <q-img
       class="img"
       :src="bidsAuctions.item.previewImage"
@@ -42,17 +45,16 @@
           </div>
           <div class="text-bold row">
             <div>
-              {{ bidsAuctions.bids[index].tokenSymbol }}
+              {{ lastBidAuctions[0].tokenSymbol }}
             </div>
             <div
               class="text-amount"
-              v-on="getLastBid()"
             >
-              {{ bidCorreting(bidsAuctions.bids[index].amount) }}
+              {{ bidCorreting(lastBidAuctions[0].amount) }}
               <q-tooltip
                 class="bg-primary"
               >
-                {{ bidsAuctions.bids[index].tokenSymbol }} {{ bidCorreting(bidsAuctions.bids[index].amount) }}
+                {{ lastBidAuctions[0].tokenSymbol }} {{ bidCorreting(lastBidAuctions[0].amount) }}
               </q-tooltip>
             </div>
           </div>
@@ -71,7 +73,7 @@
             <div
               class="text-bold"
             >
-              {{ dataMoment(bidsAuctions.expirationDt, 'MMM DD') }} {{ date }}
+              {{ dataMoment(bidsAuctions.expirationDt, 'MMM DD') }}
             </div>
             <div>
               {{ dataMoment(bidsAuctions.expirationDt, 'YYYY') }}
@@ -87,7 +89,6 @@
 import { Vue, prop } from 'vue-class-component';
 import { takeLast } from 'ramda';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
-// import { now } from 'src/helpers/timer';
 import { PropType } from 'vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { IAuctionItem } from 'src/models/IAuctionItem';
@@ -100,52 +101,42 @@ class Props {
     required: true,
   })
 
-   index = prop({
-     type: Number,
-     required: true,
-   })
-
   accountAdress= prop({
     type: String,
     required: true,
   })
 }
 export default class BidsInfor extends Vue.with(Props) {
-lastBidAuctions: IBid[] = [];
+  lastBidAuctions!: IBid[];
 
-
-dataMoment(index: string, format: string) {
-  return moment(index).format(format);
-}
-
-getLastBid(): void {
-  this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
-}
-
-//  get now() {
-//    const date = now();
-//  }
-
-get coinDetails() {
-  const coin = auctionCoins.find((coin) => {
-    return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
-  });
-
-  if (!coin) {
-    throw new Error('COIN_NOT_FOUND');
+  dataMoment(index: string, format: string) {
+    return moment(index).format(format);
   }
 
-  return coin;
-}
+  getLastBid(): void {
+    this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
+  }
 
-bidCorreting(bids: number) {
-  const amount = blockchainToCurrency(
-    bids,
-    this.coinDetails.decimalPlaces,
-  );
-  return this.$n(amount, 'decimal', {
-    maximumFractionDigits: this.coinDetails.decimalPlaces,
-  } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
-}
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
+
+  bidCorreting(bids: number) {
+    const amount = blockchainToCurrency(
+      bids,
+      this.coinDetails.decimalPlaces,
+    );
+    return this.$n(amount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
+  }
 }
 </script>

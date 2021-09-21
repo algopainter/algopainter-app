@@ -1,28 +1,27 @@
 <template>
   <div
-    class="row justify-center col-12"
-    v-on="getEndedAuction()"
+    class="row justify-center"
   >
-    <!-- v-if="auctionEnded === true && isMyBid === true" -->
     <div
+      v-if="endedAuction === true && isMyBid === true"
       class="text-bold text-center q-my-md"
     >
       <div>
         {{ $t('dashboard.bid.youNow') }}
       </div>
-      <div class="box">
+      <div class="box q-mb-md">
         {{ $t('dashboard.bid.congratulations') }}
       </div>
+      <div class="row justify-center">
+        <algo-button
+          size="lg"
+          color="primary"
+          :label=" $t('dashboard.bid.clain')"
+        />
+      </div>
     </div>
-    <algo-button
-      size="lg"
-      color="primary"
-      :label=" $t('dashboard.bid.clain')"
-    />
-    <!-- 2 -->
-    <!-- v-else-if="auctionEnded === false && isMyBid === true" -->
     <div
-      class=""
+      v-else-if="endedAuction === false && isMyBid === true"
     >
       <div
         class="text-bold text-positive flex justify-center"
@@ -50,7 +49,7 @@
           </div>
         </div>
       </div>
-      <div>
+      <div class="row justify-center">
         <algo-button
           size="lg"
           color="primary"
@@ -58,9 +57,9 @@
         />
       </div>
     </div>
-    <!-- 3 -->
-    <!-- v-else-if="auctionEnded === false && isMyBid === false" -->
-    <div>
+    <div
+      v-else-if="endedAuction === false && isMyBid === false"
+    >
       <div
         class="text-negative flex justify-center"
       >
@@ -93,15 +92,20 @@
         </div>
       </div>
     </div>
-    <!-- 4 -->
-    <!-- v-else-if="auctionEnded === true && isMyBid === false" -->
-    <div>
-      <div class="row justify-center q-my-md text-bold">
+    <div
+      v-else-if="endedAuction === true && isMyBid === false"
+    >
+      <div class="row text-h6 text-bold text-center justify-center q-my-md">
         <div>
-          {{ bidsAuctions.highestBid.tokenSymbol }}
-        </div>
-        <div class="q-ml-sm ">
-          {{ bidCorreting(MyHighBid) }}
+          {{ $t('dashboard.bid.yourBid') }}
+          <div class="row justify-center q-my-md text-bold">
+            <div>
+              {{ bidsAuctions.highestBid.tokenSymbol }}
+            </div>
+            <div class="q-ml-sm ">
+              {{ bidCorreting(MyHighBid) }}
+            </div>
+          </div>
         </div>
       </div>
       <div>
@@ -123,6 +127,7 @@ import { PropType } from 'vue';
 import { last } from 'ramda';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import moment from 'moment';
 
 class Props {
   bidsAuctions= prop({
@@ -137,7 +142,6 @@ class Props {
   },
 })
 export default class BidsStatus extends Vue.with(Props) {
-  auctionEnded: boolean = false;
   isMyBid: boolean = false;
   coinLastBid?: string;
 
@@ -146,9 +150,18 @@ export default class BidsStatus extends Vue.with(Props) {
     return this.$store.getters['user/account'] as string;
   }
 
-  getEndedAuction() {
-    this.auctionEnded = this.bidsAuctions.ended;
+  get endedAuction() {
+    const dataEndedAuction = this.bidsAuctions.expirationDt;
+    const momentApi = moment(dataEndedAuction).format('X') as unknown as number;
+    const momentToday = moment().format('X') as unknown as number;
+
     this.getHighBid();
+
+    if (momentApi <= momentToday) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   getHighBid() {
@@ -196,17 +209,10 @@ export default class BidsStatus extends Vue.with(Props) {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
   }
-
-  timeEndAuction() {
-    // pegar a data final do leilão
-    // pegar a data de hoje
-    // verificar se a data de hoje é menor ou igual a data do final do leilão
-    // retonar true or false
-  }
 }
 </script>
 <style scoped>
-  .box{
+ .box{
     width: 250px;
   }
 </style>

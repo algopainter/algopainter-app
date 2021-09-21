@@ -15,7 +15,7 @@
       <q-card
         v-for="(bid, index) in auctionsBid"
         :key="index"
-        class="row justify-center container-bids"
+        class="row justify-between container-bids"
         bordered
       >
         <div
@@ -31,7 +31,7 @@
           inset
         />
         <div
-          class="col-xs-12 col-sm-12 col-md-4 row items-center q-mx-lg"
+          class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
         >
           <BidsStatus
             :bids-auctions="bid"
@@ -168,6 +168,10 @@ getBids() {
   white-space: nowrap;
   text-align: left;
   width: 50px;
+}
+
+.box{
+  width: 100%;
 }
 
 </style>

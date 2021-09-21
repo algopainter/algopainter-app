@@ -15,101 +15,28 @@
       <q-card
         v-for="(bid, index) in auctionsBid"
         :key="index"
-        class="row justify-center container-bids"
+        class="row justify-between container-bids"
         bordered
       >
-        <div class="col-xs-12 col-sm-12 col-md-7">
-          <div class="row q-gutter-md">
-            <q-img
-              class="img"
-              :src="bid.item.previewImage"
-            />
-            <div class="text-title">
-              <p class="text-bold">
-                {{ bid.item.title }}
-              </p>
-              <p>
-                {{ bid.item.description }}
-              </p>
-              <div class="row q-gutter-sm">
-                <div
-                  v-for="(user, i) in bid.users"
-                  :key="i"
-                  class="row"
-                >
-                  <router-link :to="{name: 'customUrl', params: { customUrl: user.customProfile || user.account } }">
-                    <q-avatar
-                      size="lg"
-                      round
-                    >
-                      <img
-                        :src="user.avatar || '/placeholder-images/do-utilizador.png'"
-                      >
-                      <q-tooltip
-                        class="bg-primary"
-                      >
-                        {{ user.role }}{{ $t('dashboard.homePage.colon') }} {{ user.name }}
-                      </q-tooltip>
-                    </q-avatar>
-                  </router-link>
-                </div>
-              </div>
-              <div class="row q-mt-xl q-gutter-sm text-center">
-                <div class="col">
-                  <div class="text-bold">
-                    {{ $t('dashboard.bid.winBid') }}
-                  </div>
-                  <div class="text-bold row">
-                    <div>
-                      {{ bid.bids[index].tokenSymbol }}
-                    </div>
-                    <div
-                      class="text-amount "
-                      v-on="getLastBid(index)"
-                    >
-                      {{ bidCorreting(bid.bids[lastBidLength].amount) }}
-                      <q-tooltip
-                        class="bg-primary"
-                      >
-                        {{ bid.bids[lastBidLength].tokenSymbol }} {{ bidCorreting(bid.bids[lastBidLength].amount) }}
-                      </q-tooltip>
-                    </div>
-                  </div>
-                </div>
-
-                <q-separator
-                  vertical
-                  inset
-                />
-
-                <div class="col">
-                  <div>
-                    <div class="text-bold">
-                      {{ $t('dashboard.bid.auctionEnd') }}
-                    </div>
-                    <div
-                      class="text-bold"
-                    >
-                      {{ dataMoment(auctionsBid[index].expirationDt, 'MMM DD') }}
-                    </div>
-                    <div>
-                      {{ dataMoment(auctionsBid[index].expirationDt, 'YYYY') }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div
+          class="col-xs-12 col-sm-12 col-md-7"
+        >
+          <BidsInfor
+            :bids-auctions="bid"
+            :index="index"
+          />
         </div>
         <q-separator
           vertical
           inset
         />
-        <BidsStatus
-          :index="index"
-          :auctions-bid="auctionsBid"
-          :account-adress="accountAdress"
-        />
+        <div
+          class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
+        >
+          <BidsStatus
+            :bids-auctions="bid"
+          />
+        </div>
       </q-card>
     </div>
   </div>
@@ -120,23 +47,22 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
-import moment from 'moment';
-import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+// import moment from 'moment'
 import BidsStatus from './BidsStatus.vue';
+import BidsInfor from './BidsInfor.vue';
 
 @Options({
   components: {
     AlgoButton,
     BidsStatus,
+    BidsInfor,
   },
 })
 
 export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
-lastBidLength?: number;
 loading: boolean = true;
-statusAuction: boolean = false;
-isMyBid: boolean = false;
+dias: number = 0
 
 @Watch('accountAdress')
 onPropertyChanged() {
@@ -163,38 +89,61 @@ getBids() {
   });
 }
 
-getLastBid(index: number) {
-  const lastBidAuctions = this.auctionsBid[index].bids;
-  this.lastBidLength = lastBidAuctions.length - 1;
-}
-
-dataMoment(index: number, format: string) {
-  return moment(index).format(format);
-}
-
-bidCorreting(bids: number) {
-  const amount = blockchainToCurrency(
-    bids,
-    18,
-  );
-  return this.$n(amount, 'decimal', {
-    maximumFractionDigits: 18,
-  } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
-}
-
-  // if(leilao acabou || ele for o maior bid){
-  //  fimleilao = 0
-  // } if-else(leilao ainda nao acabou || vc foi o maior lance){
-  //  fimleilao = 1
+  // dataMoment(index: number, format: string) {
+  //   return moment(index).format(format);
   // }
+
+  // contagemRegression() {
+  //   const data = this.auctionsBid.expirationDt;
+  //   console.log('data', data )
+  //   const falta = (new Date(data).getTime() - new Date().getTime()) / 1000;
+  //   const segundos = Math.round(falta % 60);
+  //   const minutos = Math.round(falta / 60 % 60);
+  //   const horas = Math.round(falta / 60 / 60 % 24);
+  //   this.dias = Math.round(falta / 60 / 60 / 24);
+  //   console.log('data que falta', this.dias, horas, minutos, segundos);
+
+  //   const hoje = new Date();
+  //   // var futuro = new Date(YY,MM-1,DD,HH,MI,SS);
+
+  //   // const futuro =
+
+  //  const hourMoment = moment(this.auctionsBid[0].expirationDt).format('h');
+  //  const HourFuture = parseInt(hourMoment);
+
+  //  const minunteMoment = moment(this.auctionsBid[0].expirationDt).format('mm');
+  //  const minunteFuture = parseInt(minunteMoment);
+
+  //   const secondMoment = moment(this.auctionsBid[0].expirationDt).format('ss');
+  //   const secondFuture = parseInt(secondMoment);
+  //   const futuroYear = new Date(this.auctionsBid[0].expirationDt).getFullYear();
+  //   const futuroMouth = new Date(this.auctionsBid[0].expirationDt).getUTCMonth() + 1;
+  //   const futuroDay = new Date(this.auctionsBid[0].expirationDt).getUTCDate();
+
+  //   const dateFuture = `${futuroYear} ${futuroMouth} ${futuroDay} ${hourMoment} ${minunteMoment} ${secondMoment}`;
+  //   console.log('dateFuture', dateFuture);
+
+  //   // const year = new Date().getFullYear();
+  //   // const month = new Date().getUTCMonth() + 1;
+  //   // const day = new Date().getUTCDate();
+  //   // const hour = new Date(). ;
+  //   // const min = new Date()
+
+  //   const minuts = parseInt(minunteFuture / 60, 10)
+  //   const seconds = parseInt(secondFuture % 60, 10);
+  //   const minutus = minuts < 10 ? "0" + minuts : minuts;
+  //   const secondus = seconds < 10 ? "0" + seconds : seconds;
+  //   const timers = minutus + ":" + secondus;
+  //   console.log('timers', timers)
   // }
 }
+// }
 </script>
 <style lang="scss">
 .container-bids{
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 20px;
+//   max-width: 100%;
+//   max-height: 100%;
+//   border-radius: 20px;
   padding: 20px;
   margin: 10px;
 }
@@ -219,6 +168,10 @@ bidCorreting(bids: number) {
   white-space: nowrap;
   text-align: left;
   width: 50px;
+}
+
+.box{
+  width: 100%;
 }
 
 </style>

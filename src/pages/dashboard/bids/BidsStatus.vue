@@ -7,7 +7,7 @@
       class="text-bold text-center q-my-md"
     >
       <div>
-        {{ $t('dashboard.bid.youNow') }}
+        {{ $t('dashboard.bid.youWon') }}
       </div>
       <div class="box q-mb-md">
         {{ $t('dashboard.bid.congratulations') }}
@@ -42,10 +42,10 @@
         </div>
         <div class="row justify-center ">
           <div>
-            {{ bidsAuctions.highestBid.tokenSymbol }}
+            {{ bidCorreting(bidsAuctions.highestBid.amount) }}
           </div>
           <div class="q-ml-sm">
-            {{ bidCorreting(bidsAuctions.highestBid.amount) }}
+            {{ bidsAuctions.highestBid.tokenSymbol }}
           </div>
         </div>
       </div>
@@ -76,10 +76,10 @@
           {{ $t('dashboard.bid.yourBid') }}
           <div class="row justify-center">
             <div>
-              {{ bidsAuctions.highestBid.tokenSymbol }}
+              {{ bidCorreting(MyHighBid) }}
             </div>
             <div class="q-ml-sm">
-              {{ bidCorreting(MyHighBid) }}
+              {{ bidsAuctions.highestBid.tokenSymbol }}
             </div>
           </div>
         </div>
@@ -100,10 +100,10 @@
           {{ $t('dashboard.bid.yourBid') }}
           <div class="row justify-center q-my-md text-bold">
             <div>
-              {{ bidsAuctions.highestBid.tokenSymbol }}
+              {{ bidCorreting(MyHighBid) }}
             </div>
             <div class="q-ml-sm ">
-              {{ bidCorreting(MyHighBid) }}
+              {{ bidsAuctions.highestBid.tokenSymbol }}
             </div>
           </div>
         </div>

@@ -33,16 +33,16 @@
     </div>
   </div>
   <div
-    class="row"
+    class="row justify-center"
   >
     <div
       v-if="!galleryTabs[0].loadingButtons && currentBtnClicked === galleryTabs[0].btnIndex"
-      class=" col-md-9 col-lg-9 flex q-col-gutter-md"
+      class=" col-12 flex q-col-gutter-md justify-center"
     >
       <div v-if="!galleryTabs[0].loadingData">
         <div
           v-if="!galleryTabs[0].noData"
-          class="col-md-9 col-lg-9 flex q-col-gutter-md"
+          class="col-12 flex q-col-gutter-md justify-center"
         >
           <div
             v-for="(item, index) in galleryTabs[0].data"
@@ -59,7 +59,7 @@
         </div>
         <div
           v-else
-          class="col-md-9 col-sm-12 col-lg-9 q-mt-lg"
+          class="col-12 q-mt-lg justify-center"
         >
           <p class="text-h6 text-primary text-center q-pb-md text-noItems">
             {{ $t('dashboard.homePage.personalNoItems') }}
@@ -100,7 +100,7 @@
     </div>
     <div
       v-else-if="currentBtnClicked === galleryTabs[0].btnIndex"
-      class="col-12 col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-12 flex q-col-gutter-md justify-center"
     >
       <MyGallerySkeleton
         :buttons="true"
@@ -108,14 +108,14 @@
     </div>
     <div
       v-else-if="currentBtnClicked === galleryTabs[1].btnIndex"
-      class="col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-12 flex q-col-gutter-md justify-center"
     >
       <div
         v-if="!galleryTabs[1].loadingData"
       >
         <div
           v-if="!galleryTabs[1].noData"
-          class=" col-md-9 col-lg-9 flex q-col-gutter-md"
+          class=" col-12 flex q-col-gutter-md"
         >
           <div
             v-for="(item, index) in galleryTabs[1].data"
@@ -132,7 +132,7 @@
         </div>
         <div
           v-else
-          class=" col-md-9 col-lg-9 q-mt-lg"
+          class=" col-12 q-mt-lg"
         >
           <div class="text-h6 text-primary text-center q-pb-md">
             {{ $t('dashboard.homePage.noItemsForSalePrivate1') }}
@@ -178,14 +178,14 @@
     </div>
     <div
       v-else-if="currentBtnClicked === galleryTabs[2].btnIndex"
-      class="col-md-9 col-lg-9 flex q-col-gutter-md"
+      class="col-12 flex q-col-gutter-md justify-center"
     >
       <div
         v-if="!galleryTabs[2].loadingData"
       >
         <div
           v-if="!galleryTabs[2].noData"
-          class=" col-md-9 col-lg-9 flex q-col-gutter-md"
+          class=" col-12 flex q-col-gutter-md justify-center"
         >
           <div
             v-for="(item, index) in galleryTabs[2].data"
@@ -201,7 +201,7 @@
         </div>
         <div
           v-else
-          class=" col-md-9 col-lg-9 q-mt-lg"
+          class=" col-12 q-mt-lg justify-center"
         >
           <div class="text-h6 text-primary text-center q-pb-md">
             {{ $t('dashboard.homePage.noItems') }}

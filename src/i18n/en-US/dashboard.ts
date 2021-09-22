@@ -241,8 +241,6 @@ export default {
     hours: 'Hours',
     minis: 'Mins',
     seconds: 'Secs',
-    noBids: 'No bids here yet...',
-    goingOnce: 'Going once, going twice, sold!',
     outbid: 'Outbid',
     win: "You're winning!",
     yourBid: 'Your Bid',

@@ -89,10 +89,10 @@ getBids() {
   });
 }
 
-getLastBid(index: number) {
-  const lastBidAuctions = this.auctionsBid[index].bids;
-  this.lastBidLength = lastBidAuctions.length - 1;
-}
+  // getLastBid(index: number) {
+  //   const lastBidAuctions = this.auctionsBid[index].bids;
+  //   this.lastBidLength = lastBidAuctions.length - 1;
+  // }
 }
 
 </script>

@@ -7,7 +7,7 @@
         {{ $t('dashboard.bid.noBids') }}
       </div>
       <div class="text-bold text-h5 text-center">
-        {{ $t('dashboard.bid.goingOnce') }}
+        {{ $t('dashboard.bid.goingOnce' ) }}
       </div>
     </div>
 

@@ -231,7 +231,7 @@ export default {
     clain: 'Clain your NFT',
     winBid: 'Winning bid',
     auctionEnd: 'Auction ended',
-    auctionTime: 'Auction ended in',
+    auctionTime: 'Auction ends in ',
     money: '$500.00',
     noBids: 'No bids here yet...',
     goingOnce: 'Going once, going twice, sold!',

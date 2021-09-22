@@ -41,17 +41,17 @@
           </div>
           <div class="text-bold row">
             <div>
-              {{ bidsAuctions.bids[index].tokenSymbol }}
+              {{ bidsAuctions.highestBid.tokenSymbol }}
             </div>
             <div
               class="text-amount"
               v-on="getLastBid()"
             >
-              {{ bidCorreting(bidsAuctions.bids[index].amount) }}
+              {{ bidCorreting(bidsAuctions.highestBid.amount) }}
               <q-tooltip
                 class="bg-primary"
               >
-                {{ bidsAuctions.bids[index].tokenSymbol }} {{ bidCorreting(bidsAuctions.bids[index].amount) }}
+                {{ bidsAuctions.highestBid.tokenSymbol }} {{ bidCorreting(bidsAuctions.highestBid.amount) }}
               </q-tooltip>
             </div>
           </div>
@@ -83,6 +83,12 @@
             >
               {{ $t('dashboard.bid.auctionTime') }}
               <div
+                class="text-bold"
+              >
+                {{ monthExpirations }}  <span class="text-h6 text-bold"> {{ dayExpirations }} </span>
+              </div>
+              <p> {{ yearExpirations }} </p>
+              <!-- <div
 
                 class="row  justify-start time q-gutter-sm"
               >
@@ -111,7 +117,7 @@
                   </p>
                   <span>{{ $t('dashboard.bid.seconds') }}</span>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -129,7 +135,8 @@ import { PropType } from 'vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IBid } from 'src/models/IBid';
-import moment from 'moment';
+// eslint-disable-next-line import/named
+import moment, { Duration } from 'moment';
 import { Watch } from 'vue-property-decorator';
 import 'moment-duration-format';
 
@@ -159,7 +166,7 @@ export default class BidsInfor extends Vue.with(Props) {
 lastBidAuctions: IBid[] = [];
 dias: number = 0;
 segundos: number = 0;
-time: string = ''
+time!: Duration ;
 monthExpirations: string = ''
 dayExpirations: string = ''
 yearExpirations: string = ''
@@ -199,12 +206,11 @@ onPropertyChanged() {
  getTime() {
    const newEnded = moment(this.bidsAuctions.expirationDt);
    const timeLeft = moment.duration(newEnded.diff(moment()));
-   this.time = timeLeft;
+   this.time = timeLeft as unknown as Duration;
  }
 
  get Dias() {
    if (this.time) {
-     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
      return this.time.days();
    }
    return 0;
@@ -212,7 +218,6 @@ onPropertyChanged() {
 
  get Horas() {
    if (this.time) {
-     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
      return this.time.hours();
    }
    return 0;
@@ -220,7 +225,6 @@ onPropertyChanged() {
 
  get Minutos() {
    if (this.time) {
-     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
      return this.time.minutes();
    }
    return 0;
@@ -228,7 +232,6 @@ onPropertyChanged() {
 
  get Segundos() {
    if (this.time) {
-     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
      return this.time.seconds();
    }
    return 0;

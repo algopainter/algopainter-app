@@ -233,6 +233,7 @@ export default {
     clain: 'CLAIM',
     winBid: 'Winning bid',
     auctionEnd: 'Auction ended',
+    auctionText: 'Auction ends in ',
     noBids: 'No bids here yet...',
     goingOnce: 'Going once, going twice, sold!',
     outbid: 'Outbid',

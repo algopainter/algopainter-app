@@ -195,7 +195,7 @@ export default class SellYourArt extends Vue {
 
   get allowedCoins() {
     return auctionCoins.filter((rawCoin) => {
-      return this.allowedTokens[rawCoin.tokenAddress];
+      return this.allowedTokens[rawCoin.tokenAddress.toLowerCase()];
     });
   }
 
@@ -263,7 +263,7 @@ export default class SellYourArt extends Vue {
       const tokens = await this.auctionSystem.getAllowedTokens();
 
       this.allowedTokens = tokens.reduce((curr, token) => {
-        return { ...curr, [token]: true };
+        return { ...curr, [token.toLowerCase()]: true };
       }, {});
 
       this.loadingCoins = false;

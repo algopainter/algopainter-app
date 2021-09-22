@@ -1,5 +1,8 @@
 <template>
-  <div class="row q-gutter-md">
+  <div
+    class="row q-gutter-md"
+    v-on="getLastBid()"
+  >
     <q-img
       class="img"
       :src="bidsAuctions.item.previewImage"
@@ -45,7 +48,6 @@
             </div>
             <div
               class="text-amount"
-              v-on="getLastBid()"
             >
               {{ bidCorreting(bidsAuctions.highestBid.amount) }}
               <q-tooltip
@@ -145,11 +147,6 @@ class Props {
     type: Object as PropType<IAuctionItem>,
     required: true,
   })
-
-   index = prop({
-     type: Number,
-     required: true,
-   })
 
   accountAdress= prop({
     type: String,

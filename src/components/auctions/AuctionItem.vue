@@ -69,13 +69,27 @@
                 v-if="lastValueBid < 0"
                 class="price"
               >
-                <div>{{ isHot.minimumBid.tokenSymbol + ' ' + bidValue(isHot.minimumBid.amount) }}</div>
+                <div class="row">
+                  <div class="ellipsis q-mr-xs">
+                    {{ bidValue(isHot.minimumBid.amount) }}
+                  </div>
+                  <div>
+                    {{ isHot.minimumBid.tokenSymbol }}
+                  </div>
+                  <q-tooltip
+                    anchor="top middle"
+                    self="center middle"
+                    class="bg-primary"
+                  >
+                    {{ bidValue(isHot.minimumBid.amount) + ' ' + isHot.minimumBid.tokenSymbol }}
+                  </q-tooltip>
+                </div>
               </div>
               <div
                 v-else
                 class="price"
               >
-                {{ isHot.bids[lastValueBid].tokenSymbol + ' ' + bidValue(isHot.bids[lastValueBid].amount) }}
+                {{ bidValue(isHot.bids[lastValueBid].amount) + ' ' + isHot.bids[lastValueBid].tokenSymbol }}
               </div>
             </div>
           </template>
@@ -134,6 +148,7 @@ export default class AuctionItem extends Vue.with(Props) {
   bidderTrue: string = '';
   lastBidLength: number = 0;
   lastValueBid: number = 0;
+  valueCoin!: string;
 
   // usersOwner: unknown;
   // isHotUnkown: unknown;
@@ -258,6 +273,16 @@ export default class AuctionItem extends Vue.with(Props) {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
+
+  // get reductionBidValue() {
+  //   const coinReduction = this.valueCoin as unknown as number;
+  //   return UserUtils.formatAccountBalance(coinReduction, 2);
+  // }
+
+  // showValue(bids: number) {
+  //   this.bidValue(bids);
+  //   return this.reductionBidValue;
+  // }
 }
 </script>
 
@@ -320,6 +345,14 @@ export default class AuctionItem extends Vue.with(Props) {
 
   .btn-place-a-bid{
     width: 300px;
+  }
+
+  .ellipsis{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    max-width: 120px;
   }
 }
 

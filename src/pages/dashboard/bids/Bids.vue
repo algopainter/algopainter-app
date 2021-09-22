@@ -15,10 +15,12 @@
       <q-card
         v-for="(bid, index) in auctionsBid"
         :key="index"
-        class="row justify-center container-bids"
+        class="row justify-between container-bids"
         bordered
       >
-        <div class="col-xs-12 col-sm-12 col-md-7">
+        <div
+          class="col-xs-12 col-sm-12 col-md-7"
+        >
           <BidsInfor
             :bids-auctions="bid"
             :index="index"
@@ -28,9 +30,13 @@
           vertical
           inset
         />
-        <BidsStatus
-          :bids-auctions="bid"
-        />
+        <div
+          class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
+        >
+          <BidsStatus
+            :bids-auctions="bid"
+          />
+        </div>
       </q-card>
     </div>
   </div>
@@ -55,7 +61,6 @@ import BidsInfor from './BidsInfor.vue';
 
 export default class Bids extends Vue {
 auctionsBid: IAuctionItem[] = [];
-lastBidLength?: number;
 loading: boolean = true;
 dias: number = 0
 
@@ -92,7 +97,10 @@ getLastBid(index: number) {
 
 </script>
 <style lang="scss">
-
+.container-bids{
+  padding: 20px;
+  margin: 10px;
+}
 .img{
   width: 250px;
   @media (max-width: $breakpoint-xs-max) {
@@ -114,6 +122,10 @@ getLastBid(index: number) {
   white-space: nowrap;
   text-align: left;
   width: 50px;
+}
+
+.box{
+  width: 100%;
 }
 
 </style>

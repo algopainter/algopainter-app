@@ -11,6 +11,9 @@
       <q-card-section>
         <q-form>
           <div>
+            {{ `${minimumLabel}:` }} {{ minimumValue }} {{ auction.minimumBid.tokenSymbol }}
+          </div>
+          <div>
             <q-input
               v-model="bidValue"
               :label="$t('dashboard.auctionPage.amount')"
@@ -49,7 +52,7 @@ import { Vue, Options, Ref, Prop } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import { mapGetters } from 'vuex';
 
-import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
@@ -59,6 +62,7 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import NewBidStatusCard from './NewBidStatusCard.vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 
 enum PlacingBidStatus {
   CheckingAllowance,
@@ -88,7 +92,7 @@ export default class NewBidDialog extends Vue {
   @Prop() auction!: IAuctionItem;
 
   auctionSystem!: AlgoPainterAuctionSystemProxy;
-  algopToken!: AlgoPainterTokenProxy;
+  auctionCoinTokenProxy!: ERC20TokenProxy;
   networkInfo!: NetworkInfo;
   userAccount!: string;
 
@@ -115,10 +119,28 @@ export default class NewBidDialog extends Vue {
     return coin;
   }
 
+  get minimumLabel() {
+    const { highestBid } = this.auction;
+    return highestBid ? 'Highest bid' : 'Minimum bid';
+  }
+
+  get minimumValue() {
+    const { highestBid, minimumBid } = this.auction;
+    const { decimalPlaces } = this.coinDetails;
+
+    const value = highestBid ? highestBid.amount : minimumBid.amount;
+
+    const amount = blockchainToCurrency(value, decimalPlaces);
+
+    return this.$n(amount, 'decimal', {
+      maximumFractionDigits: decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
   mounted() {
     this.show();
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.algopToken = new AlgoPainterTokenProxy(this.networkInfo);
+    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.auction.minimumBid.tokenPriceAddress);
   }
 
   show() {
@@ -136,13 +158,13 @@ export default class NewBidDialog extends Vue {
   async approveContractTransfer(amount: number) {
     this.placingBidStatus = PlacingBidStatus.CheckingAllowance;
 
-    const allowance = await this.algopToken
+    const allowance = await this.auctionCoinTokenProxy
       .allowance(this.userAccount, this.auctionSystemContractAddress);
 
     if (allowance < amount) {
       this.placingBidStatus = PlacingBidStatus.IncreateAllowanceAwaitingInput;
 
-      await this.algopToken.approve(
+      await this.auctionCoinTokenProxy.approve(
         this.auctionSystemContractAddress,
         numberToString(amount),
         this.userAccount,

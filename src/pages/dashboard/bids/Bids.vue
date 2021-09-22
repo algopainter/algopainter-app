@@ -88,13 +88,8 @@ getBids() {
     this.loading = false;
   });
 }
-
-  // getLastBid(index: number) {
-  //   const lastBidAuctions = this.auctionsBid[index].bids;
-  //   this.lastBidLength = lastBidAuctions.length - 1;
-  // }
 }
-
+// }
 </script>
 <style lang="scss">
 .container-bids{

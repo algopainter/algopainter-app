@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div
     class="row q-gutter-md"
@@ -189,6 +190,7 @@ onPropertyChanged() {
  }
 
  getLastBid(): void {
+   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
    this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
  }
 

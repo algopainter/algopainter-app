@@ -168,6 +168,8 @@ export default class CreateAuctionStatusCard extends Vue {
   mounted() {
     setTimeout(() => { console.log('deletingAuction', this.deletingAuction); }, 3000);
     setTimeout(() => { console.log('createAuctionStatus', this.createAuctionStatus); }, 3000);
+    const today = new Date();
+    console.log(today);
   }
 
   get firstStepLabel() {

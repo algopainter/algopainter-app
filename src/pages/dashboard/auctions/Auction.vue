@@ -79,19 +79,20 @@
           </div>
           <div class="col-12">
             <algo-button
-              class="full-width q-py-sm"
-              color="primary"
-              outline
-              :label="$t('dashboard.auctionPage.placeABid')"
-              @click="openPlaceBidDialog"
-            />
-            <!--  v-if="account === auction.owner" -->
-            <algo-button
+              v-if="account === auction.owner"
               class="full-width q-py-sm q-mt-sm"
               color="primary"
               outline
               :label="$t('dashboard.auctionPage.cancelAuction')"
               @click="cancelAuction"
+            />
+            <algo-button
+              v-else
+              class="full-width q-py-sm"
+              color="primary"
+              outline
+              :label="$t('dashboard.auctionPage.placeABid')"
+              @click="openPlaceBidDialog"
             />
           </div>
         </div>

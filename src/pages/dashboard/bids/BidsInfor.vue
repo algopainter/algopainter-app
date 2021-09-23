@@ -1,3 +1,4 @@
+<!--
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div
@@ -140,3 +141,4 @@ export default class BidsInfor extends Vue.with(Props) {
   }
 }
 </script>
+-->

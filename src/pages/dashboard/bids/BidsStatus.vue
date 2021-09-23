@@ -1,3 +1,4 @@
+<!--
 <template>
   <div
     class="row justify-center"
@@ -216,3 +217,4 @@ export default class BidsStatus extends Vue.with(Props) {
     width: 250px;
   }
 </style>
+-->

@@ -181,6 +181,7 @@ export default {
       placeBidError: 'An error ocurred while trying to place a bid',
       placeBidAvailable: 'Bid placed successfully',
     },
+    cancelAuction: 'Cancel auction',
   },
   editProfile: {
     title: 'Edit Profile',

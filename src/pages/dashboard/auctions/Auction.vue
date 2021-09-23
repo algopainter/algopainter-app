@@ -85,6 +85,14 @@
               :label="$t('dashboard.auctionPage.placeABid')"
               @click="openPlaceBidDialog"
             />
+            <!--  v-if="account === auction.owner" -->
+            <algo-button
+              class="full-width q-py-sm q-mt-sm"
+              color="primary"
+              outline
+              :label="$t('dashboard.auctionPage.cancelAuction')"
+              @click="cancelAuction"
+            />
           </div>
         </div>
       </div>
@@ -104,6 +112,9 @@ import NewBidDialog from 'components/auctions/auction/NewBidDialog.vue';
 import AuctionInfo from './tabs/AuctionInfo.vue';
 import BidsList from './tabs/BidsList.vue';
 import AuctionHistory from './tabs/AuctionHistory.vue';
+import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
 
 @Options({
   components: {
@@ -113,12 +124,17 @@ import AuctionHistory from './tabs/AuctionHistory.vue';
     BidsList,
     AuctionHistory,
   },
+  computed: {
+    ...mapGetters('user', ['networkInfo']),
+  },
 })
 export default class Auction extends Vue {
   loading: boolean = false;
   auction: IAuctionItem | null = null;
   tab: string = 'info';
   reloadInterval: number | undefined;
+  networkInfo!: NetworkInfo;
+  auctionSystem!: AlgoPainterAuctionSystemProxy;
 
   get auctionId(): string {
     const { id } = this.$route.params;
@@ -126,8 +142,20 @@ export default class Auction extends Vue {
     return id as string;
   }
 
+  get account() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/account'];
+  }
+
+  cancelAuction() {
+    if (this.auction) {
+      void this.auctionSystem.cancelAuction(this.auction.index, this.account);
+    }
+  }
+
   created() {
     void this.getAuctionData();
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
   }
 
   mounted() {
@@ -142,6 +170,8 @@ export default class Auction extends Vue {
 
   async loadAuctionDetails() {
     this.auction = await getAuctionDetails(this.auctionId);
+    console.log('this.auction', this.auction);
+    console.log('this.account', this.account);
   }
 
   async getAuctionData() {

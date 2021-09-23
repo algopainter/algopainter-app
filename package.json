@@ -18,6 +18,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
+    "moment-duration-format": "^2.3.2",
     "nanoid": "^3.1.23",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "quasar": "^2.0.0-rc.1",

@@ -25,6 +25,7 @@ export default class AlgoPainterAuctionSystemProxy {
       ): ContractSendMethod;
       bid(auctionId: number, amount: string): ContractSendMethod;
       cancelAuction(auctionId: number): ContractSendMethod;
+      endAction(auctionId: number): ContractSendMethod;
     };
   };
 
@@ -74,6 +75,12 @@ export default class AlgoPainterAuctionSystemProxy {
 
   cancelAuction(auctionId: number, from: string) {
     return this.smartContract.methods.cancelAuction(
+      auctionId,
+    ).send({ from });
+  }
+
+  endAuction(auctionId: number, from: string) {
+    return this.smartContract.methods.endAction(
       auctionId,
     ).send({ from });
   }

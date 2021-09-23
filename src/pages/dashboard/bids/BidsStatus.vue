@@ -1,4 +1,3 @@
-<!--
 <template>
   <div
     class="row justify-center"
@@ -18,6 +17,7 @@
           size="lg"
           color="primary"
           :label=" $t('dashboard.bid.clain')"
+          @click="endAuction"
         />
       </div>
     </div>
@@ -55,6 +55,7 @@
           size="lg"
           color="primary"
           :label="$t('dashboard.bid.viewArt')"
+          :to="`/collections/${bidsAuctions.item._id}`"
         />
       </div>
     </div>
@@ -89,6 +90,7 @@
             size="lg"
             color="primary"
             :label="$t('dashboard.bid.bidAgain')"
+            :to="`/auctions/${bidsAuctions._id}`"
           />
         </div>
       </div>
@@ -129,6 +131,9 @@ import { last } from 'ramda';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import moment from 'moment';
+import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
 
 class Props {
   bidsAuctions= prop({
@@ -141,10 +146,14 @@ class Props {
   components: {
     AlgoButton,
   },
+  computed: {
+    ...mapGetters('user', ['networkInfo']),
+  },
 })
 export default class BidsStatus extends Vue.with(Props) {
   isMyBid: boolean = false;
   coinLastBid?: string;
+  networkInfo!: NetworkInfo;
 
   get accountAdress() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -210,6 +219,13 @@ export default class BidsStatus extends Vue.with(Props) {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
   }
+
+  endAuction() {
+    const endAuction = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    void endAuction.endAuction(this.bidsAuctions.index, this.accountAdress);
+  }
 }
 </script>
 <style scoped>
@@ -217,4 +233,3 @@ export default class BidsStatus extends Vue.with(Props) {
     width: 250px;
   }
 </style>
--->

@@ -97,6 +97,16 @@
         </div>
       </div>
     </div>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
+      <create-auction-status-card
+        :create-auction-status="createAuctionStatus"
+        :deleting-auction="true"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
   </q-page>
 </template>
 
@@ -115,6 +125,18 @@ import AuctionHistory from './tabs/AuctionHistory.vue';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
+import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
+
+enum CreatingAuctionStatus {
+  CheckingContractApproved,
+  ContractApprovedAwaitingInput,
+  ContractApprovedAwaitingConfirmation,
+  ContractApprovedError,
+  CreateAuctionAwaitingInput,
+  CreateAuctionAwaitingConfirmation,
+  CreateAuctionError,
+  AuctionCreated,
+}
 
 @Options({
   components: {
@@ -123,6 +145,7 @@ import { NetworkInfo } from 'src/store/user/types';
     AuctionInfo,
     BidsList,
     AuctionHistory,
+    CreateAuctionStatusCard,
   },
   computed: {
     ...mapGetters('user', ['networkInfo']),
@@ -135,6 +158,8 @@ export default class Auction extends Vue {
   reloadInterval: number | undefined;
   networkInfo!: NetworkInfo;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
+  displayingStatus: boolean = false;
+  createAuctionStatus: CreatingAuctionStatus | null = null;
 
   get auctionId(): string {
     const { id } = this.$route.params;
@@ -148,6 +173,8 @@ export default class Auction extends Vue {
   }
 
   cancelAuction() {
+    this.displayingStatus = true;
+
     if (this.auction) {
       void this.auctionSystem.cancelAuction(this.auction.index, this.account);
     }
@@ -193,6 +220,19 @@ export default class Auction extends Vue {
         auction: this.auction,
       },
     });
+  }
+
+  onCloseStatusDialog() {
+    this.displayingStatus = false;
+
+    if (this.createAuctionStatus === CreatingAuctionStatus.AuctionCreated) {
+      this.$q.notify({
+        type: 'positive',
+        message: 'Auction created successfully',
+      });
+
+      void this.$router.push('/');
+    }
   }
 }
 </script>

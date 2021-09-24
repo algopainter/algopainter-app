@@ -91,11 +91,6 @@
               <div
                 class="text-bold"
               >
-                <!-- {{ dias }} {{ horas }} {{ minuReal }} {{ minutos }} {{ segundos }} -->
-                <!-- {{ monthExpirations }}  <span class="text-h6 text-bold"> {{ dayExpirations }}
-                  {{ $t('dashboard.bid.at') }} {{ hoursExpirations }} </span>
-              </div>
-              <p> {{ yearExpirations }} </p> -->
                 <div
 
                   class="row justify-start time q-gutter-sm "
@@ -144,9 +139,7 @@ import { PropType } from 'vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IBid } from 'src/models/IBid';
-// eslint-disable-next-line import/named
 import moment from 'moment';
-import { Watch } from 'vue-property-decorator';
 import 'moment-duration-format';
 
 class Props {
@@ -179,121 +172,79 @@ dayExpirations: string = ''
 yearExpirations: string = ''
 hoursExpirations!: string ;
 
- @Watch('now')
-onPropertyChanged() {
-  // void this.getTime();
+mounted(): void {
+  void this.formatTime();
+  void this.countdown();
 }
 
- mounted() {
-   // void this.getTime();
-   void this.formatTime();
-   void this.countdown();
- }
+formatTime() {
+  this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
+  this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
+  this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
+  this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('h:mm:ss');
+}
 
- formatTime() {
-   this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
-   this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
-   this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
-   this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('h:mm:ss');
- }
+countdown() {
+  const date = this.bidsAuctions.expirationDt;
+  const lack = (new Date(date).getTime() - new Date().getTime()) / 1000;
+  this.seconds = Math.round(lack % 60);
+  this.minutes = Math.round(lack / 60 % 60);
+  this.hours = Math.round(lack / 60 / 60 % 24);
+  this.days = Math.round(lack / 60 / 60 / 24);
+  setInterval(() => {
+    if (this.seconds === 0) {
+      this.seconds = 60;
+      this.minutes--;
+    }
+    if (this.minutes === 0) {
+      this.minutes = 60;
+      this.hours--;
+    }
+    if (this.hours === 0) {
+      this.hours = 24;
+      this.days--;
+    }
+    this.seconds--;
+  }, 1000);
+}
 
- countdown() {
-   const date = this.bidsAuctions.expirationDt;
-   const lack = (new Date(date).getTime() - new Date().getTime()) / 1000;
-   this.seconds = Math.round(lack % 60);
-   this.minutes = Math.round(lack / 60 % 60);
-   this.hours = Math.round(lack / 60 / 60 % 24);
-   this.days = Math.round(lack / 60 / 60 / 24);
-   setInterval(() => {
-     if (this.seconds === 0) {
-       this.seconds = 60;
-       this.minutes--;
-     }
-     if (this.minutes === 0) {
-       this.minutes = 60;
-       this.hours--;
-     }
-     if (this.hours === 0) {
-       this.hours = 24;
-       this.days--;
-     }
-     this.seconds--;
-   }, 1000);
- }
+dataMoment(index: string, format: string) {
+  return moment(index).format(format);
+}
 
- dataMoment(index: string, format: string) {
-   return moment(index).format(format);
- }
+getLastBid(): void {
+  this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
+}
 
- getLastBid(): void {
-   this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
- }
+get now() {
+  return now.value;
+}
 
- get now() {
-   return now.value;
- }
+get isEnded() {
+  return moment().isAfter(this.bidsAuctions.expirationDt);
+}
 
- get isEnded() {
-   return moment().isAfter(this.bidsAuctions.expirationDt);
- }
+get coinDetails() {
+  const coin = auctionCoins.find((coin) => {
+    return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
+  });
 
- //  getTime() {
- //    const newEnded = moment(this.bidsAuctions.expirationDt);
- //    const timeLeft = moment(newEnded.diff(moment()));
- //    this.time = timeLeft as unknown as number;
- //  }
+  if (!coin) {
+    throw new Error('COIN_NOT_FOUND');
+  }
 
- //  get Dias() {
- //    if (this.time) {
- //      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
- //      return this.time.days();
- //    }
- //    return 0;
- //  }
+  return coin;
+}
 
- //  get Horas() {
- //    if (this.time) {
- //      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
- //      return this.time.hours();
- //    }
- //    return 0;
- //  }
-
- //  get Minutos() {
- //    if (this.time) {
- //      return this.time.minutes();
- //    }
- //    return 0;
- //  }
-
- //  get Segundos() {
- //    if (this.time) {
- //      return this.time.seconds();
- //    }
- //    return 0;
- //  }
-
- get coinDetails() {
-   const coin = auctionCoins.find((coin) => {
-     return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
-   });
-
-   if (!coin) {
-     throw new Error('COIN_NOT_FOUND');
-   }
-
-   return coin;
- }
-
- bidCorreting(bids: number) {
-   const amount = blockchainToCurrency(
-     bids,
-     this.coinDetails.decimalPlaces,
-   );
-   return this.$n(amount, 'decimal', {
-     maximumFractionDigits: this.coinDetails.decimalPlaces,
-   } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
- }
+bidCorreting(bids: number) {
+  const amount = blockchainToCurrency(
+    bids,
+    this.coinDetails.decimalPlaces,
+  );
+  return this.$n(amount, 'decimal', {
+    maximumFractionDigits: this.coinDetails.decimalPlaces,
+  } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
+}
 }
 </script>
 <style lang="scss">

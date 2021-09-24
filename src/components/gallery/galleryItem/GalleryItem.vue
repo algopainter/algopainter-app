@@ -48,7 +48,6 @@
       <div class="name limit-text">
         {{ $t('dashboard.homePage.symbol') }}{{ galleryItem.index }} {{ galleryItem.art.name }}
         <q-tooltip
-          v-if="galleryItem.description.length > 22"
           class="bg-primary"
         >
           {{ galleryItem.art.name }}
@@ -57,7 +56,6 @@
       <div class="limit-text">
         {{ galleryItem.description }}
         <q-tooltip
-          v-if="galleryItem.description.length > 22"
           anchor="bottom middle"
           max-width="200px"
           class="bg-primary tooltip-description"

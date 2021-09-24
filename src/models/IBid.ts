@@ -7,4 +7,5 @@ export interface IBid {
   createdAt: string;
   tokenSymbol: string;
   tokenAddress: string;
+  customProfile: string;
 }

@@ -123,11 +123,13 @@ export default {
   sellYourArt: {
     title: 'Sell your Art',
     createAuction: 'Create auction',
+    deleteAuction: 'Delete auction',
     minimumPrice: 'Minimum price',
     endDate: 'End date',
     selectCoin: 'Select a coin',
     ireceive: '0.2002',
     creatingAuction: 'Creating auction',
+    deletingAuction: 'Deleting auction',
     statuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',
@@ -181,6 +183,7 @@ export default {
       placeBidError: 'An error ocurred while trying to place a bid',
       placeBidAvailable: 'Bid placed successfully',
     },
+    cancelAuction: 'Cancel auction',
   },
   editProfile: {
     title: 'Edit Profile',

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div
     class="row q-gutter-md"

@@ -223,6 +223,7 @@ export default class BidsStatus extends Vue.with(Props) {
   endAuction() {
     const endAuction = new AlgoPainterAuctionSystemProxy(this.networkInfo);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     void endAuction.endAuction(this.bidsAuctions.index, this.accountAdress);
   }
 }

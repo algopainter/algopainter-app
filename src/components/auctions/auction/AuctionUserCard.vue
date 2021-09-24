@@ -1,12 +1,16 @@
 <template>
   <div class="highest-bid row">
     <div class="col-auto q-pr-md row items-center">
-      <q-avatar
-        size="44px"
-        round
+      <router-link
+        :to="{name: 'customUrl', params: { customUrl: user.customProfile || user.account } }"
       >
-        <img :src="user.avatar || '/placeholder-images/do-utilizador.png'">
-      </q-avatar>
+        <q-avatar
+          size="44px"
+          round
+        >
+          <img :src="user.avatar || '/placeholder-images/do-utilizador.png'">
+        </q-avatar>
+      </router-link>
     </div>
     <div class="col row items-center user-type">
       <div class="col-12">

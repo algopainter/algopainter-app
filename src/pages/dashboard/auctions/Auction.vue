@@ -18,7 +18,13 @@
       <div class="col-12 col-sm">
         <q-img
           :src="auction.item.image"
+          class="img"
         />
+        <div
+          class="q-mt-sm text-subtitle1 text-justify desktop-only"
+        >
+          {{ auction.item.description }}
+        </div>
       </div>
       <q-separator
         class="q-mx-lg gt-xs"

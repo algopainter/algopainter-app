@@ -37,15 +37,12 @@
           </router-link>
         </div>
       </div>
-      <div class="row q-mt-xl q-gutter-sm text-center">
-        <div class="col">
-          <div class="text-bold">
+      <div class="row container-info q-mt-xl q-gutter-sm text-center">
+        <div class="col q-mb-md ">
+          <div class="row justify-center text-bold text-winbid">
             {{ $t('dashboard.bid.winBid') }}
           </div>
-          <div class="text-bold row">
-            <div>
-              {{ bidsAuctions.highestBid.tokenSymbol }}
-            </div>
+          <div class=" row justify-center text-bold">
             <div
               class="text-amount"
             >
@@ -55,6 +52,9 @@
               >
                 {{ bidsAuctions.highestBid.tokenSymbol }} {{ bidCorreting(bidsAuctions.highestBid.amount) }}
               </q-tooltip>
+            </div>
+            <div>
+              {{ bidsAuctions.highestBid.tokenSymbol }}
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@
           <div>
             <div
               v-if="isEnded"
-              class="text-bold"
+              class="text-bold text-end"
             >
               {{ $t('dashboard.bid.auctionEnd') }}
 
@@ -81,9 +81,13 @@
             </div>
             <div
               v-else
-              class="text-bold text-end"
             >
-              {{ $t('dashboard.bid.auctionTime') }}
+              <div
+                class="text-bold row  justify-center text-end"
+              >
+                {{ $t('dashboard.bid.auctionTime') }}
+              </div>
+
               <div
                 class="text-bold"
               >
@@ -94,31 +98,31 @@
               <p> {{ yearExpirations }} </p> -->
                 <div
 
-                  class="row  justify-start time q-gutter-sm"
+                  class="row justify-start time q-gutter-sm "
                 >
                   <div>
-                    <p class="text-bold">
+                    <div class="text-bold">
                       {{ days }}
-                    </p>
+                    </div>
                     <span> {{ $t('dashboard.bid.days') }} </span>
                   </div>
 
                   <div>
-                    <p class="text-bold">
+                    <div class="text-bold">
                       {{ hours }}
-                    </p>
+                    </div>
                     <span>{{ $t('dashboard.bid.hours') }}</span>
                   </div>
                   <div>
-                    <p class="text-bold">
+                    <div class="text-bold">
                       {{ minutes }}
-                    </p>
+                    </div>
                     <span>{{ $t('dashboard.bid.minis') }}</span>
                   </div>
                   <div>
-                    <p class="text-bold">
+                    <div class="text-bold">
                       {{ seconds }}
-                    </p>
+                    </div>
                     <span>{{ $t('dashboard.bid.seconds') }}</span>
                   </div>
                 </div>
@@ -294,16 +298,38 @@ onPropertyChanged() {
 </script>
 <style lang="scss">
 .time{
-  width: 200px;
+  width: 180px;
   margin-right: 5px;
+}
+.text-time{
+  font-size: 1.1rem;
+  margin-left: -30px;
+}
+.text-end{
+  width: 170px;
+  font-size: 16px;
+}
+.text-winbid{
+  font-size: 16px;
 }
 @media (max-width: 450px ) {
   .time{
-    justify-content:center;
-    width: 130px;
+     width: 100%;
+    justify-content:center ;
+    margin: 0;
   }
-}
-.text-end{
-  width:130px;
+  .container-info {
+    display: block;
+    justify-content: center;
+    align-items: center;
+  }
+  .text-end{
+    width: 100%;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .text-time{
+    margin-left: 0;
+  }
 }
 </style>

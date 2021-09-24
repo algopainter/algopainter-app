@@ -111,7 +111,6 @@ getBids() {
 }
 
 .text-amount{
-  margin-left: 10px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

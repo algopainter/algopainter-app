@@ -27,6 +27,9 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
   GET_USER_LIKES(state: UserStateInterface): []|undefined {
     return state.userLikes;
   },
+  GET_OPEN_CONNECT_YOUR_WALLET_MODAL(state: UserStateInterface): boolean {
+    return state.openConnectYourWalletModal;
+  },
 };
 
 export default getters;

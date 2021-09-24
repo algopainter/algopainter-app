@@ -94,9 +94,19 @@ export default class MainLayout extends Vue {
     this.isAuctionModalOpen = this.openAuctionModal;
   }
 
+  @Watch('openConnectYourWalletModal')
+  onOpenConnectYourWalletModalChanged() {
+    this.showModal = this.openConnectYourWalletModal;
+  }
+
   get openAuctionModal() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['auctions/openAuctionModal'] as boolean;
+  }
+
+  get openConnectYourWalletModal() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/GET_OPEN_CONNECT_YOUR_WALLET_MODAL'] as boolean;
   }
 
   openDrawer() {

@@ -137,6 +137,7 @@ enum CreatingAuctionStatus {
   CreateAuctionAwaitingConfirmation,
   CreateAuctionError,
   AuctionCreated,
+  ConnectYourWallet,
 }
 
 @Options({
@@ -171,6 +172,11 @@ export default class Auction extends Vue {
   get account() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/account'];
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
   }
 
   cancelAuction() {
@@ -211,6 +217,14 @@ export default class Auction extends Vue {
       this.loading = false;
     } catch {
       this.loading = false;
+    }
+  }
+
+  placeABidAction() {
+    if (this.isConnected) {
+      this.openPlaceBidDialog();
+    } else {
+
     }
   }
 

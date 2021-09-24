@@ -77,11 +77,7 @@ export default class MainLayout extends Vue {
   }
 
   headerMenu() {
-    if (window.innerWidth <= 768) {
-      this.leftDrawerOpen = false;
-    } else {
-      this.leftDrawerOpen = true;
-    }
+    this.leftDrawerOpen = (window.innerWidth > 768);
   }
 
   @Watch('isConnected')
@@ -126,6 +122,7 @@ export default class MainLayout extends Vue {
   }
 
   refreshModal() {
+    void this.$store.dispatch('user/openConnectYourWalletModal');
     this.showModal = !this.isConnected;
   }
 

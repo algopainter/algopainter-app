@@ -92,7 +92,7 @@
               color="primary"
               outline
               :label="$t('dashboard.auctionPage.placeABid')"
-              @click="openPlaceBidDialog"
+              @click="placeABidAction"
             />
           </div>
         </div>
@@ -127,6 +127,7 @@ import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
 import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
+import { Watch } from 'vue-property-decorator';
 
 enum CreatingAuctionStatus {
   CheckingContractApproved,
@@ -189,7 +190,13 @@ export default class Auction extends Vue {
 
   created() {
     void this.getAuctionData();
-    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    }
   }
 
   mounted() {
@@ -204,8 +211,6 @@ export default class Auction extends Vue {
 
   async loadAuctionDetails() {
     this.auction = await getAuctionDetails(this.auctionId);
-    console.log('this.auction', this.auction);
-    console.log('this.account', this.account);
   }
 
   async getAuctionData() {
@@ -224,7 +229,7 @@ export default class Auction extends Vue {
     if (this.isConnected) {
       this.openPlaceBidDialog();
     } else {
-
+      void this.$store.dispatch('user/openConnectYourWalletModal');
     }
   }
 

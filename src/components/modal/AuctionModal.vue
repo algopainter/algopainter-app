@@ -92,6 +92,7 @@ import { Vue, Options, prop } from 'vue-class-component';
 import { QDialog } from 'quasar';
 import AlgoButton from 'src/components/common/Button.vue';
 import UserUtils from 'src/helpers/user';
+import { Watch } from 'vue-property-decorator';
 
 class Props {
   OpenModal = prop({
@@ -168,6 +169,18 @@ export default class AuctionModal extends Vue.with(Props) {
     return this.$store.getters['user/account'];
   }
 
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      void this.setAccountBalance();
+    }
+  }
+
   async setAccountBalance() {
     this.userBalance = (
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -176,11 +189,6 @@ export default class AuctionModal extends Vue.with(Props) {
 
   formattedBalance() {
     return UserUtils.formatAccountBalance(this.userBalance, 2);
-  }
-
-  mounted() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    void this.setAccountBalance();
   }
 
   claimItem() {

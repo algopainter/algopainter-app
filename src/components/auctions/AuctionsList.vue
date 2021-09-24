@@ -214,6 +214,7 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 import { ITopSellersBuyers } from 'src/models/ITopSellersBuyers';
 import { AuctionItem } from 'components/auctions';
 import AlgoButton from 'components/common/Button.vue';
+import moment from 'moment';
 import 'vue3-carousel/dist/carousel.css';
 import CarouselSkeleton from 'components/auctions/auction/CarouselSkeleton.vue';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
@@ -256,7 +257,7 @@ export default class AuctionsList extends Vue {
     }).then(() => {
       this.areHot = this.$store.state.auctions.hotBids;
       this.auctions = this.areHot.filter(function(items) {
-        return items.ended === false;
+        return moment().isAfter(items.expirationDt) === false;
       });
       this.findHotBids();
       this.hotBidsLoading = false;

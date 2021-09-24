@@ -38,15 +38,12 @@
           </router-link>
         </div>
       </div>
-      <div class="row q-mt-xl q-gutter-sm text-center">
-        <div class="col">
-          <div class="text-bold">
+      <div class="row container-info q-mt-xl q-gutter-sm text-center">
+        <div class="col q-mb-md ">
+          <div class="row justify-center text-bold text-winbid">
             {{ $t('dashboard.bid.winBid') }}
           </div>
-          <div class="text-bold row">
-            <div>
-              {{ bidsAuctions.highestBid.tokenSymbol }}
-            </div>
+          <div class=" row justify-center text-bold">
             <div
               class="text-amount"
             >
@@ -56,6 +53,9 @@
               >
                 {{ bidsAuctions.highestBid.tokenSymbol }} {{ bidCorreting(bidsAuctions.highestBid.amount) }}
               </q-tooltip>
+            </div>
+            <div>
+              {{ bidsAuctions.highestBid.tokenSymbol }}
             </div>
           </div>
         </div>
@@ -69,7 +69,7 @@
           <div>
             <div
               v-if="isEnded"
-              class="text-bold"
+              class="text-bold text-end"
             >
               {{ $t('dashboard.bid.auctionEnd') }}
 
@@ -82,45 +82,47 @@
             </div>
             <div
               v-else
-              class="text-bold text-end"
             >
-              {{ $t('dashboard.bid.auctionTime') }}
+              <div
+                class="text-bold row  justify-center text-end"
+              >
+                {{ $t('dashboard.bid.auctionTime') }}
+              </div>
+
               <div
                 class="text-bold"
               >
-                {{ monthExpirations }}  <span class="text-h6 text-bold"> {{ dayExpirations }} </span>
+                <div
+
+                  class="row justify-start time q-gutter-sm "
+                >
+                  <div>
+                    <div class="text-bold">
+                      {{ days }}
+                    </div>
+                    <span> {{ $t('dashboard.bid.days') }} </span>
+                  </div>
+
+                  <div>
+                    <div class="text-bold">
+                      {{ hours }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.hours') }}</span>
+                  </div>
+                  <div>
+                    <div class="text-bold">
+                      {{ minutes }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.minis') }}</span>
+                  </div>
+                  <div>
+                    <div class="text-bold">
+                      {{ seconds }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.seconds') }}</span>
+                  </div>
+                </div>
               </div>
-              <p> {{ yearExpirations }} </p>
-              <!-- <div
-
-                class="row  justify-start time q-gutter-sm"
-              >
-                <div>
-                  <p class="text-bold">
-                    {{ Dias }}
-                  </p>
-                  <span> {{ $t('dashboard.bid.days') }} </span>
-                </div>
-
-                <div>
-                  <p class="text-bold">
-                    {{ Horas }}
-                  </p>
-                  <span>{{ $t('dashboard.bid.hours') }}</span>
-                </div>
-                <div>
-                  <p class="text-bold">
-                    {{ Minutos }}
-                  </p>
-                  <span>{{ $t('dashboard.bid.minis') }}</span>
-                </div>
-                <div>
-                  <p class="text-bold">
-                    {{ Segundos }}
-                  </p>
-                  <span>{{ $t('dashboard.bid.seconds') }}</span>
-                </div>
-              </div> -->
             </div>
           </div>
         </div>
@@ -138,9 +140,7 @@ import { PropType } from 'vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IBid } from 'src/models/IBid';
-// eslint-disable-next-line import/named
-import moment, { Duration } from 'moment';
-import { Watch } from 'vue-property-decorator';
+import moment from 'moment';
 import 'moment-duration-format';
 
 class Props {
@@ -162,115 +162,126 @@ class Props {
 
 export default class BidsInfor extends Vue.with(Props) {
 lastBidAuctions: IBid[] = [];
-dias: number = 0;
-segundos: number = 0;
-time!: Duration ;
+days: number = 0;
+hours: number = 0;
+minutes: number = 0;
+minuReal: number = 0;
+seconds: number = 0;
+time!: number ;
 monthExpirations: string = ''
 dayExpirations: string = ''
 yearExpirations: string = ''
+hoursExpirations!: string ;
 
- @Watch('now')
-onPropertyChanged() {
-  void this.getTime();
+mounted(): void {
+  void this.formatTime();
+  void this.countdown();
 }
 
- mounted() {
-   void this.getTime();
-   void this.formatTime();
- }
+formatTime() {
+  this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
+  this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
+  this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
+  this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('h:mm:ss');
+}
 
- formatTime() {
-   this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
-   this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
-   this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
- }
+countdown() {
+  const date = this.bidsAuctions.expirationDt;
+  const lack = (new Date(date).getTime() - new Date().getTime()) / 1000;
+  this.seconds = Math.round(lack % 60);
+  this.minutes = Math.round(lack / 60 % 60);
+  this.hours = Math.round(lack / 60 / 60 % 24);
+  this.days = Math.round(lack / 60 / 60 / 24);
+  setInterval(() => {
+    if (this.seconds === 0) {
+      this.seconds = 60;
+      this.minutes--;
+    }
+    if (this.minutes === 0) {
+      this.minutes = 60;
+      this.hours--;
+    }
+    if (this.hours === 0) {
+      this.hours = 24;
+      this.days--;
+    }
+    this.seconds--;
+  }, 1000);
+}
 
- dataMoment(index: string, format: string) {
-   return moment(index).format(format);
- }
+dataMoment(index: string, format: string) {
+  return moment(index).format(format);
+}
 
- getLastBid(): void {
-   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-   this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
- }
+getLastBid(): void {
+  this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
+}
 
- get now() {
-   return now.value;
- }
+get now() {
+  return now.value;
+}
 
- get isEnded() {
-   return moment().isAfter(this.bidsAuctions.expirationDt);
- }
+get isEnded() {
+  return moment().isAfter(this.bidsAuctions.expirationDt);
+}
 
- getTime() {
-   const newEnded = moment(this.bidsAuctions.expirationDt);
-   const timeLeft = moment.duration(newEnded.diff(moment()));
-   this.time = timeLeft as unknown as Duration;
- }
+get coinDetails() {
+  const coin = auctionCoins.find((coin) => {
+    return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
+  });
 
- get Dias() {
-   if (this.time) {
-     return this.time.days();
-   }
-   return 0;
- }
+  if (!coin) {
+    throw new Error('COIN_NOT_FOUND');
+  }
 
- get Horas() {
-   if (this.time) {
-     return this.time.hours();
-   }
-   return 0;
- }
+  return coin;
+}
 
- get Minutos() {
-   if (this.time) {
-     return this.time.minutes();
-   }
-   return 0;
- }
-
- get Segundos() {
-   if (this.time) {
-     return this.time.seconds();
-   }
-   return 0;
- }
-
- get coinDetails() {
-   const coin = auctionCoins.find((coin) => {
-     return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
-   });
-
-   if (!coin) {
-     throw new Error('COIN_NOT_FOUND');
-   }
-
-   return coin;
- }
-
- bidCorreting(bids: number) {
-   const amount = blockchainToCurrency(
-     bids,
-     this.coinDetails.decimalPlaces,
-   );
-   return this.$n(amount, 'decimal', {
-     maximumFractionDigits: this.coinDetails.decimalPlaces,
-   } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
- }
+bidCorreting(bids: number) {
+  const amount = blockchainToCurrency(
+    bids,
+    this.coinDetails.decimalPlaces,
+  );
+  return this.$n(amount, 'decimal', {
+    maximumFractionDigits: this.coinDetails.decimalPlaces,
+  } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
+}
 }
 </script>
 <style lang="scss">
 .time{
-  width: 200px;
+  width: 180px;
   margin-right: 5px;
+}
+.text-time{
+  font-size: 1.1rem;
+  margin-left: -30px;
+}
+.text-end{
+  width: 170px;
+  font-size: 16px;
+}
+.text-winbid{
+  font-size: 16px;
 }
 @media (max-width: 450px ) {
   .time{
-    justify-content:center;
-    width: 130px;
+     width: 100%;
+    justify-content:center ;
+    margin: 0;
   }
-}
-.text-end{
-  width:130px;
+  .container-info {
+    display: block;
+    justify-content: center;
+    align-items: center;
+  }
+  .text-end{
+    width: 100%;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .text-time{
+    margin-left: 0;
+  }
 }
 </style>

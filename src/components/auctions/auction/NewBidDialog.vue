@@ -162,7 +162,7 @@ export default class NewBidDialog extends Vue {
     const { highestBid, minimumBid } = this.auction;
     const { decimalPlaces } = this.coinDetails;
 
-    const value = highestBid ? highestBid.amount + 1: minimumBid.amount;
+    const value = highestBid ? highestBid.amount + 1 : minimumBid.amount;
 
     return blockchainToCurrency(value, decimalPlaces);
   }

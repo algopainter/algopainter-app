@@ -365,7 +365,7 @@ export default class SellYourArt extends Vue {
 
       await this.approveContract();
 
-      const { minimumPrice, endDate } = auction;
+      const { minimumPrice, endDate, endTime } = auction;
       const { decimalPlaces } = this.selectedCoin;
 
       const minimumPriceFormatted = currencyToBlockchain(
@@ -381,7 +381,7 @@ export default class SellYourArt extends Vue {
         this.image.collectionOwner,
         this.image.nft.index,
         numberToString(minimumPriceFormatted),
-        moment(endDate, 'MM/DD/YYYY').endOf('day').unix(),
+        moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
         this.selectedCoin.tokenAddress,
         0,
         this.userAccount,

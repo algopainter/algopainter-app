@@ -53,8 +53,15 @@
           {{ galleryItem.art.name }}
         </q-tooltip>
       </div>
-      <div class="img-description limit-text">
-        <p>{{ galleryItem.description }}</p>
+      <div class="limit-text">
+        {{ galleryItem.description }}
+        <q-tooltip
+          anchor="bottom middle"
+          max-width="200px"
+          class="bg-primary tooltip-description"
+        >
+          {{ galleryItem.description }}
+        </q-tooltip>
       </div>
       <div class="row justify-center">
         <algoButton
@@ -200,13 +207,7 @@ export default class GalleryItem extends Vue.with(Props) {
 .container {
   padding: 0 1rem 0 0;
 }
-.limit-text{
-   text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    text-align: left;
-    width: 250px;
-}
+
 .users {
   .q-avatar:not(:first-child) {
     margin-left: -8px;
@@ -239,6 +240,15 @@ export default class GalleryItem extends Vue.with(Props) {
 
   .highest-bid {
     font-size: 1.1rem;
+  }
+
+  .limit-text{
+    font-weight: bold;
+    font-size: 1.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 280px;
   }
 }
 

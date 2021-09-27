@@ -82,7 +82,7 @@
             {{ $t('dashboard.homePage.items') }}
           </div>
           <div class="text-h1 text-bold q-py-xl">
-            {{ userItems }}
+            {{ userItems + userOnSale }}
           </div>
         </div>
       </div>
@@ -123,6 +123,7 @@ export default class UserAccountDetails extends Vue {
   loadingUserItems: boolean = true;
 
   balance: number = 0;
+  userOnSale: string = '0';
 
   expanded: boolean = false;
 
@@ -144,6 +145,7 @@ export default class UserAccountDetails extends Vue {
     this.formatedBalance();
     void this.getUserProfile();
     void this.getUserItems();
+    void this.getUserOnSale();
   }
 
   getUserProfile() {
@@ -179,6 +181,27 @@ export default class UserAccountDetails extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.userItems = this.$store.getters['collections/GET_USER_ITEMS'] as string;
     });
+  }
+
+  getUserOnSale() {
+    const route = this.$route.params.account;
+
+    if (this.isConnected === true) {
+      void this.$store.dispatch({
+        type: 'collections/getUserOnSale',
+        account: route,
+        page: 1,
+        perPage: '9',
+        collectionName: '',
+        currentCollection: '',
+
+      }).then(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        const onSales = this.$store.getters['collections/GET_USER_ON_SALE'];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        this.userOnSale = onSales.count;
+      });
+    }
   }
 
   async setAccountBalance() {

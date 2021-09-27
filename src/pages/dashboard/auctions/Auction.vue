@@ -195,7 +195,7 @@ export default class Auction extends Vue {
   mounted() {
     this.reloadInterval = setInterval(() => {
       void this.loadAuctionDetails();
-    }, 15000) as unknown as number;
+    }, 5000) as unknown as number;
   }
 
   unmounted() {

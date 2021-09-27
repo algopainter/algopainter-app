@@ -1,4 +1,3 @@
-<!--
 <template>
   <div>
     <div
@@ -72,4 +71,3 @@ export default class BidsList extends Vue {
   font-size: 1.2rem;
 }
 </style>
--->

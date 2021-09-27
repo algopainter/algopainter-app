@@ -1,6 +1,6 @@
 
 <template>
-  <div v-if="loadingUserProfile === false && loadingUserItems === false">
+  <div v-if="loadingUserProfile === false && loadingUserItems === false && countItem === false">
     <div class="row q-col-gutter-xl items-center">
       <div class="col-12 col-sm-7 col-xl-7">
         <div class="user-info flex column q-col-gutter-lg">
@@ -82,7 +82,7 @@
             {{ $t('dashboard.homePage.items') }}
           </div>
           <div class="text-h1 text-bold q-py-xl">
-            {{ userItems + userOnSale }}
+            {{ userHaveItems }}
           </div>
         </div>
       </div>
@@ -118,8 +118,10 @@ import UserAccountDetailsSkeleton from 'src/components/home-page/user-gallery-ov
 export default class UserAccountDetails extends Vue {
   userProfile: IProfile = {};
   loadingUserProfile: boolean = true;
+  countItem: boolean = true;
 
-  userItems = '0';
+  userItems: number = 0;
+  userHaveItems: number = 0;
   loadingUserItems: boolean = true;
 
   balance: number = 0;
@@ -179,7 +181,7 @@ export default class UserAccountDetails extends Vue {
     }).then(() => {
       this.loadingUserItems = false;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.userItems = this.$store.getters['collections/GET_USER_ITEMS'] as string;
+      this.userItems = this.$store.getters['collections/GET_USER_ITEMS'] as number;
     });
   }
 
@@ -199,7 +201,9 @@ export default class UserAccountDetails extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         const onSales = this.$store.getters['collections/GET_USER_ON_SALE'];
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        this.userOnSale = onSales.count;
+        const userOnSale = onSales.count as number;
+        this.userHaveItems = this.userItems + userOnSale;
+        this.countItem = false;
       });
     }
   }

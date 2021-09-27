@@ -21,7 +21,7 @@
           class="img"
         />
         <div
-          class="q-mt-sm text-subtitle1 text-justify desktop-only"
+          class="q-mt-sm text-subtitle1 text-justify desktop-only description"
         >
           {{ auction.item.description }}
         </div>
@@ -32,8 +32,13 @@
       />
       <div class="col-12 col-sm-8">
         <div class="row q-col-gutter-md">
-          <div class="col-12 header">
+          <div class="col-12 header title">
             {{ auction.item.title }}
+            <q-tooltip
+              class="bg-primary"
+            >
+              {{ auction.item.title }}
+            </q-tooltip>
           </div>
           <div class="col-12">
             <q-tabs
@@ -246,4 +251,17 @@ export default class Auction extends Vue {
 .q-tabs {
   font-weight: bold;
 }
+
+.title{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 100%;
+}
+
+.description{
+  word-wrap: break-word;
+}
+
 </style>

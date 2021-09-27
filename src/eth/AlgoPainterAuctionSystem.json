@@ -976,7 +976,7 @@
         "type": "uint256"
       }
     ],
-    "name": "endAction",
+    "name": "endAuction",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

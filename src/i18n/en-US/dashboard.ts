@@ -197,6 +197,7 @@ export default {
     sChanges: 'Save changes',
     erroBio: 'Description" must be less than or equal to 1000 characters long',
     erroName: 'Field name is required and must be less than 32 character long',
+    erroEmail: 'Invalid email. Enter your email correctly ',
   },
   gallery: {
     title: 'Collection',

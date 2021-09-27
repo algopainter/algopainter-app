@@ -47,7 +47,8 @@
           />
           <q-input
             v-model="formFields.email"
-            type="email"
+            :rules="[ email => email.indexOf('@') !== -1 && email.indexOf('.') !== -1] "
+            :error-message="$t('dashboard.editProfile.erroEmail')"
             :label="$t('dashboard.editProfile.email')"
           />
         </div>
@@ -182,6 +183,7 @@ export default class EditProfile extends Vue {
   };
 
   isLoading: boolean = false;
+  isValid: boolean = false;
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -219,9 +221,19 @@ export default class EditProfile extends Vue {
   }
 
   mounted() {
+    void this.emailValid();
     if (this.isConnected) {
       void this.loadData();
     }
+  }
+
+  validateEmail(email: string | undefined | null) {
+    const response = /\S+@\S+\.\S+/;
+    return response.test(email as string);
+  }
+
+  emailValid() {
+    this.isValid = this.validateEmail(this.formFields.email);
   }
 
   async loadData() {
@@ -250,6 +262,7 @@ export default class EditProfile extends Vue {
   }
 
   async saveChanges() {
+    this.isValid = this.validateEmail(this.formFields.email);
     const allowed: RegExp = /[^a-zA-Z0-9-]/g;
     const customProfile: string | undefined = this.formFields.customProfile;
     const notAllowed = allowed.test(customProfile as string);
@@ -275,7 +288,6 @@ export default class EditProfile extends Vue {
       this.isLoading = true;
       this.formFields.name = this.formFields.name?.trim();
       this.formFields.bio = this.formFields.bio?.trim();
-
       if (!this.formFields.email) {
         this.formFields.email = undefined;
       }
@@ -287,6 +299,17 @@ export default class EditProfile extends Vue {
       if (this.formFields.name === '' || this.formFields.name === undefined) {
         Notify.create({
           message: 'Field name required!',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        return;
+      }
+      if (this.formFields.email === '' || this.formFields.email === undefined) {
+        this.isValid = true;
+      }
+      if (this.isValid === false) {
+        Notify.create({
+          message: 'Invalid email. Enter your email correctly',
           color: 'red',
           icon: 'mdi-alert',
         });

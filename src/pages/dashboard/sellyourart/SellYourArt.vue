@@ -346,7 +346,7 @@ export default class SellYourArt extends Vue {
       this.auctionSystemContractAddress,
       true,
       this.userAccount,
-    ).on('confirmation', () => {
+    ).on('transactionHash', () => {
       this.createAuctionStatus =
         CreatingAuctionStatus.ContractApprovedAwaitingConfirmation;
     }).on('error', () => {

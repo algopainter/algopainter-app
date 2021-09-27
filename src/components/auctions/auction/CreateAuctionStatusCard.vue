@@ -1,16 +1,7 @@
 <template>
   <q-card>
-    <q-card-section
-      v-if="!deletingAuction"
-      class="header"
-    >
+    <q-card-section class="header">
       {{ $t('dashboard.sellYourArt.creatingAuction') }}
-    </q-card-section>
-    <q-card-section
-      v-else
-      class="header"
-    >
-      {{ $t('dashboard.sellYourArt.deletingAuction') }}
     </q-card-section>
     <q-card-section>
       <div class="steps row q-col-gutter-md">
@@ -108,17 +99,8 @@
             </q-avatar>
           </div>
           <div class="label">
-            <div
-              v-if="!deletingAuction"
-              class="title"
-            >
+            <div class="title">
               {{ $t('dashboard.sellYourArt.createAuction') }}
-            </div>
-            <div
-              v-else
-              class="title"
-            >
-              {{ $t('dashboard.sellYourArt.deleteAuction') }}
             </div>
             <div>
               {{ secondStepLabel }}
@@ -161,16 +143,8 @@ enum CreatingAuctionStatus {
 })
 export default class CreateAuctionStatusCard extends Vue {
   @Prop({ required: true }) createAuctionStatus!: CreatingAuctionStatus;
-  @Prop({ required: false }) deletingAuction!: boolean;
 
   CreatingAuctionStatus = CreatingAuctionStatus;
-
-  mounted() {
-    setTimeout(() => { console.log('deletingAuction', this.deletingAuction); }, 3000);
-    setTimeout(() => { console.log('createAuctionStatus', this.createAuctionStatus); }, 3000);
-    const today = new Date();
-    console.log(today);
-  }
 
   get firstStepLabel() {
     switch (this.createAuctionStatus) {

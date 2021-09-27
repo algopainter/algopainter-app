@@ -1,16 +1,26 @@
 <template>
   <div class="highest-bid row">
     <div class="col-auto q-pr-md row items-center">
-      <router-link
-        :to="{name: 'customUrl', params: { customUrl: user.customProfile || user.account } }"
-      >
+      <div v-if="user.customProfile || user.account">
+        <router-link
+          :to="{name: 'customUrl', params: { customUrl: user.customProfile || user.account } }"
+        >
+          <q-avatar
+            size="44px"
+            round
+          >
+            <img :src="user.avatar || '/placeholder-images/do-utilizador.png'">
+          </q-avatar>
+        </router-link>
+      </div>
+      <div v-else>
         <q-avatar
           size="44px"
           round
         >
           <img :src="user.avatar || '/placeholder-images/do-utilizador.png'">
         </q-avatar>
-      </router-link>
+      </div>
     </div>
     <div class="col row items-center user-type">
       <div class="col-12">

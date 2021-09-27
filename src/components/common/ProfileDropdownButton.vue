@@ -121,8 +121,19 @@ export default class ProfileDropdownButton extends Vue {
   }
 
   mounted() {
-    void this.setAccountBalance();
     void this.loadUserProfile();
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      void this.setAccountBalance();
+    }
   }
 
   @Watch('accountAddress')

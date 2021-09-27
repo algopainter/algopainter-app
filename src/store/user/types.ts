@@ -73,6 +73,7 @@ export interface UserStateInterface {
   userAccount?: string;
   userProfile?: [];
   userLikes?: [] | undefined;
+  openConnectYourWalletModal: boolean;
 }
 
 export interface IWeb3Provider {

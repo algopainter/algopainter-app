@@ -77,11 +77,7 @@ export default class MainLayout extends Vue {
   }
 
   headerMenu() {
-    if (window.innerWidth <= 768) {
-      this.leftDrawerOpen = false;
-    } else {
-      this.leftDrawerOpen = true;
-    }
+    this.leftDrawerOpen = (window.innerWidth > 768);
   }
 
   @Watch('isConnected')
@@ -94,9 +90,19 @@ export default class MainLayout extends Vue {
     this.isAuctionModalOpen = this.openAuctionModal;
   }
 
+  @Watch('openConnectYourWalletModal')
+  onOpenConnectYourWalletModalChanged() {
+    this.showModal = this.openConnectYourWalletModal;
+  }
+
   get openAuctionModal() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['auctions/openAuctionModal'] as boolean;
+  }
+
+  get openConnectYourWalletModal() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/GET_OPEN_CONNECT_YOUR_WALLET_MODAL'] as boolean;
   }
 
   openDrawer() {
@@ -116,6 +122,7 @@ export default class MainLayout extends Vue {
   }
 
   refreshModal() {
+    void this.$store.dispatch('user/openConnectYourWalletModal');
     this.showModal = !this.isConnected;
   }
 

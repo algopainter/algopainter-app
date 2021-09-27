@@ -168,6 +168,9 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       console.log('error message - getUserLikes');
     }
   },
+  openConnectYourWalletModal() {
+    this.commit('user/SET_OPEN_CONNECT_YOUR_WALLET_MODAL');
+  },
 };
 
 export default actions;

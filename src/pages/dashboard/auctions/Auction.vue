@@ -98,7 +98,7 @@
               color="primary"
               outline
               :label="$t('dashboard.auctionPage.placeABid')"
-              @click="openPlaceBidDialog"
+              @click="placeABidAction"
             />
           </div>
         </div>
@@ -133,6 +133,7 @@ import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
 import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
+import { Watch } from 'vue-property-decorator';
 
 enum CreatingAuctionStatus {
   CheckingContractApproved,
@@ -143,6 +144,7 @@ enum CreatingAuctionStatus {
   CreateAuctionAwaitingConfirmation,
   CreateAuctionError,
   AuctionCreated,
+  ConnectYourWallet,
 }
 
 @Options({
@@ -179,6 +181,11 @@ export default class Auction extends Vue {
     return this.$store.getters['user/account'];
   }
 
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
   cancelAuction() {
     this.displayingStatus = true;
 
@@ -189,7 +196,13 @@ export default class Auction extends Vue {
 
   created() {
     void this.getAuctionData();
-    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    }
   }
 
   mounted() {
@@ -215,6 +228,14 @@ export default class Auction extends Vue {
       this.loading = false;
     } catch {
       this.loading = false;
+    }
+  }
+
+  placeABidAction() {
+    if (this.isConnected) {
+      this.openPlaceBidDialog();
+    } else {
+      void this.$store.dispatch('user/openConnectYourWalletModal');
     }
   }
 

@@ -17,7 +17,7 @@
         >
           <q-date
             v-model="value"
-            mask="DD/MM/YYYY"
+            mask="MM/DD/YYYY"
             :options="options"
           />
         </q-popup-proxy>
@@ -33,7 +33,7 @@ import { Vue, Options, Model, Ref, Prop } from 'vue-property-decorator';
 @Options({
   components: {},
 })
-export default class DateTimeField extends Vue {
+export default class DateField extends Vue {
   @Ref('dateRef') dateRef!: QPopupProxy;
   @Model('modelValue') value!: string;
   @Prop() options!: unknown;

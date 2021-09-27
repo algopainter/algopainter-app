@@ -126,6 +126,7 @@ export default {
     deleteAuction: 'Delete auction',
     minimumPrice: 'Minimum price',
     endDate: 'End date',
+    endTime: 'End time',
     selectCoin: 'Select a coin',
     ireceive: '0.2002',
     creatingAuction: 'Creating auction',

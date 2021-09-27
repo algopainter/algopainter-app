@@ -32,68 +32,116 @@
           {{ $t('dashboard.sellYourArt.createAuction') }}
         </div>
         <div class="col-12">
-          <q-input
-            v-model="auction.minimumPrice"
-            :label="$t('dashboard.sellYourArt.minimumPrice')"
-            type="number"
-            color="primary"
-          >
-            <template #append>
-              <q-btn-dropdown
-                color="primary"
-                flat
-              >
-                <template #label>
-                  <q-avatar
-                    v-if="selectedCoin"
-                    size="sm"
-                    class="q-mr-md"
+          <v-form v-slot="{ handleSubmit }">
+            <q-form
+              class="row q-col-gutter-md"
+              @submit="handleSubmit(createAuction)"
+            >
+              <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.minimumPrice')"
+                  name="minimumPrice"
+                  rules="required"
+                >
+                  <q-input
+                    :label="$t('dashboard.sellYourArt.minimumPrice')"
+                    :model-value="field.value"
+                    type="number"
+                    color="primary"
+                    :error="!!errorMessage"
+                    :error-message="errorMessage"
+                    @update:modelValue="handleChange"
                   >
-                    <img :src="selectedCoin.img">
-                  </q-avatar>
-                  <div>
-                    {{ selectedCoinLabel }}
-                  </div>
-                </template>
-                <template #default>
-                  <q-list>
-                    <q-item
-                      v-for="coin in allowedCoins"
-                      :key="coin.value"
-                      v-close-popup
-                      clickable
-                      @click="selectCoin(coin.value)"
-                    >
-                      <q-item-section avatar>
-                        <q-avatar size="sm">
-                          <img :src="coin.img">
-                        </q-avatar>
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>
-                          {{ coin.label }}
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </template>
-              </q-btn-dropdown>
-            </template>
-          </q-input>
-        </div>
-        <div class="col-12">
-          <date-time-field
-            v-model="auction.endDate"
-            :options="endDateOptions"
-            :label="$t('dashboard.sellYourArt.endDate')"
-          />
-        </div>
-        <div class="col-12 flex justify-end">
-          <algo-button
-            color="primary"
-            :label="$t('dashboard.sellYourArt.createAuction')"
-            @click="createAuction"
-          />
+                    <template #append>
+                      <q-btn-dropdown
+                        color="primary"
+                        flat
+                      >
+                        <template #label>
+                          <q-avatar
+                            v-if="selectedCoin"
+                            size="sm"
+                            class="q-mr-md"
+                          >
+                            <img :src="selectedCoin.img">
+                          </q-avatar>
+                          <div>
+                            {{ selectedCoinLabel }}
+                          </div>
+                        </template>
+                        <template #default>
+                          <q-list>
+                            <q-item
+                              v-for="coin in allowedCoins"
+                              :key="coin.value"
+                              v-close-popup
+                              clickable
+                              @click="selectCoin(coin.value)"
+                            >
+                              <q-item-section avatar>
+                                <q-avatar size="sm">
+                                  <img :src="coin.img">
+                                </q-avatar>
+                              </q-item-section>
+                              <q-item-section>
+                                <q-item-label>
+                                  {{ coin.label }}
+                                </q-item-label>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                        </template>
+                      </q-btn-dropdown>
+                    </template>
+                  </q-input>
+                </v-field>
+              </div>
+              <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.endDate')"
+                  name="endDate"
+                  rules="required"
+                >
+                  <date-field
+                    :model-value="field.value"
+                    :options="endDateOptions"
+                    :label="$t('dashboard.sellYourArt.endDate')"
+                    :error="!!errorMessage"
+                    :error-message="errorMessage"
+                    @update:modelValue="handleChange"
+                  />
+                </v-field>
+              </div>
+              <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.endTime')"
+                  name="endTime"
+                  rules="required"
+                >
+                  <time-field
+                    :model-value="field.value"
+                    :label="$t('dashboard.sellYourArt.endTime')"
+                    :error="!!errorMessage"
+                    :error-message="errorMessage"
+                    @update:modelValue="handleChange"
+                  />
+                </v-field>
+              </div>
+              <div class="col-12 flex justify-end">
+                <algo-button
+                  type="submit"
+                  color="primary"
+                  :label="$t('dashboard.sellYourArt.createAuction')"
+                />
+              </div>
+            </q-form>
+          </v-form>
         </div>
       </div>
     </div>
@@ -113,6 +161,8 @@
 import { Options, Vue } from 'vue-class-component';
 import { mapGetters } from 'vuex';
 import moment from 'moment';
+import { Form, Field } from 'vee-validate';
+import { clone } from 'ramda';
 
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
@@ -127,15 +177,16 @@ import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
 import { NetworkInfo } from 'src/store/user/types';
 
 import AlgoButton from 'components/common/Button.vue';
-import DateTimeField from 'components/fields/DateTimeField.vue';
+import DateField from 'components/fields/DateField.vue';
+import TimeField from 'components/fields/TimeField.vue';
 import CreateAuctionStatusCard
   from 'components/auctions/auction/CreateAuctionStatusCard.vue';
 
 interface INewAuction {
   minimumPrice: number;
   endDate: string;
+  endTime: string;
   coin: string;
-  bidBackFee: number;
 }
 
 interface IAllowedTokens {
@@ -156,8 +207,11 @@ enum CreatingAuctionStatus {
 @Options({
   components: {
     AlgoButton,
-    DateTimeField,
+    DateField,
+    TimeField,
     CreateAuctionStatusCard,
+    VForm: Form,
+    VField: Field,
   },
   computed: {
     ...mapGetters('user', {
@@ -167,6 +221,8 @@ enum CreatingAuctionStatus {
   },
 })
 export default class SellYourArt extends Vue {
+  clone = clone;
+
   auctionSystem!: AlgoPainterAuctionSystemProxy;
   artTokenContract!: AlgoPainterItemProxy;
   networkInfo!: NetworkInfo;
@@ -176,12 +232,7 @@ export default class SellYourArt extends Vue {
   loading: boolean = false;
   loadingCoins: boolean = false;
 
-  auction: INewAuction = {
-    minimumPrice: 0,
-    endDate: '',
-    coin: '',
-    bidBackFee: 0,
-  };
+  coin: string = '3';
 
   allowedTokens: IAllowedTokens = {};
 
@@ -200,14 +251,12 @@ export default class SellYourArt extends Vue {
   }
 
   get selectedCoin() {
-    const { coin } = this.auction;
-
-    if (!coin) {
+    if (!this.coin) {
       return null;
     }
 
     const selectedOption = this.allowedCoins
-      .find((option) => option.value === coin);
+      .find((option) => option.value === this.coin);
 
     if (!selectedOption) {
       return null;
@@ -273,11 +322,11 @@ export default class SellYourArt extends Vue {
   }
 
   selectCoin(coin: string) {
-    this.auction.coin = coin;
+    this.coin = coin;
   }
 
   endDateOptions(date: string) {
-    return date > this.nowFormatted;
+    return date >= this.nowFormatted;
   }
 
   async approveContract() {
@@ -305,7 +354,7 @@ export default class SellYourArt extends Vue {
     });
   }
 
-  async createAuction() {
+  async createAuction(auction: INewAuction) {
     try {
       this.creatingAuction = true;
       this.displayingStatus = true;
@@ -316,7 +365,7 @@ export default class SellYourArt extends Vue {
 
       await this.approveContract();
 
-      const { minimumPrice, endDate } = this.auction;
+      const { minimumPrice, endDate } = auction;
       const { decimalPlaces } = this.selectedCoin;
 
       const minimumPriceFormatted = currencyToBlockchain(
@@ -332,7 +381,7 @@ export default class SellYourArt extends Vue {
         this.image.collectionOwner,
         this.image.nft.index,
         numberToString(minimumPriceFormatted),
-        moment(endDate, 'DD/MM/YYYY').endOf('day').unix(),
+        moment(endDate, 'MM/DD/YYYY').endOf('day').unix(),
         this.selectedCoin.tokenAddress,
         0,
         this.userAccount,

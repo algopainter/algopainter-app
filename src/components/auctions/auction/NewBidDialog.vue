@@ -194,9 +194,16 @@ export default class NewBidDialog extends Vue {
     if (allowance < amount) {
       this.placingBidStatus = PlacingBidStatus.IncreateAllowanceAwaitingInput;
 
+      const { decimalPlaces } = this.coinDetails;
+
+      const allowanceAmount = currencyToBlockchain(
+        Number.MAX_SAFE_INTEGER,
+        decimalPlaces,
+      );
+
       await this.auctionCoinTokenProxy.approve(
         this.auctionSystemContractAddress,
-        numberToString(amount),
+        numberToString(allowanceAmount),
         this.userAccount,
       ).on('error', () => {
         this.placingBidStatus = PlacingBidStatus.IncreateAllowanceError;
@@ -212,7 +219,7 @@ export default class NewBidDialog extends Vue {
       this.placingBid = true;
       this.displayingStatus = true;
 
-      const decimalPlaces = this.coinDetails.decimalPlaces;
+      const { decimalPlaces } = this.coinDetails;
 
       const bidAmount = currencyToBlockchain(
         Number(amount),

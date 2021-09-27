@@ -204,8 +204,6 @@ export default class Auction extends Vue {
 
   async loadAuctionDetails() {
     this.auction = await getAuctionDetails(this.auctionId);
-    console.log('this.auction', this.auction);
-    console.log('this.account', this.account);
   }
 
   async getAuctionData() {

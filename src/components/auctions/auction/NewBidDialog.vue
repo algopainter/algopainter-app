@@ -8,32 +8,44 @@
       <q-card-section class="header">
         {{ $t('dashboard.auctionPage.placeABid') }}
       </q-card-section>
-      <q-card-section>
-        <q-form>
-          <div>
-            {{ `${minimumLabel}:` }} {{ minimumValue }} {{ auction.minimumBid.tokenSymbol }}
-          </div>
-          <div>
-            <q-input
-              v-model="bidValue"
-              :label="$t('dashboard.auctionPage.amount')"
-              type="number"
-              color="primary"
-            />
-          </div>
+      <v-form v-slot="{ handleSubmit }">
+        <q-form @submit="handleSubmit(placeBid)">
+          <q-card-section>
+            <div>
+              {{ `${minimumLabel}:` }} {{ minimumValue }} {{ auction.minimumBid.tokenSymbol }}
+            </div>
+            <div>
+              <v-field
+                v-slot="{ field, handleChange, errorMessage }"
+                :label="$t('dashboard.auctionPage.amount')"
+                name="amount"
+                :rules="`required|min_value:${minimumBidAllowed}`"
+              >
+                <q-input
+                  :model-value="field.value"
+                  :label="$t('dashboard.auctionPage.amount')"
+                  type="number"
+                  color="primary"
+                  :error="!!errorMessage"
+                  :error-message="errorMessage"
+                  @update:modelValue="handleChange"
+                />
+              </v-field>
+            </div>
+          </q-card-section>
+          <q-card-section class="flex">
+            <q-space />
+            <div>
+              <algo-button
+                type="submit"
+                color="primary"
+                :label="$t('dashboard.auctionPage.placeABid')"
+                :loading="placingBid"
+              />
+            </div>
+          </q-card-section>
         </q-form>
-      </q-card-section>
-      <q-card-section class="flex">
-        <q-space />
-        <div>
-          <algo-button
-            color="primary"
-            :label="$t('dashboard.auctionPage.placeABid')"
-            :loading="placingBid"
-            @click="placeBid"
-          />
-        </div>
-      </q-card-section>
+      </v-form>
     </q-card>
     <q-dialog
       v-model="displayingStatus"
@@ -51,6 +63,7 @@
 import { Vue, Options, Ref, Prop } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import { mapGetters } from 'vuex';
+import { Form as VForm, Field as VField } from 'vee-validate';
 
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
@@ -75,10 +88,16 @@ enum PlacingBidStatus {
   BidCreated,
 }
 
+interface INewBid {
+  amount: number;
+}
+
 @Options({
   components: {
     AlgoButton,
     NewBidStatusCard,
+    VForm,
+    VField,
   },
   computed: {
     ...mapGetters('user', {
@@ -96,7 +115,6 @@ export default class NewBidDialog extends Vue {
   networkInfo!: NetworkInfo;
   userAccount!: string;
 
-  bidValue: string = '';
   placingBid: boolean = false;
   placingBidStatus: PlacingBidStatus | null = null;
   displayingStatus: boolean = false;
@@ -121,7 +139,10 @@ export default class NewBidDialog extends Vue {
 
   get minimumLabel() {
     const { highestBid } = this.auction;
-    return highestBid ? 'Highest bid' : 'Minimum bid';
+
+    return highestBid
+      ? this.$t('dashboard.auctionPage.highestBid')
+      : this.$t('dashboard.auctionPage.minimumBid');
   }
 
   get minimumValue() {
@@ -135,6 +156,15 @@ export default class NewBidDialog extends Vue {
     return this.$n(amount, 'decimal', {
       maximumFractionDigits: decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
+  get minimumBidAllowed() {
+    const { highestBid, minimumBid } = this.auction;
+    const { decimalPlaces } = this.coinDetails;
+
+    const value = highestBid ? highestBid.amount + 1: minimumBid.amount;
+
+    return blockchainToCurrency(value, decimalPlaces);
   }
 
   mounted() {
@@ -177,7 +207,7 @@ export default class NewBidDialog extends Vue {
     }
   }
 
-  async placeBid() {
+  async placeBid({ amount }: INewBid) {
     try {
       this.placingBid = true;
       this.displayingStatus = true;
@@ -185,7 +215,7 @@ export default class NewBidDialog extends Vue {
       const decimalPlaces = this.coinDetails.decimalPlaces;
 
       const bidAmount = currencyToBlockchain(
-        Number(this.bidValue),
+        Number(amount),
         decimalPlaces,
       );
 

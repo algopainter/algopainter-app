@@ -161,7 +161,7 @@
 import { Options, Vue } from 'vue-class-component';
 import { mapGetters } from 'vuex';
 import moment from 'moment';
-import { Form, Field } from 'vee-validate';
+import { Form as VForm, Field as VField } from 'vee-validate';
 import { clone } from 'ramda';
 
 import { auctionCoins } from 'src/helpers/auctionCoins';
@@ -210,8 +210,8 @@ enum CreatingAuctionStatus {
     DateField,
     TimeField,
     CreateAuctionStatusCard,
-    VForm: Form,
-    VField: Field,
+    VForm,
+    VField,
   },
   computed: {
     ...mapGetters('user', {

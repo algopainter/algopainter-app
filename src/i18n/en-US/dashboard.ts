@@ -168,6 +168,8 @@ export default {
     placeABid: 'Place a Bid',
     btnView: 'View Art',
     symbol: '#',
+    highestBid: 'Highest bid',
+    minimumBid: 'Minimum bid',
     amount: 'Amount',
     placingBid: 'Placing bid',
     okButton: 'Ok',

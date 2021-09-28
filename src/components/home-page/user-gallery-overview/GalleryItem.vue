@@ -228,7 +228,6 @@ export default class GalleryItem extends Vue.with(Props) {
       void this.loadData();
     }
     this.likes = this.art.likes;
-    void this.findAuctionEnded();
     void this.loadAuctionData();
   }
 
@@ -356,10 +355,6 @@ export default class GalleryItem extends Vue.with(Props) {
 
   openAuctionModal() {
     void this.$store.dispatch('auctions/openAuctionModal');
-  }
-
-  findAuctionEnded() {
-    this.dataEnd = this.art.onSale;
   }
 
   get accountAdress() {

@@ -259,6 +259,11 @@ export default class BidsStatus extends Vue.with(Props) {
     this.displayingStatus = false;
   }
 
+  get accountAdress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
+
   withdraw() {
     const withdrawBid = new AlgoPainterAuctionSystemProxy(this.networkInfo);
 

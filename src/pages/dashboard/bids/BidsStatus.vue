@@ -176,6 +176,11 @@ export default class BidsStatus extends Vue.with(Props) {
   displayingStatus: boolean = false;
   endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
 
+  get accountAdress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
+
   get endedAuction() {
     const dataEndedAuction = this.bidsAuctions.expirationDt;
     const momentApi = moment(dataEndedAuction).format('X') as unknown as number;

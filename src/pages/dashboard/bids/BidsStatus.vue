@@ -116,6 +116,7 @@
           size="lg"
           color="primary"
           :label="$t('dashboard.bid.removeBid')"
+          @click="withdraw"
         />
       </div>
     </div>
@@ -222,9 +223,14 @@ export default class BidsStatus extends Vue.with(Props) {
 
   endAuction() {
     const endAuction = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     void endAuction.endAuction(this.bidsAuctions.index, this.accountAdress);
+  }
+
+  withdraw() {
+    const withdrawBid = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+
+    void withdrawBid.withdraw(this.bidsAuctions.index, this.accountAdress);
   }
 }
 </script>

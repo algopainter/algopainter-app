@@ -8,11 +8,11 @@
       class="img"
       :src="bidsAuctions.item.previewImage"
     />
-    <div class="text-title">
-      <p class="text-bold">
+    <div>
+      <p class="text-bold title">
         {{ bidsAuctions.item.title }}
       </p>
-      <p>
+      <p class="title">
         {{ bidsAuctions.item.description }}
       </p>
       <div class="row q-gutter-sm">
@@ -264,6 +264,14 @@ bidCorreting(bids: number) {
 .text-winbid{
   font-size: 16px;
 }
+.title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 450px;
+  }
+
 @media (max-width: 450px ) {
   .time{
      width: 100%;
@@ -282,6 +290,14 @@ bidCorreting(bids: number) {
   }
   .text-time{
     margin-left: 0;
+  }
+
+  .title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 250px;
   }
 }
 </style>

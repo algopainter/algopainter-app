@@ -21,7 +21,7 @@
           class="img"
         />
         <div
-          class="q-mt-sm text-subtitle1 text-justify desktop-only"
+          class="q-mt-sm text-subtitle1 text-justify desktop-only description"
         >
           {{ auction.item.description }}
         </div>
@@ -32,8 +32,16 @@
       />
       <div class="col-12 col-sm-8">
         <div class="row q-col-gutter-md">
-          <div class="col-12 header">
+          <div class="col-12 header title">
             {{ auction.item.title }}
+            <q-tooltip
+              class="bg-primary"
+            >
+              {{ auction.item.title }}
+            </q-tooltip>
+          </div>
+          <div class="col-12">
+            {{ $t('dashboard.auctionPage.endDate', { endDate: endTimeFormatted }) }}
           </div>
           <div class="col-12">
             <q-tabs
@@ -108,9 +116,8 @@
       v-model="displayingStatus"
       persistent
     >
-      <create-auction-status-card
+      <delete-auction-status-card
         :create-auction-status="createAuctionStatus"
-        :deleting-auction="true"
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
@@ -118,7 +125,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-class-component';
+import { Vue, Options, Watch } from 'vue-property-decorator';
+import { mapGetters } from 'vuex';
+import moment from 'moment';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { getAuctionDetails } from 'src/api/auctions';
@@ -130,10 +139,11 @@ import AuctionInfo from './tabs/AuctionInfo.vue';
 import BidsList from './tabs/BidsList.vue';
 import AuctionHistory from './tabs/AuctionHistory.vue';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
-import { mapGetters } from 'vuex';
+
 import { NetworkInfo } from 'src/store/user/types';
-import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
-import { Watch } from 'vue-property-decorator';
+
+import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
+import { Notify } from 'quasar';
 
 enum CreatingAuctionStatus {
   CheckingContractApproved,
@@ -154,10 +164,15 @@ enum CreatingAuctionStatus {
     AuctionInfo,
     BidsList,
     AuctionHistory,
-    CreateAuctionStatusCard,
+    DeleteAuctionStatusCard,
   },
   computed: {
-    ...mapGetters('user', ['networkInfo']),
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
   },
 })
 export default class Auction extends Vue {
@@ -166,6 +181,8 @@ export default class Auction extends Vue {
   tab: string = 'info';
   reloadInterval: number | undefined;
   networkInfo!: NetworkInfo;
+  account!: string;
+  isConnected!: boolean;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
   displayingStatus: boolean = false;
   createAuctionStatus: CreatingAuctionStatus | null = null;
@@ -176,21 +193,34 @@ export default class Auction extends Vue {
     return id as string;
   }
 
-  get account() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/account'];
+  get expirationDate() {
+    if (!this.auction) {
+      return null;
+    }
+
+    return moment(this.auction.expirationDt);
   }
 
-  get isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/isConnected'];
+  get endTimeFormatted(): string {
+    if (!this.auction || !this.expirationDate) {
+      return '';
+    }
+
+    return this.expirationDate.calendar();
   }
 
-  cancelAuction() {
-    this.displayingStatus = true;
-
+  async cancelAuction() {
     if (this.auction) {
-      void this.auctionSystem.cancelAuction(this.auction.index, this.account);
+      if (this.auction.bids.length === 0) {
+        this.displayingStatus = true;
+        await this.auctionSystem.cancelAuction(this.auction.index, this.account);
+      } else {
+        Notify.create({
+          message: "You cannot cancel this auction anymore since there's a bid",
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+      }
     }
   }
 
@@ -209,6 +239,7 @@ export default class Auction extends Vue {
     this.reloadInterval = setInterval(() => {
       void this.loadAuctionDetails();
     }, 5000) as unknown as number;
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
   }
 
   unmounted() {
@@ -267,4 +298,17 @@ export default class Auction extends Vue {
 .q-tabs {
   font-weight: bold;
 }
+
+.title{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 100%;
+}
+
+.description{
+  word-wrap: break-word;
+}
+
 </style>

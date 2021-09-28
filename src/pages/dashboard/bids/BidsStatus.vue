@@ -120,21 +120,32 @@
         />
       </div>
     </div>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
+      <end-auction-status-card
+        :end-auction-status="endAuctionStatus"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
   </div>
 </template>
 
 <script lang="ts">
+import { PropType } from 'vue';
 import { Vue, prop, Options } from 'vue-class-component';
+import { mapGetters } from 'vuex';
+import { last } from 'ramda';
+import moment from 'moment';
+
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
-import { PropType } from 'vue';
-import { last } from 'ramda';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
-import moment from 'moment';
-import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
-import { mapGetters } from 'vuex';
+import AlgoPainterAuctionSystemProxy, { EndAuctionStatus } from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
+import EndAuctionStatusCard from 'components/auctions/auction/EndAuctionStatusCard.vue';
 
 class Props {
   bidsAuctions= prop({
@@ -146,20 +157,24 @@ class Props {
 @Options({
   components: {
     AlgoButton,
+    EndAuctionStatusCard,
   },
   computed: {
-    ...mapGetters('user', ['networkInfo']),
+    ...mapGetters('user', {
+      userAccount: 'account',
+      networkInfo: 'networkInfo',
+    }),
   },
 })
 export default class BidsStatus extends Vue.with(Props) {
   isMyBid: boolean = false;
   coinLastBid?: string;
   networkInfo!: NetworkInfo;
+  userAccount!: string;
+  auctionSystem!: AlgoPainterAuctionSystemProxy;
 
-  get accountAdress() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['user/account'] as string;
-  }
+  displayingStatus: boolean = false;
+  endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
 
   get endedAuction() {
     const dataEndedAuction = this.bidsAuctions.expirationDt;
@@ -177,7 +192,7 @@ export default class BidsStatus extends Vue.with(Props) {
 
   getHighBid() {
     const highBid = this.bidsAuctions.highestBid.account;
-    if (highBid === this.accountAdress) {
+    if (highBid === this.userAccount) {
       this.isMyBid = true;
     } else {
       this.isMyBid = false;
@@ -189,7 +204,7 @@ export default class BidsStatus extends Vue.with(Props) {
     // buscar os bids
     const getBids = this.bidsAuctions.bids;
     // console.log('getBids', getBids);
-    const account = this.accountAdress;
+    const account = this.userAccount;
     // filtrar os bids comparando com a account do usuario
     const myBidsFilter = getBids.filter(function(item) {
       return account === item.account;
@@ -221,10 +236,27 @@ export default class BidsStatus extends Vue.with(Props) {
     } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
-  endAuction() {
-    const endAuction = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    void endAuction.endAuction(this.bidsAuctions.index, this.accountAdress);
+  async endAuction() {
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+
+    this.displayingStatus = true;
+    this.endAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
+
+    await this.auctionSystem.endAuction(
+      this.bidsAuctions.index,
+      this.userAccount,
+    ).on('error', () => {
+      this.endAuctionStatus = EndAuctionStatus.EndAuctionError;
+    }).on('transactionHash', () => {
+      this.endAuctionStatus =
+        EndAuctionStatus.EndAuctionAwaitingConfirmation;
+    });
+
+    this.endAuctionStatus = EndAuctionStatus.AuctionEnded;
+  }
+
+  onCloseStatusDialog() {
+    this.displayingStatus = false;
   }
 
   withdraw() {

@@ -33,7 +33,7 @@
         <div
           class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
         >
-          <BidsStatus
+          <bids-status
             :bids-auctions="bid"
           />
         </div>
@@ -60,34 +60,40 @@ import BidsInfor from './BidsInfor.vue';
 })
 
 export default class Bids extends Vue {
-auctionsBid: IAuctionItem[] = [];
-loading: boolean = true;
-dias: number = 0
+  auctionsBid: IAuctionItem[] = [];
+  loading: boolean = true;
+  dias: number = 0;
 
-@Watch('accountAdress')
-onPropertyChanged() {
-  void this.getBids();
-}
+  get auctionBidsFiltered() {
+    return this.auctionsBid.filter((auction: IAuctionItem) => {
+      return !auction.ended;
+    });
+  }
 
-mounted() {
-  void this.getBids();
-}
+  @Watch('accountAdress')
+  onPropertyChanged() {
+    void this.getBids();
+  }
 
-get accountAdress() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  return this.$store.getters['user/account'] as string;
-}
+  mounted() {
+    void this.getBids();
+  }
 
-getBids() {
-  void this.$store.dispatch({
-    type: 'auctions/getBids',
-    account: this.accountAdress,
-  }).then(() => {
+  get accountAdress() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
-    this.loading = false;
-  });
-}
+    return this.$store.getters['user/account'] as string;
+  }
+
+  getBids() {
+    void this.$store.dispatch({
+      type: 'auctions/getBids',
+      account: this.accountAdress,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
+      this.loading = false;
+    });
+  }
 }
 // }
 </script>

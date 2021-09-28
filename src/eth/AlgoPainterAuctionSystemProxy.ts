@@ -5,6 +5,13 @@ import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterAuctionSystem from './AlgoPainterAuctionSystem.json';
 import { getAuctionSystemContractByNetworkId } from './Config';
 
+export enum EndAuctionStatus {
+  EndAuctionAwaitingInput,
+  EndAuctionError,
+  EndAuctionAwaitingConfirmation,
+  AuctionEnded,
+}
+
 export enum TokenType {
   ERC721 = 0,
   ERC1155 = 1,

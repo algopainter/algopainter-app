@@ -58,7 +58,7 @@
         <q-tooltip
           anchor="bottom middle"
           max-width="200px"
-          class="bg-primary tooltip-description"
+          class="bg-primary"
         >
           {{ galleryItem.description }}
         </q-tooltip>
@@ -243,6 +243,7 @@ export default class GalleryItem extends Vue.with(Props) {
   }
 
   .limit-text{
+    word-break: break-word;
     font-weight: bold;
     font-size: 1.4rem;
     text-overflow: ellipsis;

@@ -143,7 +143,6 @@ import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy
 import { NetworkInfo } from 'src/store/user/types';
 
 import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
-import { Watch } from 'vue-property-decorator';
 import { Notify } from 'quasar';
 
 enum CreatingAuctionStatus {

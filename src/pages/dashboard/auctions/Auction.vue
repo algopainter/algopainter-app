@@ -117,7 +117,7 @@
       persistent
     >
       <delete-auction-status-card
-        :create-auction-status="createAuctionStatus"
+        :delete-auction-status="deleteAuctionStatus"
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
@@ -145,15 +145,15 @@ import { NetworkInfo } from 'src/store/user/types';
 import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
 import { Notify } from 'quasar';
 
-enum CreatingAuctionStatus {
+enum DeletingAuctionStatus {
   CheckingContractApproved,
   ContractApprovedAwaitingInput,
   ContractApprovedAwaitingConfirmation,
   ContractApprovedError,
-  CreateAuctionAwaitingInput,
-  CreateAuctionAwaitingConfirmation,
-  CreateAuctionError,
-  AuctionCreated,
+  DeleteAuctionAwaitingInput,
+  DeleteAuctionAwaitingConfirmation,
+  DeleteAuctionError,
+  AuctionDeleted,
   ConnectYourWallet,
 }
 
@@ -185,7 +185,7 @@ export default class Auction extends Vue {
   isConnected!: boolean;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
   displayingStatus: boolean = false;
-  createAuctionStatus: CreatingAuctionStatus | null = null;
+  deleteAuctionStatus: DeletingAuctionStatus | null = null;
 
   get auctionId(): string {
     const { id } = this.$route.params;
@@ -210,10 +210,16 @@ export default class Auction extends Vue {
   }
 
   async cancelAuction() {
+    this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionAwaitingInput;
     if (this.auction) {
       if (this.auction.bids.length === 0) {
         this.displayingStatus = true;
-        await this.auctionSystem.cancelAuction(this.auction.index, this.account);
+        await this.auctionSystem.cancelAuction(this.auction.index, this.account).on('transactionHash', () => {
+          this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation;
+        }).on('error', () => {
+          this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
+        });
+        this.deleteAuctionStatus = DeletingAuctionStatus.AuctionDeleted;
       } else {
         Notify.create({
           message: "You cannot cancel this auction anymore since there's a bid",
@@ -282,10 +288,10 @@ export default class Auction extends Vue {
   onCloseStatusDialog() {
     this.displayingStatus = false;
 
-    if (this.createAuctionStatus === CreatingAuctionStatus.AuctionCreated) {
+    if (this.deleteAuctionStatus === DeletingAuctionStatus.AuctionDeleted) {
       this.$q.notify({
         type: 'positive',
-        message: 'Auction created successfully',
+        message: this.$t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionDeleted'),
       });
 
       void this.$router.push('/');

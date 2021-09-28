@@ -1,21 +1,21 @@
 <template>
   <q-card>
     <q-card-section class="header">
-      {{ $t('dashboard.sellYourArt.deletingAuction') }}
+      {{ $t('dashboard.auctionPage.deletingAuction') }}
     </q-card-section>
     <q-card-section>
       <div class="steps row q-col-gutter-md">
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="createAuctionStatus === CreatingAuctionStatus.CheckingContractApproved"
+              v-if="deleteAuctionStatus === DeletingAuctionStatus.CheckingContractApproved"
               size="60px"
               color="primary"
             >
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.ContractApprovedAwaitingInput"
+              v-else-if="deleteAuctionStatus === DeletingAuctionStatus.ContractApprovedAwaitingInput"
               size="60px"
               color="warning"
               text-color="white"
@@ -23,14 +23,14 @@
               <q-icon name="mdi-alert" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.ContractApprovedAwaitingConfirmation"
+              v-else-if="deleteAuctionStatus === DeletingAuctionStatus.ContractApprovedAwaitingConfirmation"
               size="60px"
               color="primary"
             >
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.ContractApprovedError"
+              v-else-if="deleteAuctionStatus === DeletingAuctionStatus.ContractApprovedError"
               size="60px"
               color="negative"
               text-color="white"
@@ -48,7 +48,7 @@
           </div>
           <div class="label">
             <div class="title">
-              {{ $t('dashboard.sellYourArt.statuses.contractApprove') }}
+              {{ $t('dashboard.auctionPage.cancelAuctionStatuses.contractApprove') }}
             </div>
             <div>
               {{ firstStepLabel }}
@@ -58,7 +58,7 @@
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="createAuctionStatus < CreatingAuctionStatus.CreateAuctionAwaitingInput"
+              v-if="deleteAuctionStatus < DeletingAuctionStatus.DeleteAuctionAwaitingInput"
               size="60px"
               color="grey"
               text-color="white"
@@ -66,7 +66,7 @@
               <q-icon name="mdi-cancel" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionAwaitingInput"
+              v-else-if="deleteAuctionStatus === DeletingAuctionStatus.DeleteAuctionAwaitingInput"
               size="60px"
               color="warning"
               text-color="white"
@@ -74,7 +74,7 @@
               <q-icon name="mdi-alert" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionAwaitingConfirmation"
+              v-else-if="deleteAuctionStatus === DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation"
               size="60px"
               color="primary"
               text-color="white"
@@ -82,7 +82,7 @@
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionError"
+              v-else-if="deleteAuctionStatus === DeletingAuctionStatus.DeleteAuctionError"
               size="60px"
               color="negative"
               text-color="white"
@@ -90,7 +90,7 @@
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.AuctionCreated"
+              v-else-if="deleteAuctionStatus === DeletingAuctionStatus.AuctionDeleted"
               size="60px"
               color="positive"
               text-color="white"
@@ -100,7 +100,7 @@
           </div>
           <div class="label">
             <div class="title">
-              {{ $t('dashboard.sellYourArt.deleteAuction') }}
+              {{ $t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuction') }}
             </div>
             <div>
               {{ secondStepLabel }}
@@ -125,15 +125,16 @@ import { Vue, Options, Prop } from 'vue-property-decorator';
 
 import AlgoButton from 'components/common/Button.vue';
 
-enum CreatingAuctionStatus {
+enum DeletingAuctionStatus {
   CheckingContractApproved,
   ContractApprovedAwaitingInput,
   ContractApprovedAwaitingConfirmation,
   ContractApprovedError,
-  CreateAuctionAwaitingInput,
-  CreateAuctionAwaitingConfirmation,
-  CreateAuctionError,
-  AuctionCreated,
+  DeleteAuctionAwaitingInput,
+  DeleteAuctionAwaitingConfirmation,
+  DeleteAuctionError,
+  AuctionDeleted,
+  ConnectYourWallet,
 }
 
 @Options({
@@ -141,45 +142,45 @@ enum CreatingAuctionStatus {
     AlgoButton,
   },
 })
-export default class CreateAuctionStatusCard extends Vue {
-  @Prop({ required: true }) createAuctionStatus!: CreatingAuctionStatus;
+export default class DeleteAuctionStatusCard extends Vue {
+  @Prop({ required: true }) deleteAuctionStatus!: DeletingAuctionStatus;
 
-  CreatingAuctionStatus = CreatingAuctionStatus;
+  DeletingAuctionStatus = DeletingAuctionStatus;
 
   get firstStepLabel() {
-    switch (this.createAuctionStatus) {
-      case CreatingAuctionStatus.CheckingContractApproved:
-        return this.$t('dashboard.sellYourArt.statuses.checkingContractApproved');
-      case CreatingAuctionStatus.ContractApprovedAwaitingInput:
-        return this.$t('dashboard.sellYourArt.statuses.approveContractInput');
-      case CreatingAuctionStatus.ContractApprovedAwaitingConfirmation:
-        return this.$t('dashboard.sellYourArt.statuses.approveContractConfirmation');
-      case CreatingAuctionStatus.ContractApprovedError:
-        return this.$t('dashboard.sellYourArt.statuses.approveContractError');
+    switch (this.deleteAuctionStatus) {
+      case DeletingAuctionStatus.CheckingContractApproved:
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.checkingContractApproved');
+      case DeletingAuctionStatus.ContractApprovedAwaitingInput:
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.approveContractInput');
+      case DeletingAuctionStatus.ContractApprovedAwaitingConfirmation:
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.approveContractConfirmation');
+      case DeletingAuctionStatus.ContractApprovedError:
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.approveContractError');
       default:
-        return this.$t('dashboard.sellYourArt.statuses.approveContractAvailable');
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.approveContractAvailable');
     }
   }
 
   get secondStepLabel() {
-    switch (this.createAuctionStatus) {
-      case CreatingAuctionStatus.CreateAuctionAwaitingInput:
-        return this.$t('dashboard.sellYourArt.statuses.createAuctionInput');
-      case CreatingAuctionStatus.CreateAuctionAwaitingConfirmation:
-        return this.$t('dashboard.sellYourArt.statuses.createAuctionConfirmation');
-      case CreatingAuctionStatus.CreateAuctionError:
-        return this.$t('dashboard.sellYourArt.statuses.createAuctionError');
-      case CreatingAuctionStatus.AuctionCreated:
-        return this.$t('dashboard.sellYourArt.statuses.createAuctionCreated');
+    switch (this.deleteAuctionStatus) {
+      case DeletingAuctionStatus.DeleteAuctionAwaitingInput:
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionInput');
+      case DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation:
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionConfirmation');
+      case DeletingAuctionStatus.DeleteAuctionError:
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionError');
+      case DeletingAuctionStatus.AuctionDeleted:
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionDeleted');
       default:
         return '';
     }
   }
 
   get okBtnDisabled() {
-    return this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
-      this.createAuctionStatus !== CreatingAuctionStatus.ContractApprovedError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError;
+    return this.deleteAuctionStatus !== DeletingAuctionStatus.AuctionDeleted &&
+      this.deleteAuctionStatus !== DeletingAuctionStatus.ContractApprovedError &&
+      this.deleteAuctionStatus !== DeletingAuctionStatus.DeleteAuctionError;
   }
 }
 </script>

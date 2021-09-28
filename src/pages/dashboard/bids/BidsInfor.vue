@@ -98,26 +98,26 @@
                 >
                   <div>
                     <div class="text-bold">
-                      <!-- {{ days }}  -->{{ Dias }}
+                      <!-- {{ days }}  -->{{ countDays }}
                     </div>
                     <span> {{ $t('dashboard.bid.days') }} </span>
                   </div>
 
                   <div>
                     <div class="text-bold">
-                      <!-- {{ hours }}--> {{ Horas }}
+                      <!-- {{ hours }}--> {{ countHours }}
                     </div>
                     <span>{{ $t('dashboard.bid.hours') }}</span>
                   </div>
                   <div>
                     <div class="text-bold">
-                      <!-- {{ minutes }} -->{{ Minutos }}
+                      <!-- {{ minutes }} -->{{ countMinutes }}
                     </div>
                     <span>{{ $t('dashboard.bid.minis') }}</span>
                   </div>
                   <div>
                     <div class="text-bold">
-                      <!-- {{ seconds }} --> {{ Segundos }}
+                      <!-- {{ seconds }} --> {{ countSeconds }}
                     </div>
                     <span>{{ $t('dashboard.bid.seconds') }}</span>
                   </div>
@@ -168,11 +168,14 @@ hours: number = 0;
 minutes: number = 0;
 minuReal: number = 0;
 seconds: number = 0;
-time!: moment.Duration;
 monthExpirations: string = ''
 dayExpirations: string = ''
 yearExpirations: string = ''
 hoursExpirations!: string ;
+countDays: number = 0;
+countHours: number = 0;
+countMinutes: number = 0;
+countSeconds: number = 0;
 
 mounted(): void {
   void this.getTime();
@@ -195,28 +198,14 @@ onPropertyChanged() {
  getTime() {
    const newEnded = moment(this.bidsAuctions.expirationDt);
    const timeLeft = moment.duration(newEnded.diff(moment()));
-   console.log(timeLeft);
-   this.time = timeLeft;
+   this.countDays = timeLeft.days() || 0;
+   this.countHours = timeLeft.hours() || 0;
+   this.countMinutes = timeLeft.minutes() || 0;
+   this.countSeconds = timeLeft.seconds() || 0;
  }
 
  get now() {
    return now.value;
- }
-
- get Dias() {
-   const day = this.time?.days() || 0;
-   return day;
- }
- get Horas() {
-   return this.time?.hours() || 0;
- }
-
- get Minutos() {
-   return this.time?.minutes() || 0;
- }
-
- get Segundos() {
-   return this.time?.seconds() || 0;
  }
 
  countdown() {

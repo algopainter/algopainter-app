@@ -356,7 +356,13 @@ export default class GalleryItem extends Vue.with(Props) {
   openAuctionModal() {
     void this.$store.dispatch('auctions/openAuctionModal');
   }
+
+  get accountAdress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
 }
+
 </script>
 
 <style lang="scss" scoped>

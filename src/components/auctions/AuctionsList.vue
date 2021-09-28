@@ -9,6 +9,21 @@
           {{ $t('dashboard.commingSoon') }}
         </p>
       </div>
+      <div
+        v-else-if="auctions.length === 3"
+        class="row justify-start"
+      >
+        <div
+          v-for="(isHot, index) in auctions"
+          :key="index"
+          class="row"
+        >
+          <auction-item
+            :is-hot="isHot"
+            @favoriteClicked="favoriteClicked()"
+          />
+        </div>
+      </div>
       <div v-else>
         <div
           v-if="hotBidsLoading === false"

@@ -72,13 +72,24 @@
             @click="openAuctionModal"
           />
           <div v-else-if="btnName === 'dashboard.homePage.goToAuction'">
-            <algoButton
-              class="q-my-md action full-width"
-              color="primary"
-              :label="$t(btnName)"
-              :to="`/auctions/${goToAuctionId}`"
-              :disable="loadingGoToAuctionId"
-            />
+            <div v-if="dataEnd">
+              <algoButton
+                class="q-my-md action full-width"
+                color="primary"
+                :label="$t(btnName)"
+                :to="`/auctions/${goToAuctionId}`"
+                :disable="loadingGoToAuctionId"
+              />
+            </div>
+            <div v-else>
+              <algoButton
+                class="q-my-md action full-width"
+                color="primary"
+                :label="$t('dashboard.homePage.getYourArt')"
+                :disable="loadingGoToAuctionId"
+                @click="endAuction"
+              />
+            </div>
           </div>
           <algoButton
             v-else
@@ -102,6 +113,8 @@ import AlgoButton from '../../common/Button.vue';
 import ShareArtIcons from '../../common/ShareArtIcons.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
+import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import { NetworkInfo } from 'src/store/user/types';
 
 class Props {
   art = prop({
@@ -134,6 +147,9 @@ export default class GalleryItem extends Vue.with(Props) {
   likes!: number;
   goToAuctionId: string | undefined = undefined;
   loadingGoToAuctionId: boolean = true;
+  dataEnd: boolean = false;
+
+  networkInfo!: NetworkInfo;
 
   collectionArtController: CollectionArtController =
   new CollectionArtController();
@@ -144,6 +160,7 @@ export default class GalleryItem extends Vue.with(Props) {
     }
     this.likes = this.art.likes;
     void this.goToAuction();
+    void this.findAuctionEnded();
   }
 
   async goToAuction() {
@@ -156,6 +173,7 @@ export default class GalleryItem extends Vue.with(Props) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       this.goToAuctionId = this.$store.getters['auctions/getAuctionId'] as string | undefined;
       this.loadingGoToAuctionId = false;
+      console.log(this.art);
     });
   }
 
@@ -240,7 +258,31 @@ export default class GalleryItem extends Vue.with(Props) {
   openAuctionModal() {
     void this.$store.dispatch('auctions/openAuctionModal');
   }
+
+  findAuctionEnded() {
+    this.dataEnd = this.art.onSale;
+  }
+
+  get accountAdress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
+
+  endAuction() {
+    try {
+      const auctionOffBid = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+
+      const auctionIndex: number = this.art.nft.index;
+      void auctionOffBid.endAuction(auctionIndex, this.accountAdress);
+      console.log(auctionIndex);
+    } catch (error) {
+      console.log(error);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  }
 }
+
 </script>
 
 <style lang="scss" scoped>

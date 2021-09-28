@@ -15,6 +15,28 @@ export interface IAuctionItem {
     }
     service: number;
   }
+  withdraws: {
+    account: string;
+    amount: number;
+    auctionId: number;
+    avatar: string;
+    bidder: string;
+    bio: string;
+    createdAt: string;
+    customProfile: string;
+    email: string;
+    facebook: string;
+    gmail: string;
+    instagram: string;
+    name: string;
+    role: string;
+    telegram: string;
+    tokenSymbol: string;
+    twitter: string;
+    type: string;
+    updatedAt: string;
+    webSite: string;
+  }[]
   highestBid: IBid;
   isHot: boolean;
   ended: boolean;
@@ -58,6 +80,10 @@ export interface IAuctionItem {
     tokenSymbol: string;
     tokenPriceAddress: string;
   }
+  returns: {
+    account: string;
+    createdAt: string;
+  }[]
   owner: string;
   startDt: string;
   updatedAt: string;
@@ -78,5 +104,6 @@ export interface IAuctionItem {
     updatedAt: string;
     _id: string;
   }];
+
   _v: number;
 }

@@ -139,7 +139,7 @@
               </span><br>
               <span>{{ $t('dashboard.viewArt.created') }}</span>
               <span class="text-bold">
-                {{ image.owner }}
+                {{ image.creator }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.mint') }}</span>
               <span class="text-bold">

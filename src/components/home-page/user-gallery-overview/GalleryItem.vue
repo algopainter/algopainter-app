@@ -172,7 +172,6 @@ export default class GalleryItem extends Vue.with(Props) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       this.goToAuctionId = this.$store.getters['auctions/getAuctionId'] as string | undefined;
       this.loadingGoToAuctionId = false;
-      console.log(this.art);
     });
   }
 
@@ -273,7 +272,6 @@ export default class GalleryItem extends Vue.with(Props) {
 
       const auctionIndex: number = this.art.nft.index;
       void auctionOffBid.endAuction(auctionIndex, this.accountAdress);
-      console.log(auctionIndex);
     } catch (error) {
       console.log(error);
     }

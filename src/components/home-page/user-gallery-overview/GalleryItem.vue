@@ -220,7 +220,6 @@ export default class GalleryItem extends Vue.with(Props) {
       maximumFractionDigits: decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-
     return this.$t('dashboard.auctionPage.claimBtn', { amount, coin });
   }
 

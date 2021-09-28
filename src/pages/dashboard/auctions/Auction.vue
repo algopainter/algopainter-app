@@ -36,6 +36,9 @@
             {{ auction.item.title }}
           </div>
           <div class="col-12">
+            {{ $t('dashboard.auctionPage.endDate', { endDate: endTimeFormatted }) }}
+          </div>
+          <div class="col-12">
             <q-tabs
               v-model="tab"
               active-color="primary"
@@ -118,7 +121,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-class-component';
+import { Vue, Options, Watch } from 'vue-property-decorator';
+import { mapGetters } from 'vuex';
+import moment from 'moment';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { getAuctionDetails } from 'src/api/auctions';
@@ -130,10 +135,9 @@ import AuctionInfo from './tabs/AuctionInfo.vue';
 import BidsList from './tabs/BidsList.vue';
 import AuctionHistory from './tabs/AuctionHistory.vue';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
-import { mapGetters } from 'vuex';
+
 import { NetworkInfo } from 'src/store/user/types';
 import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
-import { Watch } from 'vue-property-decorator';
 
 enum CreatingAuctionStatus {
   CheckingContractApproved,
@@ -157,7 +161,12 @@ enum CreatingAuctionStatus {
     CreateAuctionStatusCard,
   },
   computed: {
-    ...mapGetters('user', ['networkInfo']),
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
   },
 })
 export default class Auction extends Vue {
@@ -166,6 +175,8 @@ export default class Auction extends Vue {
   tab: string = 'info';
   reloadInterval: number | undefined;
   networkInfo!: NetworkInfo;
+  account!: string;
+  isConnected!: boolean;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
   displayingStatus: boolean = false;
   createAuctionStatus: CreatingAuctionStatus | null = null;
@@ -176,14 +187,20 @@ export default class Auction extends Vue {
     return id as string;
   }
 
-  get account() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/account'];
+  get expirationDate() {
+    if (!this.auction) {
+      return null;
+    }
+
+    return moment(this.auction.expirationDt);
   }
 
-  get isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/isConnected'];
+  get endTimeFormatted(): string {
+    if (!this.auction || !this.expirationDate) {
+      return '';
+    }
+
+    return this.expirationDate.calendar();
   }
 
   cancelAuction() {

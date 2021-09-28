@@ -175,6 +175,7 @@ export default {
     okButton: 'Ok',
     claimBtn: 'Claim: {amount} {coin}',
     endingAuction: 'End auction',
+    endDate: 'The auction will end {endDate}',
     statuses: {
       allowance: 'Allowance',
       checkingAllowance: 'Checking if has enough allowance',

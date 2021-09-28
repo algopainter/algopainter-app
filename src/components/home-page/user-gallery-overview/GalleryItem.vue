@@ -87,7 +87,6 @@
                 color="primary"
                 :label="$t('dashboard.homePage.getYourArt')"
                 :disable="loadingGoToAuctionId"
-                @click="endAuction"
               />
             </div>
           </div>

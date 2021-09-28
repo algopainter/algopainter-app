@@ -10,7 +10,7 @@
         </p>
       </div>
       <div
-        v-else-if="auctions.length === 3"
+        v-else-if="auctions.length <= 3"
         class="row justify-start"
       >
         <div
@@ -271,6 +271,7 @@ export default class AuctionsList extends Vue {
       type: 'auctions/getHotBids',
     }).then(() => {
       this.areHot = this.$store.state.auctions.hotBids;
+      console.log(this.areHot);
       this.auctions = this.areHot.filter(function(items) {
         return moment().isAfter(items.expirationDt) === false;
       });

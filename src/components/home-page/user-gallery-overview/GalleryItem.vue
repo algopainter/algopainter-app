@@ -158,14 +158,12 @@ class Props {
   },
   computed: {
     ...mapGetters('user', {
-      userAccount: 'account',
       networkInfo: 'networkInfo',
     }),
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
-  userAccount!: string;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
 
   // like feature variables

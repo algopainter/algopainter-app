@@ -64,6 +64,7 @@ export default {
     stakedAlgop: 'ALGOP Staked',
     havest: 'Harvest',
     unstakeAlgo: 'Unstake ALGOP',
+    getYourArt: 'Get here your art',
   },
   newPainting: {
     title: 'New Painting',

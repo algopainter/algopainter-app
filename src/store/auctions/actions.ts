@@ -6,7 +6,7 @@ import { api } from 'src/boot/axios';
 const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getHotBids() {
     try {
-      const res = await api.get('auctions/?order.expirationDt=1');
+      const res = await api.get('auctions/?ended=false&order.expirationDt=1');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const hotBids = res.data as [];
       this.commit('auctions/SET_HOT_BIDS', hotBids);
@@ -65,6 +65,20 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       console.log('error getAuction msg');
     } finally {
       console.log('success msg');
+    }
+  },
+
+  async getOnSale(type, value: {itemId: string}) {
+    const itemId = value.itemId;
+    try {
+      const res = await api.get<IAuctionItem[]>(`auctions?item._id=${itemId}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const auction = res.data.pop();
+      if (auction) {
+        this.commit('auctions/SET_AUCTION_ID', auction._id);
+      }
+    } catch (e) {
+      console.log('Error in getOnSale');
     }
   },
 

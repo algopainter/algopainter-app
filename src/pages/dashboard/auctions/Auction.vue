@@ -116,9 +116,8 @@
       v-model="displayingStatus"
       persistent
     >
-      <create-auction-status-card
+      <delete-auction-status-card
         :create-auction-status="createAuctionStatus"
-        :deleting-auction="true"
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
@@ -142,7 +141,10 @@ import AuctionHistory from './tabs/AuctionHistory.vue';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 
 import { NetworkInfo } from 'src/store/user/types';
-import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
+
+import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
+import { Watch } from 'vue-property-decorator';
+import { Notify } from 'quasar';
 
 enum CreatingAuctionStatus {
   CheckingContractApproved,
@@ -163,7 +165,7 @@ enum CreatingAuctionStatus {
     AuctionInfo,
     BidsList,
     AuctionHistory,
-    CreateAuctionStatusCard,
+    DeleteAuctionStatusCard,
   },
   computed: {
     ...mapGetters(
@@ -208,11 +210,18 @@ export default class Auction extends Vue {
     return this.expirationDate.calendar();
   }
 
-  cancelAuction() {
-    this.displayingStatus = true;
-
+  async cancelAuction() {
     if (this.auction) {
-      void this.auctionSystem.cancelAuction(this.auction.index, this.account);
+      if (this.auction.bids.length === 0) {
+        this.displayingStatus = true;
+        await this.auctionSystem.cancelAuction(this.auction.index, this.account);
+      } else {
+        Notify.create({
+          message: "You cannot cancel this auction anymore since there's a bid",
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+      }
     }
   }
 
@@ -231,6 +240,7 @@ export default class Auction extends Vue {
     this.reloadInterval = setInterval(() => {
       void this.loadAuctionDetails();
     }, 5000) as unknown as number;
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
   }
 
   unmounted() {

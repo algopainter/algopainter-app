@@ -98,26 +98,26 @@
                 >
                   <div>
                     <div class="text-bold">
-                      {{ days }}
+                      <!-- {{ days }}  -->{{ countDays }}
                     </div>
                     <span> {{ $t('dashboard.bid.days') }} </span>
                   </div>
 
                   <div>
                     <div class="text-bold">
-                      {{ hours }}
+                      <!-- {{ hours }}--> {{ countHours }}
                     </div>
                     <span>{{ $t('dashboard.bid.hours') }}</span>
                   </div>
                   <div>
                     <div class="text-bold">
-                      {{ minutes }}
+                      <!-- {{ minutes }} -->{{ countMinutes }}
                     </div>
                     <span>{{ $t('dashboard.bid.minis') }}</span>
                   </div>
                   <div>
                     <div class="text-bold">
-                      {{ seconds }}
+                      <!-- {{ seconds }} --> {{ countSeconds }}
                     </div>
                     <span>{{ $t('dashboard.bid.seconds') }}</span>
                   </div>
@@ -140,6 +140,7 @@ import { PropType } from 'vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IBid } from 'src/models/IBid';
+import { Watch } from 'vue-property-decorator';
 import moment from 'moment';
 import 'moment-duration-format';
 
@@ -156,7 +157,7 @@ class Props {
 }
 @Options({
   watch: {
-    accountAddress: ['now'],
+    now: ['getTime'],
   },
 })
 
@@ -167,85 +168,106 @@ hours: number = 0;
 minutes: number = 0;
 minuReal: number = 0;
 seconds: number = 0;
-time!: number ;
 monthExpirations: string = ''
 dayExpirations: string = ''
 yearExpirations: string = ''
 hoursExpirations!: string ;
+countDays: number = 0;
+countHours: number = 0;
+countMinutes: number = 0;
+countSeconds: number = 0;
 
 mounted(): void {
+  void this.getTime();
   void this.formatTime();
   void this.countdown();
 }
 
-formatTime() {
-  this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
-  this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
-  this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
-  this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('h:mm:ss');
+ @Watch('now')
+onPropertyChanged() {
+  void this.getTime();
 }
 
-countdown() {
-  const date = this.bidsAuctions.expirationDt;
-  const lack = (new Date(date).getTime() - new Date().getTime()) / 1000;
-  this.seconds = Math.round(lack % 60);
-  this.minutes = Math.round(lack / 60 % 60);
-  this.hours = Math.round(lack / 60 / 60 % 24);
-  this.days = Math.round(lack / 60 / 60 / 24);
-  setInterval(() => {
-    if (this.seconds === 0) {
-      this.seconds = 60;
-      this.minutes--;
-    }
-    if (this.minutes === 0) {
-      this.minutes = 60;
-      this.hours--;
-    }
-    if (this.hours === 0) {
-      this.hours = 24;
-      this.days--;
-    }
-    this.seconds--;
-  }, 1000);
-}
+ formatTime() {
+   this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
+   this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
+   this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
+   this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('h:mm:ss');
+ }
 
-dataMoment(index: string, format: string) {
-  return moment(index).format(format);
-}
+ getTime() {
+   const newEnded = moment(this.bidsAuctions.expirationDt);
+   const timeLeft = moment.duration(newEnded.diff(moment()));
+   this.countDays = timeLeft.days() || 0;
+   this.countHours = timeLeft.hours() || 0;
+   this.countMinutes = timeLeft.minutes() || 0;
+   this.countSeconds = timeLeft.seconds() || 0;
+ }
 
-getLastBid(): void {
-  this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
-}
+ get now() {
+   return now.value;
+ }
 
-get now() {
-  return now.value;
-}
+ countdown() {
+   const date = this.bidsAuctions.expirationDt;
+   const lack = (new Date(date).getTime() - new Date().getTime()) / 1000;
+   this.seconds = Math.round(lack % 60);
+   this.minutes = Math.round(lack / 60 % 60);
+   this.hours = Math.round(lack / 60 / 60 % 24);
+   this.days = Math.round(lack / 60 / 60 / 24);
+   setInterval(() => {
+     if (this.seconds === 0) {
+       this.seconds = 60;
+       this.minutes--;
+     }
+     if (this.minutes === 0) {
+       this.minutes = 60;
+       this.hours--;
+     }
+     if (this.hours === 0) {
+       this.hours = 24;
+       this.days--;
+     }
+     if (this.days < 0) {
+       this.days = 0;
+     }
+     this.seconds--;
+   }, 1000);
+ }
 
-get isEnded() {
-  return moment().isAfter(this.bidsAuctions.expirationDt);
-}
+ dataMoment(index: string, format: string) {
+   return moment(index).format(format);
+ }
 
-get coinDetails() {
-  const coin = auctionCoins.find((coin) => {
-    return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
-  });
+ getLastBid(): void {
+   this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
+ }
 
-  if (!coin) {
-    throw new Error('COIN_NOT_FOUND');
-  }
+ get isEnded() {
+   return moment().isAfter(this.bidsAuctions.expirationDt);
+ }
 
-  return coin;
-}
+ get coinDetails() {
+   const coin = auctionCoins.find((coin) => {
+     return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
+   });
 
-bidCorreting(bids: number) {
-  const amount = blockchainToCurrency(
-    bids,
-    this.coinDetails.decimalPlaces,
-  );
-  return this.$n(amount, 'decimal', {
-    maximumFractionDigits: this.coinDetails.decimalPlaces,
-  } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
-}
+   if (!coin) {
+     throw new Error('COIN_NOT_FOUND');
+   }
+
+   return coin;
+ }
+
+ bidCorreting(bids: number) {
+   const amount = blockchainToCurrency(
+     bids,
+     this.coinDetails.decimalPlaces,
+   );
+   return this.$n(amount, 'decimal', {
+     maximumFractionDigits: this.coinDetails.decimalPlaces,
+   } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
+ }
 }
 </script>
 <style lang="scss">

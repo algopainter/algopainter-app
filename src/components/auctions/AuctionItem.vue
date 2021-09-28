@@ -273,6 +273,16 @@ export default class AuctionItem extends Vue.with(Props) {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
+
+  // get reductionBidValue() {
+  //   const coinReduction = this.valueCoin as unknown as number;
+  //   return UserUtils.formatAccountBalance(coinReduction, 2);
+  // }
+
+  // showValue(bids: number) {
+  //   this.bidValue(bids);
+  //   return this.reductionBidValue;
+  // }
 }
 </script>
 

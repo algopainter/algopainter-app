@@ -6,9 +6,6 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getAllBids(state: AuctionStateInterface): [] | undefined {
     return state.allBids;
   },
-  getAuctionId(state: AuctionStateInterface): string | undefined {
-    return state.auctionId;
-  },
   openAuctionModal(state: AuctionStateInterface): boolean {
     return state.openAuctionModal;
   },

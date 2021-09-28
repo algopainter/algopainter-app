@@ -173,6 +173,8 @@ export default {
     amount: 'Amount',
     placingBid: 'Placing bid',
     okButton: 'Ok',
+    claimBtn: 'Claim: {amount} {coin}',
+    endingAuction: 'End auction',
     statuses: {
       allowance: 'Allowance',
       checkingAllowance: 'Checking if has enough allowance',
@@ -185,6 +187,12 @@ export default {
       placeBidConfirmation: 'Awaiting for the blockchain confirmation',
       placeBidError: 'An error ocurred while trying to place a bid',
       placeBidAvailable: 'Bid placed successfully',
+    },
+    endAuctionStatuses: {
+      awaitingInput: 'Interact with your wallet to end the auction',
+      error: 'An error ocurred while trying to end the auction',
+      awaitingConfirmation: 'Awaiting for the blockchain confirmation',
+      auctionEnded: 'Auction ended successfully',
     },
     cancelAuction: 'Cancel auction',
   },

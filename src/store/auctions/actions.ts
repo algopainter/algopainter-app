@@ -2,7 +2,6 @@ import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AuctionStateInterface } from './types';
 import { api } from 'src/boot/axios';
-import { IAuctionItem } from 'src/models/IAuctionItem';
 
 const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getHotBids() {
@@ -69,17 +68,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
-  async getOnSale(type, value: {itemId: string}) {
-    const itemId = value.itemId;
-    try {
-      const res = await api.get(`auctions?item._id=${itemId}`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const auction = res.data as IAuctionItem[];
-      this.commit('auctions/SET_AUCTION_ID', auction[0]._id);
-    } catch (e) {
-      console.log('Error in getOnSale');
-    }
-  },
   openAuctionModal() {
     this.commit('auctions/SET_OPEN_AUCTION_MODAL');
   },

@@ -2,6 +2,7 @@ import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AuctionStateInterface } from './types';
 import { api } from 'src/boot/axios';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 
 const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getHotBids() {

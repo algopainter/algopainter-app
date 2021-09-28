@@ -269,7 +269,7 @@ bidCorreting(bids: number) {
   overflow: hidden;
   white-space: nowrap;
   text-align: left;
-  width: 450px;
+  width: 400px;
   }
 
 @media (max-width: 450px ) {

@@ -1,11 +1,14 @@
 <template>
-  <div v-if="loading === false">
-    <div v-if="auctionsBid.length > 0">
+  <div
+    v-if="loading === false"
+  >
+    <div
+      v-if="auctionEnd === false"
+    >
       <div
         v-for="(bid, index) in auctionsBid"
         :key="index"
       >
-        <!-- v-on="compareReturn(index)" -->
         <div v-if="bid.ended === false">
           <q-card
             class="row justify-between container-bids"
@@ -52,7 +55,6 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
-// import moment from 'moment'
 import BidsStatus from './BidsStatus.vue';
 import BidsInfor from './BidsInfor.vue';
 
@@ -68,8 +70,7 @@ export default class Bids extends Vue {
   auctionsBid: IAuctionItem[] = [];
   loading: boolean = true;
   dias: number = 0;
-  // accountReturn!: boolean;
-  // haveInfo!: boolean;
+  haveAuction!: boolean;
 
   get auctionBidsFiltered() {
     return this.auctionsBid.filter((auction: IAuctionItem) => {
@@ -102,46 +103,16 @@ export default class Bids extends Vue {
     });
   }
 
-  // haveInfoBid() {
-  //   for (let i = 0; i < this.auctionsBid.length; i++) {
-  //     this.haveInfo = this.auctionsBid[i].ended;
-  //   }
-  //   console.log('haveInfo', this.haveInfo);
-  //   return this.haveInfo;
-  // }
-
-  // find user account in api auctionsBid.returns
-  // compareReturn(index: number) {
-  //   if (this.auctionsBid) {
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  //     const auctionsReturn = this.auctionsBid[index].returns;
-
-  //     for (let i = 0; i < auctionsReturn.length; i++) {
-  //       const auctionsReturnAccount = this.auctionsBid[index].returns[i].account;
-
-  //       if (auctionsReturnAccount === this.accountAdress) {
-  //         this.accountReturn = true;
-  //       } else {
-  //         this.accountReturn = false;
-  //       }
-  //     }
-  //     console.log('accountReturn', this.accountReturn);
-
-  //     // console.log('auctionsReturn', auctionsReturn);
-  //   }
-  // }
-
-  // endAuction(index: number) {
-  //   this.auctionEnd = this.auctionsBid[index].ended;
-  //   if (this.auctionsBid === undefined) {
-  //     return null;
-  //   }
-  //   console.log('auctionEnd', this.auctionEnd);
-  //   this.loading = false;
-  //   return this.auctionEnd;
-  // }
+  get auctionEnd() {
+    for (let i = 0; i < this.auctionsBid.length; i++) {
+      this.haveAuction = this.auctionsBid[i].ended;
+      if (this.haveAuction === false) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
-// }
 </script>
 <style lang="scss">
 .container-bids{

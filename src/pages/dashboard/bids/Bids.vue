@@ -1,6 +1,40 @@
 <template>
   <div v-if="loading === false">
-    <div v-if="auctionsBid.length === 0">
+    <div v-if="auctionsBid.length > 0">
+      <div
+        v-for="(bid, index) in auctionsBid"
+        :key="index"
+      >
+        <!-- v-on="compareReturn(index)" -->
+        <div v-if="bid.ended === false">
+          <q-card
+            class="row justify-between container-bids"
+            bordered
+          >
+            <div
+              class="col-xs-12 col-sm-12 col-md-7"
+            >
+              <BidsInfor
+                :bids-auctions="bid"
+                :index="index"
+              />
+            </div>
+            <q-separator
+              vertical
+              inset
+            />
+            <div
+              class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
+            >
+              <bids-status
+                :bids-auctions="bid"
+              />
+            </div>
+          </q-card>
+        </div>
+      </div>
+    </div>
+    <div v-else>
       <div
         class="text-h5 q-mt-lg text-primary text-center"
       >
@@ -9,35 +43,6 @@
       <div class="text-bold text-h5 text-center">
         {{ $t('dashboard.bid.goingOnce' ) }}
       </div>
-    </div>
-
-    <div v-else>
-      <q-card
-        v-for="(bid, index) in auctionsBid"
-        :key="index"
-        class="row justify-between container-bids"
-        bordered
-      >
-        <div
-          class="col-xs-12 col-sm-12 col-md-7"
-        >
-          <BidsInfor
-            :bids-auctions="bid"
-            :index="index"
-          />
-        </div>
-        <q-separator
-          vertical
-          inset
-        />
-        <div
-          class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
-        >
-          <bids-status
-            :bids-auctions="bid"
-          />
-        </div>
-      </q-card>
     </div>
   </div>
 </template>
@@ -63,6 +68,8 @@ export default class Bids extends Vue {
   auctionsBid: IAuctionItem[] = [];
   loading: boolean = true;
   dias: number = 0;
+  // accountReturn!: boolean;
+  // haveInfo!: boolean;
 
   get auctionBidsFiltered() {
     return this.auctionsBid.filter((auction: IAuctionItem) => {
@@ -94,6 +101,45 @@ export default class Bids extends Vue {
       this.loading = false;
     });
   }
+
+  // haveInfoBid() {
+  //   for (let i = 0; i < this.auctionsBid.length; i++) {
+  //     this.haveInfo = this.auctionsBid[i].ended;
+  //   }
+  //   console.log('haveInfo', this.haveInfo);
+  //   return this.haveInfo;
+  // }
+
+  // find user account in api auctionsBid.returns
+  // compareReturn(index: number) {
+  //   if (this.auctionsBid) {
+  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //     const auctionsReturn = this.auctionsBid[index].returns;
+
+  //     for (let i = 0; i < auctionsReturn.length; i++) {
+  //       const auctionsReturnAccount = this.auctionsBid[index].returns[i].account;
+
+  //       if (auctionsReturnAccount === this.accountAdress) {
+  //         this.accountReturn = true;
+  //       } else {
+  //         this.accountReturn = false;
+  //       }
+  //     }
+  //     console.log('accountReturn', this.accountReturn);
+
+  //     // console.log('auctionsReturn', auctionsReturn);
+  //   }
+  // }
+
+  // endAuction(index: number) {
+  //   this.auctionEnd = this.auctionsBid[index].ended;
+  //   if (this.auctionsBid === undefined) {
+  //     return null;
+  //   }
+  //   console.log('auctionEnd', this.auctionEnd);
+  //   this.loading = false;
+  //   return this.auctionEnd;
+  // }
 }
 // }
 </script>

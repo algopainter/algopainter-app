@@ -32,10 +32,10 @@
           {{ $t('dashboard.sellYourArt.createAuction') }}
         </div>
         <div class="col-12">
-          <v-form v-slot="{ handleSubmit }">
+          <v-form v-slot="formProps">
             <q-form
               class="row q-col-gutter-md"
-              @submit="handleSubmit(createAuction)"
+              @submit="formProps.handleSubmit(createAuction)"
             >
               <div class="col-12">
                 <v-field
@@ -126,6 +126,7 @@
                 >
                   <time-field
                     :model-value="field.value"
+                    :options="endTimeOptions(formProps.values.endDate)"
                     :label="$t('dashboard.sellYourArt.endTime')"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
@@ -327,6 +328,24 @@ export default class SellYourArt extends Vue {
 
   endDateOptions(date: string) {
     return date >= this.nowFormatted;
+  }
+
+  endTimeOptions(date: string) {
+    const now = moment();
+    const currentDate = now.format('MM/DD/YYYY');
+
+    return (hour: number, minute: number | null) => {
+      if (currentDate !== date) {
+        return true;
+      }
+
+      const currentHour = now.hour();
+      const currentMinute = now.minute();
+
+      return !minute
+        ? hour >= currentHour
+        : hour !== currentHour || minute > currentMinute;
+    };
   }
 
   async approveContract() {

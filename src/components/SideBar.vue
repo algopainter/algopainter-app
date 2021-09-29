@@ -59,7 +59,7 @@ export default class SideBar extends Vue {
       },
       {
         icon: require('../assets/icons/my-gallery.svg'),
-        label: 'My Gallery',
+        label: 'My gallery',
         onClick: () => {
           if (this.isConnected) {
             void this.$router.push('/my-gallery');

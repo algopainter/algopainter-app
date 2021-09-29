@@ -277,5 +277,6 @@ export default {
     viewArt: 'View Art',
     bidAgain: 'Bid again',
     removeBid: 'Remove your Bid',
+    of: 'of',
   },
 };

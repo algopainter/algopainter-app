@@ -41,7 +41,20 @@
             </q-tooltip>
           </div>
           <div class="col-12">
-            {{ $t('dashboard.auctionPage.endDate', { endDate: endTimeFormatted }) }}
+            <div v-if="auctionEnded">
+              {{ $t('dashboard.auctionPage.auctionEnded', { endDate: endTimeFormatted }) }}
+            </div>
+            <div
+              v-else
+              class="row"
+            >
+              <div class="col-auto remaining-time-label on-left">
+                {{ $t('dashboard.auctionPage.auctionRemainingTime') }}
+              </div>
+              <div class="col-auto">
+                <countdown-timer v-bind="remainingTime" />
+              </div>
+            </div>
           </div>
           <div class="col-12">
             <q-tabs
@@ -128,12 +141,15 @@
 import { Vue, Options, Watch } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import moment from 'moment';
+import { Notify } from 'quasar';
 
+import { now } from 'src/helpers/timer';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { getAuctionDetails } from 'src/api/auctions';
 import AlgoButton from 'components/common/Button.vue';
 import HighestBidCard from 'components/auctions/auction/HighestBidCard.vue';
 import NewBidDialog from 'components/auctions/auction/NewBidDialog.vue';
+import CountdownTimer from 'components/CountdownTimer.vue';
 
 import AuctionInfo from './tabs/AuctionInfo.vue';
 import BidsList from './tabs/BidsList.vue';
@@ -143,7 +159,6 @@ import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy
 import { NetworkInfo } from 'src/store/user/types';
 
 import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
-import { Notify } from 'quasar';
 
 enum DeletingAuctionStatus {
   CheckingContractApproved,
@@ -165,6 +180,7 @@ enum DeletingAuctionStatus {
     BidsList,
     AuctionHistory,
     DeleteAuctionStatusCard,
+    CountdownTimer,
   },
   computed: {
     ...mapGetters(
@@ -207,6 +223,30 @@ export default class Auction extends Vue {
     }
 
     return this.expirationDate.calendar();
+  }
+
+  get remainingTime() {
+    if (!this.expirationDate) {
+      return {};
+    }
+
+    const timeLeft = moment.duration(this.expirationDate.diff(now.value));
+
+    const days = timeLeft.days() || 0;
+    const hours = timeLeft.hours() || 0;
+    const minutes = timeLeft.minutes() || 0;
+    const seconds = timeLeft.seconds() || 0;
+
+    return { days, hours, minutes, seconds };
+  }
+
+  get auctionEnded(): boolean {
+    if (!this.expirationDate) {
+      return false;
+    }
+
+    return this.expirationDate &&
+      this.expirationDate.isBefore(now.value);
   }
 
   async cancelAuction() {
@@ -317,4 +357,7 @@ export default class Auction extends Vue {
   word-wrap: break-word;
 }
 
+.remaining-time-label {
+  align-self: center;
+}
 </style>

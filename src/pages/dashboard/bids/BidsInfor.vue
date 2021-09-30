@@ -76,10 +76,10 @@
               <div
                 class="text-bold"
               >
-                {{ monthExpirations }} <span class="text-h6 text-bold"> {{ dayExpirations }} </span>
-                {{ $t('dashboard.bid.of') }} <span class="text-h6 text-bold"> {{ hoursExpirations }}</span>
+                {{ monthExpirations }} <span class="text-bold"> {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span>
+                {{ yearExpirations }}
               </div>
-              <p> {{ yearExpirations }} </p>
+              <p> {{ hoursExpirations }} </p>
             </div>
             <div
               v-else
@@ -216,7 +216,7 @@ formatTime(): void {
   this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
   this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
   this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
-  this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('h:mm');
+  this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('LT');
 }
 
 getTime() {

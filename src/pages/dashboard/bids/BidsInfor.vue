@@ -195,10 +195,8 @@ onPropertyChanged() {
         window.location.reload(true);
       }
       this.stopCount = true;
-      console.log('format');
     } else {
       this.getTime();
-      console.log('getTime');
     }
   }
   this.lastCountDays = this.countDays;

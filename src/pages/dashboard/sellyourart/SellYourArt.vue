@@ -48,7 +48,10 @@
                   <q-input
                     :label="$t('dashboard.sellYourArt.minimumPrice')"
                     :model-value="field.value"
-                    type="number"
+                    inputmode="number"
+                    mask="#.####"
+                    reverse-fill-mask
+                    fill-mask="0"
                     color="primary"
                     :error="!!errorMessage"
                     :error-message="errorMessage"

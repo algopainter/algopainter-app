@@ -202,19 +202,14 @@ export default class BidsStatus extends Vue.with(Props) {
     } else {
       this.isMyBid = false;
     }
-    // console.log(this.bidsAuctions);
   }
 
   get MyHighBid() {
-    // buscar os bids
     const getBids = this.bidsAuctions.bids;
-    // console.log('getBids', getBids);
     const account = this.userAccount;
-    // filtrar os bids comparando com a account do usuario
     const myBidsFilter = getBids.filter(function(item) {
       return account === item.account;
     });
-    // selecionar o ultimo lançe do usuario.
     const lastBid = last(myBidsFilter)?.amount;
     return lastBid as number;
   }

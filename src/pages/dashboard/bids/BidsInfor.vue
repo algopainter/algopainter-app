@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 <template>
   <div
     class="row q-gutter-md"
@@ -68,7 +68,7 @@
         <div class="col">
           <div>
             <div
-              v-if="isEnded"
+              v-if="isEnded || isfinish"
               class="text-bold text-end"
             >
               {{ $t('dashboard.bid.auctionEnd') }}
@@ -76,9 +76,10 @@
               <div
                 class="text-bold"
               >
-                {{ monthExpirations }}  <span class="text-h6 text-bold"> {{ dayExpirations }} </span>
+                {{ monthExpirations }} <span class="text-bold"> {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span>
+                {{ yearExpirations }}
               </div>
-              <p> {{ yearExpirations }} </p>
+              <p> {{ hoursExpirations }} </p>
             </div>
             <div
               v-else
@@ -176,98 +177,121 @@ countDays: number = 0;
 countHours: number = 0;
 countMinutes: number = 0;
 countSeconds: number = 0;
+stopCount: boolean = false;
+isfinish: boolean = false;
 
 mounted(): void {
   void this.getTime();
   void this.formatTime();
-  void this.countdown();
 }
 
  @Watch('now')
 onPropertyChanged() {
-  void this.getTime();
+  if (!this.stopCount) {
+    if (this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
+      if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
+        this.formatTime();
+        // this.isfinish = true;
+        window.location.reload(true);
+      }
+      this.stopCount = true;
+      console.log('format');
+    } else {
+      this.getTime();
+      console.log('getTime');
+    }
+  }
+  this.lastCountDays = this.countDays;
+  this.lastCountHours = this.countHours;
+  this.lastCountMinutes = this.countMinutes;
+  this.lastCountSeconds = this.countSeconds;
 }
 
- formatTime() {
-   this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
-   this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
-   this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
-   this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('h:mm:ss');
- }
+lastCountDays: number = 0;
+lastCountHours: number = 0;
+lastCountMinutes: number = 0;
+lastCountSeconds: number = 0;
 
- getTime() {
-   const newEnded = moment(this.bidsAuctions.expirationDt);
-   const timeLeft = moment.duration(newEnded.diff(moment()));
-   this.countDays = timeLeft.days() || 0;
-   this.countHours = timeLeft.hours() || 0;
-   this.countMinutes = timeLeft.minutes() || 0;
-   this.countSeconds = timeLeft.seconds() || 0;
- }
+formatTime(): void {
+  this.monthExpirations = moment(this.bidsAuctions.expirationDt).format('MMM');
+  this.dayExpirations = moment(this.bidsAuctions.expirationDt).format('DD');
+  this.yearExpirations = moment(this.bidsAuctions.expirationDt).format('YYYY');
+  this.hoursExpirations = moment(this.bidsAuctions.expirationDt).format('LT');
+}
 
- get now() {
-   return now.value;
- }
+getTime() {
+  const newEnded = moment(this.bidsAuctions.expirationDt);
+  const timeLeft = moment.duration(newEnded.diff(moment()));
+  this.countDays = timeLeft.days() || 0;
+  this.countHours = timeLeft.hours() || 0;
+  this.countMinutes = timeLeft.minutes() || 0;
+  this.countSeconds = timeLeft.seconds() || 0;
+}
 
- countdown() {
-   const date = this.bidsAuctions.expirationDt;
-   const lack = (new Date(date).getTime() - new Date().getTime()) / 1000;
-   this.seconds = Math.round(lack % 60);
-   this.minutes = Math.round(lack / 60 % 60);
-   this.hours = Math.round(lack / 60 / 60 % 24);
-   this.days = Math.round(lack / 60 / 60 / 24);
-   setInterval(() => {
-     if (this.seconds === 0) {
-       this.seconds = 60;
-       this.minutes--;
-     }
-     if (this.minutes === 0) {
-       this.minutes = 60;
-       this.hours--;
-     }
-     if (this.hours === 0) {
-       this.hours = 24;
-       this.days--;
-     }
-     if (this.days < 0) {
-       this.days = 0;
-     }
-     this.seconds--;
-   }, 1000);
- }
+get now() {
+  return now.value;
+}
 
- dataMoment(index: string, format: string) {
-   return moment(index).format(format);
- }
+countdown() {
+  const date = this.bidsAuctions.expirationDt;
+  const lack = (new Date(date).getTime() - new Date().getTime()) / 1000;
+  this.seconds = Math.round(lack % 60);
+  this.minutes = Math.round(lack / 60 % 60);
+  this.hours = Math.round(lack / 60 / 60 % 24);
+  this.days = Math.round(lack / 60 / 60 / 24);
+  setInterval(() => {
+    if (this.seconds === 0) {
+      this.seconds = 60;
+      this.minutes--;
+    }
+    if (this.minutes === 0) {
+      this.minutes = 60;
+      this.hours--;
+    }
+    if (this.hours === 0) {
+      this.hours = 24;
+      this.days--;
+    }
+    if (this.days < 0) {
+      this.days = 0;
+    }
+    this.seconds--;
+  }, 1000);
+}
 
- getLastBid(): void {
-   this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
- }
+dataMoment(index: string, format: string) {
+  return moment(index).format(format);
+}
 
- get isEnded() {
-   return moment().isAfter(this.bidsAuctions.expirationDt);
- }
+getLastBid(): void {
+  this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
+}
 
- get coinDetails() {
-   const coin = auctionCoins.find((coin) => {
-     return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
-   });
+get isEnded() {
+  return moment().isAfter(this.bidsAuctions.expirationDt);
+}
 
-   if (!coin) {
-     throw new Error('COIN_NOT_FOUND');
-   }
+get coinDetails() {
+  const coin = auctionCoins.find((coin) => {
+    return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
+  });
 
-   return coin;
- }
+  if (!coin) {
+    throw new Error('COIN_NOT_FOUND');
+  }
 
- bidCorreting(bids: number) {
-   const amount = blockchainToCurrency(
-     bids,
-     this.coinDetails.decimalPlaces,
-   );
-   return this.$n(amount, 'decimal', {
-     maximumFractionDigits: this.coinDetails.decimalPlaces,
-   } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
- }
+  return coin;
+}
+
+bidCorreting(bids: number) {
+  const amount = blockchainToCurrency(
+    bids,
+    this.coinDetails.decimalPlaces,
+  );
+  return this.$n(amount, 'decimal', {
+    maximumFractionDigits: this.coinDetails.decimalPlaces,
+  } as any);// eslint-disable-line @typescript-eslint/no-explicit-any
+}
 }
 </script>
 <style lang="scss">

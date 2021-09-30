@@ -1,6 +1,43 @@
 <template>
-  <div v-if="loading === false">
-    <div v-if="auctionsBid.length === 0">
+  <div
+    v-if="loading === false"
+  >
+    <div
+      v-if="auctionEnd === false"
+    >
+      <div
+        v-for="(bid, index) in auctionsBid"
+        :key="index"
+      >
+        <div v-if="bid.ended === false">
+          <q-card
+            class="row justify-between container-bids"
+            bordered
+          >
+            <div
+              class="col-xs-12 col-sm-12 col-md-7"
+            >
+              <BidsInfor
+                :bids-auctions="bid"
+                :index="index"
+              />
+            </div>
+            <q-separator
+              vertical
+              inset
+            />
+            <div
+              class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
+            >
+              <bids-status
+                :bids-auctions="bid"
+              />
+            </div>
+          </q-card>
+        </div>
+      </div>
+    </div>
+    <div v-else>
       <div
         class="text-h5 q-mt-lg text-primary text-center"
       >
@@ -10,35 +47,6 @@
         {{ $t('dashboard.bid.goingOnce' ) }}
       </div>
     </div>
-
-    <div v-else>
-      <q-card
-        v-for="(bid, index) in auctionsBid"
-        :key="index"
-        class="row justify-between container-bids"
-        bordered
-      >
-        <div
-          class="col-xs-12 col-sm-12 col-md-7"
-        >
-          <BidsInfor
-            :bids-auctions="bid"
-            :index="index"
-          />
-        </div>
-        <q-separator
-          vertical
-          inset
-        />
-        <div
-          class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
-        >
-          <bids-status
-            :bids-auctions="bid"
-          />
-        </div>
-      </q-card>
-    </div>
   </div>
 </template>
 
@@ -47,7 +55,6 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
-// import moment from 'moment'
 import BidsStatus from './BidsStatus.vue';
 import BidsInfor from './BidsInfor.vue';
 
@@ -63,6 +70,7 @@ export default class Bids extends Vue {
   auctionsBid: IAuctionItem[] = [];
   loading: boolean = true;
   dias: number = 0;
+  haveAuction!: boolean;
 
   get auctionBidsFiltered() {
     return this.auctionsBid.filter((auction: IAuctionItem) => {
@@ -94,8 +102,17 @@ export default class Bids extends Vue {
       this.loading = false;
     });
   }
+
+  get auctionEnd() {
+    for (let i = 0; i < this.auctionsBid.length; i++) {
+      this.haveAuction = this.auctionsBid[i].ended;
+      if (this.haveAuction === false) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
-// }
 </script>
 <style lang="scss">
 .container-bids{

@@ -85,13 +85,23 @@
             </div>
           </div>
         </div>
-        <div>
-          <algo-button
-            size="lg"
-            color="primary"
-            :label="$t('dashboard.bid.bidAgain')"
-            :to="`/auctions/${bidsAuctions._id}`"
-          />
+        <div class="col q-gutter-sm">
+          <div>
+            <algo-button
+              size="lg"
+              color="primary"
+              :label="$t('dashboard.bid.bidAgain')"
+              :to="`/auctions/${bidsAuctions._id}`"
+            />
+          </div>
+          <div v-if="myBidsResult !== undefined">
+            <algo-button
+              size="lg"
+              color="primary"
+              :label="myBids"
+              @click="withdraw"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -174,7 +184,10 @@ export default class BidsStatus extends Vue.with(Props) {
   auctionSystem!: AlgoPainterAuctionSystemProxy;
 
   displayingStatus: boolean = false;
-  endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
+  myTotalBids: number = 0
+  endAuctionStatus!: EndAuctionStatus;
+  btnResult!: string;
+  myBidsResult!: string;
 
   get accountAdress() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -212,6 +225,20 @@ export default class BidsStatus extends Vue.with(Props) {
     });
     const lastBid = last(myBidsFilter)?.amount;
     return lastBid as number;
+  }
+
+  get myBids() {
+    const getBids = this.bidsAuctions.returns;
+    const account = this.userAccount;
+
+    Object.keys(getBids).forEach((key: any) => {
+      if (key === account) {
+        this.myBidsResult = this.bidCorreting(getBids[key] as unknown as number);
+        const coin = this.bidsAuctions.bids[0].tokenSymbol;
+        this.btnResult = this.$t('Claim: ' + this.myBidsResult + ' ' + coin);
+      }
+    });
+    return this.btnResult;
   }
 
   get coinDetails() {

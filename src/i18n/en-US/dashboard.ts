@@ -182,6 +182,7 @@ export default {
     auctionEnded: 'Auction ended {endDate}',
     auctionRemainingTime: 'Auction ends in',
     deletingAuction: 'Deleting auction',
+    feeMessage: 'Listing is free, but if the NFT is sold, a fee of 2.5% will be deducted from the final amount.',
     statuses: {
       allowance: 'Allowance',
       checkingAllowance: 'Checking if has enough allowance',

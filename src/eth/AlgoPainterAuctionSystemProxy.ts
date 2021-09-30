@@ -35,6 +35,7 @@ export default class AlgoPainterAuctionSystemProxy {
       cancelAuction(auctionId: number): ContractSendMethod;
       endAuction(auctionId: number): ContractSendMethod;
       withdraw(auctionId: number): ContractSendMethod;
+      getAuctionAmountInfo(amount: number): ContractSendMethod;
     };
   };
 
@@ -104,6 +105,13 @@ export default class AlgoPainterAuctionSystemProxy {
   withdraw(auctionId: number, from: string) {
     return this.smartContract.methods.withdraw(
       auctionId,
+    ).send({ from });
+  }
+
+  getAuctionAmountInfo(amount: number, from: string) {
+    console.log('alou');
+    return this.smartContract.methods.getAuctionAmountInfo(
+      amount,
     ).send({ from });
   }
 }

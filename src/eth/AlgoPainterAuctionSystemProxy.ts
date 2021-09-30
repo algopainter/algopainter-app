@@ -21,6 +21,7 @@ export default class AlgoPainterAuctionSystemProxy {
   declare smartContract: {
     methods: {
       getAllowedTokens(): ContractSendMethod;
+      getBidFeeRate(): ContractSendMethod;
       createAuction(
         tokenType: TokenType,
         contractAddress: string,
@@ -51,6 +52,13 @@ export default class AlgoPainterAuctionSystemProxy {
       .getAllowedTokens().call();
 
     return response as string[];
+  }
+
+  async getBidFeeRate(): Promise<number> {
+    const response: unknown = await this.smartContract.methods
+      .getBidFeeRate().call();
+
+    return response as number;
   }
 
   createAuction(

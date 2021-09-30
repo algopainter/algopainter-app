@@ -10,11 +10,17 @@
       </q-card-section>
       <v-form v-slot="{ handleSubmit }">
         <q-form @submit="handleSubmit(placeBid)">
-          <q-card-section>
-            <div>
-              {{ `${minimumLabel}:` }} {{ minimumValue }} {{ auction.minimumBid.tokenSymbol }}
+          <q-card-section class="row q-col-gutter-md">
+            <div class="col-12">
+              <i18n-t keypath="dashboard.auctionPage.newBidDescription">
+                <template #title>
+                  <span class="art-title">
+                    {{ auction.item.title }}
+                  </span>
+                </template>
+              </i18n-t>
             </div>
-            <div>
+            <div class="col-12">
               <v-field
                 v-slot="{ field, handleChange, errorMessage }"
                 :label="$t('dashboard.auctionPage.amount')"
@@ -24,13 +30,55 @@
                 <q-input
                   :model-value="field.value"
                   :label="$t('dashboard.auctionPage.amount')"
-                  type="number"
+                  inputmode="number"
+                  mask="#.####"
+                  reverse-fill-mask
+                  fill-mask="0"
                   color="primary"
+                  :hint="`${minimumLabel}: ${minimumValue} ${coinSymbol}`"
                   :error="!!errorMessage"
                   :error-message="errorMessage"
-                  @update:modelValue="handleChange"
+                  @update:modelValue="updateAmount(handleChange, $event)"
                 />
               </v-field>
+            </div>
+            <div
+              v-if="loadingBlockchainData"
+              class="col-12 flex flex-center q-pa-lg"
+            >
+              <q-spinner
+                size="80px"
+                color="primary"
+              />
+            </div>
+            <div
+              v-else
+              class="col-12 info-list"
+            >
+              <div class="info-item">
+                <div class="label">
+                  {{ $t('dashboard.auctionPage.yourBalance') }}
+                </div>
+                <div class="value">
+                  {{ `${userBalanceFormatted} ${coinSymbol}` }}
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="label">
+                  {{ $t('dashboard.auctionPage.serviceFee') }}
+                </div>
+                <div class="value">
+                  {{ `${bidFeeAmount} ${coinSymbol}` }}
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="label">
+                  {{ $t('dashboard.auctionPage.netAmount') }}
+                </div>
+                <div class="value">
+                  {{ `${netAmount} ${coinSymbol}` }}
+                </div>
+              </div>
             </div>
           </q-card-section>
           <q-card-section class="flex">
@@ -110,10 +158,15 @@ export default class NewBidDialog extends Vue {
   @Ref() dialogRef!: QDialog;
   @Prop() auction!: IAuctionItem;
 
-  auctionSystem!: AlgoPainterAuctionSystemProxy;
+  auctionSystemProxy!: AlgoPainterAuctionSystemProxy;
   auctionCoinTokenProxy!: ERC20TokenProxy;
   networkInfo!: NetworkInfo;
   userAccount!: string;
+
+  loadingBlockchainData: boolean = false;
+  userBalance: number = 0;
+  bidFee: number = 0;
+  bidAmount: number = 0;
 
   placingBid: boolean = false;
   placingBidStatus: PlacingBidStatus | null = null;
@@ -137,12 +190,31 @@ export default class NewBidDialog extends Vue {
     return coin;
   }
 
+  get coinSymbol() {
+    return this.coinDetails.label;
+  }
+
   get minimumLabel() {
     const { highestBid } = this.auction;
 
     return highestBid
       ? this.$t('dashboard.auctionPage.highestBid')
       : this.$t('dashboard.auctionPage.minimumBid');
+  }
+
+  get userBalanceFormatted() {
+    const { decimalPlaces } = this.coinDetails;
+    const amount = blockchainToCurrency(this.userBalance, decimalPlaces);
+
+    return this.formatValue(amount);
+  }
+
+  get bidFeeAmount() {
+    return this.formatValue(this.bidAmount * this.bidFee);
+  }
+
+  get netAmount() {
+    return this.formatValue(this.bidAmount + (this.bidAmount * this.bidFee));
   }
 
   get minimumValue() {
@@ -169,8 +241,9 @@ export default class NewBidDialog extends Vue {
 
   mounted() {
     this.show();
-    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.auctionCoinTokenProxy = new ERC20TokenProxy(this.auction.minimumBid.tokenPriceAddress);
+    void this.loadBlockchainData();
   }
 
   show() {
@@ -183,6 +256,37 @@ export default class NewBidDialog extends Vue {
 
   onDialogHide() {
     this.$emit('hide');
+  }
+
+  formatValue(value: number) {
+    const { decimalPlaces } = this.coinDetails;
+
+    return this.$n(value, 'decimal', {
+      maximumFractionDigits: decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
+  async loadBlockchainData() {
+    try {
+      this.loadingBlockchainData = true;
+
+      const [balance, fee] = await Promise.all([
+        this.auctionCoinTokenProxy.balanceOf(this.userAccount),
+        this.auctionSystemProxy.getBidFeeRate(),
+      ]);
+
+      this.userBalance = balance;
+      this.bidFee = fee / 1000;
+
+      this.loadingBlockchainData = false;
+    } catch {
+      this.loadingBlockchainData = false;
+    }
+  }
+
+  updateAmount(handleFormInput: (value: number) => void, value: number) {
+    this.bidAmount = Number(value);
+    handleFormInput(this.bidAmount);
   }
 
   async approveContractTransfer(amount: number) {
@@ -230,7 +334,7 @@ export default class NewBidDialog extends Vue {
 
       this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingInput;
 
-      await this.auctionSystem.bid(
+      await this.auctionSystemProxy.bid(
         this.auction.index,
         numberToString(bidAmount),
         this.userAccount,
@@ -261,12 +365,30 @@ export default class NewBidDialog extends Vue {
 
 <style lang="scss" scoped>
 .place-bid-card {
+  border-radius: 12px;
   width: 600px;
 
   .header {
     background: $primary;
     font-size: 1.4rem;
     color: #FFF;
+  }
+
+  .art-title {
+    font-weight: bold;
+    color: $primary;
+  }
+
+  .info-list {
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+
+      .label {
+        color: $grey-5;
+      }
+    }
   }
 }
 </style>

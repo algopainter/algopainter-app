@@ -20,8 +20,11 @@ export default class ERC20TokenProxy {
     );
   }
 
-  async balanceOf(address: string) {
-    return this.erc20TokenContract.methods.balanceOf(address).call();
+  async balanceOf(address: string): Promise<number> {
+    const response: unknown = await this.erc20TokenContract.methods
+      .balanceOf(address).call();
+
+    return response as number;
   }
 
   async ownerOf(index: number): Promise<boolean> {

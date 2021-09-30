@@ -137,12 +137,18 @@
                   />
                 </v-field>
               </div>
-              <div class="col-12 flex justify-end">
-                <algo-button
-                  type="submit"
-                  color="primary"
-                  :label="$t('dashboard.sellYourArt.createAuction')"
-                />
+              <div class="col-12">
+                <div class="q-mr-md q-mb-md">
+                  {{ $t('dashboard.auctionPage.feeMessage') }}
+                </div>
+                <div class="flex justify-end">
+                  <algo-button
+                    class="q-mb-md"
+                    type="submit"
+                    color="primary"
+                    :label="$t('dashboard.sellYourArt.createAuction')"
+                  />
+                </div>
               </div>
             </q-form>
           </v-form>
@@ -167,6 +173,7 @@ import { mapGetters } from 'vuex';
 import moment from 'moment';
 import { Form as VForm, Field as VField } from 'vee-validate';
 import { clone } from 'ramda';
+import { Watch } from 'vue-property-decorator';
 
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
@@ -243,6 +250,20 @@ export default class SellYourArt extends Vue {
   creatingAuction: boolean = false;
   displayingStatus: boolean = false;
   createAuctionStatus: CreatingAuctionStatus | null = null;
+
+  /*
+  async getFee() {
+    await this.auctionSystem.getAuctionAmountInfo(10000, this.userAccount).on('transactionHash', () => {
+      console.log('auction');
+    }).on('error', () => {
+      console.log('error');
+    });
+  }
+
+  mounted() {
+    void this.getFee();
+  }
+  */
 
   get auctionSystemContractAddress() {
     return getAuctionSystemContractByNetworkId(this.networkInfo.id);

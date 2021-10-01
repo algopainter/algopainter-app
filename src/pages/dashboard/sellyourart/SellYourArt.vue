@@ -173,7 +173,6 @@ import { mapGetters } from 'vuex';
 import moment from 'moment';
 import { Form as VForm, Field as VField } from 'vee-validate';
 import { clone } from 'ramda';
-import { Watch } from 'vue-property-decorator';
 
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';

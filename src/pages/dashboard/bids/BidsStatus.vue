@@ -230,9 +230,9 @@ export default class BidsStatus extends Vue.with(Props) {
   get myBids() {
     const getBids = this.bidsAuctions.returns;
     const account = this.userAccount;
-
-    Object.keys(getBids).forEach((key: any) => {
+    Object.keys(getBids).forEach((key: unknown) => {
       if (key === account) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.myBidsResult = this.bidCorreting(getBids[key] as unknown as number);
         const coin = this.bidsAuctions.bids[0].tokenSymbol;
         this.btnResult = this.$t('Claim: ' + this.myBidsResult + ' ' + coin);

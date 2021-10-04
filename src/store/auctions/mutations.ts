@@ -11,8 +11,8 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_TOP_BUYERS(state: AuctionStateInterface, payload) {
     state.topBuyers = payload as [];
   },
-  SET_ALL_BIDS(state: AuctionStateInterface, payload) {
-    state.allBids = payload as [];
+  SET_AUCTIONS(state: AuctionStateInterface, payload) {
+    state.auctions = payload as [];
   },
   SET_AUCTION_ID(state: AuctionStateInterface, payload) {
     state.auctionId = payload as string | undefined;
@@ -20,7 +20,16 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_OPEN_AUCTION_MODAL(state: AuctionStateInterface) {
     state.openAuctionModal = !state.openAuctionModal;
   },
+  SET_OPEN_BID_BACK_MODAL(state: AuctionStateInterface) {
+    state.openBidBackModal = !state.openBidBackModal;
+  },
+  SET_BID_BACK_ID(state: AuctionStateInterface, payload) {
+    state.bidBackId = payload as string;
+  },
   SET_BIDS(state: AuctionStateInterface, payload) {
+    state.bids = payload as [];
+  },
+  SET_BIDBACK(state: AuctionStateInterface, payload) {
     state.bids = payload as [];
   },
 };

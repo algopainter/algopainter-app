@@ -119,7 +119,12 @@ export default {
     stackAlgop: 'Stack Algop',
     pirs: 'PIRS',
     bidback: 'Bidback',
+    bidbackBtn: 'BidBack Share',
     currentBalance: 'Current balance: ',
+    currentBidBackAmount: 'Current bidback amount: ',
+    bidBackModal: {
+      title: 'BidBack share',
+    },
   },
   sellYourArt: {
     title: 'Sell your Art',
@@ -284,5 +289,17 @@ export default {
     bidAgain: 'Bid again',
     removeBid: 'Remove your bid',
     of: ',',
+  },
+  stackModalAlgop: {
+    title: 'Stake LP tokens',
+    titleUnstack: 'Unstake LP tokens',
+    stake: 'Stake',
+    balance: 'Balance',
+    max: 'Max',
+    noTokens: 'No Tokens to stake.',
+    annual: 'Annual ROI at current rates:',
+    annualCoin: '$0,00',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
   },
 };

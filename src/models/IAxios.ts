@@ -13,4 +13,5 @@ export interface IAxiosPaginated {
   data: [];
   pages: number;
   perPage: number;
+  length: number;
 }

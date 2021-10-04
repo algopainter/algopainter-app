@@ -97,11 +97,6 @@ class Props {
     type: Object as PropType<IGallery>,
     required: true,
   });
-
-  descriptionNew = prop({
-    type: Object as PropType<IGallery>,
-    required: true,
-  });
 }
 
 @Options({

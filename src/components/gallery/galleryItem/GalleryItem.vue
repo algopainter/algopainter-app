@@ -53,7 +53,13 @@
           {{ galleryItem.art.name }}
         </q-tooltip>
       </div>
-      <div class="limit-text">
+      <div v-if="galleryItem.description.trim() === ''">
+        <p class="white-text" />
+      </div>
+      <div
+        v-else
+        class="limit-text"
+      >
         {{ galleryItem.description }}
         <q-tooltip
           anchor="bottom middle"
@@ -88,6 +94,11 @@ import CollectionArtController from 'src/controllers/collectionArt/CollectionArt
 
 class Props {
   galleryItem = prop({
+    type: Object as PropType<IGallery>,
+    required: true,
+  });
+
+  descriptionNew = prop({
     type: Object as PropType<IGallery>,
     required: true,
   });
@@ -207,6 +218,9 @@ export default class GalleryItem extends Vue.with(Props) {
 .container {
   padding: 0 1rem 0 0;
 }
+.white-text{
+  height:4px;
+}
 
 .users {
   .q-avatar:not(:first-child) {
@@ -244,8 +258,6 @@ export default class GalleryItem extends Vue.with(Props) {
 
   .limit-text{
     word-break: break-word;
-    font-weight: bold;
-    font-size: 1.4rem;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

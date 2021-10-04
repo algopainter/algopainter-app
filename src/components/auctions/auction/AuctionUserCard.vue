@@ -27,7 +27,7 @@
         {{ title }}
       </div>
       <div class="col-12 text-primary user-name">
-        {{ user.name }}
+        {{ user.name || formatedAccount }}
       </div>
     </div>
   </div>
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
-
+import UserUtils from 'src/helpers/user';
 import { IUser } from 'src/models/IUser';
 
 @Options({
@@ -45,6 +45,10 @@ import { IUser } from 'src/models/IUser';
 export default class AuctionUserCard extends Vue {
   @Prop({ required: true }) user!: IUser;
   @Prop({ required: true }) title!: string;
+
+  get formatedAccount() {
+    return UserUtils.formatedAccount(this.user.account);
+  }
 }
 </script>
 

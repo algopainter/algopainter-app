@@ -8,4 +8,5 @@ export interface AuctionStateInterface {
     auctionId: string | undefined,
     openAuctionModal: boolean;
     openBidBackModal: boolean;
+    bidBackId: string | undefined,
 }

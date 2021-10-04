@@ -1,14 +1,5 @@
 /* eslint-disable no-new-wrappers */
 <template>
-  <algo-button
-    :label="$t('dashboard.homePage.loadMore', {
-      msg: btnLoadMoreMsg
-    })"
-    color="primary"
-    outline
-    class="load-more q-px-xl q-mx-auto"
-    @click="openBidBackModal()"
-  />
   <div class="btn-container q-mx-auto row items-center justify-center ">
     <q-select
       v-model="currentCollection"
@@ -481,10 +472,6 @@ export default class MyGalleryOverview extends Vue {
       noData: false as boolean,
     },
   ];
-
-  openBidBackModal() {
-    void this.$store.dispatch('auctions/openBidBackModal');
-  }
 
   mounted() {
     void this.getCollections();

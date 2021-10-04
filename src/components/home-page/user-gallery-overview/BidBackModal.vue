@@ -2,7 +2,7 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
-    @hide="onDialogHide; openBidBackModal()"
+    @hide="openBidBackModal()"
   >
     <q-card class="q-pa-lg">
       <p
@@ -10,12 +10,14 @@
       >
         {{ ' ' + $t('dashboard.auctions.bidBackModal.title') }}
       </p>
-      <p class="q-mb-none">
-        <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBalance`) }}</span> {{ $t(`dashboard.algop`) }} {{ formattedBalance() }}
-      </p>
-      <p class="q-mb-none">
-        <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBidBackAmount`) }}</span>{{ ` $${auctionToken} ${bidBackAmount}` }}
-      </p>
+      <div v-if="!loadingTable">
+        <p class="q-mb-none">
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBalance`) }}</span> {{ $t(`dashboard.algop`) }} {{ formattedBalance() }}
+        </p>
+        <p class="q-mb-none">
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBidBackAmount`) }}</span>{{ ` $${auctionToken} ${bidBackAmount}` }}
+        </p>
+      </div>
       <div class="q-pa-md">
         <q-table
           :rows="userBid"
@@ -23,6 +25,7 @@
           row-key="name"
           hide-bottom
           flat
+          :loading="loadingTable"
         />
       </div>
     </q-card>
@@ -31,7 +34,6 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import { QDialog } from 'quasar';
 import AlgoButton from 'src/components/common/Button.vue';
 import UserUtils from 'src/helpers/user';
 import { Watch } from 'vue-property-decorator';
@@ -56,6 +58,7 @@ export default class BidBackModal extends Vue {
   userBalance: number = 0;
 
   userBid: IUserBid[] = [];
+  loadingTable: boolean = true;
   auctionToken: string = '';
   bidBackAmount: number = 0;
   columns = [
@@ -90,14 +93,12 @@ export default class BidBackModal extends Vue {
     },
   ];
 
-  mounted() {
-    void this.getAuctions();
-  }
-
   getAuctions() {
+    this.loadingTable = true;
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
-      id: '615709c87d509c0014b22d6f',
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      id: this.auctionId as string,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;
@@ -126,7 +127,7 @@ export default class BidBackModal extends Vue {
           this.userBid.push({ name: name, account: account, highestBid: highestBid, tokenSymbol: tokenSymbol, stackedALGOP: 0 });
         }
       });
-      this.userBid.push({ name: null, account: '0xA6...335d', highestBid: 21, tokenSymbol: 'ALGOP', stackedALGOP: 0 });
+      this.loadingTable = false;
     });
   }
 
@@ -136,10 +137,15 @@ export default class BidBackModal extends Vue {
 
   formatName(name:string) {
     const nameArray = name.split(' ');
-    nameArray[0] = (nameArray[0].length <= 15)
+    nameArray[0] = (nameArray[0].length <= 11)
       ? nameArray[0]
-      : nameArray[0].slice(0, 15) + '...';
+      : nameArray[0].slice(0, 11) + '...';
     return nameArray[0];
+  }
+
+  get auctionId() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['auctions/getBidBackId'];
   }
 
   get account() {
@@ -159,6 +165,14 @@ export default class BidBackModal extends Vue {
     }
   }
 
+  @Watch('auctionId')
+  onAuctionIdChanged() {
+    this.userBid = [];
+    if (this.auctionId !== '') {
+      void this.getAuctions();
+    }
+  }
+
   async setAccountBalance() {
     this.userBalance = (
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -169,31 +183,16 @@ export default class BidBackModal extends Vue {
     return UserUtils.formatAccountBalance(this.userBalance, 2);
   }
 
-  show() {
-    this.$refs.dialog.show();
-  }
-
-  hide() {
-    this.$refs.dialog.hide();
-  }
-
   openBidBackModal() {
-    void this.$store.dispatch('auctions/openBidBackModal');
+    void this.$store.dispatch({
+      type: 'auctions/openBidBackModal',
+      auctionId: '',
+    });
   }
-
-  onDialogHide() {
-    this.$emit('hide');
-  }
-
-  closeModal() {
-    this.modal = false;
-  }
-
-  declare $refs: {
-    dialog: QDialog;
-  };
 }
 </script>
 <style style="scss" scoped>
-
+  .close-button-container {
+    width: 100%;
+  }
 </style>

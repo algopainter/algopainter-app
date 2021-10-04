@@ -119,6 +119,7 @@ export default {
     stackAlgop: 'Stack Algop',
     pirs: 'PIRS',
     bidback: 'Bidback',
+    bidbackBtn: 'BidBack Share',
     currentBalance: 'Current balance: ',
     currentBidBackAmount: 'Current bidback amount: ',
     bidBackModal: {

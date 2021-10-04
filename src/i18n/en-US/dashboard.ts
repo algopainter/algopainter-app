@@ -120,6 +120,10 @@ export default {
     pirs: 'PIRS',
     bidback: 'Bidback',
     currentBalance: 'Current balance: ',
+    currentBidBackAmount: 'Current bidback amount: ',
+    bidBackModal: {
+      title: 'BidBack share',
+    },
   },
   sellYourArt: {
     title: 'Sell your Art',

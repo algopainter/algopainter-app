@@ -30,6 +30,7 @@
         <wrong-chain-dialog v-if="showWrongChainDialog" />
         <NewPaintingModal v-model="openModal" />
         <AuctionModal v-model="isAuctionModalOpen" />
+        <BidBackModal v-model="isBidBackModalOpen" />
       </q-page-container>
     </q-layout>
   </div>
@@ -44,6 +45,7 @@ import WrongChainDialog from 'components/common/WrongChainDialog.vue';
 import { Watch } from 'vue-property-decorator';
 import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
 import AuctionModal from 'src/components/modal/AuctionModal.vue';
+import BidBackModal from 'src/components/home-page/user-gallery-overview/BidBackModal.vue';
 
 @Options({
   components: {
@@ -53,6 +55,7 @@ import AuctionModal from 'src/components/modal/AuctionModal.vue';
     WrongChainDialog,
     NewPaintingModal,
     AuctionModal,
+    BidBackModal,
   },
   watch: {
     isConnected: ['refreshModal'],
@@ -69,6 +72,7 @@ export default class MainLayout extends Vue {
   showModal: boolean = false;
   showWrongChainDialog: boolean = false;
   isAuctionModalOpen: boolean = false;
+  isBidBackModalOpen: boolean = false;
   page: string = '';
   artistModal: boolean = false;
 
@@ -90,6 +94,11 @@ export default class MainLayout extends Vue {
     this.isAuctionModalOpen = this.openAuctionModal;
   }
 
+  @Watch('openBidBackModal')
+  onOpenBidBackModalChanged() {
+    this.isBidBackModalOpen = this.openBidBackModal;
+  }
+
   @Watch('openConnectYourWalletModal')
   onOpenConnectYourWalletModalChanged() {
     this.showModal = this.openConnectYourWalletModal;
@@ -98,6 +107,11 @@ export default class MainLayout extends Vue {
   get openAuctionModal() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['auctions/openAuctionModal'] as boolean;
+  }
+
+  get openBidBackModal() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['auctions/openBidBackModal'] as boolean;
   }
 
   get openConnectYourWalletModal() {

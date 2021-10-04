@@ -89,7 +89,7 @@
         </div>
       </div>
       <algo-button
-        label="teste"
+        :label="$t('dashboard.auctions.bidbackBtn')"
         color="primary"
         outline
         class="load-more q-px-xl q-mx-auto"
@@ -143,7 +143,10 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   openBidBackModal() {
-    void this.$store.dispatch('auctions/openBidBackModal');
+    void this.$store.dispatch({
+      type: 'auctions/openBidBackModal',
+      auctionId: this.art._id,
+    });
   }
 }
 

@@ -11,6 +11,7 @@ function state(): AuctionStateInterface {
     auctionId: undefined,
     openAuctionModal: false,
     openBidBackModal: false,
+    bidBackId: undefined,
   };
 }
 

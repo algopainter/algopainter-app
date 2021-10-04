@@ -73,7 +73,7 @@
           <UnstackModalAlgop v-model="openModalUnstack" />
         </div>
         <div class="text-primary q-my-sm">
-          {{ 'Voce pode sacar 0.002 WETH de BIDBACK' }}
+          {{ 'You can withdraw 0.002 WETH de BIDBACK' }}
         </div>
       </div>
     </div>

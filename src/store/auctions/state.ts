@@ -5,11 +5,12 @@ function state(): AuctionStateInterface {
     hotBids: [],
     topSellers: [],
     topBuyers: [],
-    allBids: [],
+    auctions: [],
     bids: [],
     bidBack: [],
     auctionId: undefined,
     openAuctionModal: false,
+    openBidBackModal: false,
   };
 }
 

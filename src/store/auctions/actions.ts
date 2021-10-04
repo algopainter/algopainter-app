@@ -41,12 +41,15 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       console.log('success msg');
     }
   },
-  async getAllBids() {
+
+  async getAuctions(type, value) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const id = value.id as string;
     try {
-      const res = await api.get('auctions');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const allBids = res.data as [];
-      this.commit('auctions/SET_ALL_BIDS', allBids);
+      const res = await api.get(`auctions/${id}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      const auctions = res.data as [];
+      this.commit('auctions/SET_AUCTIONS', auctions);
     } catch (e) {
       console.log('error msg');
     } finally {
@@ -100,6 +103,10 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
 
   openAuctionModal() {
     this.commit('auctions/SET_OPEN_AUCTION_MODAL');
+  },
+
+  openBidBackModal() {
+    this.commit('auctions/SET_OPEN_BID_BACK_MODAL');
   },
 };
 

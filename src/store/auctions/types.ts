@@ -2,9 +2,10 @@ export interface AuctionStateInterface {
     hotBids: [],
     topSellers: [],
     topBuyers: [],
-    allBids: [],
+    auctions: [],
     bids: [],
     bidBack: [],
     auctionId: string | undefined,
     openAuctionModal: boolean;
+    openBidBackModal: boolean;
 }

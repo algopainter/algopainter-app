@@ -7,6 +7,7 @@ function state(): AuctionStateInterface {
     topBuyers: [],
     allBids: [],
     bids: [],
+    bidBack: [],
     auctionId: undefined,
     openAuctionModal: false,
   };

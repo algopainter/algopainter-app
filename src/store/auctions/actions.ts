@@ -69,6 +69,21 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
+  async getBidBack(type, value) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const account = value.account as string;
+
+    try {
+      const result = await api.get(`users/${account}/auctions/biding/?page=1&perPage=6`);
+      const bids = result.data as [];
+      this.commit('auctions/SET_BIDS', bids);
+    } catch (e) {
+      console.log('error getAuction msg');
+    } finally {
+      console.log('success msg');
+    }
+  },
+
   async getOnSale(type, value: {itemId: string}) {
     const itemId = value.itemId;
     try {

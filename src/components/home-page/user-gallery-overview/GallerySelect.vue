@@ -79,7 +79,7 @@
     </div>
     <div class="col-12 col-md-2 col-lg-2">
       <div
-        class="bidBack text-white column justify-center content-center"
+        class="bidBack text-white column justify-center content-center q-mb-xl"
       >
         <div class="row justify-center items-center content-center">
           {{ "10%" }}
@@ -88,6 +88,13 @@
           {{ "BidBack" }}
         </div>
       </div>
+      <algo-button
+        label="teste"
+        color="primary"
+        outline
+        class="load-more q-px-xl q-mx-auto"
+        @click="openBidBackModal()"
+      />
     </div>
   </div>
 </template>
@@ -133,6 +140,10 @@ export default class gallerySelect extends Vue.with(Props) {
 
   unstackCoin() {
     this.openModalUnstack = true;
+  }
+
+  openBidBackModal() {
+    void this.$store.dispatch('auctions/openBidBackModal');
   }
 }
 

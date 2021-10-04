@@ -144,8 +144,6 @@ export default class BidBackModal extends Vue {
   }
 
   get auctionId() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    console.log("this.$store.getters['auctions/getBidBackId']", this.$store.getters['auctions/getBidBackId']);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['auctions/getBidBackId'];
   }
@@ -186,7 +184,6 @@ export default class BidBackModal extends Vue {
   }
 
   openBidBackModal() {
-    console.log('openBidBackModal');
     void this.$store.dispatch({
       type: 'auctions/openBidBackModal',
       auctionId: '',

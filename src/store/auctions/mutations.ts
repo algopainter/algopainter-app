@@ -24,7 +24,6 @@ const mutation: MutationTree<AuctionStateInterface> = {
     state.openBidBackModal = !state.openBidBackModal;
   },
   SET_BID_BACK_ID(state: AuctionStateInterface, payload) {
-    console.log('payload', payload);
     state.bidBackId = payload as string;
   },
   SET_BIDS(state: AuctionStateInterface, payload) {

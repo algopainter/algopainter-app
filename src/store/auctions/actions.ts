@@ -106,7 +106,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   },
 
   openBidBackModal(type, value: {auctionId: string}) {
-    console.log('value.auctionId', value.auctionId);
     this.commit('auctions/SET_OPEN_BID_BACK_MODAL');
     this.commit('auctions/SET_BID_BACK_ID', value.auctionId);
   },

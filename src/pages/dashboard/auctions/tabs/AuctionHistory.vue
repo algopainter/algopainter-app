@@ -14,7 +14,7 @@
         v-if="users.length === 0"
         class="empty-state"
       >
-        {{ $t('dashboard.auctionPage.noOldOwners') }}
+        {{ $t('dashboard.auctionPage.noPreviousOwner') }}
       </div>
       <div
         v-else
@@ -27,7 +27,7 @@
         >
           <auction-user-card
             :user="user"
-            :title="$t('dashboard.auctionPage.oldOwner')"
+            :title="$t('dashboard.auctionPage.previousOwner')"
           />
         </div>
       </div>

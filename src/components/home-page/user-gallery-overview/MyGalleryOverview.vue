@@ -477,9 +477,9 @@ export default class MyGalleryOverview extends Vue {
     void this.getCollections();
     void this.getLikes(1, 'All Collections');
     void this.getOnSale(1, 'All Collections');
-    void this.getGalleryArts(1, 'All Collections');
     void this.getPirs(1);
     void this.getBidBack(1);
+    void this.getGalleryArts(1, 'All Collections');
   }
 
   @Watch('accountAddress')

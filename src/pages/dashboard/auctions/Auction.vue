@@ -231,13 +231,13 @@ export default class Auction extends Vue {
     }
 
     const timeLeft = moment.duration(this.expirationDate.diff(now.value));
-
+    const year = timeLeft.years() || 0;
     const days = timeLeft.days() || 0;
     const hours = timeLeft.hours() || 0;
     const minutes = timeLeft.minutes() || 0;
     const seconds = timeLeft.seconds() || 0;
 
-    return { days, hours, minutes, seconds };
+    return { year, days, hours, minutes, seconds };
   }
 
   get auctionEnded(): boolean {

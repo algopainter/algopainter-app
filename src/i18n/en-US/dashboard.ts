@@ -271,6 +271,7 @@ export default {
     auctionEnd: 'Auction ended',
     auctionTime: 'Auction ends in ',
     at: 'At',
+    year: 'Year',
     days: 'Days',
     hours: 'Hours',
     minis: 'Mins',

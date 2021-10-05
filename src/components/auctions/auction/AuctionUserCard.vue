@@ -27,7 +27,7 @@
         {{ title }}
       </div>
       <div class="col-12 text-primary user-name">
-        {{ user.name || formatedAccount }}
+        {{ formatedAccount }}
       </div>
     </div>
   </div>
@@ -47,7 +47,12 @@ export default class AuctionUserCard extends Vue {
   @Prop({ required: true }) title!: string;
 
   get formatedAccount() {
-    return UserUtils.formatedAccount(this.user.account);
+    const name = this.user.name.slice(0, 2);
+
+    if (name === '0x') {
+      return UserUtils.formatedAccount(this.user.account);
+    }
+    return this.user.name;
   }
 }
 </script>

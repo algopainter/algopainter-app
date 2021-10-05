@@ -16,7 +16,7 @@
         <i18n-t keypath="dashboard.auctionPage.highestBidBy">
           <template #highestBidBy>
             <span class="username">
-              {{ bid.name || formatedAccount }}
+              {{ formatedAccount }}
             </span>
           </template>
         </i18n-t>

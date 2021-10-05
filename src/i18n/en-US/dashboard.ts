@@ -158,7 +158,7 @@ export default {
     noBids: 'There are no bids yet',
     noPreviousOwner: 'This art has no previous owner',
     owner: 'Owner',
-    previouswner: 'Previous Owner',
+    previousOwner: 'Previous Owner',
     previousOwners: 'Previous Owners',
     creator: 'Creator',
     creators: 'Creators',

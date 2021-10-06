@@ -50,6 +50,7 @@
   </div>
   <q-spinner
     v-else
+    class="q-mt-xl"
     size="xl"
     width="100%"
     color="primary"
@@ -77,7 +78,6 @@ export default class Bids extends Vue {
   auctionsBid: IAuctionItem[] = [];
   loading: boolean = true;
   dias: number = 0;
-  haveAuction!: boolean;
   returnKey?: string;
   haveReturns: boolean = false;
   bidOff:boolean = false;
@@ -115,6 +115,7 @@ export default class Bids extends Vue {
   }
 
   auctionsReturns(i: number) {
+    console.log('test');
     const dateAuction = !moment().isAfter(this.auctionsBid[i].expirationDt);
     try {
       const auctionReturs = Object.keys(this.auctionsBid[i].returns);
@@ -129,39 +130,27 @@ export default class Bids extends Vue {
           this.haveReturns = false;
         }
       });
-    } catch (error) {
-      this.haveReturns = false;
-    }
-    if (dateAuction && this.haveReturns === false) {
-      this.bidOff = false;
-      return false;
-    }
-    if (dateAuction && this.haveReturns === true) {
-      this.bidOff = false;
-      return false;
-    }
-    if (dateAuction === false && this.haveReturns === false) {
-      if (this.auctionsBid[i].ended === false) {
+
+      if (dateAuction && this.haveReturns === false) {
+        this.bidOff = false;
+        return false;
+      } else if (dateAuction && this.haveReturns === true) {
+        this.bidOff = false;
+        return false;
+      } else if (dateAuction === false && this.haveReturns === false) {
+        if (this.auctionsBid[i].ended === false) {
+          this.bidOff = false;
+          return false;
+        }
+        this.bidOff = true;
+        return true;
+      } else if (dateAuction === false && this.haveReturns === true) {
         this.bidOff = false;
         return false;
       }
-      this.bidOff = true;
-      return true;
+    } catch (error) {
+      this.haveReturns = false;
     }
-    if (dateAuction === false && this.haveReturns === true) {
-      this.bidOff = false;
-      return false;
-    }
-  }
-
-  get auctionEnd() {
-    for (let i = 0; i < this.auctionsBid.length; i++) {
-      this.haveAuction = this.auctionsBid[i].ended;
-      if (this.haveAuction === false) {
-        return false;
-      }
-    }
-    return true;
   }
 }
 </script>

@@ -8,8 +8,9 @@
       <div
         v-for="(bid, index) in auctionsBid"
         :key="index"
+        v-on="auctionsReturns(index)"
       >
-        <div v-if="bid.ended === false">
+        <div v-if="haveReturns === true || bid.ended === false ">
           <q-card
             class="row justify-between container-bids"
             bordered
@@ -71,6 +72,8 @@ export default class Bids extends Vue {
   loading: boolean = true;
   dias: number = 0;
   haveAuction!: boolean;
+  returnKey?: string;
+  haveReturns!: boolean;
 
   get auctionBidsFiltered() {
     return this.auctionsBid.filter((auction: IAuctionItem) => {
@@ -101,6 +104,28 @@ export default class Bids extends Vue {
       this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
       this.loading = false;
     });
+  }
+
+  // eslint-disable-next-line getter-return
+  auctionsReturns(i: number) {
+    try {
+      const auctionReturs = Object.keys(this.auctionsBid[i].returns);
+      for (const key of auctionReturs) {
+        console.log('passo a passom', this.returnKey);
+        this.returnKey = key;
+      }
+      auctionReturs.forEach((key) => {
+        // console.log('comparando keys', this.haveReturns, this.auctionsBid[i].item.title);
+
+        if (key === this.accountAdress) {
+          this.haveReturns = true;
+        } else {
+          this.haveReturns = false;
+        }
+      });
+    } catch (error) {
+      console.log('erro auctionsReturns');
+    }
   }
 
   get auctionEnd() {

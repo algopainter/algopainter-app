@@ -271,7 +271,6 @@ export default class AuctionsList extends Vue {
       type: 'auctions/getHotBids',
     }).then(() => {
       this.areHot = this.$store.state.auctions.hotBids;
-      console.log(this.areHot);
       this.auctions = this.areHot.filter(function(items) {
         return moment().isAfter(items.expirationDt) === false;
       });

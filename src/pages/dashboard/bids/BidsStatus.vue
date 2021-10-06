@@ -74,12 +74,28 @@
         />
       </div>
       <div class="text-h6 text-bold text-center justify-center q-my-md">
-        <div class="q-my-md">
+        <div
+          v-if="myBidsResult !== undefined"
+          class="q-my-md"
+        >
           {{ $t('dashboard.bid.yourBid') }}
           <div class="row justify-center">
             <div>
               {{ bidCorreting(MyHighBid) }}
             </div>
+            {{ myBidsResult }}
+            <div class="q-ml-sm">
+              {{ bidsAuctions.highestBid.tokenSymbol }}
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          {{ $t('dashboard.bid.yourLastBid') }}
+          <div class="row justify-center">
+            <div>
+              {{ bidCorreting(MyHighBid) }}
+            </div>
+            {{ myBidsResult }}
             <div class="q-ml-sm">
               {{ bidsAuctions.highestBid.tokenSymbol }}
             </div>
@@ -189,6 +205,10 @@ export default class BidsStatus extends Vue.with(Props) {
   btnResult!: string;
   myBidsResult!: string;
 
+  beforeMount() {
+    void this.myBids;
+  }
+
   get accountAdress() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['user/account'] as string;
@@ -228,16 +248,22 @@ export default class BidsStatus extends Vue.with(Props) {
   }
 
   get myBids() {
-    const getBids = this.bidsAuctions.returns;
-    const account = this.userAccount;
-    Object.keys(getBids).forEach((key: unknown) => {
-      if (key === account) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.myBidsResult = this.bidCorreting(getBids[key] as unknown as number);
-        const coin = this.bidsAuctions.bids[0].tokenSymbol;
-        this.btnResult = this.$t('Claim: ' + this.myBidsResult + ' ' + coin);
-      }
-    });
+    try {
+      const getBids = this.bidsAuctions.returns;
+      const account = this.userAccount;
+      const getBidsKeys = Object.keys(getBids);
+      getBidsKeys.forEach((key) => {
+        if (key === account) {
+          const BidsKey = getBids[key as unknown as number] as unknown as number;
+          this.myBidsResult = this.bidCorreting(BidsKey);
+          const coin = this.bidsAuctions.bids[0].tokenSymbol;
+          this.btnResult = this.$t('Claim: ' + this.myBidsResult + ' ' + coin);
+        }
+      });
+    } catch (error) {
+      console.log('erro');
+    }
+
     return this.btnResult;
   }
 

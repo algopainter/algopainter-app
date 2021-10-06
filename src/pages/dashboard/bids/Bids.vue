@@ -3,14 +3,13 @@
     v-if="loading === false"
   >
     <div
-      v-if="auctionEnd === false"
+      v-if="bidOff === false"
     >
       <div
         v-for="(bid, index) in auctionsBid"
         :key="index"
-        v-on="auctionsReturns(index)"
       >
-        <div v-if="haveReturns === true || bid.ended === false ">
+        <div v-if="auctionsReturns(index) === false ">
           <q-card
             class="row justify-between container-bids"
             bordered
@@ -49,6 +48,12 @@
       </div>
     </div>
   </div>
+  <q-spinner
+    v-else
+    size="xl"
+    width="100%"
+    color="primary"
+  />
 </template>
 
 <script lang="ts">
@@ -58,6 +63,7 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import BidsStatus from './BidsStatus.vue';
 import BidsInfor from './BidsInfor.vue';
+import moment from 'moment';
 
 @Options({
   components: {
@@ -73,7 +79,8 @@ export default class Bids extends Vue {
   dias: number = 0;
   haveAuction!: boolean;
   returnKey?: string;
-  haveReturns!: boolean;
+  haveReturns: boolean = false;
+  bidOff:boolean = false;
 
   get auctionBidsFiltered() {
     return this.auctionsBid.filter((auction: IAuctionItem) => {
@@ -102,21 +109,21 @@ export default class Bids extends Vue {
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
+
       this.loading = false;
     });
   }
 
-  // eslint-disable-next-line getter-return
   auctionsReturns(i: number) {
+    const dateAuction = !moment().isAfter(this.auctionsBid[i].expirationDt);
+    console.log(this.auctionsBid[i].ended, this.auctionsBid[i].item.title);
     try {
       const auctionReturs = Object.keys(this.auctionsBid[i].returns);
       for (const key of auctionReturs) {
-        console.log('passo a passom', this.returnKey);
         this.returnKey = key;
       }
-      auctionReturs.forEach((key) => {
-        // console.log('comparando keys', this.haveReturns, this.auctionsBid[i].item.title);
 
+      auctionReturs.forEach((key) => {
         if (key === this.accountAdress) {
           this.haveReturns = true;
         } else {
@@ -124,7 +131,27 @@ export default class Bids extends Vue {
         }
       });
     } catch (error) {
-      console.log('erro auctionsReturns');
+      this.haveReturns = false;
+    }
+    if (dateAuction && this.haveReturns === false) {
+      this.bidOff = false;
+      return false;
+    }
+    if (dateAuction && this.haveReturns === true) {
+      this.bidOff = false;
+      return false;
+    }
+    if (dateAuction === false && this.haveReturns === false) {
+      if (this.auctionsBid[i].ended === false) {
+        this.bidOff = false;
+        return false;
+      }
+      this.bidOff = true;
+      return true;
+    }
+    if (dateAuction === false && this.haveReturns === true) {
+      this.bidOff = false;
+      return false;
     }
   }
 

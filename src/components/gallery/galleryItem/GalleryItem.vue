@@ -149,12 +149,29 @@ export default class GalleryItem extends Vue.with(Props) {
     return this.$store.getters['user/isConnected'];
   }
 
+  /*
+  get openConnectYourWalletModal() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/GET_OPEN_CONNECT_YOUR_WALLET_MODAL'];
+  }
+  */
+
   favoriteClicked(wasLiked: boolean) {
     if (!this.likeClicked) {
       this.likeClicked = true;
-      this.$emit('favoriteClicked');
       if (this.isConnected) {
         wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+      } else {
+        void this.$store.dispatch('user/openConnectYourWalletModal');
+        this.likeClicked = false;
+        /*
+        const checkIfModalIsStillOpen = setInterval(() => {
+          if (!this.openConnectYourWalletModal) {
+            wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+            clearInterval(checkIfModalIsStillOpen);
+          }
+        }, 3000) as unknown as number;
+        */
       }
     }
   }

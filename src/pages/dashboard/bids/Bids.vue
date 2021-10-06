@@ -116,7 +116,6 @@ export default class Bids extends Vue {
 
   auctionsReturns(i: number) {
     const dateAuction = !moment().isAfter(this.auctionsBid[i].expirationDt);
-    console.log(this.auctionsBid[i].ended, this.auctionsBid[i].item.title);
     try {
       const auctionReturs = Object.keys(this.auctionsBid[i].returns);
       for (const key of auctionReturs) {

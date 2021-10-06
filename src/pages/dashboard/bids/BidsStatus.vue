@@ -16,7 +16,7 @@
         <algo-button
           size="lg"
           color="primary"
-          :label=" $t('dashboard.bid.clain')"
+          :label=" $t('dashboard.bid.claim')"
           @click="endAuction"
         />
       </div>

@@ -94,7 +94,43 @@
                 class="text-bold"
               >
                 <div
+                  v-if="countYear >= 1"
+                  class="row justify-start time-year q-gutter-sm "
+                >
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ days }}  -->{{ countYear }}
+                    </div>
+                    <span> {{ $t('dashboard.bid.year') }} </span>
+                  </div>
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ days }}  -->{{ countDays }}
+                    </div>
+                    <span> {{ $t('dashboard.bid.days') }} </span>
+                  </div>
 
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ hours }}--> {{ countHours }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.hours') }}</span>
+                  </div>
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ minutes }} -->{{ countMinutes }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.minis') }}</span>
+                  </div>
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ seconds }} --> {{ countSeconds }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.seconds') }}</span>
+                  </div>
+                </div>
+                <div
+                  v-else
                   class="row justify-start time q-gutter-sm "
                 >
                   <div>
@@ -174,6 +210,7 @@ dayExpirations: string = ''
 yearExpirations: string = ''
 hoursExpirations!: string ;
 countDays: number = 0;
+countYear: number = 0;
 countHours: number = 0;
 countMinutes: number = 0;
 countSeconds: number = 0;
@@ -220,6 +257,7 @@ formatTime(): void {
 getTime() {
   const newEnded = moment(this.bidsAuctions.expirationDt);
   const timeLeft = moment.duration(newEnded.diff(moment()));
+  this.countYear = timeLeft.years() || 0;
   this.countDays = timeLeft.days() || 0;
   this.countHours = timeLeft.hours() || 0;
   this.countMinutes = timeLeft.minutes() || 0;
@@ -297,6 +335,10 @@ bidCorreting(bids: number) {
   width: 180px;
   margin-right: 5px;
 }
+.time-year{
+  width: 250px;
+  margin-right: 5px;
+  }
 .text-time{
   font-size: 1.1rem;
   margin-left: -30px;

@@ -32,10 +32,10 @@
           {{ $t('dashboard.sellYourArt.createAuction') }}
         </div>
         <div class="col-12">
-          <v-form v-slot="{ handleSubmit }">
+          <v-form v-slot="formProps">
             <q-form
               class="row q-col-gutter-md"
-              @submit="handleSubmit(createAuction)"
+              @submit="formProps.handleSubmit(createAuction)"
             >
               <div class="col-12">
                 <v-field
@@ -48,7 +48,10 @@
                   <q-input
                     :label="$t('dashboard.sellYourArt.minimumPrice')"
                     :model-value="field.value"
-                    type="number"
+                    inputmode="number"
+                    mask="#.####"
+                    reverse-fill-mask
+                    fill-mask="0"
                     color="primary"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
@@ -126,6 +129,7 @@
                 >
                   <time-field
                     :model-value="field.value"
+                    :options="endTimeOptions(formProps.values.endDate)"
                     :label="$t('dashboard.sellYourArt.endTime')"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
@@ -133,12 +137,18 @@
                   />
                 </v-field>
               </div>
-              <div class="col-12 flex justify-end">
-                <algo-button
-                  type="submit"
-                  color="primary"
-                  :label="$t('dashboard.sellYourArt.createAuction')"
-                />
+              <div class="col-12">
+                <div class="q-mr-md q-mb-md">
+                  {{ $t('dashboard.auctionPage.feeMessage') }}
+                </div>
+                <div class="flex justify-end">
+                  <algo-button
+                    class="q-mb-md"
+                    type="submit"
+                    color="primary"
+                    :label="$t('dashboard.sellYourArt.createAuction')"
+                  />
+                </div>
               </div>
             </q-form>
           </v-form>
@@ -240,6 +250,20 @@ export default class SellYourArt extends Vue {
   displayingStatus: boolean = false;
   createAuctionStatus: CreatingAuctionStatus | null = null;
 
+  /*
+  async getFee() {
+    await this.auctionSystem.getAuctionAmountInfo(10000, this.userAccount).on('transactionHash', () => {
+      console.log('auction');
+    }).on('error', () => {
+      console.log('error');
+    });
+  }
+
+  mounted() {
+    void this.getFee();
+  }
+  */
+
   get auctionSystemContractAddress() {
     return getAuctionSystemContractByNetworkId(this.networkInfo.id);
   }
@@ -327,6 +351,24 @@ export default class SellYourArt extends Vue {
 
   endDateOptions(date: string) {
     return date >= this.nowFormatted;
+  }
+
+  endTimeOptions(date: string) {
+    const now = moment();
+    const currentDate = now.format('MM/DD/YYYY');
+
+    return (hour: number, minute: number | null) => {
+      if (currentDate !== date) {
+        return true;
+      }
+
+      const currentHour = now.hour();
+      const currentMinute = now.minute();
+
+      return !minute
+        ? hour >= currentHour
+        : hour !== currentHour || minute > currentMinute;
+    };
   }
 
   async approveContract() {

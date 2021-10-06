@@ -15,7 +15,10 @@
           transition-show="scale"
           transition-hide="scale"
         >
-          <q-time v-model="value" />
+          <q-time
+            v-model="value"
+            :options="options"
+          />
         </q-popup-proxy>
       </q-icon>
     </template>

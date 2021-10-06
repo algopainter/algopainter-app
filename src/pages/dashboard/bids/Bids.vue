@@ -130,7 +130,6 @@ export default class Bids extends Vue {
           this.haveReturns = false;
         }
       });
-
       if (dateAuction && this.haveReturns === false) {
         this.bidOff = false;
         return false;
@@ -147,6 +146,9 @@ export default class Bids extends Vue {
       } else if (dateAuction === false && this.haveReturns === true) {
         this.bidOff = false;
         return false;
+      } else {
+        this.bidOff = true;
+        return true;
       }
     } catch (error) {
       this.haveReturns = false;

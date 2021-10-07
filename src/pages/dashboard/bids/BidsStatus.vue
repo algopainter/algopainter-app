@@ -150,7 +150,7 @@
       v-model="displayingStatus"
       persistent
     >
-      <end-auction-status-card
+      <get-art-end-auction
         :end-auction-status="endAuctionStatus"
         @request-close="onCloseStatusDialog"
       />
@@ -171,7 +171,7 @@ import { auctionCoins } from 'src/helpers/auctionCoins';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import AlgoPainterAuctionSystemProxy, { EndAuctionStatus } from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
-import EndAuctionStatusCard from 'components/auctions/auction/EndAuctionStatusCard.vue';
+import GetArtEndAuction from 'components/auctions/auction/GetArtEndAuction.vue';
 
 class Props {
   bidsAuctions= prop({
@@ -183,7 +183,7 @@ class Props {
 @Options({
   components: {
     AlgoButton,
-    EndAuctionStatusCard,
+    GetArtEndAuction,
   },
   computed: {
     ...mapGetters('user', {
@@ -201,9 +201,9 @@ export default class BidsStatus extends Vue.with(Props) {
 
   displayingStatus: boolean = false;
   myTotalBids: number = 0
-  endAuctionStatus!: EndAuctionStatus;
   btnResult!: string;
   myBidsResult!: string;
+  endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
 
   beforeMount() {
     void this.myBids;
@@ -261,7 +261,6 @@ export default class BidsStatus extends Vue.with(Props) {
         }
       });
     } catch (error) {
-      console.log('erro');
     }
 
     return this.btnResult;
@@ -290,6 +289,10 @@ export default class BidsStatus extends Vue.with(Props) {
   }
 
   async endAuction() {
+    if (!this.bidsAuctions) {
+      return;
+    }
+
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
 
     this.displayingStatus = true;
@@ -297,7 +300,7 @@ export default class BidsStatus extends Vue.with(Props) {
 
     await this.auctionSystem.endAuction(
       this.bidsAuctions.index,
-      this.userAccount,
+      this.accountAdress,
     ).on('error', () => {
       this.endAuctionStatus = EndAuctionStatus.EndAuctionError;
     }).on('transactionHash', () => {

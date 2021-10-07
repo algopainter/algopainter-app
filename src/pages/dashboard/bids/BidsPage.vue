@@ -60,7 +60,6 @@ class Props {
     BidsStatus,
     BidsInfor,
   },
-
 })
 
 export default class BidsPage extends Vue.with(Props) {
@@ -90,9 +89,6 @@ export default class BidsPage extends Vue.with(Props) {
     } catch (error) {
       this.haveReturns = false;
     } finally {
-      // eslint-disable-next-line max-len
-      console.log('dataAPI < hojeApi', dateAuction, 'Tem valor pra sacar', this.haveReturns, 'leilao finalizou', this.bid.ended, this.bid.item.title);
-
       if (dateAuction && this.haveReturns === false) {
         this.bidOff = false;
         // eslint-disable-next-line no-unsafe-finally
@@ -103,7 +99,13 @@ export default class BidsPage extends Vue.with(Props) {
         return false;
       } else if (dateAuction === false && this.haveReturns === false) {
         if (this.bid.ended === false) {
+          if (this.bid.highestBid.account !== this.accountAdress) {
+            this.bidOff = true;
+            // eslint-disable-next-line no-unsafe-finally
+            return true;
+          }
           this.bidOff = false;
+          console.log('test3');
           // eslint-disable-next-line no-unsafe-finally
           return false;
         }

@@ -2,39 +2,16 @@
   <div
     v-if="loading === false"
   >
-    <div
-      v-if="bidOff === false"
-    >
+    <div v-if="bidStatus === false">
       <div
         v-for="(bid, index) in auctionsBid"
         :key="index"
       >
-        <div v-if="auctionsReturns(index) === false ">
-          <q-card
-            class="row justify-between container-bids"
-            bordered
-          >
-            <div
-              class="col-xs-12 col-sm-12 col-md-7"
-            >
-              <BidsInfor
-                :bids-auctions="bid"
-                :index="index"
-              />
-            </div>
-            <q-separator
-              vertical
-              inset
-            />
-            <div
-              class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
-            >
-              <bids-status
-                :bids-auctions="bid"
-              />
-            </div>
-          </q-card>
-        </div>
+        <Bids-page
+          :bid="bid"
+          :account-adress="accountAdress"
+          :index="index"
+        />
       </div>
     </div>
     <div v-else>
@@ -61,16 +38,11 @@
 import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
-import AlgoButton from 'components/common/Button.vue';
-import BidsStatus from './BidsStatus.vue';
-import BidsInfor from './BidsInfor.vue';
-import moment from 'moment';
+import BidsPage from './BidsPage.vue';
 
 @Options({
   components: {
-    AlgoButton,
-    BidsStatus,
-    BidsInfor,
+    BidsPage,
   },
 })
 
@@ -78,9 +50,6 @@ export default class Bids extends Vue {
   auctionsBid: IAuctionItem[] = [];
   loading: boolean = true;
   dias: number = 0;
-  returnKey?: string;
-  haveReturns: boolean = false;
-  bidOff:boolean = false;
 
   get auctionBidsFiltered() {
     return this.auctionsBid.filter((auction: IAuctionItem) => {
@@ -114,77 +83,17 @@ export default class Bids extends Vue {
     });
   }
 
-  auctionsReturns(i: number) {
-    console.log('test');
-    const dateAuction = !moment().isAfter(this.auctionsBid[i].expirationDt);
-    try {
-      const auctionReturs = Object.keys(this.auctionsBid[i].returns);
-      for (const key of auctionReturs) {
-        this.returnKey = key;
+  get bidStatus() {
+    for (let index = 0; index < this.auctionsBid.length; index++) {
+      console.log('ended', this.auctionsBid[index].ended);
+      if (this.auctionsBid[index].ended === false) {
+        return false;
       }
-
-      auctionReturs.forEach((key) => {
-        if (key === this.accountAdress) {
-          this.haveReturns = true;
-        } else {
-          this.haveReturns = false;
-        }
-      });
-      if (dateAuction && this.haveReturns === false) {
-        this.bidOff = false;
-        return false;
-      } else if (dateAuction && this.haveReturns === true) {
-        this.bidOff = false;
-        return false;
-      } else if (dateAuction === false && this.haveReturns === false) {
-        if (this.auctionsBid[i].ended === false) {
-          this.bidOff = false;
-          return false;
-        }
-        this.bidOff = true;
-        return true;
-      } else if (dateAuction === false && this.haveReturns === true) {
-        this.bidOff = false;
-        return false;
-      } else {
-        this.bidOff = true;
-        return true;
-      }
-    } catch (error) {
-      this.haveReturns = false;
     }
+    return true;
   }
 }
 </script>
 <style lang="scss">
-.container-bids{
-  padding: 20px;
-  margin: 10px;
-}
-.img{
-  width: 250px;
-  @media (max-width: $breakpoint-xs-max) {
-    width: 100%;
-  }
-}
-
-.text-title{
-  width: 250px;
-  @media (max-width: $breakpoint-xs-max) {
-    width: 100%;
-  }
-}
-
-.text-amount{
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  text-align: left;
-  width: 50px;
-}
-
-.box{
-  width: 100%;
-}
 
 </style>

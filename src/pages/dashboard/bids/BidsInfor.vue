@@ -2,7 +2,6 @@
 <template>
   <div
     class="row q-gutter-md"
-    v-on="getLastBid()"
   >
     <q-img
       class="img"
@@ -170,7 +169,6 @@
 
 <script lang="ts">
 import { Vue, prop, Options } from 'vue-class-component';
-import { takeLast } from 'ramda';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { now } from 'src/helpers/timer';
 import { PropType } from 'vue';
@@ -299,10 +297,6 @@ dataMoment(index: string, format: string) {
   return moment(index).format(format);
 }
 
-getLastBid(): void {
-  this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
-}
-
 get isEnded() {
   return moment().isAfter(this.bidsAuctions.expirationDt);
 }
@@ -331,6 +325,19 @@ bidCorreting(bids: number) {
 }
 </script>
 <style lang="scss">
+.text-amount{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 50px;
+}
+.img{
+  width: 250px;
+  @media (max-width: $breakpoint-xs-max) {
+    width: 100%;
+  }
+}
 .time{
   width: 180px;
   margin-right: 5px;

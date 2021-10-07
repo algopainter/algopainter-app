@@ -190,6 +190,7 @@ export default class ViewArt extends Vue {
   backgroundChange: boolean = false;
   loadingImage: boolean = true;
   imageUrl: string = '';
+  likeClicked: boolean = false;
 
   mounted() {
     void this.getDetailsData();
@@ -329,9 +330,14 @@ export default class ViewArt extends Vue {
   }
 
   favoriteClicked(wasLiked: boolean) {
-    this.$emit('favoriteClicked');
-    if (this.isConnected) {
-      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    if (!this.likeClicked) {
+      this.likeClicked = true;
+      if (this.isConnected) {
+        wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+      } else {
+        void this.$store.dispatch('user/openConnectYourWalletModal');
+        this.likeClicked = false;
+      }
     }
   }
 
@@ -349,10 +355,13 @@ export default class ViewArt extends Vue {
         (result) => {
           if (result.isFailure) {
             this.like(true);
+            this.likeClicked = false;
           }
+          this.likeClicked = false;
         },
         (error) => {
           console.log('"like" post error: ', error);
+          this.likeClicked = false;
         },
       );
     this.like();
@@ -365,10 +374,13 @@ export default class ViewArt extends Vue {
         (result) => {
           if (result.isFailure) {
             this.like();
+            this.likeClicked = false;
           }
+          this.likeClicked = false;
         },
         (error) => {
           console.log('"like" delete error: ', error);
+          this.likeClicked = false;
         },
       );
     this.like(true);

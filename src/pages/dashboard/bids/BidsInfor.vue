@@ -225,8 +225,8 @@ mounted(): void {
  @Watch('now')
 onPropertyChanged() {
   if (!this.stopCount) {
-    if (this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
-      if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
+    if (this.countYear <= 0 && this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
+      if (this.lastCountYear === 0 && this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
         this.formatTime();
         // this.isfinish = true;
         window.location.reload(true);
@@ -238,12 +238,14 @@ onPropertyChanged() {
       console.log('getTime');
     }
   }
+  this.lastCountYear = this.countYear;
   this.lastCountDays = this.countDays;
   this.lastCountHours = this.countHours;
   this.lastCountMinutes = this.countMinutes;
   this.lastCountSeconds = this.countSeconds;
 }
 
+lastCountYear: number = 0;
 lastCountDays: number = 0;
 lastCountHours: number = 0;
 lastCountMinutes: number = 0;

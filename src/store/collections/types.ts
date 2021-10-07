@@ -6,4 +6,5 @@ export interface CollectionsStateInterface {
     images: [],
     collections: [],
     userOnSale: [],
+    onSalePublic: [],
 }

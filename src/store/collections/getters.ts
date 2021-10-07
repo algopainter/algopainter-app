@@ -15,6 +15,9 @@ const getters: GetterTree<CollectionsStateInterface, StateInterface> = {
   GET_USER_ON_SALE(state: CollectionsStateInterface): [] {
     return state.userOnSale;
   },
+  GET_ON_SALE_PUBLIC(state: CollectionsStateInterface): [] {
+    return state.onSalePublic;
+  },
 };
 
 export default getters;

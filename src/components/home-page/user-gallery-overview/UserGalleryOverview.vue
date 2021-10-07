@@ -155,7 +155,7 @@
           :label="index + 1"
           class="q-mr-xs desktop-only"
           :loading="galleryTabs[1].currentPage === index + 1 ? galleryTabs[1].loadingData : false"
-          @click="getOnSale(index + 1, currentCollection.label)"
+          @click="getSalePublic(index + 1, currentCollection.label)"
         />
         <algo-button
           v-if="!galleryTabs[1].noData"
@@ -167,7 +167,7 @@
           class="load-more q-px-xl q-mx-auto mobile-only"
           :disable="noMoreImages"
           :loading="loadMoreBtn"
-          @click="loadMoreOnSale(currentCollection.label)"
+          @click="loadMoreSalePublic(currentCollection.label)"
         />
       </div>
     </div>
@@ -347,7 +347,7 @@ export default class UserGalleryOverview extends Vue {
       noData: false as boolean,
     },
     {
-      label: 'onSale' as string,
+      label: 'SalePublic' as string,
       cont: 0 as number,
       contLabel: '' as string,
       btnIndex: 2 as number,
@@ -374,7 +374,7 @@ export default class UserGalleryOverview extends Vue {
     // void this.getGalleryBidders();
     void this.getCollections();
     void this.getLikes(1, this.currentCollection);
-    void this.getOnSale(1, this.currentCollection);
+    void this.getSalePublic(1, this.currentCollection);
     void this.getGalleryArts(1, this.currentCollection);
   }
 
@@ -384,7 +384,7 @@ export default class UserGalleryOverview extends Vue {
       void this.getGalleryArts(1, this.currentCollection, true);
     }
     if (this.currentBtnClicked !== 2) {
-      void this.getOnSale(1, this.currentCollection, true);
+      void this.getSalePublic(1, this.currentCollection, true);
     }
     if (this.currentBtnClicked !== 3) {
       void this.getLikes(1, this.currentCollection, true);
@@ -420,7 +420,7 @@ export default class UserGalleryOverview extends Vue {
       if (this.currentBtnClicked === this.galleryTabs[0].btnIndex) {
         void this.getGalleryArts(page, currentCollection);
       } else if (this.currentBtnClicked === this.galleryTabs[1].btnIndex) {
-        void this.getOnSale(page, currentCollection);
+        void this.getSalePublic(page, currentCollection);
       } else if (this.currentBtnClicked === this.galleryTabs[2].btnIndex) {
         void this.getLikes(page, currentCollection);
       }
@@ -436,7 +436,7 @@ export default class UserGalleryOverview extends Vue {
       if (this.currentBtnClicked === this.galleryTabs[0].btnIndex) {
         void this.loadMore(currentCollection, true);
       } else if (this.currentBtnClicked === this.galleryTabs[1].btnIndex) {
-        void this.loadMoreOnSale(currentCollection, true);
+        void this.loadMoreSalePublic(currentCollection, true);
       } else if (this.currentBtnClicked === this.galleryTabs[2].btnIndex) {
         void this.loadMoreLike(currentCollection, true);
       }
@@ -468,21 +468,21 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
-  async getOnSale(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+  async getSalePublic(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
     this.galleryTabs[1].loadingData = true;
     this.galleryTabs[1].currentPage = page;
     if (!watcher) {
       this.currentBtnClicked = 2;
     }
     await this.$store.dispatch({
-      type: 'collections/getUserOnSale',
+      type: 'collections/getOnSalePublic',
       account: this.$route.params.account,
       page: page,
       perPage: '9',
       collectionName: collection,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['collections/GET_USER_ON_SALE'] as IAxiosPaginated;
+      const response = this.$store.getters['collections/GET_ON_SALE_PUBLIC'] as IAxiosPaginated;
       this.galleryTabs[1].data = response.data;
       this.galleryTabs[1].cont = response.count;
       this.galleryTabs[1].contLabel = ` (${response.count})`;
@@ -550,7 +550,7 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
-  async loadMoreOnSale(collection:string = this.currentCollection, filter: boolean = false) {
+  async loadMoreSalePublic(collection:string = this.currentCollection, filter: boolean = false) {
     if (filter) {
       this.galleryTabs[1].loadingData = true;
       this.galleryTabs[1].data = [];
@@ -558,14 +558,14 @@ export default class UserGalleryOverview extends Vue {
     this.loadMoreCounterOnSale++;
     this.loadMoreBtn = true;
     await this.$store.dispatch({
-      type: 'collections/getUserOnSale',
+      type: 'collections/getOnSalePublic',
       account: this.$route.params.account,
       page: this.loadMoreCounterOnSale,
       perPage: '9',
       collectionName: collection,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['collections/GET_USER_ON_SALE'] as IAxiosPaginated;
+      const response = this.$store.getters['collections/GET_ON_SALE_PUBLIC'] as IAxiosPaginated;
       const onSaleMobile = response.data;
       this.galleryTabs[1].cont = response.count;
       this.galleryTabs[1].contLabel = ` (${response.count})`;

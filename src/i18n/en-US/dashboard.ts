@@ -50,6 +50,7 @@ export default {
     collectiblesGallery: 'Collection',
     exploreAuctions: 'Explore Auctions',
     onSale: 'On sale',
+    SalePublic: 'On sale',
     like: 'Liked',
     gwei: 'Gwei',
     expressions: 'Expressions',

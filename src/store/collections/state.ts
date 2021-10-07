@@ -9,6 +9,7 @@ function state(): CollectionsStateInterface {
     images: [],
     collections: [],
     userOnSale: [],
+    onSalePublic: [],
   };
 }
 

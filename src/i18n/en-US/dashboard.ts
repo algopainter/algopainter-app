@@ -179,6 +179,7 @@ export default {
     okButton: 'Ok',
     claimBtn: 'Claim: {amount} {coin}',
     endingAuction: 'End auction',
+    youWin: 'You won the auction, now get your art!',
     auctionEnded: 'Auction ended {endDate}',
     auctionRemainingTime: 'Auction ends in',
     deletingAuction: 'Deleting auction',

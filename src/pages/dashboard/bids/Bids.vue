@@ -85,7 +85,6 @@ export default class Bids extends Vue {
 
   get bidStatus() {
     for (let index = 0; index < this.auctionsBid.length; index++) {
-      console.log('ended', this.auctionsBid[index].ended);
       if (this.auctionsBid[index].ended === false) {
         return false;
       }

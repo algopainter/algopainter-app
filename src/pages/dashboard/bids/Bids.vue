@@ -2,39 +2,16 @@
   <div
     v-if="loading === false"
   >
-    <div
-      v-if="auctionEnd === false"
-    >
+    <div v-if="bidStatus === false">
       <div
         v-for="(bid, index) in auctionsBid"
         :key="index"
       >
-        <div v-if="bid.ended === false">
-          <q-card
-            class="row justify-between container-bids"
-            bordered
-          >
-            <div
-              class="col-xs-12 col-sm-12 col-md-7"
-            >
-              <BidsInfor
-                :bids-auctions="bid"
-                :index="index"
-              />
-            </div>
-            <q-separator
-              vertical
-              inset
-            />
-            <div
-              class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
-            >
-              <bids-status
-                :bids-auctions="bid"
-              />
-            </div>
-          </q-card>
-        </div>
+        <Bids-page
+          :bid="bid"
+          :account-adress="accountAdress"
+          :index="index"
+        />
       </div>
     </div>
     <div v-else>
@@ -48,21 +25,24 @@
       </div>
     </div>
   </div>
+  <q-spinner
+    v-else
+    class="q-mt-xl"
+    size="xl"
+    width="100%"
+    color="primary"
+  />
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
-import AlgoButton from 'components/common/Button.vue';
-import BidsStatus from './BidsStatus.vue';
-import BidsInfor from './BidsInfor.vue';
+import BidsPage from './BidsPage.vue';
 
 @Options({
   components: {
-    AlgoButton,
-    BidsStatus,
-    BidsInfor,
+    BidsPage,
   },
 })
 
@@ -70,7 +50,6 @@ export default class Bids extends Vue {
   auctionsBid: IAuctionItem[] = [];
   loading: boolean = true;
   dias: number = 0;
-  haveAuction!: boolean;
 
   get auctionBidsFiltered() {
     return this.auctionsBid.filter((auction: IAuctionItem) => {
@@ -99,14 +78,14 @@ export default class Bids extends Vue {
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
+
       this.loading = false;
     });
   }
 
-  get auctionEnd() {
-    for (let i = 0; i < this.auctionsBid.length; i++) {
-      this.haveAuction = this.auctionsBid[i].ended;
-      if (this.haveAuction === false) {
+  get bidStatus() {
+    for (let index = 0; index < this.auctionsBid.length; index++) {
+      if (this.auctionsBid[index].ended === false) {
         return false;
       }
     }
@@ -115,34 +94,5 @@ export default class Bids extends Vue {
 }
 </script>
 <style lang="scss">
-.container-bids{
-  padding: 20px;
-  margin: 10px;
-}
-.img{
-  width: 250px;
-  @media (max-width: $breakpoint-xs-max) {
-    width: 100%;
-  }
-}
-
-.text-title{
-  width: 250px;
-  @media (max-width: $breakpoint-xs-max) {
-    width: 100%;
-  }
-}
-
-.text-amount{
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  text-align: left;
-  width: 50px;
-}
-
-.box{
-  width: 100%;
-}
 
 </style>

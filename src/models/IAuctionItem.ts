@@ -81,8 +81,7 @@ export interface IAuctionItem {
     tokenPriceAddress: string;
   }
   returns: {
-    account: string;
-    createdAt: string;
+    [account: string]: number
   }[]
   owner: string;
   startDt: string;

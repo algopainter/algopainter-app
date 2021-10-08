@@ -106,13 +106,17 @@
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
             </span>
-            <p> {{ image.description }} </p>
+            <p
+              class="text-description"
+            >
+              {{ image.description }}
+            </p>
             <div v-if="image.collectionName === 'Gwei'">
               <p class="text-bold text-primary text-h6">
                 {{ $t('dashboard.viewArt.parameters') }}
               </p>
               <span>{{ $t('dashboard.viewArt.text') }}</span>
-              <span class="text-bold">
+              <span class="text-bold text-description">
                 {{ image.nft.parameters.text }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.randomColor') }}</span>
@@ -480,6 +484,9 @@ export default class ViewArt extends Vue {
 
 </script>
 <style scoped>
+.text-description{
+  word-wrap: break-word;
+}
 
 .details{
   margin-left: 25px;

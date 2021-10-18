@@ -39,3 +39,14 @@ export function getAuctionSystemContractByNetworkId(id: number): string {
       return process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS as string;
   }
 }
+
+export function getRewardsSystemContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_REWARDS_SYSTEM_56 as string;
+    case 97:
+      return process.env.ALGOPAINTER_REWARDS_SYSTEM_97 as string;
+    default:
+      return process.env.ALGOPAINTER_REWARDS_SYSTEM as string;
+  }
+}

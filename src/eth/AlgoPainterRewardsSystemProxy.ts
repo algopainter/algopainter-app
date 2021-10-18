@@ -1,0 +1,117 @@
+import { AbiItem } from 'web3-utils';
+import { ContractSendMethod } from 'web3-eth-contract';
+
+import { NetworkInfo } from 'src/store/user/types';
+import AlgoPainterRewardsSystem from './AlgoPainterRewardsSystem.json';
+import { getRewardsSystemContractByNetworkId } from './Config';
+
+export enum EndAuctionStatus {
+  EndAuctionAwaitingInput,
+  EndAuctionError,
+  EndAuctionAwaitingConfirmation,
+  AuctionEnded,
+}
+
+export enum TokenType {
+  ERC721 = 0,
+  ERC1155 = 1,
+}
+
+export default class AlgoPainterRewardsSystemProxy {
+  declare smartContract: {
+    methods: {
+      getAllowedTokens(): ContractSendMethod;
+      getBidFeeRate(): ContractSendMethod;
+      createAuction(
+        tokenType: TokenType,
+        contractAddress: string,
+        tokenId: number,
+        minimumAmount: string,
+        endTime: number,
+        tokenPriceAddress: string,
+        bidBackFee: number,
+      ): ContractSendMethod;
+      bid(auctionId: number, amount: string): ContractSendMethod;
+      cancelAuction(auctionId: number): ContractSendMethod;
+      endAuction(auctionId: number): ContractSendMethod;
+      withdraw(auctionId: number): ContractSendMethod;
+      getAuctionAmountInfo(amount: number): ContractSendMethod;
+    };
+  };
+
+  constructor(networkInfo: NetworkInfo) {
+    const contractAddress = getRewardsSystemContractByNetworkId(networkInfo.id);
+
+    this.smartContract = new window.web3.eth.Contract(
+      AlgoPainterRewardsSystem as AbiItem[],
+      contractAddress,
+    );
+  }
+
+  async getAllowedTokens(): Promise<string[]> {
+    const response: unknown = await this.smartContract.methods
+      .getAllowedTokens().call();
+
+    return response as string[];
+  }
+
+  async getBidFeeRate(): Promise<number> {
+    const response: unknown = await this.smartContract.methods
+      .getBidFeeRate().call();
+
+    return response as number;
+  }
+
+  createAuction(
+    tokenType: number,
+    contractAddress: string,
+    tokenId: number,
+    minimumAmount: string,
+    endTime: number,
+    tokenPriceAddress: string,
+    bidBackFee: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.createAuction(
+      tokenType,
+      contractAddress,
+      tokenId,
+      minimumAmount,
+      endTime,
+      tokenPriceAddress,
+      bidBackFee,
+    ).send({ from });
+  }
+
+  bid(auctionId: number, amount: string, from: string) {
+    return this.smartContract.methods.bid(
+      auctionId,
+      amount,
+    ).send({ from });
+  }
+
+  cancelAuction(auctionId: number, from: string) {
+    return this.smartContract.methods.cancelAuction(
+      auctionId,
+    ).send({ from });
+  }
+
+  endAuction(auctionId: number, from: string) {
+    return this.smartContract.methods.endAuction(
+      auctionId,
+    ).send({ from });
+  }
+
+  withdraw(auctionId: number, from: string) {
+    return this.smartContract.methods.withdraw(
+      auctionId,
+    ).send({ from });
+  }
+
+  getAuctionAmountInfo(amount: number, from: string) {
+    console.log('alou');
+    return this.smartContract.methods.getAuctionAmountInfo(
+      amount,
+    ).send({ from });
+  }
+}

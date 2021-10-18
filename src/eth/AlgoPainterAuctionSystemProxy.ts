@@ -109,7 +109,6 @@ export default class AlgoPainterAuctionSystemProxy {
   }
 
   getAuctionAmountInfo(amount: number, from: string) {
-    console.log('alou');
     return this.smartContract.methods.getAuctionAmountInfo(
       amount,
     ).send({ from });

@@ -69,8 +69,14 @@
             class="btn-staked"
             @click="stackCoin()"
           />
-          <stack-modal-algop v-model="openModal" />
-          <UnstackModalAlgop v-model="openModalUnstack" />
+          <stack-modal-algop
+            v-model="openModal"
+            :art="art"
+          />
+          <UnstackModalAlgop
+            v-model="openModalUnstack"
+            :art="art"
+          />
         </div>
         <div class="text-primary q-my-sm">
           {{ 'You can withdraw 0.002 WETH de BIDBACK' }}

@@ -20,22 +20,36 @@ export enum TokenType {
 export default class AlgoPainterRewardsSystemProxy {
   declare smartContract: {
     methods: {
-      getAllowedTokens(): ContractSendMethod;
-      getBidFeeRate(): ContractSendMethod;
-      createAuction(
-        tokenType: TokenType,
-        contractAddress: string,
-        tokenId: number,
-        minimumAmount: string,
-        endTime: number,
-        tokenPriceAddress: string,
-        bidBackFee: number,
+      stakeBidback(
+        auctionId: number,
+        amount: number
       ): ContractSendMethod;
-      bid(auctionId: number, amount: string): ContractSendMethod;
-      cancelAuction(auctionId: number): ContractSendMethod;
-      endAuction(auctionId: number): ContractSendMethod;
-      withdraw(auctionId: number): ContractSendMethod;
-      getAuctionAmountInfo(amount: number): ContractSendMethod;
+      unstakeBidback(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      stakePirs(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      unstakePirs(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      withdrawBidback(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      withdrawPirs(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      claimBidback(
+        auctionId: number
+      ): ContractSendMethod;
+      claimPirs(
+        auctionId: number
+      ): ContractSendMethod;
     };
   };
 
@@ -48,70 +62,88 @@ export default class AlgoPainterRewardsSystemProxy {
     );
   }
 
-  async getAllowedTokens(): Promise<string[]> {
-    const response: unknown = await this.smartContract.methods
-      .getAllowedTokens().call();
-
-    return response as string[];
-  }
-
-  async getBidFeeRate(): Promise<number> {
-    const response: unknown = await this.smartContract.methods
-      .getBidFeeRate().call();
-
-    return response as number;
-  }
-
-  createAuction(
-    tokenType: number,
-    contractAddress: string,
-    tokenId: number,
-    minimumAmount: string,
-    endTime: number,
-    tokenPriceAddress: string,
-    bidBackFee: number,
+  stakeBidback(
+    auctionId: number,
+    amount: number,
     from: string,
   ) {
-    return this.smartContract.methods.createAuction(
-      tokenType,
-      contractAddress,
-      tokenId,
-      minimumAmount,
-      endTime,
-      tokenPriceAddress,
-      bidBackFee,
-    ).send({ from });
-  }
-
-  bid(auctionId: number, amount: string, from: string) {
-    return this.smartContract.methods.bid(
+    return this.smartContract.methods.stakeBidback(
       auctionId,
       amount,
     ).send({ from });
   }
 
-  cancelAuction(auctionId: number, from: string) {
-    return this.smartContract.methods.cancelAuction(
+  unstakeBidback(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    console.log('unstakeBidback proxy');
+    return this.smartContract.methods.unstakeBidback(
       auctionId,
-    ).send({ from });
-  }
-
-  endAuction(auctionId: number, from: string) {
-    return this.smartContract.methods.endAuction(
-      auctionId,
-    ).send({ from });
-  }
-
-  withdraw(auctionId: number, from: string) {
-    return this.smartContract.methods.withdraw(
-      auctionId,
-    ).send({ from });
-  }
-
-  getAuctionAmountInfo(amount: number, from: string) {
-    console.log('alou');
-    return this.smartContract.methods.getAuctionAmountInfo(
       amount,
+    ).send({ from });
+  }
+
+  stakePirs(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.stakePirs(
+      auctionId,
+      amount,
+    ).send({ from });
+  }
+
+  unstakePirs(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.unstakePirs(
+      auctionId,
+      amount,
+    ).send({ from });
+  }
+
+  withdrawBidback(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.withdrawBidback(
+      auctionId,
+      amount,
+    ).send({ from });
+  }
+
+  withdrawPirs(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.withdrawPirs(
+      auctionId,
+      amount,
+    ).send({ from });
+  }
+
+  claimBidback(
+    auctionId: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.claimBidback(
+      auctionId,
+    ).send({ from });
+  }
+
+  claimPirs(
+    auctionId: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.claimPirs(
+      auctionId,
     ).send({ from });
   }
 }

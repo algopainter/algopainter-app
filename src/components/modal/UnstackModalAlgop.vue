@@ -6,25 +6,31 @@
   >
     <q-card class="q-pa-md">
       <p class="text-bold text-h6">
-        {{ $t('dashboard.stackModalAlgop.titleUnstack') }}
+        {{ $t('dashboard.unstackModalAlgop.title') }}
       </p>
       <div>
         <div>
           <div class="row justify-between">
-            <div>
-              {{ $t('dashboard.stackModalAlgop.stake') }}
+            <div class="flex items-end q-pb-sm text-bold">
+              {{ $t('dashboard.unstackModalAlgop.unstake') }}
             </div>
-            <div class="variable-balance">
-              {{ $t('dashboard.stackModalAlgop.balance') }}
+            <div>
+              <div class="variable-balance text-bold">
+                {{ $t('dashboard.unstackModalAlgop.balance') }}
+              </div>
+              <div class="q-pb-sm">
+                {{ formattedBalance }}
+              </div>
             </div>
           </div>
           <q-input
             v-model="unstakeAmount"
+            class="q-mb-sm"
             type="number"
             rounded
             outlined
             suffix="$ALGOP"
-            :rules="[val => !!val || 'No Tokens to stake.']"
+            :rules="[val => !!val || 'No Tokens to unstake.']"
             no-error-icon="false"
             :bind="validateInput()"
           >
@@ -34,7 +40,7 @@
                 color="primary"
                 @click="maxStakeAmount"
               >
-                {{ $t('dashboard.stackModalAlgop.max') }}
+                {{ $t('dashboard.unstackModalAlgop.max') }}
               </q-btn>
             </template>
           </q-input>
@@ -44,12 +50,12 @@
               type="submit"
               color="primary"
               class=""
-              :label="$t('dashboard.stackModalAlgop.cancel')"
+              :label="$t('dashboard.unstackModalAlgop.cancel')"
             />
             <algo-button
               type="submit"
               color="primary"
-              :label="$t('dashboard.stackModalAlgop.confirm')"
+              :label="$t('dashboard.unstackModalAlgop.confirm')"
               :disabled="isDisabled"
               :loading="isConfirmBtnLoading"
               @click="unstakeAlgop"
@@ -108,6 +114,7 @@ export default class MyPaint extends Vue.with(Props) {
   unstakeAmount: number | null | string = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
+  formattedBalance: string = '';
 
   show() {
     this.$refs.dialog.show();
@@ -134,11 +141,20 @@ export default class MyPaint extends Vue.with(Props) {
       this.balance = (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
+      void this.setformattedBalance();
     }
   }
 
-  maxStakeAmount() {
-    this.unstakeAmount = this.balance;
+  setformattedBalance() {
+    this.formattedBalance = UserUtils.formatAccountBalance(this.balance, 2);
+  }
+
+  async maxStakeAmount() {
+    try {
+      this.unstakeAmount = await this.rewardsSystem.getTotalBidbackStakes(this.art.index);
+    } catch (error) {
+      console.log('error maxStakeAmount');
+    }
   }
 
   validateInput() {
@@ -147,6 +163,13 @@ export default class MyPaint extends Vue.with(Props) {
       this.isDisabled = true;
     } else {
       this.isDisabled = false;
+    }
+  }
+
+  @Watch('balance')
+  onBalanceChanged() {
+    if (this.isConnected) {
+      void this.setAccountBalance();
     }
   }
 

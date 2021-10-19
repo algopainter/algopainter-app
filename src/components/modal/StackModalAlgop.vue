@@ -14,20 +14,26 @@
       <div>
         <div>
           <div class="row justify-between">
-            <div>
+            <div class="flex items-end q-pb-sm text-bold">
               {{ $t('dashboard.stackModalAlgop.stake') }}
             </div>
-            <div class="variable-balance">
-              {{ $t('dashboard.stackModalAlgop.balance') }}
+            <div>
+              <div class="variable-balance text-bold">
+                {{ $t('dashboard.stackModalAlgop.balance') }}
+              </div>
+              <div class="q-pb-sm">
+                {{ formattedBalance }}
+              </div>
             </div>
           </div>
           <q-input
             v-model="stakeAmount"
+            class="q-mb-sm"
             type="number"
             rounded
             outlined
             suffix="$ALGOP"
-            :rules="[val => !!val || 'No Tokens to stake.']"
+            :rules="[val => !!val || $t('dashboard.stackModalAlgop.noAlgop')]"
             no-error-icon="false"
             :bind="validateInput()"
           >
@@ -41,12 +47,6 @@
               </q-btn>
             </template>
           </q-input>
-          <div class="flex justify-between">
-            <p>{{ $t('dashboard.stackModalAlgop.annual') }}</p>
-            <div class="variable-balance">
-              <p> {{ $t('dashboard.stackModalAlgop.annualCoin') }} </p>
-            </div>
-          </div>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup
@@ -117,6 +117,7 @@ export default class MyPaint extends Vue.with(Props) {
   stakeAmount: number | null | string = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
+  formattedBalance: string = '';
 
   show() {
     this.$refs.dialog.show();
@@ -143,7 +144,12 @@ export default class MyPaint extends Vue.with(Props) {
       this.balance = (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
+      void this.setformattedBalance();
     }
+  }
+
+  setformattedBalance() {
+    this.formattedBalance = UserUtils.formatAccountBalance(this.balance, 2);
   }
 
   maxStakeAmount() {
@@ -156,6 +162,13 @@ export default class MyPaint extends Vue.with(Props) {
       this.isDisabled = true;
     } else {
       this.isDisabled = false;
+    }
+  }
+
+  @Watch('balance')
+  onBalanceChanged() {
+    if (this.isConnected) {
+      void this.setAccountBalance();
     }
   }
 

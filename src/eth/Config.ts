@@ -50,3 +50,14 @@ export function getRewardsSystemContractByNetworkId(id: number): string {
       return process.env.ALGOPAINTER_REWARDS_SYSTEM as string;
   }
 }
+
+export function getBidBackPirsContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT_56 as string;
+    case 97:
+      return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT_97 as string;
+    default:
+      return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT as string;
+  }
+}

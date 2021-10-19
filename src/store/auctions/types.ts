@@ -9,4 +9,5 @@ export interface AuctionStateInterface {
     openAuctionModal: boolean;
     openBidBackModal: boolean;
     bidBackId: string | undefined,
+    bidbackIndex: number | undefined,
 }

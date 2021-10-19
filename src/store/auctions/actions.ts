@@ -72,12 +72,13 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
-  async getBidBack(type, value) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  async getBidBack(type, value: Record<string, unknown>) {
     const account = value.account as string;
+    const page = value.page as number;
+    const perPage = value.perPage as string;
 
     try {
-      const result = await api.get(`users/${account}/auctions/biding/?page=1&perPage=6`);
+      const result = await api.get(`users/${account}/auctions/biding/?page=${page}&perPage=${perPage}&order.expirationDt=-1`);
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {
@@ -105,9 +106,10 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     this.commit('auctions/SET_OPEN_AUCTION_MODAL');
   },
 
-  openBidBackModal(type, value: {auctionId: string}) {
+  openBidBackModal(type, value: {auctionId: string, auctionIndex: number}) {
     this.commit('auctions/SET_OPEN_BID_BACK_MODAL');
     this.commit('auctions/SET_BID_BACK_ID', value.auctionId);
+    this.commit('auctions/SET_BID_BACK_INDEX', value.auctionIndex);
   },
 };
 

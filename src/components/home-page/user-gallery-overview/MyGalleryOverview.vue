@@ -689,6 +689,8 @@ export default class MyGalleryOverview extends Vue {
     void this.$store.dispatch({
       type: 'auctions/getBidBack',
       account: this.accountAddress,
+      page: page,
+      perPage: '9',
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const response = this.$store.getters['auctions/getBidBack'] as IAxiosPaginated;

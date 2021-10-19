@@ -12,10 +12,10 @@
       </p>
       <div v-if="!loadingTable">
         <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBalance`) }}</span> {{ $t(`dashboard.algop`) }} {{ formattedBalance() }}
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBalance`) }}</span> {{ $t(`dashboard.algop`) }} {{ formattedBalance }}
         </p>
         <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBidBackAmount`) }}</span>{{ ` $${auctionToken} ${bidBackAmount}` }}
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBidBackAmount`) }}</span>{{ ` ${bidBackAmount}` }}
         </p>
       </div>
       <div class="q-pa-md">
@@ -39,27 +39,56 @@ import UserUtils from 'src/helpers/user';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IBid } from 'src/models/IBid';
+import { mapGetters } from 'vuex';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
+import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
+import { NetworkInfo } from 'src/store/user/types';
 
 interface IUserBid {
   name: string | null;
   account: string;
   highestBid: number;
   tokenSymbol: string;
-  stackedALGOP: number;
+  stackedAlgop: number;
+  stackedAlgopPercentage: number;
+}
+
+interface IBidbackPercentages {
+  percentages: [],
+  users: [],
 }
 
 @Options({
   components: {
     AlgoButton,
   },
+  computed: {
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
+    ...mapGetters(
+      'auctions', [
+        'getBidbackIndex',
+      ]),
+  },
 })
 export default class BidBackModal extends Vue {
+  bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
+  rewardsSystem!: AlgoPainterRewardsSystemProxy;
+  networkInfo!: NetworkInfo;
+  account!: string;
+  getBidbackIndex!: number;
+  isConnected!: boolean;
+
   modal: boolean = false;
   userBalance: number = 0;
+  formattedBalance: string = '';
 
   userBid: IUserBid[] = [];
   loadingTable: boolean = true;
-  auctionToken: string = '';
   bidBackAmount: number = 0;
   columns = [
     {
@@ -78,20 +107,42 @@ export default class BidBackModal extends Vue {
       sortable: true,
     },
     {
-      name: 'stackedALGOP',
+      name: 'stackedAlgop',
       required: true,
       label: 'ALGOP Stacked',
-      field: (userBid: { stackedALGOP: number; }) => userBid.stackedALGOP,
+      field: (userBid: { stackedAlgop: number; }) => userBid.stackedAlgop,
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
       label: 'BidBack %',
-      field: (userBid: { stackedALGOP: number; }) => userBid.stackedALGOP,
+      field: (userBid: { stackedAlgopPercentage: number; }) => userBid.stackedAlgopPercentage,
       sortable: true,
     },
   ];
+
+  created() {
+    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+  }
+
+  mounted() {
+    void this.setAccountBalance();
+  }
+
+  async getBidbackPercentages() {
+    try {
+      const response = await this.rewardsSystem.getBidbackPercentages(this.getBidbackIndex) as unknown as IBidbackPercentages;
+      const bidbackPercentages = response.percentages;
+
+      for (let i = 0; i < this.userBid.length; i++) {
+        this.userBid[i].stackedAlgopPercentage = (typeof bidbackPercentages[i] === 'undefined') ? 0 : bidbackPercentages[i];
+      }
+    } catch {
+      console.log('error getBidbackPercentages');
+    }
+  }
 
   getAuctions() {
     this.loadingTable = true;
@@ -106,10 +157,6 @@ export default class BidBackModal extends Vue {
       const auctionBidsReversed: IBid[] = [];
       const bidderAccounts: string|string[] = [];
 
-      const highestBidAmount = auction.highestBid.amount / 1000000000000000000;
-      const bidBackFee = 0.10;
-      this.bidBackAmount = highestBidAmount * bidBackFee;
-
       auctionBids.forEach(bid => {
         auctionBidsReversed.push(bid);
       });
@@ -119,14 +166,14 @@ export default class BidBackModal extends Vue {
         const account = this.formatAccount(bid.account);
         const name = this.formatName(bid.name);
         const tokenSymbol = bid.tokenSymbol;
-        this.auctionToken = tokenSymbol;
         const highestBid = bid.amount / 1000000000000000000;
 
         if (!bidderAccounts.includes(account)) {
           bidderAccounts.push(account);
-          this.userBid.push({ name: name, account: account, highestBid: highestBid, tokenSymbol: tokenSymbol, stackedALGOP: 0 });
+          this.userBid.push({ name: name, account: account, highestBid: highestBid, tokenSymbol: tokenSymbol, stackedAlgop: 0, stackedAlgopPercentage: 0 });
         }
       });
+      void this.getBidbackPercentages();
       this.loadingTable = false;
     });
   }
@@ -148,16 +195,6 @@ export default class BidBackModal extends Vue {
     return this.$store.getters['auctions/getBidBackId'];
   }
 
-  get account() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/account'];
-  }
-
-  get isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/isConnected'];
-  }
-
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
@@ -173,20 +210,29 @@ export default class BidBackModal extends Vue {
     }
   }
 
+  @Watch('userBalance')
+  onUserBalanceChanged() {
+    if (this.isConnected) {
+      void this.setAccountBalance();
+    }
+  }
+
   async setAccountBalance() {
     this.userBalance = (
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
+    void this.setformattedBalance();
   }
 
-  formattedBalance() {
-    return UserUtils.formatAccountBalance(this.userBalance, 2);
+  setformattedBalance() {
+    this.formattedBalance = UserUtils.formatAccountBalance(this.userBalance, 2);
   }
 
   openBidBackModal() {
     void this.$store.dispatch({
       type: 'auctions/openBidBackModal',
       auctionId: '',
+      auctionIndex: '',
     });
   }
 }

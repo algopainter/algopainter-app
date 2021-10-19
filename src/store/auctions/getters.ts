@@ -21,6 +21,9 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getBidBackId(state: AuctionStateInterface): string |undefined {
     return state.bidBackId;
   },
+  getBidbackIndex(state: AuctionStateInterface): number |undefined {
+    return state.bidbackIndex;
+  },
 };
 
 export default getters;

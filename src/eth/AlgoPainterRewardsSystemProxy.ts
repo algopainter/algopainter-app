@@ -4,22 +4,18 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterRewardsSystem from './AlgoPainterRewardsSystem.json';
 import { getRewardsSystemContractByNetworkId } from './Config';
-
-export enum EndAuctionStatus {
-  EndAuctionAwaitingInput,
-  EndAuctionError,
-  EndAuctionAwaitingConfirmation,
-  AuctionEnded,
-}
-
-export enum TokenType {
-  ERC721 = 0,
-  ERC1155 = 1,
-}
-
 export default class AlgoPainterRewardsSystemProxy {
   declare smartContract: {
     methods: {
+      getTotalBidbackStakes(
+        auctionId: number,
+      ): ContractSendMethod;
+      getBidbackUsers(
+        auctionId: number,
+      ): ContractSendMethod;
+      getBidbackPercentages(
+        auctionId: number,
+      ): ContractSendMethod;
       stakeBidback(
         auctionId: number,
         amount: number
@@ -62,6 +58,36 @@ export default class AlgoPainterRewardsSystemProxy {
     );
   }
 
+  async getTotalBidbackStakes(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getTotalBidbackStakes(
+      auctionId,
+    ).call();
+
+    return response as number;
+  }
+
+  async getBidbackUsers(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getBidbackUsers(
+      auctionId,
+    ).call();
+
+    return response as number;
+  }
+
+  async getBidbackPercentages(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getBidbackPercentages(
+      auctionId,
+    ).call();
+
+    return response as [];
+  }
+
   stakeBidback(
     auctionId: number,
     amount: number,
@@ -78,7 +104,6 @@ export default class AlgoPainterRewardsSystemProxy {
     amount: number,
     from: string,
   ) {
-    console.log('unstakeBidback proxy');
     return this.smartContract.methods.unstakeBidback(
       auctionId,
       amount,

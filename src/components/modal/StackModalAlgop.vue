@@ -47,6 +47,16 @@
               </q-btn>
             </template>
           </q-input>
+          <p
+            v-if="isConfirmBtnLoading"
+            class="q-mb-lg"
+          >
+            <q-icon
+              name="mdi-alert-circle"
+              color="yellow"
+              size="md"
+            /> {{ $t('dashboard.stackModalAlgop.interact') }}
+          </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup
@@ -60,6 +70,7 @@
               color="primary"
               :label="$t('dashboard.stackModalAlgop.confirm')"
               :disabled="isDisabled"
+              :loading="isConfirmBtnLoading"
               @click="stakeAlgop"
             />
           </div>
@@ -196,7 +207,7 @@ export default class MyPaint extends Vue.with(Props) {
           });
         }).on('error', () => {
           Notify.create({
-            message: 'It was not possible to unstake',
+            message: 'It was not possible to stake',
             color: 'red',
             icon: 'mdi-alert',
           });

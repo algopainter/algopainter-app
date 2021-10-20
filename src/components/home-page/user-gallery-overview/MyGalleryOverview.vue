@@ -2,6 +2,7 @@
 <template>
   <div class="btn-container q-mx-auto row items-center justify-center ">
     <q-select
+      v-if="currentBtnClicked !== 4 && currentBtnClicked !== 5"
       v-model="currentCollection"
       :options="collectionFilter"
       color="primary"
@@ -404,6 +405,8 @@ export default class MyGalleryOverview extends Vue {
   loadMoreCounter: number = 1;
   loadMoreCounterOnSale: number = 1;
   loadMoreCounterLike: number = 1;
+  loadMoreCounterPirs: number = 1;
+  loadMoreCounterBidback: number = 1;
   noMoreImages: boolean = false;
   maxItemsPerPage: number = 9;
   currentBtnClicked: number = 1;
@@ -675,7 +678,7 @@ export default class MyGalleryOverview extends Vue {
     this.currentBtnClicked = 5;
     void this.$store.dispatch({
       type: 'auctions/getBidBack',
-      account: this.accountAddress,
+      account: '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a', // this.accountAddress,
       page: page,
       perPage: '9',
     }).then(() => {
@@ -791,22 +794,17 @@ export default class MyGalleryOverview extends Vue {
     });
   }
 
-  async loadMorePirs(collection:string = this.currentCollection, filter: boolean = false) {
-    if (filter) {
-      this.galleryTabs[3].loadingData = true;
-      this.galleryTabs[3].data = [];
-    }
-    this.loadMoreCounterLike++;
+  async loadMorePirs() {
+    this.loadMoreCounterPirs++;
     this.loadMoreBtn = true;
     await this.$store.dispatch({
-      type: 'user/getUserLikes',
+      type: 'collections/getUserPastImages',
       account: this.accountAddress,
-      page: this.loadMoreCounterLike,
+      page: this.loadMoreCounterPirs,
       perPage: '9',
-      collectionName: collection,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['user/GET_USER_LIKES'] as IAxiosPaginated;
+      const response = this.$store.getters['collections/GET_USER_PAST_IMAGES'] as IAxiosPaginated;
       const likeMobile = response.data;
       this.galleryTabs[3].cont = response.count;
       this.galleryTabs[3].contLabel = ` (${response.count})`;
@@ -824,22 +822,17 @@ export default class MyGalleryOverview extends Vue {
     });
   }
 
-  async loadMoreBidBack(collection:string = this.currentCollection, filter: boolean = false) {
-    if (filter) {
-      this.galleryTabs[4].loadingData = true;
-      this.galleryTabs[4].data = [];
-    }
-    this.loadMoreCounterLike++;
+  async loadMoreBidBack() {
+    this.loadMoreCounterBidback++;
     this.loadMoreBtn = true;
     await this.$store.dispatch({
-      type: 'user/getUserLikes',
-      account: this.accountAddress,
-      page: this.loadMoreCounterLike,
+      type: 'auctions/getBidBack',
+      account: '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a', // this.accountAddress,
+      page: this.loadMoreCounterBidback,
       perPage: '9',
-      collectionName: collection,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['user/GET_USER_LIKES'] as IAxiosPaginated;
+      const response = this.$store.getters['auctions/getBidBack'] as IAxiosPaginated;
       const likeMobile = response.data;
       this.galleryTabs[4].cont = response.count;
       this.galleryTabs[4].contLabel = ` (${response.count})`;

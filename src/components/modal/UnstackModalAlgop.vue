@@ -30,7 +30,7 @@
             rounded
             outlined
             suffix="$ALGOP"
-            :rules="[val => !!val || 'No Tokens to unstake.']"
+            :rules="[val => !!val || $t('dashboard.unstackModalAlgop.noAlgop')]"
             no-error-icon="false"
             :bind="validateInput()"
           >
@@ -44,6 +44,16 @@
               </q-btn>
             </template>
           </q-input>
+          <p
+            v-if="isConfirmBtnLoading"
+            class="q-mb-lg"
+          >
+            <q-icon
+              name="mdi-alert-circle"
+              color="yellow"
+              size="md"
+            /> {{ $t('dashboard.stackModalAlgop.interact') }}
+          </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup

@@ -120,10 +120,11 @@ export default {
     pirs: 'PIRS',
     bidback: 'Bidback',
     bidbackBtn: 'Bidback Share',
-    currentBalance: 'Current balance: ',
-    currentBidBackAmount: 'Current bidback amount: ',
-    bidBackModal: {
-      title: 'BidBack share',
+    bidbackModal: {
+      title: 'Bidback share',
+      yourBalance: 'Your balance: ',
+      totalBidBackAmount: 'Total bidback amount: ',
+      algop: '$ALGOP',
     },
   },
   sellYourArt: {
@@ -327,6 +328,7 @@ export default {
     noAlgop: 'No Algop to stake.',
     cancel: 'Cancel',
     confirm: 'Confirm',
+    interact: 'Interact with your wallet',
   },
   unstackModalAlgop: {
     title: 'Unstake Algop',
@@ -336,5 +338,6 @@ export default {
     noAlgop: 'No Algop to unstake.',
     cancel: 'Cancel',
     confirm: 'Confirm',
+    interact: 'Interact with your wallet',
   },
 };

@@ -8,14 +8,16 @@
       <p
         class="row justify-center text-h5 text-bold text-primary"
       >
-        {{ ' ' + $t('dashboard.auctions.bidBackModal.title') }}
+        {{ ' ' + $t('dashboard.auctions.bidbackModal.title') }}
       </p>
       <div v-if="!loadingTable">
         <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBalance`) }}</span> {{ $t(`dashboard.algop`) }} {{ formattedBalance }}
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidbackModal.yourBalance`) }}</span>
+          {{ $t(`dashboard.auctions.bidbackModal.algop`) }} {{ formattedBalance }}
         </p>
         <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBidBackAmount`) }}</span>{{ ` ${bidBackAmount}` }}
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidbackModal.totalBidBackAmount`) }}</span> 
+          {{ $t(`dashboard.auctions.bidbackModal.algop`) }} {{ totalBidbackStakes }}
         </p>
       </div>
       <div class="q-pa-md">
@@ -86,10 +88,10 @@ export default class BidBackModal extends Vue {
   modal: boolean = false;
   userBalance: number = 0;
   formattedBalance: string = '';
+  totalBidbackStakes: number = 0;
 
   userBid: IUserBid[] = [];
   loadingTable: boolean = true;
-  bidBackAmount: number = 0;
   columns = [
     {
       name: 'name',
@@ -109,14 +111,14 @@ export default class BidBackModal extends Vue {
     {
       name: 'stackedAlgop',
       required: true,
-      label: 'ALGOP Stacked',
+      label: 'ALGOP stacked',
       field: (userBid: { stackedAlgop: number; }) => userBid.stackedAlgop,
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
-      label: 'BidBack %',
+      label: 'Bidback %',
       field: (userBid: { stackedAlgopPercentage: number; }) => userBid.stackedAlgopPercentage,
       sortable: true,
     },
@@ -128,7 +130,16 @@ export default class BidBackModal extends Vue {
   }
 
   mounted() {
+    void this.getTotalBidbackStakes();
     void this.setAccountBalance();
+  }
+
+  async getTotalBidbackStakes() {
+    try {
+      this.totalBidbackStakes = await this.rewardsSystem.getTotalBidbackStakes(this.getBidbackIndex);
+    } catch {
+      console.log('error getBidbackPercentages');
+    }
   }
 
   async getBidbackPercentages() {
@@ -148,7 +159,6 @@ export default class BidBackModal extends Vue {
     this.loadingTable = true;
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       account: this.auctionId as string,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

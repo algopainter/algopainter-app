@@ -242,14 +242,13 @@
         />
       </div>
     </div>
-
     <div
       v-else-if="currentBtnClicked === galleryTabs[3].btnIndex"
       class="col"
     >
-      <div v-if="pirsConnected">
+      <div v-if="!galleryTabs[3].loadingData">
         <div
-          v-if="galleryTabs[3].data.length > 0"
+          v-if="!galleryTabs[3].noData"
           class="col"
         >
           <div
@@ -285,6 +284,7 @@
           :color="galleryTabs[3].currentPage === index + 1 ? 'primary' : 'grey-4'"
           :label="index + 1"
           class="q-mr-xs desktop-only"
+          :loading="galleryTabs[3].currentPage === index + 1 ? galleryTabs[3].loadingData : false"
           @click="getPirs(index + 1)"
         />
         <algo-button
@@ -305,9 +305,9 @@
       v-else-if="currentBtnClicked === galleryTabs[4].btnIndex"
       class="col"
     >
-      <div v-if="bidConnect">
+      <div v-if="!galleryTabs[4].loadingData">
         <div
-          v-if="haveBid"
+          v-if="!galleryTabs[4].noData"
           class="col"
         >
           <div
@@ -343,6 +343,7 @@
           :color="galleryTabs[4].currentPage === index + 1 ? 'primary' : 'grey-4'"
           :label="index + 1"
           class="q-mr-xs desktop-only"
+          :loading="galleryTabs[4].currentPage === index + 1 ? galleryTabs[4].loadingData : false"
           @click="getBidBack(index + 1)"
         />
         <algo-button
@@ -404,11 +405,6 @@ export default class MyGalleryOverview extends Vue {
   noMoreImages: boolean = false;
   maxItemsPerPage: number = 9;
   currentBtnClicked: number = 1;
-
-  pirsConnected: boolean = false;
-
-  bidConnect: boolean = false;
-  haveBid: boolean = false;
 
   currentCollection: string = 'All Collections';
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
@@ -503,12 +499,6 @@ export default class MyGalleryOverview extends Vue {
     if (this.currentBtnClicked !== 3) {
       void this.getLikes(1, this.currentCollection, true);
     }
-    if (this.currentBtnClicked !== 4) {
-      void this.getPirs(1);
-    }
-    if (this.currentBtnClicked !== 5) {
-      void this.getBidBack(1);
-    }
   }
 
   get isConnected() {
@@ -552,10 +542,6 @@ export default class MyGalleryOverview extends Vue {
         void this.getOnSale(page, currentCollection);
       } else if (this.currentBtnClicked === this.galleryTabs[2].btnIndex) {
         void this.getLikes(page, currentCollection);
-      } else if (this.currentBtnClicked === this.galleryTabs[3].btnIndex) {
-        void this.getPirs(page);
-      } else if (this.currentBtnClicked === this.galleryTabs[4].btnIndex) {
-        void this.getBidBack(page);
       }
     } else if (device === 'mobile') {
       this.loadMoreCounter = 0;
@@ -574,10 +560,6 @@ export default class MyGalleryOverview extends Vue {
         void this.loadMoreOnSale(currentCollection, true);
       } else if (this.currentBtnClicked === this.galleryTabs[2].btnIndex) {
         void this.loadMoreLike(currentCollection, true);
-      } else if (this.currentBtnClicked === this.galleryTabs[3].btnIndex) {
-        void this.loadMorePirs(currentCollection, true);
-      } else if (this.currentBtnClicked === this.galleryTabs[4].btnIndex) {
-        void this.loadMoreBidBack(currentCollection, true);
       }
     }
   }
@@ -663,29 +645,32 @@ export default class MyGalleryOverview extends Vue {
   }
 
   getPirs(page:number = 1) {
+    this.galleryTabs[3].loadingData = true;
     this.galleryTabs[3].currentPage = page;
     this.currentBtnClicked = 4;
     void this.$store.dispatch({
-      type: 'auctions/getBidBack',
+      type: 'collections/getUserPastImages',
       account: this.accountAddress,
+      page: page,
+      perPage: '9',
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['auctions/getBidBack'] as IAxiosPaginated;
+      const response = this.$store.getters['collections/GET_USER_PAST_IMAGES'] as IAxiosPaginated;
       if (this.isConnected) {
         this.galleryTabs[3].data = response.data;
-        this.galleryTabs[3].cont = response.data.length;
-        this.galleryTabs[3].contLabel = ` (${response.data.length})`;
+        this.galleryTabs[3].cont = response.count;
+        this.galleryTabs[3].contLabel = ` (${response.count})`;
         this.galleryTabs[3].maxPages = response.pages;
         this.galleryTabs[3].noData = (this.galleryTabs[3].data.length === 0);
-        this.pirsConnected = true;
       }
       this.galleryTabs[3].loadingData = false;
     });
   }
 
   getBidBack(page:number = 1) {
+    this.galleryTabs[4].loadingData = true;
     this.galleryTabs[4].currentPage = page;
-    this.currentBtnClicked = 4;
+    this.currentBtnClicked = 5;
     void this.$store.dispatch({
       type: 'auctions/getBidBack',
       account: this.accountAddress,
@@ -696,15 +681,12 @@ export default class MyGalleryOverview extends Vue {
       const response = this.$store.getters['auctions/getBidBack'] as IAxiosPaginated;
       if (this.isConnected) {
         this.galleryTabs[4].data = response.data;
-        this.galleryTabs[4].cont = response.data.length;
-        this.galleryTabs[4].contLabel = ` (${response.data.length})`;
+        this.galleryTabs[4].cont = response.count;
+        this.galleryTabs[4].contLabel = ` (${response.count})`;
         this.galleryTabs[4].maxPages = response.pages;
         this.galleryTabs[4].noData = (this.galleryTabs[4].data.length === 0);
-        this.pirsConnected = true;
       }
       this.galleryTabs[4].loadingData = false;
-      this.haveBid = true;
-      this.bidConnect = true;
     });
   }
 

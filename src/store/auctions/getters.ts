@@ -12,17 +12,20 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   openBidBackModal(state: AuctionStateInterface): boolean {
     return state.openBidBackModal;
   },
-  getBids(state: AuctionStateInterface): [] |undefined {
+  getBids(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },
-  getBidBack(state: AuctionStateInterface): [] |undefined {
+  getBidBack(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },
-  getBidBackId(state: AuctionStateInterface): string |undefined {
+  getBidBackId(state: AuctionStateInterface): string | undefined {
     return state.bidBackId;
   },
-  getBidbackIndex(state: AuctionStateInterface): number |undefined {
+  getBidbackIndex(state: AuctionStateInterface): number | undefined {
     return state.bidbackIndex;
+  },
+  getAuctionExpirationDate(state: AuctionStateInterface): string | undefined {
+    return state.auctionExpirationDate;
   },
 };
 

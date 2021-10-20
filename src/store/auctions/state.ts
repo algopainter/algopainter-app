@@ -13,6 +13,7 @@ function state(): AuctionStateInterface {
     openBidBackModal: false,
     bidBackId: undefined,
     bidbackIndex: undefined,
+    auctionExpirationDate: undefined,
   };
 }
 

@@ -35,6 +35,9 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_BIDBACK(state: AuctionStateInterface, payload) {
     state.bids = payload as [];
   },
+  SET_AUCTION_EXPIRATION_DATE(state: AuctionStateInterface, payload) {
+    state.auctionExpirationDate = payload as string;
+  },
 };
 
 export default mutation;

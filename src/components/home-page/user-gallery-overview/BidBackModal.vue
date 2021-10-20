@@ -149,7 +149,7 @@ export default class BidBackModal extends Vue {
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      id: this.auctionId as string,
+      account: this.auctionId as string,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;

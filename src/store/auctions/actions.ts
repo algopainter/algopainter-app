@@ -8,7 +8,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getHotBids() {
     try {
       const res = await api.get('auctions/?ended=false&order.expirationDt=1');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const hotBids = res.data as [];
       this.commit('auctions/SET_HOT_BIDS', hotBids);
     } catch (e) {
@@ -20,7 +19,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getTopSellers() {
     try {
       const res = await api.get('reports/top/sellers');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const topSellers = res.data as [];
       this.commit('auctions/SET_TOP_SELLERS', topSellers);
     } catch (e) {
@@ -32,7 +30,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getTopBuyers() {
     try {
       const res = await api.get('reports/top/buyers');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const TopBuyers = res.data as [];
       this.commit('auctions/SET_TOP_BUYERS', TopBuyers);
     } catch (e) {
@@ -42,14 +39,17 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
-  async getAuctions(type, value) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const id = value.id as string;
+  async getAuctions(type, value: Record<string, unknown>) {
+    const account = value.account as string;
+    const collectionOwner = value.collectionOwner as string;
+    const itemIndex = value.itemIndex as number;
+
     try {
-      const res = await api.get(`auctions/${id}`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      const res = await api.get(`auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}`);
       const auctions = res.data as [];
-      this.commit('auctions/SET_AUCTIONS', auctions);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const expirationDt = res.data.expirationDt as string;
+      collectionOwner || itemIndex ? this.commit('auctions/SET_AUCTION_EXPIRATION_DATE', expirationDt) : this.commit('auctions/SET_AUCTIONS', auctions);
     } catch (e) {
       console.log('error msg');
     } finally {
@@ -57,8 +57,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
-  async getBids(type, value) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  async getBids(type, value: Record<string, unknown>) {
     const account = value.account as string;
 
     try {
@@ -76,9 +75,9 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     const account = value.account as string;
     const page = value.page as number;
     const perPage = value.perPage as string;
-
     try {
-      const result = await api.get(`users/${account}/auctions/biding/?page=${page}&perPage=${perPage}&order.expirationDt=-1`);
+      const result =
+        await api.get(`users/${account}/auctions/biding/?page=${page}&perPage=${perPage}&order.expirationDt=-1`);
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {

@@ -10,6 +10,9 @@ export default class AlgoPainterRewardsSystemProxy {
       getTotalBidbackStakes(
         auctionId: number,
       ): ContractSendMethod;
+      getTotalPirsStakes(
+        auctionId: number,
+      ): ContractSendMethod;
       getBidbackUsers(
         auctionId: number,
       ): ContractSendMethod;
@@ -62,6 +65,16 @@ export default class AlgoPainterRewardsSystemProxy {
     auctionId: number,
   ) {
     const response: unknown = await this.smartContract.methods.getTotalBidbackStakes(
+      auctionId,
+    ).call();
+
+    return response as number;
+  }
+
+  async getTotalPirsStakes(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getTotalPirsStakes(
       auctionId,
     ).call();
 

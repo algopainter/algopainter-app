@@ -5,10 +5,14 @@ export interface AuctionStateInterface {
     auctions: [],
     bids: [],
     bidBack: [],
+    owner: [],
     auctionId: string | undefined,
     openAuctionModal: boolean;
     openBidBackModal: boolean;
     bidBackId: string | undefined,
     bidbackIndex: number | undefined,
-    auctionExpirationDate: string | undefined,
+    pirsId: number | undefined,
+    pirsIndex: number | undefined,
+    pirsAuction: [],
+    openPirsModal: boolean,
 }

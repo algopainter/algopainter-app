@@ -24,8 +24,20 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getBidbackIndex(state: AuctionStateInterface): number | undefined {
     return state.bidbackIndex;
   },
-  getAuctionExpirationDate(state: AuctionStateInterface): string | undefined {
-    return state.auctionExpirationDate;
+  getPirsAuction(state: AuctionStateInterface): [] | undefined {
+    return state.pirsAuction;
+  },
+  getImagePastOwners(state: AuctionStateInterface): [] | undefined {
+    return state.owner;
+  },
+  openPirsModal(state: AuctionStateInterface): boolean {
+    return state.openPirsModal;
+  },
+  getPirsId(state: AuctionStateInterface): number | undefined {
+    return state.pirsId;
+  },
+  getPirsIndex(state: AuctionStateInterface): number | undefined {
+    return state.pirsIndex;
   },
 };
 

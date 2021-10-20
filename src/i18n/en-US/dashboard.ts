@@ -125,6 +125,9 @@ export default {
     bidBackModal: {
       title: 'BidBack share',
     },
+    pirsModal: {
+      title: 'Pirs share',
+    },
   },
   sellYourArt: {
     title: 'Sell your Art',
@@ -233,7 +236,21 @@ export default {
       claimBidbackError: 'An error occurred while trying to claim the bidback',
       claimedBidbackSuccessfully: 'Bidback successfully',
     },
+    claimPirsStatuses: {
+      contractApprove: 'Approve contract',
+      checkingContractApproved: 'Verifying if the contract is already approved',
+      approveContractInput: 'Interact with your wallet to approve the auction smart contract',
+      approveContractConfirmation: 'Awaiting for the blockchain confirmation',
+      approveContractError: 'An error occurred while trying to approve the auction smart contract',
+      approveContractAvailable: 'Smart contract approved',
+      claimPirs: 'Claim Pirs',
+      claimPirsInput: 'Interact with your wallet to claim the Pirs',
+      claimPirsConfirmation: 'Awaiting for the blockchain confirmation',
+      claimPirsError: 'An error occurred while trying to claim the Pirs',
+      claimedPirsSuccessfully: 'Pirs successfully',
+    },
     claimBidback: 'Claim bidback',
+    claimPirs: 'Claim Pirs',
   },
   editProfile: {
     title: 'Edit profile',
@@ -255,6 +272,10 @@ export default {
     expressions: 'Expressions',
     monero: 'Monero',
     myPainting: 'My Painting',
+    pirsTab: {
+      pirs: 'PIRS',
+      btnPirs: 'Pirs Share',
+    },
     newPainting: 'New Painting',
     bidbackTab: {
       lastBids: 'Last Bids',

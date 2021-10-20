@@ -40,20 +40,41 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   },
 
   async getAuctions(type, value: Record<string, unknown>) {
-    const account = value.account as string;
+    const account = value.account as string || '';
     const collectionOwner = value.collectionOwner as string;
     const itemIndex = value.itemIndex as number;
 
     try {
       const res = await api.get(`auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}`);
       const auctions = res.data as [];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const expirationDt = res.data.expirationDt as string;
-      collectionOwner || itemIndex ? this.commit('auctions/SET_AUCTION_EXPIRATION_DATE', expirationDt) : this.commit('auctions/SET_AUCTIONS', auctions);
+      const auctionsLength = auctions.length;
+      // eslint-disable-next-line no-mixed-operators
+      if (auctionsLength && collectionOwner || auctionsLength && itemIndex) {
+        const lastAuction = auctions[auctionsLength - 1] as IAuctionItem;
+        const expirationDate = lastAuction;
+        // console.log('expirationDate', expirationDate);
+        this.commit('auctions/SET_PIRS_AUCTION', expirationDate);
+      } else {
+        this.commit('auctions/SET_AUCTIONS', auctions);
+      }
     } catch (e) {
       console.log('error msg');
     } finally {
       console.log('success msg');
+    }
+  },
+
+  async getImagePastOwners(type, value: Record<string, unknown>) {
+    const imgId = value.imgId as string;
+    try {
+      const result = await api.get(`/images/${imgId}/owners`);
+      const owners = result.data as [];
+      console.log('owners', owners);
+      this.commit('auctions/SET_IMAGE_PAST_OWNERS', owners);
+    } catch (err) {
+      console.log('error getImagePastOwners');
+    } finally {
+      console.log('sucess msg getImagePastOwners');
     }
   },
 
@@ -109,6 +130,12 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     this.commit('auctions/SET_OPEN_BID_BACK_MODAL');
     this.commit('auctions/SET_BID_BACK_ID', value.auctionId);
     this.commit('auctions/SET_BID_BACK_INDEX', value.auctionIndex);
+  },
+
+  openPirsModal(type, value: {auctionId: string, auctionIndex: number}) {
+    this.commit('auctions/SET_OPEN_PIRS_MODAL');
+    this.commit('auctions/SET_PIRS_ID', value.auctionId);
+    this.commit('auctions/SET_PIRS_INDEX', value.auctionIndex);
   },
 };
 

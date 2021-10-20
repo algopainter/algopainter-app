@@ -10,6 +10,7 @@ export interface IAxios {
 export interface IAxiosPaginated {
   count: number;
   currPage: number;
+  expirationDt: string | undefined;
   data: [];
   pages: number;
   perPage: number;

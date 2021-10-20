@@ -35,8 +35,20 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_BIDBACK(state: AuctionStateInterface, payload) {
     state.bids = payload as [];
   },
-  SET_AUCTION_EXPIRATION_DATE(state: AuctionStateInterface, payload) {
-    state.auctionExpirationDate = payload as string;
+  SET_PIRS_AUCTION(state: AuctionStateInterface, payload) {
+    state.pirsAuction = payload as [];
+  },
+  SET_IMAGE_PAST_OWNERS(state: AuctionStateInterface, payload) {
+    state.owner = payload as [];
+  },
+  SET_PIRS_ID(state: AuctionStateInterface, payload) {
+    state.pirsId = payload as number;
+  },
+  SET_PIRS_INDEX(state: AuctionStateInterface, payload) {
+    state.pirsIndex = payload as number;
+  },
+  SET_OPEN_PIRS_MODAL(state: AuctionStateInterface) {
+    state.openPirsModal = !state.openPirsModal;
   },
 };
 

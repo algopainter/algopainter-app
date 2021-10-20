@@ -31,6 +31,7 @@
         <NewPaintingModal v-model="openModal" />
         <AuctionModal v-model="isAuctionModalOpen" />
         <BidBackModal v-model="isBidBackModalOpen" />
+        <PirsModal v-model="isPirsModalOpen" />
       </q-page-container>
     </q-layout>
   </div>
@@ -46,6 +47,7 @@ import { Watch } from 'vue-property-decorator';
 import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
 import AuctionModal from 'src/components/modal/AuctionModal.vue';
 import BidBackModal from 'src/components/home-page/user-gallery-overview/BidBackModal.vue';
+import PirsModal from 'src/components/home-page/user-gallery-overview/PirsModal.vue';
 
 @Options({
   components: {
@@ -56,6 +58,8 @@ import BidBackModal from 'src/components/home-page/user-gallery-overview/BidBack
     NewPaintingModal,
     AuctionModal,
     BidBackModal,
+    PirsModal,
+
   },
   watch: {
     isConnected: ['refreshModal'],
@@ -73,6 +77,7 @@ export default class MainLayout extends Vue {
   showWrongChainDialog: boolean = false;
   isAuctionModalOpen: boolean = false;
   isBidBackModalOpen: boolean = false;
+  isPirsModalOpen: boolean = false;
   page: string = '';
   artistModal: boolean = false;
 
@@ -99,6 +104,11 @@ export default class MainLayout extends Vue {
     this.isBidBackModalOpen = this.openBidBackModal;
   }
 
+  @Watch('openPirsModal')
+  onOpenPirsModalChanged() {
+    this.isPirsModalOpen = this.openPirsModal;
+  }
+
   @Watch('openConnectYourWalletModal')
   onOpenConnectYourWalletModalChanged() {
     this.showModal = this.openConnectYourWalletModal;
@@ -112,6 +122,11 @@ export default class MainLayout extends Vue {
   get openBidBackModal() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['auctions/openBidBackModal'] as boolean;
+  }
+
+  get openPirsModal() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['auctions/openPirsModal'] as boolean;
   }
 
   get openConnectYourWalletModal() {

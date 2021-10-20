@@ -255,7 +255,7 @@
             v-for="(item, index) in galleryTabs[3].data"
             :key="index"
           >
-            <gallery-select
+            <pirs-item
               :art="item"
               :btn-name="'dashboard.auctions.stackAlgop'"
               @favoriteClicked="favoriteClicked"
@@ -276,7 +276,7 @@
       </div>
       <div
         v-if="galleryTabs[3].cont > maxItemsPerPage"
-        class="q-mx-auto q-mb-md"
+        class="row flex justify-center q-mt-md q-mb-md q-mb-md"
       >
         <q-btn
           v-for="(btn, index) in galleryTabs[3].maxPages"
@@ -375,6 +375,7 @@ import LatestBidsItem from './LatestBidsItem.vue';
 import GallerySelect from './GallerySelect.vue';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
+import PirsItem from './PirsItem.vue';
 
 @Options({
   components: {
@@ -384,6 +385,7 @@ import MyGallerySkeleton from './MyGallerySkeleton.vue';
     LatestBidsItemSkeleton,
     MyGallerySkeleton,
     GallerySelect,
+    PirsItem,
   },
 })
 export default class MyGalleryOverview extends Vue {

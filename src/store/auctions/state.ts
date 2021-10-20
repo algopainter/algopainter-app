@@ -8,12 +8,16 @@ function state(): AuctionStateInterface {
     auctions: [],
     bids: [],
     bidBack: [],
+    owner: [],
     auctionId: undefined,
     openAuctionModal: false,
     openBidBackModal: false,
     bidBackId: undefined,
     bidbackIndex: undefined,
-    auctionExpirationDate: undefined,
+    pirsId: undefined,
+    pirsIndex: undefined,
+    pirsAuction: [],
+    openPirsModal: false,
   };
 }
 

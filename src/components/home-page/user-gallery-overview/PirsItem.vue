@@ -1,0 +1,538 @@
+<template>
+  <div class="row q-mb-md">
+    <div class="col-12 col-md-3 col-lg-3">
+      <q-img
+        class="previewImage"
+        :src="art.nft.previewImage"
+        alt="img art"
+      />
+    </div>
+    <div class="col-12 col-md-4 col-lg-4">
+      <div class="text">
+        <div class="text text-bold text-h6">
+          {{ $t('dashboard.gallery.bidbackTab.symbol') }}{{ art.nft.index }} {{ art.title }}
+        </div>
+        {{ art.description }}
+      </div>
+      <div>
+        <div class="text-bold text-h4 q-mt-md">
+          {{ $t('dashboard.gallery.bidbackTab.lastBids') }}
+        </div>
+        <p class="coin text-h6">
+          nao tem
+        </p>
+      </div>
+      <div class="text-bold text-h6">
+        <!--
+        <p class="won-bid">
+          {{ $t('dashboard.gallery.bidbackTab.auctionStatuses.youWon') }}
+        </p>
+        -->
+        <div
+          v-if="isEnded"
+          class="text-bold text-end"
+        >
+          <div>
+            <p class="text-bold text-h6">
+              {{ $t('dashboard.bid.auctionEnd') }}
+            </p>
+          </div>
+        </div>
+        <div
+          v-else
+        >
+          <div>
+            <div class="text-bold text-h4 q-mt-md">
+              {{ $t('dashboard.gallery.bidbackTab.lastBids') }}
+            </div>
+            <p class="coin text-h6">
+              {{ lastBid }}
+            </p>
+          </div>
+          <div
+            class="text-bold row  justify-center text-end"
+          >
+            {{ $t('dashboard.bid.auctionTime') }}
+          </div>
+          <div
+            class="text-bold"
+          >
+            <div
+              class="row justify-start time q-gutter-sm "
+            >
+              <div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
+                <span> {{ $t('dashboard.bid.days') }} </span>
+              </div>
+              <div>
+                <div class="text-bold">
+                  <!-- {{ hours }}--> {{ countHours }}
+                </div>
+                <span>{{ $t('dashboard.bid.hours') }}</span>
+              </div>
+              <div>
+                <div class="text-bold">
+                  <!-- {{ minutes }} -->{{ countMinutes }}
+                </div>
+                <span>{{ $t('dashboard.bid.minis') }}</span>
+              </div>
+              <div>
+                <div class="text-bold">
+                  <!-- {{ seconds }} --> {{ countSeconds }}
+                </div>
+                <span>{{ $t('dashboard.bid.seconds') }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-3 col-lg-3 items-center">
+      <div>
+        <span class="text-bold flex">
+          {{ $t('dashboard.gallery.bidbackTab.earned') }}
+        </span>
+        <div
+          class="flex container"
+        >
+          <q-input
+            v-model="coinHarvestAmount"
+            fill-mask="0"
+            input-class="text-left"
+            class="input-stack-algop"
+            :disable="true"
+            readonly
+          />
+          <algo-button
+            :label="$t('dashboard.gallery.bidbackTab.harvest')"
+            color="primary"
+            class="btn-havest"
+            :disable="isCoinHarvestDisabled"
+            @click="harvestAlgop"
+          />
+        </div>
+        <span>
+          {{ $t('dashboard.gallery.bidbackTab.stakedAlgop') }}
+        </span>
+        <div class="flex container">
+          <q-input
+            v-model="coinStakeAmount"
+            fill-mask="0"
+            input-class="text-left"
+            class="input-stack-algop"
+          />
+          <algo-button
+            label="-"
+            color="primary"
+            class="btn-staked"
+            :disable="disableUnstackBtn"
+            @click="unstackCoin()"
+          />
+          <algo-button
+            label="+"
+            color="primary"
+            class="btn-staked"
+            @click="stackCoin()"
+          />
+          <pirs-stack-modal
+            v-model="openModal"
+            :art="art"
+          />
+          <pirs-unstack-modal
+            v-model="openModalUnstack"
+            :art="art"
+          />
+        </div>
+        <div class="text-primary q-my-sm">
+          {{ $t('dashboard.gallery.bidbackTab.withdrawAmount', {
+            amount: coinHarvestAmount,
+          }) }}
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-2 col-lg-2">
+      <div
+        class="bidBack text-white column justify-center content-center q-mb-xl"
+      >
+        <div class="row justify-center items-center content-center">
+          {{ auctionPirs + "%" }}
+        </div>
+        <div class="row justify-center items-center content-center">
+          {{ $t('dashboard.gallery.pirsTab.pirs') }}
+        </div>
+      </div>
+      <algo-button
+        :label="$t('dashboard.gallery.pirsTab.btnPirs')"
+        color="primary"
+        outline
+        class="load-more q-px-xl q-mx-auto"
+        @click="openPirsModal()"
+      />
+    </div>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
+      <withdraw-pirs-status-card
+        :withdraw-pirs-status="withdrawPirsStatus"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
+  </div>
+</template>
+
+<script lang="ts">
+import { PropType } from 'vue';
+import { Vue, prop, Options } from 'vue-class-component';
+import AlgoButton from 'components/common/Button.vue';
+import PirsStackModal from 'src/components/modal/PirsStackModal.vue';
+import PirsUnstackModal from 'src/components/modal/PirsUnstackModal.vue';
+import { IMyGallery } from 'src/models/IMyGallery';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
+import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
+import WithdrawPirsStatusCard from 'components/auctions/auction/WithdrawPirsStatusCard.vue';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import { auctionCoins } from 'src/helpers/auctionCoins';
+import moment from 'moment';
+import { now } from 'src/helpers/timer';
+import 'moment-duration-format';
+import { Watch } from 'vue-property-decorator';
+import { IAuctionItem } from 'src/models/IAuctionItem';
+
+class Props {
+  art = prop({
+    type: Object as PropType<IMyGallery>,
+    required: true,
+  })
+
+  btnName = prop({
+    type: String,
+    required: true,
+  })
+}
+
+enum WithdrawPirsStatus {
+  CheckingContractApproved,
+  ContractApprovedAwaitingInput,
+  ContractApprovedAwaitingConfirmation,
+  ContractApprovedError,
+  WithdrawPirsAwaitingInput,
+  WithdrawPirsAwaitingConfirmation,
+  WithdrawPirsError,
+  PirsWithdrawn,
+}
+
+@Options({
+  components: {
+    AlgoButton,
+    PirsStackModal,
+    PirsUnstackModal,
+    WithdrawPirsStatusCard,
+  },
+  watch: {
+    now: ['getTime'],
+  },
+  computed: {
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
+  },
+})
+
+export default class PirsItem extends Vue.with(Props) {
+  bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
+  rewardsSystem!: AlgoPainterRewardsSystemProxy;
+  networkInfo!: NetworkInfo;
+  account!: string;
+  // isConnected!: boolean;
+  canStack: boolean = false;
+  coinHarvestAmount: number = 0;
+  coinStakeAmount: number = 0;
+  openModal: boolean = false;
+  openModalUnstack: boolean = false;
+  auctionPirs: number | null = null;
+  isCoinHarvestDisabled: boolean = true;
+  disableUnstackBtn: boolean = true;
+  lastBid: string = '';
+  itemPirs: IAuctionItem = [];
+
+  withdrawingPirs: boolean = false;
+  displayingStatus: boolean = false;
+  withdrawPirsStatus: WithdrawPirsStatus | null = null;
+
+  days: number = 0;
+  hours: number = 0;
+  minutes: number = 0;
+  minuReal: number = 0;
+  seconds: number = 0;
+  monthExpirations: string = ''
+  dayExpirations: string = ''
+  yearExpirations: string = ''
+  hoursExpirations!: string ;
+  countDays: number = 0;
+  countHours: number = 0;
+  countMinutes: number = 0;
+  countSeconds: number = 0;
+  lastCountDays: number = 0;
+  lastCountHours: number = 0;
+  lastCountMinutes: number = 0;
+  lastCountSeconds: number = 0;
+  stopCount: boolean = false;
+
+  created() {
+    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/isConnected'] as boolean;
+  }
+
+  get accountAddress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
+
+  mounted() {
+    void this.getPirsPercentage();
+    void this.getUserStackedPirs();
+    void this.getLastBid();
+    void this.getTime();
+    // void this.formatTime();
+    void this.getPirsItem();
+  }
+
+  getLastBid() {
+    console.log('this.itemPirs.highestBid.amount', this.itemPirs);
+    // if (this.itemPirs.highestBid.amount) {
+    //   const bidAmount = blockchainToCurrency(
+    //   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    //     this.itemPirs.highestBid.amount,
+    //     this.coinDetails.decimalPlaces,
+    //   );
+    //   this.lastBid = `${bidAmount} ${this.itemPirs.highestBid.tokenSymbol}`;
+    // } else {
+    //   this.lastBid = 'nao tem nada!';
+    // }
+  }
+
+  setFormatCurrency(amount: number) {
+    return blockchainToCurrency(
+      amount,
+      this.coinDetails.decimalPlaces,
+    );
+  }
+
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      return coin.tokenAddress.toLowerCase() === this.itemPirs.minimumBid.tokenPriceAddress;
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
+
+  async getUserStackedPirs() {
+    try {
+      this.coinHarvestAmount = await this.rewardsSystem.getTotalBidbackStakes(this.art.nft.index);
+      this.coinHarvestAmount = 1000;
+
+      this.coinStakeAmount = this.coinHarvestAmount;
+
+      this.isCoinHarvestDisabled = (this.coinHarvestAmount <= 0);
+      this.disableUnstackBtn = (this.coinHarvestAmount <= 0);
+    } catch (error) {
+      this.isCoinHarvestDisabled = true;
+      this.disableUnstackBtn = true;
+    }
+  }
+
+  async harvestAlgop() {
+    try {
+      this.withdrawingPirs = true;
+      this.displayingStatus = true;
+
+      this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
+
+      await this.rewardsSystem.claimPirs(
+        this.art.nft.index,
+        this.account,
+      ).on('transactionHash', () => {
+        this.withdrawPirsStatus =
+          WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
+      }).on('error', () => {
+        this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsError;
+      });
+
+      this.withdrawPirsStatus = WithdrawPirsStatus.PirsWithdrawn;
+    } catch {
+      this.withdrawingPirs = false;
+    }
+    this.withdrawingPirs = false;
+  }
+
+  async getPirsPercentage() {
+    try {
+      this.auctionPirs = await this.bidBackPirsSystem.getInvestorPirsPercentage(this.art.collectionOwner, this.art.nft.index);
+    } catch (error) {
+      console.log('error getInvestorPirsPercentage');
+    }
+  }
+
+  stackAlgo() {
+    this.canStack = true;
+  }
+
+  stackCoin() {
+    this.openModal = true;
+  }
+
+  unstackCoin() {
+    this.openModalUnstack = true;
+  }
+
+  openPirsModal() {
+    void this.$store.dispatch({
+      type: 'auctions/openPirsModal',
+      auctionId: this.art._id,
+      auctionIndex: this.art.nft.index,
+    });
+  }
+
+  onCloseStatusDialog() {
+    this.displayingStatus = false;
+
+    if (this.withdrawPirsStatus === WithdrawPirsStatus.PirsWithdrawn) {
+      this.$q.notify({
+        type: 'positive',
+        message: 'Auction created successfully',
+      });
+
+      // void this.$router.push('/');
+    }
+  }
+
+  // formatTime(): void {
+  //   this.monthExpirations = moment(this.itemPirs.expirationDt).format('MMM');
+
+  //   this.dayExpirations = moment(this.itemPirs.expirationDt).format('DD');
+  //   this.yearExpirations = moment(this.itemPirs.expirationDt).format('YYYY');
+  //   this.hoursExpirations = moment(this.itemPirs.expirationDt).format('LT');
+  // }
+
+  getTime() {
+    const newEnded = moment(this.itemPirs.expirationDt);
+    const timeLeft = moment.duration(newEnded.diff(moment()));
+    this.countDays = timeLeft.days() || 0;
+    this.countHours = timeLeft.hours() || 0;
+    this.countMinutes = timeLeft.minutes() || 0;
+    this.countSeconds = timeLeft.seconds() || 0;
+  }
+
+  get now() {
+    return now.value;
+  }
+
+  get isEnded() {
+    return moment().isAfter(this.itemPirs.expirationDt);
+  }
+
+  @Watch('now')
+  onPropertyChanged() {
+    if (!this.stopCount) {
+      if (this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
+        if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
+          // this.formatTime();
+          window.location.reload();
+        }
+        this.stopCount = true;
+      } else {
+        this.getTime();
+      }
+    }
+    this.lastCountDays = this.countDays;
+    this.lastCountHours = this.countHours;
+    this.lastCountMinutes = this.countMinutes;
+    this.lastCountSeconds = this.countSeconds;
+  }
+
+  getPirsItem() {
+    void this.$store.dispatch({
+      type: 'auctions/getAuctions',
+      collectionOwner: this.art.collectionOwner,
+      itemIndex: this.art.nft.index,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
+      if (this.isConnected) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        this.itemPirs = response;
+        console.log('pirs data', this.itemPirs);
+      }
+    });
+  }
+}
+
+</script>
+
+<style scoped lang="scss">
+.text{
+  white-space: nowrap;
+  width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.won-bid{
+  color: $positive;
+}
+
+.btn-staked{
+  min-width: 30px;
+  margin-right: 10px;
+  height: 30px;
+  margin-top: 20px;
+}
+
+.btn-havest{
+  min-width: 100px;
+  height: 50px;
+  margin-top: 10px;
+}
+
+.previewImage{
+  width: 290px;
+}
+.input-stack-algop{
+  width:170px;
+  margin-right: 10px;
+}
+.container{
+  width: 300px;
+}
+.bidBack{
+  text-align: unset;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  background-color: $primary;
+}
+.coin{
+  color: $primary;
+}
+.text-end{
+  width: 170px;
+  font-size: 16px;
+}
+</style>

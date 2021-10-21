@@ -56,6 +56,10 @@ interface IUserBid {
 }
 
 /*
+delete me
+*/
+
+/*
 interface IBidbackPercentages {
   percentages: [],
   users: [],

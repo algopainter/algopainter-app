@@ -28,8 +28,7 @@ export default class AlgoPainterAuctionSystemProxy {
         tokenId: number,
         minimumAmount: string,
         endTime: number,
-        tokenPriceAddress: string,
-        bidBackFee: number,
+        tokenPriceAddress: string
       ): ContractSendMethod;
       bid(auctionId: number, amount: string): ContractSendMethod;
       cancelAuction(auctionId: number): ContractSendMethod;
@@ -69,7 +68,6 @@ export default class AlgoPainterAuctionSystemProxy {
     minimumAmount: string,
     endTime: number,
     tokenPriceAddress: string,
-    bidBackFee: number,
     from: string,
   ) {
     return this.smartContract.methods.createAuction(
@@ -79,7 +77,6 @@ export default class AlgoPainterAuctionSystemProxy {
       minimumAmount,
       endTime,
       tokenPriceAddress,
-      bidBackFee,
     ).send({ from });
   }
 

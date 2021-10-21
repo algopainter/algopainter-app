@@ -62,12 +62,6 @@
         "internalType": "contract IERC20",
         "name": "tokenPriceAddress",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "bidBackFee",
-        "type": "uint256"
       }
     ],
     "name": "AuctionCreated",
@@ -121,6 +115,12 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "rewardsSystemAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "auctionFeeRate",
         "type": "uint256"
@@ -141,6 +141,12 @@
         "indexed": false,
         "internalType": "contract IAuctionSystemManager",
         "name": "auctionSystemManager",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "contract IAuctionRewardsTotalRatesProvider",
+        "name": "rewardsTotalRatesProviderAddress",
         "type": "address"
       }
     ],
@@ -634,6 +640,19 @@
   },
   {
     "inputs": [],
+    "name": "getRewardsSystemAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getAuctionFeeRate",
     "outputs": [
       {
@@ -685,10 +704,28 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getRewardsTotalRatesProviderAddress",
+    "outputs": [
+      {
+        "internalType": "contract IAuctionRewardsTotalRatesProvider",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
         "name": "_addressFee",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_rewardsSystemAddress",
         "type": "address"
       },
       {
@@ -709,6 +746,11 @@
       {
         "internalType": "contract IAuctionSystemManager",
         "name": "_auctionSystemManager",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IAuctionRewardsTotalRatesProvider",
+        "name": "_rewardsTotalRatesProviderAddress",
         "type": "address"
       }
     ],
@@ -777,6 +819,19 @@
   {
     "inputs": [
       {
+        "internalType": "contract IAuctionRewardsTotalRatesProvider",
+        "name": "_rewardsTotalRatesProviderAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setRewardsTotalRatesProviderAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "enum AlgoPainterAuctionSystem.TokenType",
         "name": "_tokenType",
         "type": "uint8"
@@ -805,11 +860,6 @@
         "internalType": "contract IERC20",
         "name": "_tokenPriceAddress",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_bidBackFee",
-        "type": "uint256"
       }
     ],
     "name": "createAuction",
@@ -904,11 +954,6 @@
         "internalType": "contract IERC20",
         "name": "tokenPriceAddress",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "bidBackFee",
-        "type": "uint256"
       },
       {
         "internalType": "bool",

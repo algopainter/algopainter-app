@@ -425,7 +425,6 @@ export default class SellYourArt extends Vue {
         numberToString(minimumPriceFormatted),
         moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
         this.selectedCoin.tokenAddress,
-        0,
         this.userAccount,
       ).on('transactionHash', () => {
         this.createAuctionStatus =

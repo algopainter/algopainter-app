@@ -142,6 +142,7 @@ export default class BidBackModal extends Vue {
     }
   }
 
+  /*
   async getBidbackPercentages() {
     try {
       const response = await this.rewardsSystem.getBidbackPercentages(this.getBidbackIndex) as unknown as IBidbackPercentages;
@@ -154,6 +155,7 @@ export default class BidBackModal extends Vue {
       console.log('error getBidbackPercentages');
     }
   }
+  */
 
   getAuctions() {
     this.loadingTable = true;
@@ -163,6 +165,7 @@ export default class BidBackModal extends Vue {
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;
+      console.log('auction', auction);
       const auctionBids = auction.bids;
       const auctionBidsReversed: IBid[] = [];
       const bidderAccounts: string|string[] = [];
@@ -177,13 +180,20 @@ export default class BidBackModal extends Vue {
         const name = this.formatName(bid.name);
         const tokenSymbol = bid.tokenSymbol;
         const highestBid = bid.amount / 1000000000000000000;
+        // const stackedAlgopPercentage = bid.stackedAlgopPercentage;
+        // const stackedAlgop = bid.stackedAlgop;
+
+        const stackedAlgop = Math.floor(Math.random() * (100 - 0) + 0);
+        let sum = 0;
+        sum += stackedAlgop;
+        const stackedAlgopPercentage = (stackedAlgop / sum) * 100;
 
         if (!bidderAccounts.includes(account)) {
           bidderAccounts.push(account);
-          this.userBid.push({ name: name, account: account, highestBid: highestBid, tokenSymbol: tokenSymbol, stackedAlgop: 0, stackedAlgopPercentage: 0 });
+          this.userBid.push({ name: name, account: account, highestBid: highestBid, tokenSymbol: tokenSymbol, stackedAlgop: stackedAlgop, stackedAlgopPercentage: stackedAlgopPercentage });
         }
       });
-      void this.getBidbackPercentages();
+      // void this.getBidbackPercentages();
       this.loadingTable = false;
     });
   }

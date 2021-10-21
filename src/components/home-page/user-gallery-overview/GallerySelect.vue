@@ -361,7 +361,7 @@ export default class gallerySelect extends Vue.with(Props) {
 
   async getBidbackPercentage() {
     try {
-      this.auctionBidBack = await this.bidBackPirsSystem.getBidbackPercentage(this.art.index);
+      this.auctionBidBack = await this.bidBackPirsSystem.getBidbackRate(this.art.index);
     } catch (error) {
       console.log('error getBidbackPercentage');
     }

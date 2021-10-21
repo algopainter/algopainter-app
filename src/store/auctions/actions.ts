@@ -52,7 +52,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       if (auctionsLength && collectionOwner || auctionsLength && itemIndex) {
         const lastAuction = auctions[auctionsLength - 1] as IAuctionItem;
         const expirationDate = lastAuction;
-        // console.log('expirationDate', expirationDate);
         this.commit('auctions/SET_PIRS_AUCTION', expirationDate);
       } else {
         this.commit('auctions/SET_AUCTIONS', auctions);

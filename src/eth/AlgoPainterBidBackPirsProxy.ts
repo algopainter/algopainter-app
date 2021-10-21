@@ -8,14 +8,13 @@ import { getBidBackPirsContractByNetworkId } from './Config';
 export default class AlgoPainterBidBackPirsProxy {
   declare smartContract: {
     methods: {
-      getBidbackPercentage(
+      getBidbackRate(
         auctionId: number,
       ): ContractSendMethod;
-      getInvestorPirsPercentage(
-        contractAddress: string,
-        tokenId: number
+      getInvestorPirsRate(
+        auctionId: number,
       ): ContractSendMethod;
-      getCreatorPirsPercentage(
+      getCreatorPirsRate(
         contractAddress: string,
       ): ContractSendMethod;
     };
@@ -30,32 +29,30 @@ export default class AlgoPainterBidBackPirsProxy {
     );
   }
 
-  async getBidbackPercentage(
+  async getBidbackRate(
     auctionId: number,
   ) {
-    const response: unknown = await this.smartContract.methods.getBidbackPercentage(
+    const response: unknown = await this.smartContract.methods.getBidbackRate(
       auctionId,
     ).call();
 
     return response as number;
   }
 
-  async getInvestorPirsPercentage(
-    contractAddress: string,
-    tokenId: number,
+  async getInvestorPirsRate(
+    auctionId: number,
   ) {
-    const response: unknown = await this.smartContract.methods.getInvestorPirsPercentage(
-      contractAddress,
-      tokenId,
+    const response: unknown = await this.smartContract.methods.getInvestorPirsRate(
+      auctionId,
     ).call();
 
     return response as number;
   }
 
-  async getCreatorPirsPercentage(
+  async getCreatorPirsRate(
     contractAddress: string,
   ) {
-    const response: unknown = await this.smartContract.methods.getCreatorPirsPercentage(
+    const response: unknown = await this.smartContract.methods.getCreatorPirsRate(
       contractAddress,
     ).call();
 

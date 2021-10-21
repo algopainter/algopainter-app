@@ -678,7 +678,7 @@ export default class MyGalleryOverview extends Vue {
     this.currentBtnClicked = 5;
     void this.$store.dispatch({
       type: 'auctions/getBidBack',
-      account: '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a', // this.accountAddress,
+      account: this.accountAddress, // '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a',
       page: page,
       perPage: '9',
     }).then(() => {
@@ -827,7 +827,7 @@ export default class MyGalleryOverview extends Vue {
     this.loadMoreBtn = true;
     await this.$store.dispatch({
       type: 'auctions/getBidBack',
-      account: '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a', // this.accountAddress,
+      account: this.accountAddress, // '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a',
       page: this.loadMoreCounterBidback,
       perPage: '9',
     }).then(() => {

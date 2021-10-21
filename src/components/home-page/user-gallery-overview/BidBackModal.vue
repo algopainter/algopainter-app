@@ -55,17 +55,6 @@ interface IUserBid {
   stackedAlgopPercentage: number;
 }
 
-/*
-delete me
-*/
-
-/*
-interface IBidbackPercentages {
-  percentages: [],
-  users: [],
-}
-*/
-
 @Options({
   components: {
     AlgoButton,

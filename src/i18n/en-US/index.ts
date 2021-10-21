@@ -7,6 +7,7 @@ export default {
     bidBack: 'BidBack',
     placeABid: 'PLACE A BID',
     ok: 'Ok',
+    year: 'Year',
     days: 'days',
     hours: 'hours',
     minutes: 'minutes',

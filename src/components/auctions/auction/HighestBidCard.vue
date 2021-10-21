@@ -16,7 +16,7 @@
         <i18n-t keypath="dashboard.auctionPage.highestBidBy">
           <template #highestBidBy>
             <span class="username">
-              {{ bid.name || bid.account }}
+              {{ formatedAccount }}
             </span>
           </template>
         </i18n-t>
@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { Vue, Prop } from 'vue-property-decorator';
-
+import UserUtils from 'src/helpers/user';
 import { IBid } from 'src/models/IBid';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
@@ -38,6 +38,8 @@ import { auctionCoins } from 'src/helpers/auctionCoins';
 export default class HighestBidCard extends Vue {
   @Prop({ required: true }) bid!: IBid;
   @Prop({ required: true }) tokenPriceAddress!: string;
+
+  userBalance: number = 0;
 
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
@@ -60,6 +62,10 @@ export default class HighestBidCard extends Vue {
     return this.$n(amount, 'decimal', {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
+  get formatedAccount() {
+    return UserUtils.formatedAccount(this.bid.account);
   }
 }
 </script>

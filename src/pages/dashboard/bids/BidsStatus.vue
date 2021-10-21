@@ -74,24 +74,50 @@
         />
       </div>
       <div class="text-h6 text-bold text-center justify-center q-my-md">
-        <div class="q-my-md">
+        <div
+          v-if="myBidsResult !== undefined"
+          class="q-my-md"
+        >
           {{ $t('dashboard.bid.yourBid') }}
           <div class="row justify-center">
             <div>
               {{ bidCorreting(MyHighBid) }}
             </div>
+            {{ myBidsResult }}
             <div class="q-ml-sm">
               {{ bidsAuctions.highestBid.tokenSymbol }}
             </div>
           </div>
         </div>
-        <div>
-          <algo-button
-            size="lg"
-            color="primary"
-            :label="$t('dashboard.bid.bidAgain')"
-            :to="`/auctions/${bidsAuctions._id}`"
-          />
+        <div v-else>
+          {{ $t('dashboard.bid.yourLastBid') }}
+          <div class="row justify-center">
+            <div>
+              {{ bidCorreting(MyHighBid) }}
+            </div>
+            {{ myBidsResult }}
+            <div class="q-ml-sm">
+              {{ bidsAuctions.highestBid.tokenSymbol }}
+            </div>
+          </div>
+        </div>
+        <div class="col q-gutter-sm">
+          <div>
+            <algo-button
+              size="lg"
+              color="primary"
+              :label="$t('dashboard.bid.bidAgain')"
+              :to="`/auctions/${bidsAuctions._id}`"
+            />
+          </div>
+          <div v-if="myBidsResult !== undefined">
+            <algo-button
+              size="lg"
+              color="primary"
+              :label="myBids"
+              @click="withdraw"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -124,7 +150,7 @@
       v-model="displayingStatus"
       persistent
     >
-      <end-auction-status-card
+      <get-art-end-auction
         :end-auction-status="endAuctionStatus"
         @request-close="onCloseStatusDialog"
       />
@@ -145,7 +171,7 @@ import { auctionCoins } from 'src/helpers/auctionCoins';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import AlgoPainterAuctionSystemProxy, { EndAuctionStatus } from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
-import EndAuctionStatusCard from 'components/auctions/auction/EndAuctionStatusCard.vue';
+import GetArtEndAuction from 'components/auctions/auction/GetArtEndAuction.vue';
 
 class Props {
   bidsAuctions= prop({
@@ -157,7 +183,7 @@ class Props {
 @Options({
   components: {
     AlgoButton,
-    EndAuctionStatusCard,
+    GetArtEndAuction,
   },
   computed: {
     ...mapGetters('user', {
@@ -174,7 +200,14 @@ export default class BidsStatus extends Vue.with(Props) {
   auctionSystem!: AlgoPainterAuctionSystemProxy;
 
   displayingStatus: boolean = false;
+  myTotalBids: number = 0
+  btnResult!: string;
+  myBidsResult!: string;
   endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
+
+  beforeMount() {
+    void this.myBids;
+  }
 
   get accountAdress() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -214,6 +247,25 @@ export default class BidsStatus extends Vue.with(Props) {
     return lastBid as number;
   }
 
+  get myBids() {
+    try {
+      const getBids = this.bidsAuctions.returns;
+      const account = this.userAccount;
+      const getBidsKeys = Object.keys(getBids);
+      getBidsKeys.forEach((key) => {
+        if (key === account) {
+          const BidsKey = getBids[key as unknown as number] as unknown as number;
+          this.myBidsResult = this.bidCorreting(BidsKey);
+          const coin = this.bidsAuctions.bids[0].tokenSymbol;
+          this.btnResult = this.$t('Claim: ' + this.myBidsResult + ' ' + coin);
+        }
+      });
+    } catch (error) {
+    }
+
+    return this.btnResult;
+  }
+
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
       return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
@@ -237,6 +289,10 @@ export default class BidsStatus extends Vue.with(Props) {
   }
 
   async endAuction() {
+    if (!this.bidsAuctions) {
+      return;
+    }
+
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
 
     this.displayingStatus = true;
@@ -244,7 +300,7 @@ export default class BidsStatus extends Vue.with(Props) {
 
     await this.auctionSystem.endAuction(
       this.bidsAuctions.index,
-      this.userAccount,
+      this.accountAdress,
     ).on('error', () => {
       this.endAuctionStatus = EndAuctionStatus.EndAuctionError;
     }).on('transactionHash', () => {

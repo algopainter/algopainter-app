@@ -2,7 +2,6 @@
 <template>
   <div
     class="row q-gutter-md"
-    v-on="getLastBid()"
   >
     <q-img
       class="img"
@@ -94,7 +93,43 @@
                 class="text-bold"
               >
                 <div
+                  v-if="countYear >= 1"
+                  class="row justify-start time-year q-gutter-sm "
+                >
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ days }}  -->{{ countYear }}
+                    </div>
+                    <span> {{ $t('dashboard.bid.year') }} </span>
+                  </div>
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ days }}  -->{{ countDays }}
+                    </div>
+                    <span> {{ $t('dashboard.bid.days') }} </span>
+                  </div>
 
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ hours }}--> {{ countHours }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.hours') }}</span>
+                  </div>
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ minutes }} -->{{ countMinutes }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.minis') }}</span>
+                  </div>
+                  <div>
+                    <div class="text-bold">
+                      <!-- {{ seconds }} --> {{ countSeconds }}
+                    </div>
+                    <span>{{ $t('dashboard.bid.seconds') }}</span>
+                  </div>
+                </div>
+                <div
+                  v-else
                   class="row justify-start time q-gutter-sm "
                 >
                   <div>
@@ -134,7 +169,6 @@
 
 <script lang="ts">
 import { Vue, prop, Options } from 'vue-class-component';
-import { takeLast } from 'ramda';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { now } from 'src/helpers/timer';
 import { PropType } from 'vue';
@@ -174,6 +208,7 @@ dayExpirations: string = ''
 yearExpirations: string = ''
 hoursExpirations!: string ;
 countDays: number = 0;
+countYear: number = 0;
 countHours: number = 0;
 countMinutes: number = 0;
 countSeconds: number = 0;
@@ -195,10 +230,8 @@ onPropertyChanged() {
         window.location.reload(true);
       }
       this.stopCount = true;
-      console.log('format');
     } else {
       this.getTime();
-      console.log('getTime');
     }
   }
   this.lastCountDays = this.countDays;
@@ -222,6 +255,7 @@ formatTime(): void {
 getTime() {
   const newEnded = moment(this.bidsAuctions.expirationDt);
   const timeLeft = moment.duration(newEnded.diff(moment()));
+  this.countYear = timeLeft.years() || 0;
   this.countDays = timeLeft.days() || 0;
   this.countHours = timeLeft.hours() || 0;
   this.countMinutes = timeLeft.minutes() || 0;
@@ -263,10 +297,6 @@ dataMoment(index: string, format: string) {
   return moment(index).format(format);
 }
 
-getLastBid(): void {
-  this.lastBidAuctions = takeLast(1, this.bidsAuctions.bids);
-}
-
 get isEnded() {
   return moment().isAfter(this.bidsAuctions.expirationDt);
 }
@@ -295,10 +325,27 @@ bidCorreting(bids: number) {
 }
 </script>
 <style lang="scss">
+.text-amount{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 50px;
+}
+.img{
+  width: 250px;
+  @media (max-width: $breakpoint-xs-max) {
+    width: 100%;
+  }
+}
 .time{
   width: 180px;
   margin-right: 5px;
 }
+.time-year{
+  width: 250px;
+  margin-right: 5px;
+  }
 .text-time{
   font-size: 1.1rem;
   margin-left: -30px;

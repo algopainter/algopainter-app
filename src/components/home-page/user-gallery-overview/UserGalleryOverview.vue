@@ -318,6 +318,7 @@ export default class UserGalleryOverview extends Vue {
   nullGalleryBidShow: boolean = false;
   loadingLatestBidsItem: boolean = true;
   btnBidsClicked: boolean = false;
+
   */
 
   loadMoreBtn: boolean = false;

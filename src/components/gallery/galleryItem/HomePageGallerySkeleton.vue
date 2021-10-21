@@ -1,44 +1,4 @@
 <template>
-  <div class="flex desktop-only">
-    <q-skeleton
-      type="QBtn"
-      width="200px"
-      height="50px"
-      class="custom-skeleton-border q-mr-sm"
-    />
-    <q-skeleton
-      type="QBtn"
-      width="200px"
-      height="50px"
-      class="custom-skeleton-border q-mr-sm"
-    />
-    <q-skeleton
-      type="QBtn"
-      width="200px"
-      height="50px"
-      class="custom-skeleton-border q-mr-sx"
-    />
-  </div>
-  <div class="flex mobile-only">
-    <q-skeleton
-      type="QBtn"
-      width="200px"
-      height="50px"
-      class="custom-skeleton-border q-ma-xs"
-    />
-    <q-skeleton
-      type="QBtn"
-      width="200px"
-      height="50px"
-      class="custom-skeleton-border q-ma-xs"
-    />
-    <q-skeleton
-      type="QBtn"
-      width="200px"
-      height="50px"
-      class="custom-skeleton-border q-ma-xs"
-    />
-  </div>
   <div class="flex">
     <div
       v-for="(item, index) in 8"

@@ -1,42 +1,45 @@
 <template>
-  <div v-if="loading === false">
-    <q-page class="q-gutter-lg q-pb-lg">
-      <div class="header q-gutter-xs">
-        <algo-button
-          v-for="(collection, i) in collections"
-          :key="i"
-          :label="collection.title"
-          :loading="currentCollection._id == collection._id ? loadingCollection : false "
-          class="q-mr-xs"
-          :class="[
-            currentCollection._id == collection._id
-              ? 'btn-selected'
-              : 'btn-unselected',
-          ]"
-          @click="collectionClicked(collection)"
+  <div class="header size q-mb-lg">
+    <q-select
+      v-model="currentFilter"
+      :options="filterOptions"
+      color="primary"
+      :loading="loadingGalleryImages"
+      rounded
+      outlined
+      bottom-slots
+      @update:model-value="filterCollection(currentFilter.label)"
+    >
+      <template #before>
+        <q-icon
+          name="filter_list"
+          color="primary"
         />
-      </div>
-      <div class="flex justify-center">
+      </template>
+    </q-select>
+  </div>
+  <div class="space" />
+  <div v-if="!loadingGalleryImages">
+    <q-page class="q-gutter-lg q-pb-lg">
+      <q-infinite-scroll
+        class="flex justify-center"
+        @load="loadMore"
+      >
         <gallery-item
           v-for="galleryItem in currentCollectionGallery"
           :key="galleryItem.id"
           :gallery-item="galleryItem"
           @favoriteClicked="favoriteClicked"
         />
-      </div>
-      <div class="footer">
-        <algo-button
-          :label="$t('dashboard.homePage.loadMore', {
-            msg: btnLoadMoreMsg
-          })"
+      </q-infinite-scroll>
+      <div
+        v-if="!loadedAllItems"
+        class="row justify-center q-my-md footer"
+      >
+        <q-spinner-dots
           color="primary"
-          outline
-          class="load-more q-px-xl q-mx-auto"
-          :disable="noMoreImages"
-          :loading="loadingBtn"
-          @click="loadMore()"
+          size="40px"
         />
-        <!-- to="/gallery" -->
       </div>
     </q-page>
   </div>
@@ -49,7 +52,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
+import { Notify } from 'quasar';
 import { IGallery } from 'src/models/IGallery';
 import { GalleryItem } from 'components/gallery';
 import AlgoButton from 'components/common/Button.vue';
@@ -68,30 +71,48 @@ import HomePageGallerySkeleton from 'components/gallery/galleryItem/HomePageGall
   },
 })
 export default class HomePageGallery extends Vue {
-  currentCollection!: ICollection;
-  collections: ICollection[] = [];
   currentCollectionGallery: IGallery[] = [];
-  loading: boolean = true;
-  loadingBtn: boolean = false;
-  loadingCollection: boolean = true;
+  loadingGalleryImages: boolean = true;
+  loadedAllItems: boolean = false;
   loadMoreCounter: number = 1;
-  noMoreImages: boolean = false;
   btnLoadMoreMsg: string = 'Load More';
-  images: [] = [];
   imgIdArray: string[] = [];
+
+  // Filter
+  currentFilter: string = 'All Collections';
+  filterOptions: any[] = [{ label: 'All Collections', id: '' }];
+  currentCollectionId: string = '';
+
+  filterCollection(currentCollection: string = '') {
+    this.currentFilter = currentCollection;
+    this.loadedAllItems = false;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    this.currentCollectionId = this.filterOptions.find(x => x.label === currentCollection).id;
+    this.loadMoreCounter = 0;
+    this.btnLoadMoreMsg = 'Load More';
+    void this.collectionClicked();
+  }
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
 
-  async loadMore() {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  async loadMore(index: number, done: Function) {
     this.loadMoreCounter++;
-    this.loadingBtn = true;
-    const images = await new CollectionController().getCollectionsImages(this.currentCollection._id, this.loadMoreCounter);
+
+    const images = (this.currentFilter.toLowerCase() === 'all collections')
+      ? await new CollectionController().getAllImages(this.loadMoreCounter)
+      : await new CollectionController().getCollectionsImages(this.currentCollectionId, this.loadMoreCounter);
+
     if (images.length === 0) {
-      this.noMoreImages = true;
-      this.btnLoadMoreMsg = 'Nothing else to show';
-      this.loadingBtn = false;
+      Notify.create({
+        message: "That's all for now!",
+        color: 'green',
+        icon: 'mdi-check-all',
+      });
+      this.loadedAllItems = true;
+      done(true);
     } else {
       const tempCollectionGallery = images.map((image) =>
         this.mapImageToGalleryItem(image),
@@ -108,25 +129,27 @@ export default class HomePageGallery extends Vue {
           this.imgIdArray.push(item.id);
         }
       });
-      this.loadingBtn = false;
+      done();
     }
   }
 
-  async collectionClicked(collection: ICollection) {
-    this.loadingCollection = true;
+  async collectionClicked() {
+    this.loadingGalleryImages = true;
     this.imgIdArray = [];
     this.loadMoreCounter = 1;
     this.btnLoadMoreMsg = 'Load More';
-    this.noMoreImages = false;
-    this.currentCollection = collection;
-    const images = await new CollectionController().getCollectionsImages(collection._id);
+
+    const images = (this.currentFilter.toLowerCase() === 'all collections')
+      ? await new CollectionController().getAllImages()
+      : await new CollectionController().getCollectionsImages(this.currentCollectionId);
+
     this.currentCollectionGallery = images.map((image) =>
       this.mapImageToGalleryItem(image),
     );
     this.currentCollectionGallery.forEach((item) => {
       this.imgIdArray.push(item.id);
     });
-    this.loadingCollection = false;
+    this.loadingGalleryImages = false;
   }
 
   mounted() {
@@ -136,9 +159,17 @@ export default class HomePageGallery extends Vue {
   async getCollections() {
     const collections = await new CollectionController().getCollections();
     if (collections) {
-      this.collections = collections.slice(0, 3); // Simulation of three items received from api, only
-      this.currentCollection = collections[0];
-      const images = await new CollectionController().getCollectionsImages(collections[0]._id);
+      collections.forEach((item: ICollection) => {
+        this.filterOptions.push({ label: item.title, id: item._id });
+      });
+
+      this.currentCollectionId = collections[0]._id;
+
+      const images = (this.currentFilter.toLowerCase() === 'all collections')
+        ? await new CollectionController().getAllImages()
+        : await new CollectionController().getCollectionsImages('');
+
+      this.currentFilter = 'All Collections';
       this.currentCollectionGallery = images.map((image) =>
         this.mapImageToGalleryItem(image),
       );
@@ -146,8 +177,7 @@ export default class HomePageGallery extends Vue {
     this.currentCollectionGallery.forEach((item) => {
       this.imgIdArray.push(item.id);
     });
-    this.loading = false;
-    this.loadingCollection = false;
+    this.loadingGalleryImages = false;
   }
 
   mapImageToGalleryItem(image: IImage) {
@@ -205,7 +235,18 @@ body.screen--xs {
   }
 }
 
+.size {
+  display: block;
+  width: 250px;
+  height: 50px;
+}
+
 .custom-skeleton-border {
   border-radius: 10px;
+}
+
+.space {
+  height: 1px;
+  width: 100%;
 }
 </style>

@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
-  <div class="btn-container q-mx-auto row items-center justify-center ">
+  <div class="btn-container q-mx-auto row items-center justify-center">
     <q-select
       v-model="currentCollection"
       :options="collectionFilter"
@@ -32,9 +31,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="row q-col-gutter-lg"
-  >
+  <div class="row q-col-gutter-lg">
     <div
       v-if="!galleryTabs[0].loadingButtons && currentBtnClicked === galleryTabs[0].btnIndex"
       class=" col-12 flex q-col-gutter-md justify-center"
@@ -62,9 +59,7 @@
         </div>
       </div>
       <div v-else>
-        <MyGallerySkeleton
-          :buttons="false"
-        />
+        <MyGallerySkeleton :buttons="false" />
       </div>
       <div
         v-if="galleryTabs[0].cont > maxItemsPerPage"
@@ -97,9 +92,7 @@
       v-else-if="currentBtnClicked === galleryTabs[0].btnIndex"
       class="col-12 flex q-col-gutter-md justify-center"
     >
-      <MyGallerySkeleton
-        :buttons="true"
-      />
+      <MyGallerySkeleton :buttons="true" />
     </div>
     <div
       v-else-if="currentBtnClicked === galleryTabs[1].btnIndex"
@@ -203,12 +196,8 @@
           </div>
         </div>
       </div>
-      <div
-        v-else
-      >
-        <MyGallerySkeleton
-          :buttons="false"
-        />
+      <div v-else>
+        <MyGallerySkeleton :buttons="false" />
       </div>
       <div
         v-if="galleryTabs[2].cont > maxItemsPerPage"
@@ -327,9 +316,31 @@ export default class UserGalleryOverview extends Vue {
   loadMoreCounterOnSale: number = 1;
   loadMoreCounterLike: number = 1;
   noMoreImages: boolean = false;
+
   currentBtnClicked: number = 1;
+  galleryButtons = [
+    {
+      label: 'gallery',
+      action: () => this.showGalleryArts(),
+      cont: '',
+      btnClicked: 1,
+    },
+    {
+      label: 'onSale',
+      action: () => this.showOnSale(),
+      cont: '',
+      btnClicked: 2,
+    },
+    {
+      label: 'like',
+      action: () => this.showLikes(),
+      cont: '',
+      btnClicked: 3,
+    },
+  ];
 
   currentCollection: string = 'All Collections';
+
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
   getCollectionsLoading: boolean = true;
 
@@ -376,6 +387,7 @@ export default class UserGalleryOverview extends Vue {
     void this.getLikes(1, this.currentCollection);
     void this.getOnSale(1, this.currentCollection);
     void this.getGalleryArts(1, this.currentCollection);
+
   }
 
   @Watch('currentCollection')
@@ -399,17 +411,21 @@ export default class UserGalleryOverview extends Vue {
 
   async getCollections() {
     this.getCollectionsLoading = true;
-    await this.$store.dispatch({
-      type: 'collections/getAllCollections',
-    }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['collections/GET_COLLECTIONS'] as IAxios;
-      const collectionFilter = response.data;
-      collectionFilter.forEach((item: ICollection) => {
-        this.collectionFilter.push({ label: item.title });
+    await this.$store
+      .dispatch({
+        type: 'collections/getAllCollections',
+      })
+      .then(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const response = this.$store.getters[
+          'collections/GET_COLLECTIONS'
+        ] as IAxios;
+        const collectionFilter = response.data;
+        collectionFilter.forEach((item: ICollection) => {
+          this.collectionFilter.push({ label: item.title });
+        });
+        this.getCollectionsLoading = false;
       });
-      this.getCollectionsLoading = false;
-    });
   }
 
   filterCollection(page: number = 1, currentCollection: string = 'All Collections') {
@@ -518,11 +534,13 @@ export default class UserGalleryOverview extends Vue {
   }
 
   async loadMore(collection:string = this.currentCollection, filter: boolean = false) {
+
     if (filter) {
       this.galleryTabs[0].loadingData = true;
       this.galleryTabs[0].data = [];
     }
     this.loadMoreCounter++;
+
     this.loadMoreBtn = true;
     await this.$store.dispatch({
       type: 'collections/getUserItems',
@@ -584,6 +602,7 @@ export default class UserGalleryOverview extends Vue {
   }
 
   async loadMoreLike(collection:string = this.currentCollection, filter: boolean = false) {
+
     if (filter) {
       this.galleryTabs[2].loadingData = true;
       this.galleryTabs[2].data = [];
@@ -657,16 +676,15 @@ export default class UserGalleryOverview extends Vue {
 </script>
 
 <style lang="scss">
-
 .btn-container {
   width: 100%;
   height: 80px;
-  @media (max-width: $breakpoint-xs-max){
+  @media (max-width: $breakpoint-xs-max) {
     height: 50%;
   }
 }
-.algo-button{
-  @media (max-width: $breakpoint-xs-max){
+.algo-button {
+  @media (max-width: $breakpoint-xs-max) {
     margin-bottom: 10px;
   }
 }
@@ -682,10 +700,10 @@ export default class UserGalleryOverview extends Vue {
   justify-self: center;
 }
 
-.latest-bids{
-  @media (max-width: $breakpoint-xs-max){
-  margin-left: 25px;
-  margin-right: 25px;
+.latest-bids {
+  @media (max-width: $breakpoint-xs-max) {
+    margin-left: 25px;
+    margin-right: 25px;
   }
   margin-left: 16px;
 }

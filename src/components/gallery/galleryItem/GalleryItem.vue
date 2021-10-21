@@ -53,7 +53,13 @@
           {{ galleryItem.art.name }}
         </q-tooltip>
       </div>
-      <div class="limit-text">
+      <div v-if="galleryItem.description.trim() === ''">
+        <p class="white-text" />
+      </div>
+      <div
+        v-else
+        class="limit-text"
+      >
         {{ galleryItem.description }}
         <q-tooltip
           anchor="bottom middle"
@@ -242,10 +248,19 @@ export default class GalleryItem extends Vue.with(Props) {
     font-size: 1.1rem;
   }
 
-  .limit-text{
+  .white-text{
+    height:4px;
+  }
+
+  .limit-text {
     word-break: break-word;
-    font-weight: bold;
-    font-size: 1.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 280px;
+  }
+
+  .limit-description{
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

@@ -1,7 +1,7 @@
 <template>
   <q-card>
     <q-card-section class="header">
-      {{ $t('dashboard.auctionPage.claimBidbackStatuses.claimBidback') }}
+      {{ $t('dashboard.auctionPage.claimPirsStatuses.claimPirs') }}
     </q-card-section>
     <q-card-section>
       <div class="steps row q-col-gutter-md">

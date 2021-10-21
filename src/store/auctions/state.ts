@@ -5,10 +5,19 @@ function state(): AuctionStateInterface {
     hotBids: [],
     topSellers: [],
     topBuyers: [],
-    allBids: [],
+    auctions: [],
     bids: [],
+    bidBack: [],
+    owner: [],
     auctionId: undefined,
     openAuctionModal: false,
+    openBidBackModal: false,
+    bidBackId: undefined,
+    bidbackIndex: undefined,
+    pirsId: undefined,
+    pirsIndex: undefined,
+    pirsAuction: [],
+    openPirsModal: false,
   };
 }
 

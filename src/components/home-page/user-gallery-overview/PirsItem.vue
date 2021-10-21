@@ -1,34 +1,34 @@
 <template>
-  <div class="row q-mb-md">
+  <div class="row justify-between q-mb-md">
     <div class="col-12 col-md-3 col-lg-3  col-xl-2 col-sm-6 col-xs-12">
       <q-img
         class="previewImage"
-        :src="art.item.previewImage"
+        :src="art.nft.previewImage"
         alt="img art"
       />
     </div>
     <div class="col-12 col-md-3 col-lg-4 col-sm-6 col-xs-12 text-last">
       <div class="text">
         <div class="text text-bold text-h6">
-          {{ $t('dashboard.gallery.bidbackTab.symbol') }}{{ art.item.index }} {{ art.item.title }}
+          {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.nft.index }} {{ art.title }}
           <q-tooltip
             anchor="bottom middle"
             max-width="200px"
             class="bg-primary"
           >
-            {{ art.item.title }}
+            {{ art.title }}
           </q-tooltip>
         </div>
-        {{ art.item.description }}
+        {{ art.description }}
       </div>
-      <div>
+      <!-- <div>
         <div class="text-bold text-h4 q-mt-md">
           {{ $t('dashboard.gallery.bidbackTab.lastBids') }}
         </div>
         <p class="coin text-h6">
           {{ lastBid }}
         </p>
-      </div>
+      </div> -->
       <div class="text-bold text-h6">
         <!--
         <p class="won-bid">
@@ -39,18 +39,31 @@
           v-if="isEnded"
           class="text-bold text-end"
         >
-          {{ $t('dashboard.bid.auctionEnd') }}
-          <div
-            class="text-bold"
-          >
-            {{ monthExpirations }} <span class="text-bold"> {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span>
-            {{ yearExpirations }}
+          <div>
+            <div class="text-bold text-h4 q-mt-md">
+              {{ $t('dashboard.gallery.pirsTab.lastBids') }}
+            </div>
+            <p class="coin">
+              {{ $t('dashboard.gallery.pirsTab.lastText') }}
+            </p>
           </div>
-          <p> {{ hoursExpirations }} </p>
+          <div>
+            <p class="text-bold text-h6">
+              {{ $t('dashboard.bid.auctionEnd') }}
+            </p>
+          </div>
         </div>
         <div
           v-else
         >
+          <div>
+            <div class="text-bold text-h4 q-mt-md">
+              {{ $t('dashboard.gallery.pirsTab.lastBids') }}
+            </div>
+            <p class="coin text-h6">
+              {{ lastBid }}
+            </p>
+          </div>
           <div
             class="text-bold row  justify-center text-end"
           >
@@ -94,7 +107,7 @@
     <div class="col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12 items-center field-stack">
       <div>
         <span class="text-bold flex">
-          {{ $t('dashboard.gallery.bidbackTab.earned') }}
+          {{ $t('dashboard.gallery.pirsTab.earned') }}
         </span>
         <div
           class="flex container"
@@ -108,7 +121,7 @@
             readonly
           />
           <algo-button
-            :label="$t('dashboard.gallery.bidbackTab.harvest')"
+            :label="$t('dashboard.gallery.pirsTab.harvest')"
             color="primary"
             class="btn-havest"
             :disable="isCoinHarvestDisabled"
@@ -116,7 +129,7 @@
           />
         </div>
         <span>
-          {{ $t('dashboard.gallery.bidbackTab.stakedAlgop') }}
+          {{ $t('dashboard.gallery.pirsTab.stakedAlgop') }}
         </span>
         <div class="flex container">
           <q-input
@@ -138,17 +151,17 @@
             class="btn-staked"
             @click="stackCoin()"
           />
-          <stack-modal-algop
+          <pirs-stack-modal
             v-model="openModal"
             :art="art"
           />
-          <UnstackModalAlgop
+          <pirs-unstack-modal
             v-model="openModalUnstack"
             :art="art"
           />
         </div>
         <div class="text-primary q-my-sm">
-          {{ $t('dashboard.gallery.bidbackTab.withdrawAmount', {
+          {{ $t('dashboard.gallery.pirsTab.withdrawAmount', {
             amount: coinHarvestAmount,
           }) }}
         </div>
@@ -159,26 +172,26 @@
         class="bidBack text-white column justify-center content-center q-mb-xl"
       >
         <div class="row justify-center items-center content-center">
-          {{ auctionBidBack + "%" }}
+          {{ auctionPirs + "%" }}
         </div>
         <div class="row justify-center items-center content-center">
-          {{ $t('dashboard.gallery.bidbackTab.bidback') }}
+          {{ $t('dashboard.gallery.pirsTab.pirs') }}
         </div>
       </div>
       <algo-button
-        :label="$t('dashboard.gallery.bidbackTab.bidbackBtn')"
+        :label="$t('dashboard.gallery.pirsTab.btnPirs')"
         color="primary"
         outline
         class="load-more q-px-xl q-mx-auto"
-        @click="openBidBackModal()"
+        @click="openPirsModal()"
       />
     </div>
     <q-dialog
       v-model="displayingStatus"
       persistent
     >
-      <withdraw-bidback-status-card
-        :withdraw-bidback-status="withdrawBidbackStatus"
+      <withdraw-pirs-status-card
+        :withdraw-pirs-status="withdrawPirsStatus"
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
@@ -189,24 +202,25 @@
 import { PropType } from 'vue';
 import { Vue, prop, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-import StackModalAlgop from 'src/components/modal/StackModalAlgop.vue';
-import UnstackModalAlgop from 'src/components/modal/UnstackModalAlgop.vue';
-import { IAuctionItem } from 'src/models/IAuctionItem';
+import PirsStackModal from 'src/components/modal/PirsStackModal.vue';
+import PirsUnstackModal from 'src/components/modal/PirsUnstackModal.vue';
+import { IMyGallery } from 'src/models/IMyGallery';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
-import WithdrawBidbackStatusCard from 'components/auctions/auction/WithdrawBidbackStatusCard.vue';
+import WithdrawPirsStatusCard from 'components/auctions/auction/WithdrawPirsStatusCard.vue';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import moment from 'moment';
 import { now } from 'src/helpers/timer';
 import 'moment-duration-format';
 import { Watch } from 'vue-property-decorator';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 
 class Props {
   art = prop({
-    type: Object as PropType<IAuctionItem>,
+    type: Object as PropType<IMyGallery>,
     required: true,
   })
 
@@ -216,23 +230,23 @@ class Props {
   })
 }
 
-enum WithdrawBidbackStatus {
+enum WithdrawPirsStatus {
   CheckingContractApproved,
   ContractApprovedAwaitingInput,
   ContractApprovedAwaitingConfirmation,
   ContractApprovedError,
-  WithdrawBidbackAwaitingInput,
-  WithdrawBidbackAwaitingConfirmation,
-  WithdrawBidbackError,
-  BidbackWithdrawn,
+  WithdrawPirsAwaitingInput,
+  WithdrawPirsAwaitingConfirmation,
+  WithdrawPirsError,
+  PirsWithdrawn,
 }
 
 @Options({
   components: {
     AlgoButton,
-    StackModalAlgop,
-    UnstackModalAlgop,
-    WithdrawBidbackStatusCard,
+    PirsStackModal,
+    PirsUnstackModal,
+    WithdrawPirsStatusCard,
   },
   watch: {
     now: ['getTime'],
@@ -247,25 +261,30 @@ enum WithdrawBidbackStatus {
   },
 })
 
-export default class gallerySelect extends Vue.with(Props) {
+export default class PirsItem extends Vue.with(Props) {
   bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  isConnected!: boolean;
+  // isConnected!: boolean;
   canStack: boolean = false;
   coinHarvestAmount: number = 0;
   coinStakeAmount: number = 0;
   openModal: boolean = false;
   openModalUnstack: boolean = false;
-  auctionBidBack: number | null = null;
+  auctionPirs: number | null = null;
   isCoinHarvestDisabled: boolean = true;
   disableUnstackBtn: boolean = true;
   lastBid: string = '';
+  auctionExpirationDt: string = '';
+  tokenPriceAddress: string = '';
+  highestBidAmount: number = 0;
+  auctionTokenSymbol: string = '';
+  auctionIndex: number = 0;
 
-  withdrawingBidback: boolean = false;
+  withdrawingPirs: boolean = false;
   displayingStatus: boolean = false;
-  withdrawBidbackStatus: WithdrawBidbackStatus | null = null;
+  withdrawPirsStatus: WithdrawPirsStatus | null = null;
 
   days: number = 0;
   hours: number = 0;
@@ -291,21 +310,34 @@ export default class gallerySelect extends Vue.with(Props) {
     this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
   }
 
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/isConnected'] as boolean;
+  }
+
+  get accountAddress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
+
   mounted() {
-    void this.getBidbackPercentage();
-    void this.getUserStackedBidback();
-    void this.getLastBid();
-    void this.getTime();
+    void this.getPirsItem();
+    void this.getPirsPercentage();
+    void this.getUserStackedPirs();
     void this.formatTime();
   }
 
   getLastBid() {
-    const bidAmount = blockchainToCurrency(
-      this.art.highestBid.amount,
-      this.coinDetails.decimalPlaces,
-    );
-
-    this.lastBid = `${bidAmount} ${this.art.highestBid.tokenSymbol}`;
+    if (this.highestBidAmount) {
+      const bidAmount = blockchainToCurrency(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.highestBidAmount,
+        this.coinDetails.decimalPlaces,
+      );
+      this.lastBid = `${bidAmount} ${this.auctionTokenSymbol}`;
+    } else {
+      this.lastBid = 'There is no bid so far';
+    }
   }
 
   setFormatCurrency(amount: number) {
@@ -317,7 +349,7 @@ export default class gallerySelect extends Vue.with(Props) {
 
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
-      return coin.tokenAddress.toLowerCase() === this.art.minimumBid.tokenPriceAddress;
+      return coin.tokenAddress.toLowerCase() === this.tokenPriceAddress;
     });
 
     if (!coin) {
@@ -327,14 +359,14 @@ export default class gallerySelect extends Vue.with(Props) {
     return coin;
   }
 
-  async getUserStackedBidback() {
+  async getUserStackedPirs() {
     try {
-      this.coinHarvestAmount = await this.rewardsSystem.getTotalBidbackStakes(this.art.index);
+      this.coinHarvestAmount = await this.rewardsSystem.getTotalBidbackStakes(this.art.nft.index);
       this.coinHarvestAmount = 1000;
 
       this.coinStakeAmount = this.coinHarvestAmount;
 
-      this.isCoinHarvestDisabled = (this.coinHarvestAmount <= 0 || !this.art.ended);
+      this.isCoinHarvestDisabled = (this.coinHarvestAmount <= 0);
       this.disableUnstackBtn = (this.coinHarvestAmount <= 0);
     } catch (error) {
       this.isCoinHarvestDisabled = true;
@@ -344,33 +376,33 @@ export default class gallerySelect extends Vue.with(Props) {
 
   async harvestAlgop() {
     try {
-      this.withdrawingBidback = true;
+      this.withdrawingPirs = true;
       this.displayingStatus = true;
 
-      this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
+      this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
 
-      await this.rewardsSystem.claimBidback(
-        this.art.index,
+      await this.rewardsSystem.claimPirs(
+        this.art.nft.index,
         this.account,
       ).on('transactionHash', () => {
-        this.withdrawBidbackStatus =
-          WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
+        this.withdrawPirsStatus =
+          WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
       }).on('error', () => {
-        this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackError;
+        this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsError;
       });
 
-      this.withdrawBidbackStatus = WithdrawBidbackStatus.BidbackWithdrawn;
+      this.withdrawPirsStatus = WithdrawPirsStatus.PirsWithdrawn;
     } catch {
-      this.withdrawingBidback = false;
+      this.withdrawingPirs = false;
     }
-    this.withdrawingBidback = false;
+    this.withdrawingPirs = false;
   }
 
-  async getBidbackPercentage() {
+  async getPirsPercentage() {
     try {
-      this.auctionBidBack = await this.bidBackPirsSystem.getBidbackRate(this.art.index);
+      this.auctionPirs = await this.bidBackPirsSystem.getInvestorPirsRate(this.auctionIndex);
     } catch (error) {
-      console.log('error getBidbackPercentage');
+      console.log('error getInvestorPirsPercentage');
     }
   }
 
@@ -386,18 +418,18 @@ export default class gallerySelect extends Vue.with(Props) {
     this.openModalUnstack = true;
   }
 
-  openBidBackModal() {
+  openPirsModal() {
     void this.$store.dispatch({
-      type: 'auctions/openBidBackModal',
+      type: 'auctions/openPirsModal',
       auctionId: this.art._id,
-      auctionIndex: this.art.index,
+      auctionIndex: this.art.nft.index,
     });
   }
 
   onCloseStatusDialog() {
     this.displayingStatus = false;
 
-    if (this.withdrawBidbackStatus === WithdrawBidbackStatus.BidbackWithdrawn) {
+    if (this.withdrawPirsStatus === WithdrawPirsStatus.PirsWithdrawn) {
       this.$q.notify({
         type: 'positive',
         message: 'Auction created successfully',
@@ -408,14 +440,14 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   formatTime(): void {
-    this.monthExpirations = moment(this.art.expirationDt).format('MMM');
-    this.dayExpirations = moment(this.art.expirationDt).format('DD');
-    this.yearExpirations = moment(this.art.expirationDt).format('YYYY');
-    this.hoursExpirations = moment(this.art.expirationDt).format('LT');
+    this.monthExpirations = moment(this.auctionExpirationDt).format('MMM');
+    this.dayExpirations = moment(this.auctionExpirationDt).format('DD');
+    this.yearExpirations = moment(this.auctionExpirationDt).format('YYYY');
+    this.hoursExpirations = moment(this.auctionExpirationDt).format('LT');
   }
 
   getTime() {
-    const newEnded = moment(this.art.expirationDt);
+    const newEnded = moment(this.auctionExpirationDt);
     const timeLeft = moment.duration(newEnded.diff(moment()));
     this.countDays = timeLeft.days() || 0;
     this.countHours = timeLeft.hours() || 0;
@@ -428,7 +460,7 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   get isEnded() {
-    return moment().isAfter(this.art.expirationDt);
+    return moment().isAfter(this.auctionExpirationDt);
   }
 
   @Watch('now')
@@ -448,6 +480,28 @@ export default class gallerySelect extends Vue.with(Props) {
     this.lastCountHours = this.countHours;
     this.lastCountMinutes = this.countMinutes;
     this.lastCountSeconds = this.countSeconds;
+  }
+
+  getPirsItem() {
+    void this.$store.dispatch({
+      type: 'auctions/getAuctions',
+      collectionOwner: this.art.collectionOwner,
+      itemIndex: this.art.nft.index,
+    }).then(() => {
+      if (this.isConnected) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const itemPirs = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
+        this.auctionExpirationDt = itemPirs.expirationDt;
+        this.tokenPriceAddress = itemPirs.minimumBid.tokenPriceAddress;
+        this.highestBidAmount = (itemPirs.highestBid) ? itemPirs.highestBid.amount : 0;
+        this.auctionTokenSymbol = itemPirs.minimumBid.tokenSymbol;
+        this.auctionIndex = itemPirs.index;
+        if (itemPirs) {
+          void this.getLastBid();
+          void this.getTime();
+        }
+      }
+    });
   }
 }
 
@@ -503,12 +557,12 @@ export default class gallerySelect extends Vue.with(Props) {
   font-size: 16px;
 }
 @media  (max-width:470px) {
-  .text{
-    text-align: center;
-    margin-left: 4%;
-  }
   .text-last{
     text-align: center;
+  }
+
+  .time{
+    justify-content:center;
   }
   .previewImage {
     width: 100%;
@@ -529,6 +583,10 @@ export default class gallerySelect extends Vue.with(Props) {
   .text-end{
     width: 100%;
 
+  }
+   .text{
+    text-align: center;
+    margin-left: 4%;
   }
 }
 </style>

@@ -3,14 +3,41 @@ import { StateInterface } from '..';
 import { AuctionStateInterface } from './types';
 
 const getters: GetterTree<AuctionStateInterface, StateInterface> = {
-  getAllBids(state: AuctionStateInterface): [] | undefined {
-    return state.allBids;
+  getAuctions(state: AuctionStateInterface): [] | undefined {
+    return state.auctions;
   },
   openAuctionModal(state: AuctionStateInterface): boolean {
     return state.openAuctionModal;
   },
-  getBids(state: AuctionStateInterface): [] |undefined {
+  openBidBackModal(state: AuctionStateInterface): boolean {
+    return state.openBidBackModal;
+  },
+  getBids(state: AuctionStateInterface): [] | undefined {
     return state.bids;
+  },
+  getBidBack(state: AuctionStateInterface): [] | undefined {
+    return state.bids;
+  },
+  getBidBackId(state: AuctionStateInterface): string | undefined {
+    return state.bidBackId;
+  },
+  getBidbackIndex(state: AuctionStateInterface): number | undefined {
+    return state.bidbackIndex;
+  },
+  getPirsAuction(state: AuctionStateInterface): [] | undefined {
+    return state.pirsAuction;
+  },
+  getImagePastOwners(state: AuctionStateInterface): [] | undefined {
+    return state.owner;
+  },
+  openPirsModal(state: AuctionStateInterface): boolean {
+    return state.openPirsModal;
+  },
+  getPirsId(state: AuctionStateInterface): number | undefined {
+    return state.pirsId;
+  },
+  getPirsIndex(state: AuctionStateInterface): number | undefined {
+    return state.pirsIndex;
   },
 };
 

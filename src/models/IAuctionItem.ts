@@ -1,6 +1,7 @@
 import { IBid } from './IBid';
 
 export interface IAuctionItem {
+  address?: string,
   _id: string;
   index: number;
   bids: IBid[];

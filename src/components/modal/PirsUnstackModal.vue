@@ -2,24 +2,21 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
-    class="q-gutter-md"
     @hide="onDialogHide"
   >
-    <q-card
-      class="q-pa-md"
-    >
+    <q-card class="q-pa-md">
       <p class="text-bold text-h6">
-        {{ $t('dashboard.stackModalAlgop.title') }}
+        {{ $t('dashboard.unstackModalAlgop.title') }}
       </p>
       <div>
         <div>
           <div class="row justify-between">
             <div class="flex items-end q-pb-sm text-bold">
-              {{ $t('dashboard.stackModalAlgop.stake') }}
+              {{ $t('dashboard.unstackModalAlgop.unstake') }}
             </div>
             <div>
               <div class="variable-balance text-bold">
-                {{ $t('dashboard.stackModalAlgop.balance') }}
+                {{ $t('dashboard.unstackModalAlgop.balance') }}
               </div>
               <div class="q-pb-sm">
                 {{ formattedBalance }}
@@ -27,13 +24,13 @@
             </div>
           </div>
           <q-input
-            v-model="stakeAmount"
+            v-model="unstakeAmount"
             class="q-mb-sm"
             type="number"
             rounded
             outlined
             suffix="$ALGOP"
-            :rules="[val => !!val || $t('dashboard.stackModalAlgop.noAlgop')]"
+            :rules="[val => !!val || 'No Tokens to unstake.']"
             no-error-icon="false"
             :bind="validateInput()"
           >
@@ -43,35 +40,25 @@
                 color="primary"
                 @click="maxStakeAmount"
               >
-                {{ $t('dashboard.stackModalAlgop.max') }}
+                {{ $t('dashboard.unstackModalAlgop.max') }}
               </q-btn>
             </template>
           </q-input>
-          <p
-            v-if="isConfirmBtnLoading"
-            class="q-mb-lg"
-          >
-            <q-icon
-              name="mdi-alert-circle"
-              color="yellow"
-              size="md"
-            /> {{ $t('dashboard.stackModalAlgop.interact') }}
-          </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup
               type="submit"
               color="primary"
               class=""
-              :label="$t('dashboard.stackModalAlgop.cancel')"
+              :label="$t('dashboard.unstackModalAlgop.cancel')"
             />
             <algo-button
               type="submit"
               color="primary"
-              :label="$t('dashboard.stackModalAlgop.confirm')"
+              :label="$t('dashboard.unstackModalAlgop.confirm')"
               :disabled="isDisabled"
               :loading="isConfirmBtnLoading"
-              @click="stakeAlgop"
+              @click="unstakeAlgop"
             />
           </div>
         </div>
@@ -82,13 +69,13 @@
 <script lang="ts">
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
-import AlgoButton from 'components/common/Button.vue';
 import { mapGetters } from 'vuex';
+import AlgoButton from 'components/common/Button.vue';
 import { QDialog, Notify } from 'quasar';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
 import { Watch } from 'vue-property-decorator';
-import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IMyGallery } from 'src/models/IMyGallery';
 import UserUtils from 'src/helpers/user';
 
 class Props {
@@ -98,7 +85,7 @@ class Props {
   })
 
   art = prop({
-    type: Object as PropType<IAuctionItem>,
+    type: Object as PropType<IMyGallery>,
     required: true,
   })
 }
@@ -116,8 +103,7 @@ class Props {
       ]),
   },
 })
-
-export default class MyPaint extends Vue.with(Props) {
+export default class PirsUnstackModal extends Vue.with(Props) {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
@@ -125,7 +111,7 @@ export default class MyPaint extends Vue.with(Props) {
   modal: boolean = true;
   isContractApproved: boolean = true;
   isDisabled: boolean = true;
-  stakeAmount: number | null | string = null;
+  unstakeAmount: number | null | string = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
@@ -163,13 +149,17 @@ export default class MyPaint extends Vue.with(Props) {
     this.formattedBalance = UserUtils.formatAccountBalance(this.balance, 2);
   }
 
-  maxStakeAmount() {
-    this.stakeAmount = this.balance;
+  async maxStakeAmount() {
+    try {
+      this.unstakeAmount = await this.rewardsSystem.getTotalPirsStakes(this.art.nft.index);
+    } catch (error) {
+      console.log('error maxStakeAmount');
+    }
   }
 
   validateInput() {
-    this.stakeAmount = Number(this.stakeAmount);
-    if (this.stakeAmount <= 0 || this.stakeAmount === null) {
+    this.unstakeAmount = Number(this.unstakeAmount);
+    if (this.unstakeAmount <= 0 || this.unstakeAmount === null) {
       this.isDisabled = true;
     } else {
       this.isDisabled = false;
@@ -195,11 +185,11 @@ export default class MyPaint extends Vue.with(Props) {
     void this.setAccountBalance();
   }
 
-  async stakeAlgop() {
+  async unstakeAlgop() {
     this.isConfirmBtnLoading = true;
     try {
-      if (this.stakeAmount && typeof this.stakeAmount === 'number') {
-        await this.rewardsSystem.stakeBidback(this.art.index, this.stakeAmount, this.account).on('transactionHash', () => {
+      if (this.unstakeAmount && typeof this.unstakeAmount === 'number') {
+        await this.rewardsSystem.unstakePirs(this.art.nft.index, this.unstakeAmount, this.account).on('transactionHash', () => {
           Notify.create({
             message: 'Algop unstaked successfully',
             color: 'green',
@@ -207,7 +197,7 @@ export default class MyPaint extends Vue.with(Props) {
           });
         }).on('error', () => {
           Notify.create({
-            message: 'It was not possible to stake',
+            message: 'It was not possible to unstake',
             color: 'red',
             icon: 'mdi-alert',
           });

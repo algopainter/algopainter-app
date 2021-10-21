@@ -45,6 +45,18 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
       console.log('error message - getUserItems');
     }
   },
+  async getUserPastImages(type, value) {
+    const account = value.account as string;
+    const page = value.page as string;
+    const perPage = value.perPage as string;
+    try {
+      const res = await api.get(`histories/owners/${account}/images?page=${page}&perPage=${perPage}&order.onSale=-1`);
+      const history: [] = res.data;
+      this.commit('collections/SET_USER_PAST_IMAGES', history);
+    } catch (e) {
+      console.log('error message - getUserPastImages');
+    }
+  },
 };
 
 export default actions;

@@ -47,16 +47,6 @@
               </q-btn>
             </template>
           </q-input>
-          <p
-            v-if="isConfirmBtnLoading"
-            class="q-mb-lg"
-          >
-            <q-icon
-              name="mdi-alert-circle"
-              color="yellow"
-              size="md"
-            /> {{ $t('dashboard.stackModalAlgop.interact') }}
-          </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup
@@ -70,7 +60,6 @@
               color="primary"
               :label="$t('dashboard.stackModalAlgop.confirm')"
               :disabled="isDisabled"
-              :loading="isConfirmBtnLoading"
               @click="stakeAlgop"
             />
           </div>
@@ -88,7 +77,7 @@ import { QDialog, Notify } from 'quasar';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
 import { Watch } from 'vue-property-decorator';
-import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IMyGallery } from 'src/models/IMyGallery';
 import UserUtils from 'src/helpers/user';
 
 class Props {
@@ -98,7 +87,7 @@ class Props {
   })
 
   art = prop({
-    type: Object as PropType<IAuctionItem>,
+    type: Object as PropType<IMyGallery>,
     required: true,
   })
 }
@@ -117,7 +106,7 @@ class Props {
   },
 })
 
-export default class MyPaint extends Vue.with(Props) {
+export default class PirsStackModal extends Vue.with(Props) {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
@@ -199,7 +188,7 @@ export default class MyPaint extends Vue.with(Props) {
     this.isConfirmBtnLoading = true;
     try {
       if (this.stakeAmount && typeof this.stakeAmount === 'number') {
-        await this.rewardsSystem.stakeBidback(this.art.index, this.stakeAmount, this.account).on('transactionHash', () => {
+        await this.rewardsSystem.stakePirs(this.art.nft.index, this.stakeAmount, this.account).on('transactionHash', () => {
           Notify.create({
             message: 'Algop unstaked successfully',
             color: 'green',
@@ -207,7 +196,7 @@ export default class MyPaint extends Vue.with(Props) {
           });
         }).on('error', () => {
           Notify.create({
-            message: 'It was not possible to stake',
+            message: 'It was not possible to unstake',
             color: 'red',
             icon: 'mdi-alert',
           });

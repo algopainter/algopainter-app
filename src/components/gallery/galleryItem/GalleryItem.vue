@@ -268,8 +268,19 @@ export default class GalleryItem extends Vue.with(Props) {
     font-size: 1.1rem;
   }
 
-  .limit-text{
+  .white-text{
+    height:4px;
+  }
+
+  .limit-text {
     word-break: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 280px;
+  }
+
+  .limit-description{
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

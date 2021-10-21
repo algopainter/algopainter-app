@@ -8,7 +8,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getHotBids() {
     try {
       const res = await api.get('auctions/?ended=false&order.expirationDt=1');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const hotBids = res.data as [];
       this.commit('auctions/SET_HOT_BIDS', hotBids);
     } catch (e) {
@@ -20,7 +19,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getTopSellers() {
     try {
       const res = await api.get('reports/top/sellers');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const topSellers = res.data as [];
       this.commit('auctions/SET_TOP_SELLERS', topSellers);
     } catch (e) {
@@ -32,7 +30,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getTopBuyers() {
     try {
       const res = await api.get('reports/top/buyers');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const TopBuyers = res.data as [];
       this.commit('auctions/SET_TOP_BUYERS', TopBuyers);
     } catch (e) {
@@ -41,12 +38,24 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       console.log('success msg');
     }
   },
-  async getAllBids() {
+
+  async getAuctions(type, value: Record<string, unknown>) {
+    const account = value.account as string || '';
+    const collectionOwner = value.collectionOwner as string;
+    const itemIndex = value.itemIndex as number;
+
     try {
-      const res = await api.get('auctions');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const allBids = res.data as [];
-      this.commit('auctions/SET_ALL_BIDS', allBids);
+      const res = await api.get(`auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}`);
+      const auctions = res.data as [];
+      const auctionsLength = auctions.length;
+      // eslint-disable-next-line no-mixed-operators
+      if (auctionsLength && collectionOwner || auctionsLength && itemIndex) {
+        const lastAuction = auctions[auctionsLength - 1] as IAuctionItem;
+        const expirationDate = lastAuction;
+        this.commit('auctions/SET_PIRS_AUCTION', expirationDate);
+      } else {
+        this.commit('auctions/SET_AUCTIONS', auctions);
+      }
     } catch (e) {
       console.log('error msg');
     } finally {
@@ -54,12 +63,41 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
-  async getBids(type, value) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  async getImagePastOwners(type, value: Record<string, unknown>) {
+    const imgId = value.imgId as string;
+    try {
+      const result = await api.get(`/images/${imgId}/owners`);
+      const owners = result.data as [];
+      console.log('owners', owners);
+      this.commit('auctions/SET_IMAGE_PAST_OWNERS', owners);
+    } catch (err) {
+      console.log('error getImagePastOwners');
+    } finally {
+      console.log('sucess msg getImagePastOwners');
+    }
+  },
+
+  async getBids(type, value: Record<string, unknown>) {
     const account = value.account as string;
 
     try {
       const result = await api.get(`users/${account}/auctions/biding`);
+      const bids = result.data as [];
+      this.commit('auctions/SET_BIDS', bids);
+    } catch (e) {
+      console.log('error getAuction msg');
+    } finally {
+      console.log('success msg');
+    }
+  },
+
+  async getBidBack(type, value: Record<string, unknown>) {
+    const account = value.account as string;
+    const page = value.page as number;
+    const perPage = value.perPage as string;
+    try {
+      const result =
+        await api.get(`users/${account}/auctions/biding/?page=${page}&perPage=${perPage}&order.expirationDt=-1`);
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {
@@ -85,6 +123,18 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
 
   openAuctionModal() {
     this.commit('auctions/SET_OPEN_AUCTION_MODAL');
+  },
+
+  openBidBackModal(type, value: {auctionId: string, auctionIndex: number}) {
+    this.commit('auctions/SET_OPEN_BID_BACK_MODAL');
+    this.commit('auctions/SET_BID_BACK_ID', value.auctionId);
+    this.commit('auctions/SET_BID_BACK_INDEX', value.auctionIndex);
+  },
+
+  openPirsModal(type, value: {auctionId: string, auctionIndex: number}) {
+    this.commit('auctions/SET_OPEN_PIRS_MODAL');
+    this.commit('auctions/SET_PIRS_ID', value.auctionId);
+    this.commit('auctions/SET_PIRS_INDEX', value.auctionIndex);
   },
 };
 

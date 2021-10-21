@@ -26,7 +26,7 @@
           {{ $t('dashboard.gallery.bidbackTab.lastBids') }}
         </div>
         <p class="coin text-h6">
-          nao tem
+          {{ lastBid }}
         </p>
       </div>
       <div class="text-bold text-h6">
@@ -48,14 +48,6 @@
         <div
           v-else
         >
-          <div>
-            <div class="text-bold text-h4 q-mt-md">
-              {{ $t('dashboard.gallery.bidbackTab.lastBids') }}
-            </div>
-            <p class="coin text-h6">
-              {{ lastBid }}
-            </p>
-          </div>
           <div
             class="text-bold row  justify-center text-end"
           >
@@ -268,7 +260,10 @@ export default class PirsItem extends Vue.with(Props) {
   isCoinHarvestDisabled: boolean = true;
   disableUnstackBtn: boolean = true;
   lastBid: string = '';
-  itemPirs: IAuctionItem = [];
+  auctionExpirationDt: string = '';
+  tokenPriceAddress: string = '';
+  highestBidAmount: number = 0;
+  auctionTokenSymbol: string =''
 
   withdrawingPirs: boolean = false;
   displayingStatus: boolean = false;
@@ -309,26 +304,23 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   mounted() {
+    void this.getPirsItem();
     void this.getPirsPercentage();
     void this.getUserStackedPirs();
-    void this.getLastBid();
-    void this.getTime();
     // void this.formatTime();
-    void this.getPirsItem();
   }
 
   getLastBid() {
-    console.log('this.itemPirs.highestBid.amount', this.itemPirs);
-    // if (this.itemPirs.highestBid.amount) {
-    //   const bidAmount = blockchainToCurrency(
-    //   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    //     this.itemPirs.highestBid.amount,
-    //     this.coinDetails.decimalPlaces,
-    //   );
-    //   this.lastBid = `${bidAmount} ${this.itemPirs.highestBid.tokenSymbol}`;
-    // } else {
-    //   this.lastBid = 'nao tem nada!';
-    // }
+    if (this.highestBidAmount) {
+      const bidAmount = blockchainToCurrency(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.highestBidAmount,
+        this.coinDetails.decimalPlaces,
+      );
+      this.lastBid = `${bidAmount} ${this.auctionTokenSymbol}`;
+    } else {
+      this.lastBid = 'There is no bid so far';
+    }
   }
 
   setFormatCurrency(amount: number) {
@@ -340,7 +332,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
-      return coin.tokenAddress.toLowerCase() === this.itemPirs.minimumBid.tokenPriceAddress;
+      return coin.tokenAddress.toLowerCase() === this.tokenPriceAddress;
     });
 
     if (!coin) {
@@ -439,7 +431,7 @@ export default class PirsItem extends Vue.with(Props) {
   // }
 
   getTime() {
-    const newEnded = moment(this.itemPirs.expirationDt);
+    const newEnded = moment(this.auctionExpirationDt);
     const timeLeft = moment.duration(newEnded.diff(moment()));
     this.countDays = timeLeft.days() || 0;
     this.countHours = timeLeft.hours() || 0;
@@ -452,7 +444,7 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   get isEnded() {
-    return moment().isAfter(this.itemPirs.expirationDt);
+    return moment().isAfter(this.auctionExpirationDt);
   }
 
   @Watch('now')
@@ -480,12 +472,19 @@ export default class PirsItem extends Vue.with(Props) {
       collectionOwner: this.art.collectionOwner,
       itemIndex: this.art.nft.index,
     }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
       if (this.isConnected) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        this.itemPirs = response;
-        console.log('pirs data', this.itemPirs);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const itemPirs = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
+
+        console.log('itemPirs', itemPirs);
+        this.auctionExpirationDt = itemPirs.expirationDt;
+        this.tokenPriceAddress = itemPirs.minimumBid.tokenPriceAddress;
+        this.highestBidAmount = (itemPirs.highestBid) ? itemPirs.highestBid.amount : 0;
+        this.auctionTokenSymbol = itemPirs.minimumBid.tokenSymbol;
+        if (itemPirs) {
+          void this.getLastBid();
+          void this.getTime();
+        }
       }
     });
   }

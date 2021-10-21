@@ -98,7 +98,8 @@ export default {
     title: 'Auctions',
     hotBids: 'Auctions 🔥',
     highestBid: 'Highest bid {highestBid}',
-    currentBalance: 'Balance',
+    currentBalance: 'Your Balance:',
+
     topSellers: {
       top: 'Top {sellers}',
       sellers: 'Sellers',
@@ -129,6 +130,9 @@ export default {
     },
     pirsModal: {
       title: 'Pirs share',
+      totalPirsAmount: 'Total pirs amount: ',
+      algop: '$ALGOP',
+      yourBalance: 'Your balance: ',
     },
   },
   sellYourArt: {
@@ -274,10 +278,6 @@ export default {
     expressions: 'Expressions',
     monero: 'Monero',
     myPainting: 'My Painting',
-    pirsTab: {
-      pirs: 'PIRS',
-      btnPirs: 'Pirs Share',
-    },
     newPainting: 'New Painting',
     bidbackTab: {
       lastBids: 'Last Bids',
@@ -294,6 +294,24 @@ export default {
       bidbackBtn: 'Bidback Share',
       symbol: '#',
       earned: 'ALGOP Earned',
+    },
+    pirsTab: {
+      pirs: 'PIRS',
+      btnPirs: 'Pirs Share',
+      lastBids: 'Last Bids',
+      auctionStatuses: {
+        youWon: 'You won!',
+        youAreLosing: 'You are losing!',
+        youLost: 'You lost this time',
+        auctionEnded: 'AuctionEnded',
+        lastText: 'There is no bid so far',
+      },
+      harvest: 'Harvest',
+      stakedAlgop: 'ALGOP staked',
+      withdrawAmount: 'You can withdraw {amount} ALGOP of pirs',
+      symbol: '#',
+      earned: 'ALGOP Earned',
+      lastText: 'There is no bid so far',
     },
   },
   viewArt: {

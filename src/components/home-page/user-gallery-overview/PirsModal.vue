@@ -11,12 +11,16 @@
         {{ ' ' + $t('dashboard.auctions.pirsModal.title') }}
       </p>
       <div v-if="!loadingTable">
-        <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBalance`) }}</span> {{ $t(`dashboard.algop`) }} {{ formattedBalance }}
-        </p>
-        <!-- <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.currentBidBackAmount`) }}</span>{{ ` ${bidBackAmount}` }}
-        </p> -->
+        <div v-if="!loadingTable">
+          <p class="q-mb-none">
+            <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.yourBalance`) }}</span>
+            {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ formattedBalance }}
+          </p>
+          <p class="q-mb-none">
+            <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.totalPirsAmount`) }}</span>
+            {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ totalPirsStakes }}
+          </p>
+        </div>
       </div>
       <div class="q-pa-md">
         <q-table
@@ -68,7 +72,7 @@ interface IBidbackPercentages {
       ]),
     ...mapGetters(
       'auctions', [
-        'getBidbackIndex',
+        'getPirsIndex',
       ]),
   },
 })
@@ -77,8 +81,9 @@ export default class PirsModal extends Vue {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  getBidbackIndex!: number;
+  getPirsIndex!: number;
   isConnected!: boolean;
+  totalPirsStakes: number = 0;
 
   modal: boolean = false;
   userBalance: number = 0;
@@ -118,12 +123,22 @@ export default class PirsModal extends Vue {
   }
 
   mounted() {
+    void this.getTotalPirsStakes();
     void this.setAccountBalance();
   }
 
+  async getTotalPirsStakes() {
+    try {
+      this.totalPirsStakes = await this.rewardsSystem.getTotalPirsStakes(this.getPirsIndex);
+    } catch {
+      console.log('error getPirsPercentages');
+    }
+  }
+
+  // nao tem essa função no contrato
   async getBidbackPercentages() {
     try {
-      const response = await this.rewardsSystem.getBidbackPercentages(this.getBidbackIndex) as unknown as IBidbackPercentages;
+      const response = await this.rewardsSystem.getBidbackPercentages(this.getPirsIndex) as unknown as IBidbackPercentages;
       const bidbackPercentages = response.percentages;
 
       for (let i = 0; i < this.userBid.length; i++) {
@@ -160,7 +175,7 @@ export default class PirsModal extends Vue {
           this.userBid.push({ name: name, account: account, stackedAlgop: 0, stackedAlgopPercentage: 0 });
         }
       });
-      void this.getBidbackPercentages();
+      // void this.getBidbackPercentages();
       this.loadingTable = false;
     });
   }

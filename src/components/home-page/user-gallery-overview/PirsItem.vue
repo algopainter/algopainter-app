@@ -10,7 +10,7 @@
     <div class="col-12 col-md-3 col-lg-4 col-sm-6 col-xs-12 text-last">
       <div class="text">
         <div class="text text-bold text-h6">
-          {{ $t('dashboard.gallery.bidbackTab.symbol') }}{{ art.nft.index }} {{ art.title }}
+          {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.nft.index }} {{ art.title }}
           <q-tooltip
             anchor="bottom middle"
             max-width="200px"
@@ -21,14 +21,14 @@
         </div>
         {{ art.description }}
       </div>
-      <div>
+      <!-- <div>
         <div class="text-bold text-h4 q-mt-md">
           {{ $t('dashboard.gallery.bidbackTab.lastBids') }}
         </div>
         <p class="coin text-h6">
           {{ lastBid }}
         </p>
-      </div>
+      </div> -->
       <div class="text-bold text-h6">
         <!--
         <p class="won-bid">
@@ -40,6 +40,14 @@
           class="text-bold text-end"
         >
           <div>
+            <div class="text-bold text-h4 q-mt-md">
+              {{ $t('dashboard.gallery.pirsTab.lastBids') }}
+            </div>
+            <p class="coin">
+              {{ $t('dashboard.gallery.pirsTab.lastText') }}
+            </p>
+          </div>
+          <div>
             <p class="text-bold text-h6">
               {{ $t('dashboard.bid.auctionEnd') }}
             </p>
@@ -48,6 +56,14 @@
         <div
           v-else
         >
+          <div>
+            <div class="text-bold text-h4 q-mt-md">
+              {{ $t('dashboard.gallery.pirsTab.lastBids') }}
+            </div>
+            <p class="coin text-h6">
+              {{ lastBid }}
+            </p>
+          </div>
           <div
             class="text-bold row  justify-center text-end"
           >
@@ -91,7 +107,7 @@
     <div class="col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12 items-center field-stack">
       <div>
         <span class="text-bold flex">
-          {{ $t('dashboard.gallery.bidbackTab.earned') }}
+          {{ $t('dashboard.gallery.pirsTab.earned') }}
         </span>
         <div
           class="flex container"
@@ -105,7 +121,7 @@
             readonly
           />
           <algo-button
-            :label="$t('dashboard.gallery.bidbackTab.harvest')"
+            :label="$t('dashboard.gallery.pirsTab.harvest')"
             color="primary"
             class="btn-havest"
             :disable="isCoinHarvestDisabled"
@@ -113,7 +129,7 @@
           />
         </div>
         <span>
-          {{ $t('dashboard.gallery.bidbackTab.stakedAlgop') }}
+          {{ $t('dashboard.gallery.pirsTab.stakedAlgop') }}
         </span>
         <div class="flex container">
           <q-input
@@ -145,7 +161,7 @@
           />
         </div>
         <div class="text-primary q-my-sm">
-          {{ $t('dashboard.gallery.bidbackTab.withdrawAmount', {
+          {{ $t('dashboard.gallery.pirsTab.withdrawAmount', {
             amount: coinHarvestAmount,
           }) }}
         </div>
@@ -475,8 +491,6 @@ export default class PirsItem extends Vue.with(Props) {
       if (this.isConnected) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const itemPirs = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
-
-        console.log('itemPirs', itemPirs);
         this.auctionExpirationDt = itemPirs.expirationDt;
         this.tokenPriceAddress = itemPirs.minimumBid.tokenPriceAddress;
         this.highestBidAmount = (itemPirs.highestBid) ? itemPirs.highestBid.amount : 0;

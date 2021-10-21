@@ -76,19 +76,6 @@
   },
   {
     "inputs": [],
-    "name": "CONFIGURATOR_ROLE",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
       {
@@ -262,11 +249,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "_maxCreatorPirsPercentage",
+        "name": "_maxCreatorPirsRate",
         "type": "uint256"
       }
     ],
-    "name": "setMaxCreatorPirsPercentage",
+    "name": "setMaxCreatorPirsRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -275,11 +262,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_maxInvestorPirsPercentage",
+        "name": "_maxInvestorPirsRate",
         "type": "uint256"
       }
     ],
-    "name": "setMaxInvestorPirsPercentage",
+    "name": "setMaxInvestorPirsRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -288,11 +275,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_maxBidbackPercentage",
+        "name": "_maxBidbackRate",
         "type": "uint256"
       }
     ],
-    "name": "setMaxBidbackPercentage",
+    "name": "setMaxBidbackRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -306,11 +293,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "_bidbackPercentage",
+        "name": "_bidbackRate",
         "type": "uint256"
       }
     ],
-    "name": "setBidbackPercentage",
+    "name": "setBidbackRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -329,11 +316,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "_investorPirsPercentage",
+        "name": "_investorPirsRate",
         "type": "uint256"
       }
     ],
-    "name": "setInvestorPirsPercentage",
+    "name": "setInvestorPirsRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -347,11 +334,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "_creatorPirsPercentage",
+        "name": "_creatorPirsRate",
         "type": "uint256"
       }
     ],
-    "name": "setCreatorPirsPercentage",
+    "name": "setCreatorPirsRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -364,7 +351,45 @@
         "type": "uint256"
       }
     ],
-    "name": "getBidbackPercentage",
+    "name": "getBidbackRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getInvestorPirsRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCreatorPirsRate",
     "outputs": [
       {
         "internalType": "uint256",
@@ -381,52 +406,9 @@
         "internalType": "address",
         "name": "_tokenAddress",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_tokenId",
-        "type": "uint256"
       }
     ],
-    "name": "getInvestorPirsPercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "getCreatorPirsPercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "getMaxCreatorPirsPercentage",
+    "name": "getMaxCreatorPirsRate",
     "outputs": [
       {
         "internalType": "uint256",
@@ -439,7 +421,7 @@
   },
   {
     "inputs": [],
-    "name": "getMaxInvestorPirsPercentage",
+    "name": "getMaxInvestorPirsRate",
     "outputs": [
       {
         "internalType": "uint256",
@@ -452,7 +434,26 @@
   },
   {
     "inputs": [],
-    "name": "getMaxBidbackPercentage",
+    "name": "getMaxBidbackRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRewardsRate",
     "outputs": [
       {
         "internalType": "uint256",

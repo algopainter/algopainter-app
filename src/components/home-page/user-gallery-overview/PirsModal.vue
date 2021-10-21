@@ -158,6 +158,7 @@ export default class PirsModal extends Vue {
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const response = this.$store.getters['auctions/getImagePastOwners'] as IOwnerPirs[];
+      console.log('response', response);
       const pastOwners: IOwnerPirs[] = [];
       const bidderAccounts: string|string[] = [];
 

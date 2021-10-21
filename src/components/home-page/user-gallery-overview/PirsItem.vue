@@ -279,7 +279,8 @@ export default class PirsItem extends Vue.with(Props) {
   auctionExpirationDt: string = '';
   tokenPriceAddress: string = '';
   highestBidAmount: number = 0;
-  auctionTokenSymbol: string =''
+  auctionTokenSymbol: string = '';
+  auctionIndex: number = 0;
 
   withdrawingPirs: boolean = false;
   displayingStatus: boolean = false;
@@ -323,7 +324,7 @@ export default class PirsItem extends Vue.with(Props) {
     void this.getPirsItem();
     void this.getPirsPercentage();
     void this.getUserStackedPirs();
-    // void this.formatTime();
+    void this.formatTime();
   }
 
   getLastBid() {
@@ -399,7 +400,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   async getPirsPercentage() {
     try {
-      this.auctionPirs = await this.bidBackPirsSystem.getInvestorPirsPercentage(this.art.collectionOwner, this.art.nft.index);
+      this.auctionPirs = await this.bidBackPirsSystem.getInvestorPirsRate(this.auctionIndex);
     } catch (error) {
       console.log('error getInvestorPirsPercentage');
     }
@@ -438,13 +439,12 @@ export default class PirsItem extends Vue.with(Props) {
     }
   }
 
-  // formatTime(): void {
-  //   this.monthExpirations = moment(this.itemPirs.expirationDt).format('MMM');
-
-  //   this.dayExpirations = moment(this.itemPirs.expirationDt).format('DD');
-  //   this.yearExpirations = moment(this.itemPirs.expirationDt).format('YYYY');
-  //   this.hoursExpirations = moment(this.itemPirs.expirationDt).format('LT');
-  // }
+  formatTime(): void {
+    this.monthExpirations = moment(this.auctionExpirationDt).format('MMM');
+    this.dayExpirations = moment(this.auctionExpirationDt).format('DD');
+    this.yearExpirations = moment(this.auctionExpirationDt).format('YYYY');
+    this.hoursExpirations = moment(this.auctionExpirationDt).format('LT');
+  }
 
   getTime() {
     const newEnded = moment(this.auctionExpirationDt);
@@ -468,7 +468,7 @@ export default class PirsItem extends Vue.with(Props) {
     if (!this.stopCount) {
       if (this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
         if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
-          // this.formatTime();
+          this.formatTime();
           window.location.reload();
         }
         this.stopCount = true;
@@ -495,6 +495,7 @@ export default class PirsItem extends Vue.with(Props) {
         this.tokenPriceAddress = itemPirs.minimumBid.tokenPriceAddress;
         this.highestBidAmount = (itemPirs.highestBid) ? itemPirs.highestBid.amount : 0;
         this.auctionTokenSymbol = itemPirs.minimumBid.tokenSymbol;
+        this.auctionIndex = itemPirs.index;
         if (itemPirs) {
           void this.getLastBid();
           void this.getTime();

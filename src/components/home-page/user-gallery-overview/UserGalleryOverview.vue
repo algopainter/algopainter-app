@@ -319,26 +319,6 @@ export default class UserGalleryOverview extends Vue {
   noMoreImages: boolean = false;
 
   currentBtnClicked: number = 1;
-  galleryButtons = [
-    {
-      label: 'gallery',
-      action: () => this.showGalleryArts(),
-      cont: '',
-      btnClicked: 1,
-    },
-    {
-      label: 'onSale',
-      action: () => this.showOnSale(),
-      cont: '',
-      btnClicked: 2,
-    },
-    {
-      label: 'like',
-      action: () => this.showLikes(),
-      cont: '',
-      btnClicked: 3,
-    },
-  ];
 
   currentCollection: string = 'All Collections';
 

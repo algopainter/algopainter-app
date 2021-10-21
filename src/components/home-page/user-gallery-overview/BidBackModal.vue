@@ -55,10 +55,12 @@ interface IUserBid {
   stackedAlgopPercentage: number;
 }
 
+/*
 interface IBidbackPercentages {
   percentages: [],
   users: [],
 }
+*/
 
 @Options({
   components: {

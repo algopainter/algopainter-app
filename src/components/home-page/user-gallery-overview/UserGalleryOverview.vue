@@ -368,7 +368,6 @@ export default class UserGalleryOverview extends Vue {
     void this.getLikes(1, this.currentCollection);
     void this.getOnSale(1, this.currentCollection);
     void this.getGalleryArts(1, this.currentCollection);
-
   }
 
   @Watch('currentCollection')
@@ -515,7 +514,6 @@ export default class UserGalleryOverview extends Vue {
   }
 
   async loadMore(collection:string = this.currentCollection, filter: boolean = false) {
-
     if (filter) {
       this.galleryTabs[0].loadingData = true;
       this.galleryTabs[0].data = [];
@@ -583,7 +581,6 @@ export default class UserGalleryOverview extends Vue {
   }
 
   async loadMoreLike(collection:string = this.currentCollection, filter: boolean = false) {
-
     if (filter) {
       this.galleryTabs[2].loadingData = true;
       this.galleryTabs[2].data = [];

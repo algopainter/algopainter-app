@@ -281,11 +281,7 @@ export default class MyPaint extends Vue.with(Props) {
     const allowance = await this.auctionCoinTokenProxy
       .allowance(this.account, this.auctionRewardsContractAddress);
 
-    console.log('allowance', allowance);
-    console.log('amount', amount);
-
     if (allowance < amount) {
-      console.log('in');
       this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingInput;
 
       const { decimalPlaces } = this.coinDetails;
@@ -294,8 +290,6 @@ export default class MyPaint extends Vue.with(Props) {
         Number.MAX_SAFE_INTEGER,
         decimalPlaces,
       );
-
-      console.log('allowanceAmount', allowanceAmount);
 
       await this.auctionCoinTokenProxy.approve(
         this.auctionRewardsContractAddress,

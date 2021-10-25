@@ -1,15 +1,15 @@
 <template>
   <div class="row justify-between q-mb-md">
-    <div class="col-12 col-md-3 col-lg-3  col-xl-2 col-sm-6 col-xs-12">
+    <div class="col-12 col-md-3 col-lg-3  col-xl-3 col-sm-6 col-xs-12">
       <q-img
         class="previewImage"
         :src="art.nft.previewImage"
         alt="img art"
       />
     </div>
-    <div class="col-12 col-md-3 col-lg-4 col-sm-6 col-xs-12 text-last">
+    <div class="col-12 col-md-3 col-lg-4  col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
-        <div class="text text-bold text-h6">
+        <div class="text-title text-bold text-h6">
           {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.nft.index }} {{ art.title }}
           <q-tooltip
             anchor="bottom middle"
@@ -73,6 +73,43 @@
             class="text-bold"
           >
             <div
+              v-if="countYear >= 1"
+              class="row justify-center time-year q-gutter-sm "
+            >
+              <div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countYear }}
+                </div>
+                <span> {{ $t('dashboard.bid.year') }} </span>
+              </div>
+              <div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
+                <span> {{ $t('dashboard.bid.days') }} </span>
+              </div>
+
+              <div>
+                <div class="text-bold">
+                  <!-- {{ hours }}--> {{ countHours }}
+                </div>
+                <span>{{ $t('dashboard.bid.hours') }}</span>
+              </div>
+              <div>
+                <div class="text-bold">
+                  <!-- {{ minutes }} -->{{ countMinutes }}
+                </div>
+                <span>{{ $t('dashboard.bid.minis') }}</span>
+              </div>
+              <div>
+                <div class="text-bold">
+                  <!-- {{ seconds }} --> {{ countSeconds }}
+                </div>
+                <span>{{ $t('dashboard.bid.seconds') }}</span>
+              </div>
+            </div>
+            <div
+              v-else
               class="row justify-start time q-gutter-sm "
             >
               <div>
@@ -81,6 +118,7 @@
                 </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
+
               <div>
                 <div class="text-bold">
                   <!-- {{ hours }}--> {{ countHours }}
@@ -169,7 +207,7 @@
     </div>
     <div class="col-12 col-md-2 col-lg-2 col-sm-4 col-xs-12 ended-part">
       <div
-        class="bidBack text-white column justify-center content-center q-mb-xl"
+        class="pirs text-white column justify-center content-center q-mb-xl"
       >
         <div class="row justify-center items-center content-center">
           {{ auctionPirs + "%" }}
@@ -296,6 +334,7 @@ export default class PirsItem extends Vue.with(Props) {
   yearExpirations: string = ''
   hoursExpirations!: string ;
   countDays: number = 0;
+  countYear: number = 0;
   countHours: number = 0;
   countMinutes: number = 0;
   countSeconds: number = 0;
@@ -449,6 +488,7 @@ export default class PirsItem extends Vue.with(Props) {
   getTime() {
     const newEnded = moment(this.auctionExpirationDt);
     const timeLeft = moment.duration(newEnded.diff(moment()));
+    this.countYear = timeLeft.years() || 0;
     this.countDays = timeLeft.days() || 0;
     this.countHours = timeLeft.hours() || 0;
     this.countMinutes = timeLeft.minutes() || 0;
@@ -509,7 +549,7 @@ export default class PirsItem extends Vue.with(Props) {
 </script>
 
 <style scoped lang="scss">
-.text{
+.text-title{
   white-space: nowrap;
   width: 300px;
   overflow: hidden;
@@ -543,7 +583,7 @@ export default class PirsItem extends Vue.with(Props) {
 .container{
   width: 300px;
 }
-.bidBack{
+.pirs{
   text-align: unset;
   height: 100px;
   width: 100px;
@@ -561,6 +601,12 @@ export default class PirsItem extends Vue.with(Props) {
   .text-last{
     text-align: center;
   }
+  .text-title{
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
   .time{
     justify-content:center;
@@ -587,7 +633,7 @@ export default class PirsItem extends Vue.with(Props) {
   }
    .text{
     text-align: center;
-    margin-left: 4%;
+    align-items: center
   }
 }
 </style>

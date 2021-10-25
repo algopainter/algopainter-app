@@ -17,6 +17,15 @@ export default class AlgoPainterBidBackPirsProxy {
       getCreatorPirsRate(
         contractAddress: string,
       ): ContractSendMethod;
+      setBidbackRate(
+        auctionId: number,
+        bidbackRate: number
+      ): ContractSendMethod;
+      setInvestorPirsRate(
+        tokenAddress: string,
+        tokenId: number,
+        investorPirsRate: number,
+      ): ContractSendMethod;
     };
   };
 
@@ -57,5 +66,29 @@ export default class AlgoPainterBidBackPirsProxy {
     ).call();
 
     return response as number;
+  }
+
+  setBidbackRate(
+    auctionId: number,
+    bidbackRate: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.setBidbackRate(
+      auctionId,
+      bidbackRate,
+    ).send({ from });
+  }
+
+  setInvestorPirsRate(
+    tokenAddress: string,
+    tokenId: number,
+    investorPirsRate: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.setInvestorPirsRate(
+      tokenAddress,
+      tokenId,
+      investorPirsRate,
+    ).send({ from });
   }
 }

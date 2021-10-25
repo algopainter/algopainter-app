@@ -1,15 +1,15 @@
 <template>
-  <div class="row q-mb-md">
-    <div class="col-12 col-md-3 col-lg-3  col-xl-2 col-sm-6 col-xs-12">
+  <div class="row justify-between q-mb-md">
+    <div class="col-12 col-md-3 col-lg-3 col-xl-3 col-xl-2 col-sm-6 col-xs-12">
       <q-img
         class="previewImage"
         :src="art.item.previewImage"
         alt="img art"
       />
     </div>
-    <div class="col-12 col-md-3 col-lg-4 col-sm-6 col-xs-12 text-last">
+    <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
-        <div class="text text-bold text-h6">
+        <div class="text-title text-bold text-h6">
           {{ $t('dashboard.gallery.bidbackTab.symbol') }}{{ art.item.index }} {{ art.item.title }}
           <q-tooltip
             anchor="bottom middle"
@@ -60,7 +60,7 @@
             class="text-bold"
           >
             <div
-              class="row justify-start time q-gutter-sm "
+              class="row justify-center time q-gutter-sm "
             >
               <div>
                 <div class="text-bold">
@@ -445,7 +445,7 @@ export default class gallerySelect extends Vue.with(Props) {
 </script>
 
 <style scoped lang="scss">
-.text{
+.text-title {
   white-space: nowrap;
   width: 300px;
   overflow: hidden;
@@ -496,8 +496,15 @@ export default class gallerySelect extends Vue.with(Props) {
 @media  (max-width:470px) {
   .text{
     text-align: center;
-    margin-left: 4%;
+    align-items: center;
   }
+  .text-title {
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+}
   .text-last{
     text-align: center;
   }

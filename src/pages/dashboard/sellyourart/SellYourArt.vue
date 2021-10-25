@@ -138,6 +138,26 @@
                 </v-field>
               </div>
               <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.bidBack')"
+                  name="bidBack"
+                  rules="required"
+                >
+                  <q-input
+                    type="number"
+                    :label="$t('dashboard.sellYourArt.bidBack')"
+                    :model-value="field.value"
+                    :error-message="errorMessage"
+                    :error="!!errorMessage"
+                    :rules="[val => val <= 30 || 'Please insert a number that is smaller than 30',
+                             val => val >= 0 || 'The number must be bigger than 0']"
+                    @update:modelValue="handleChange"
+                  />
+                </v-field>
+              </div>
+              <div class="col-12">
                 <div class="q-mr-md q-mb-md">
                   {{ $t('dashboard.auctionPage.feeMessage') }}
                 </div>
@@ -183,6 +203,7 @@ import AlgoPainterAuctionSystemProxy, {
   TokenType,
 } from 'src/eth/AlgoPainterAuctionSystemProxy';
 import AlgoPainterItemProxy from 'src/eth/AlgoPainterItemProxy';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
 import { NetworkInfo } from 'src/store/user/types';
 
@@ -197,6 +218,7 @@ interface INewAuction {
   endDate: string;
   endTime: string;
   coin: string;
+  bidBack: number;
 }
 
 interface IAllowedTokens {
@@ -212,6 +234,14 @@ enum CreatingAuctionStatus {
   CreateAuctionAwaitingConfirmation,
   CreateAuctionError,
   AuctionCreated,
+  SettingBidbackAwaitingInput,
+  SettingBidbackAwaitingConfirmation,
+  SettingBidbackError,
+  SettingBidbackCompleted,
+  SettingPirsAwaitingInput,
+  SettingPirsAwaitingConfirmation,
+  SettingPirsError,
+  SettingPirsCompleted,
 }
 
 @Options({
@@ -241,6 +271,8 @@ export default class SellYourArt extends Vue {
   image: IImage | null = null;
   loading: boolean = false;
   loadingCoins: boolean = false;
+  bidbackSystem!: AlgoPainterBidBackPirsProxy;
+  auctionId!: number;
 
   coin: string = '3';
 
@@ -249,6 +281,7 @@ export default class SellYourArt extends Vue {
   creatingAuction: boolean = false;
   displayingStatus: boolean = false;
   createAuctionStatus: CreatingAuctionStatus | null = null;
+  createBidBackStatus: CreatingAuctionStatus | null = null;
 
   /*
   async getFee() {
@@ -307,6 +340,7 @@ export default class SellYourArt extends Vue {
     }
 
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.bidbackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
 
     void this.loadImage();
     void this.loadAvailableTokens();
@@ -370,6 +404,7 @@ export default class SellYourArt extends Vue {
         : hour !== currentHour || minute > currentMinute;
     };
   }
+  // aqui
 
   async approveContract() {
     this.createAuctionStatus = CreatingAuctionStatus.CheckingContractApproved;
@@ -407,7 +442,7 @@ export default class SellYourArt extends Vue {
 
       await this.approveContract();
 
-      const { minimumPrice, endDate, endTime } = auction;
+      const { minimumPrice, endDate, endTime, bidBack } = auction;
       const { decimalPlaces } = this.selectedCoin;
 
       const minimumPriceFormatted = currencyToBlockchain(
@@ -418,7 +453,7 @@ export default class SellYourArt extends Vue {
       this.createAuctionStatus =
         CreatingAuctionStatus.CreateAuctionAwaitingInput;
 
-      await this.auctionSystem.createAuction(
+      const auctionResponse = await this.auctionSystem.createAuction(
         TokenType.ERC721,
         this.image.collectionOwner,
         this.image.nft.index,
@@ -434,11 +469,32 @@ export default class SellYourArt extends Vue {
       });
 
       this.createAuctionStatus = CreatingAuctionStatus.AuctionCreated;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
+      console.log('id leilao ', this.auctionId);
+      await this.setBidback(bidBack);
 
       this.creatingAuction = false;
     } catch {
       this.creatingAuction = false;
     }
+  }
+
+  async setBidback(bidBack: number) {
+    console.log('setBidBack', this.auctionId, bidBack, this.userAccount);
+    this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackAwaitingInput;
+    await this.bidbackSystem.setBidbackRate(
+      this.auctionId,
+      bidBack,
+      this.userAccount,
+    ).on('transactionHash', () => {
+      this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackAwaitingConfirmation;
+      console.log('StransactionHash');
+    }).on('error', () => {
+      console.log('error');
+      this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackError;
+    });
+    this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackCompleted;
   }
 
   onCloseStatusDialog() {

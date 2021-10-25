@@ -97,14 +97,14 @@
           {{ $t('dashboard.gallery.bidbackTab.earned') }}
         </span>
         <div
+          v-if="showHarvestBtn"
           class="flex container"
         >
           <q-input
-            v-model="coinHarvestAmount"
+            v-model="harvestAmount"
             fill-mask="0"
             input-class="text-left"
             class="input-stack-algop"
-            :disable="true"
             readonly
           />
           <algo-button
@@ -112,7 +112,7 @@
             color="primary"
             class="btn-havest"
             :disable="isCoinHarvestDisabled"
-            @click="harvestAlgop"
+            @click="claimBidback"
           />
         </div>
         <span>
@@ -120,7 +120,7 @@
         </span>
         <div class="flex container">
           <q-input
-            v-model="coinStakeAmount"
+            v-model="algopStacked"
             fill-mask="0"
             input-class="text-left"
             class="input-stack-algop"
@@ -136,6 +136,7 @@
             label="+"
             color="primary"
             class="btn-staked"
+            :disable="art.ended"
             @click="stackCoin()"
           />
           <stack-modal-algop
@@ -146,11 +147,6 @@
             v-model="openModalUnstack"
             :art="art"
           />
-        </div>
-        <div class="text-primary q-my-sm">
-          {{ $t('dashboard.gallery.bidbackTab.withdrawAmount', {
-            amount: coinHarvestAmount,
-          }) }}
         </div>
       </div>
     </div>
@@ -253,15 +249,17 @@ export default class gallerySelect extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
-  canStack: boolean = false;
-  coinHarvestAmount: number = 0;
-  coinStakeAmount: number = 0;
+
+  algopStacked: number = 0;
   openModal: boolean = false;
   openModalUnstack: boolean = false;
   auctionBidBack: number | null = null;
   isCoinHarvestDisabled: boolean = true;
   disableUnstackBtn: boolean = true;
+  disableStackBtn: boolean = true;
   lastBid: string = '';
+  harvestAmount: number = 0;
+  showHarvestBtn: boolean = false;
 
   withdrawingBidback: boolean = false;
   displayingStatus: boolean = false;
@@ -327,22 +325,19 @@ export default class gallerySelect extends Vue.with(Props) {
     return coin;
   }
 
-  async getUserStackedBidback() {
-    try {
-      this.coinHarvestAmount = await this.rewardsSystem.getTotalBidbackStakes(this.art.index);
-      this.coinHarvestAmount = 1000;
-
-      this.coinStakeAmount = this.coinHarvestAmount;
-
-      this.isCoinHarvestDisabled = (this.coinHarvestAmount <= 0 || !this.art.ended);
-      this.disableUnstackBtn = (this.coinHarvestAmount <= 0);
-    } catch (error) {
-      this.isCoinHarvestDisabled = true;
-      this.disableUnstackBtn = true;
+  getUserStackedBidback() {
+    if (this.art.bidbacks) {
+      Object.keys(this.art.bidbacks).forEach(() => {
+        this.algopStacked = this.art.bidbacks[this.account as unknown as number] as number;
+      });
     }
+
+    this.isCoinHarvestDisabled = (this.algopStacked <= 0 || !this.art.ended);
+    this.disableUnstackBtn = (this.algopStacked <= 0);
+    this.showHarvestBtn = (this.art.ended && this.algopStacked > 0);
   }
 
-  async harvestAlgop() {
+  async claimBidback() {
     try {
       this.withdrawingBidback = true;
       this.displayingStatus = true;
@@ -372,10 +367,6 @@ export default class gallerySelect extends Vue.with(Props) {
     } catch (error) {
       console.log('error getBidbackPercentage');
     }
-  }
-
-  stackAlgo() {
-    this.canStack = true;
   }
 
   stackCoin() {

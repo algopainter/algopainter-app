@@ -16,8 +16,8 @@
           {{ $t(`dashboard.auctions.bidbackModal.algop`) }} {{ formattedBalance }}
         </p>
         <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidbackModal.totalBidBackAmount`) }}</span> 
-          {{ $t(`dashboard.auctions.bidbackModal.algop`) }} {{ totalBidbackStakes }}
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidbackModal.totalBidBackAmount`) }}</span>
+          {{ $t(`dashboard.auctions.bidbackModal.algop`) }} {{ totalBidbackStaked }}
         </p>
       </div>
       <div class="q-pa-md">
@@ -48,10 +48,11 @@ import { NetworkInfo } from 'src/store/user/types';
 
 interface IUserBid {
   name: string | null;
-  account: string;
+  account: string | unknown;
+  formattedAccount: string | unknown;
   highestBid: number;
   tokenSymbol: string;
-  stackedAlgop: number;
+  stackedAlgop: number | unknown;
   stackedAlgopPercentage: number;
 }
 
@@ -83,7 +84,7 @@ export default class BidBackModal extends Vue {
   modal: boolean = false;
   userBalance: number = 0;
   formattedBalance: string = '';
-  totalBidbackStakes: number = 0;
+  totalBidbackStaked: number = 0;
 
   userBid: IUserBid[] = [];
   loadingTable: boolean = true;
@@ -93,7 +94,7 @@ export default class BidBackModal extends Vue {
       required: true,
       label: 'Name',
       align: 'left',
-      field: (userBid: { name: string; account: string; }) => (userBid.name) ? userBid.name : userBid.account,
+      field: (userBid: { name: string; formattedAccount: string; }) => (userBid.name) ? userBid.name : userBid.formattedAccount,
       sortable: true,
     },
     {
@@ -125,42 +126,17 @@ export default class BidBackModal extends Vue {
   }
 
   mounted() {
-    void this.getTotalBidbackStakes();
     void this.setAccountBalance();
   }
-
-  async getTotalBidbackStakes() {
-    try {
-      this.totalBidbackStakes = await this.rewardsSystem.getTotalBidbackStakes(this.getBidbackIndex);
-    } catch {
-      console.log('error getBidbackPercentages');
-    }
-  }
-
-  /*
-  async getBidbackPercentages() {
-    try {
-      const response = await this.rewardsSystem.getBidbackPercentages(this.getBidbackIndex) as unknown as IBidbackPercentages;
-      const bidbackPercentages = response.percentages;
-
-      for (let i = 0; i < this.userBid.length; i++) {
-        this.userBid[i].stackedAlgopPercentage = (typeof bidbackPercentages[i] === 'undefined') ? 0 : bidbackPercentages[i];
-      }
-    } catch {
-      console.log('error getBidbackPercentages');
-    }
-  }
-  */
 
   getAuctions() {
     this.loadingTable = true;
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
       account: this.auctionId as string,
-    }).then(() => {
+    }).then(async() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;
-      console.log('auction', auction);
       const auctionBids = auction.bids;
       const auctionBidsReversed: IBid[] = [];
       const bidderAccounts: string|string[] = [];
@@ -171,24 +147,43 @@ export default class BidBackModal extends Vue {
       auctionBidsReversed.reverse();
 
       auctionBidsReversed.forEach(bid => {
-        const account = this.formatAccount(bid.account);
+        const account = bid.account;
+        const formattedAccount = this.formatAccount(account);
         const name = this.formatName(bid.name);
         const tokenSymbol = bid.tokenSymbol;
         const highestBid = bid.amount / 1000000000000000000;
-        // const stackedAlgopPercentage = bid.stackedAlgopPercentage;
-        // const stackedAlgop = bid.stackedAlgop;
-
-        const stackedAlgop = Math.floor(Math.random() * (100 - 0) + 0);
-        let sum = 0;
-        sum += stackedAlgop;
-        const stackedAlgopPercentage = (stackedAlgop / sum) * 100;
 
         if (!bidderAccounts.includes(account)) {
           bidderAccounts.push(account);
-          this.userBid.push({ name: name, account: account, highestBid: highestBid, tokenSymbol: tokenSymbol, stackedAlgop: stackedAlgop, stackedAlgopPercentage: stackedAlgopPercentage });
+
+          this.userBid.push({
+            name: name,
+            account: account,
+            formattedAccount: formattedAccount,
+            highestBid: highestBid,
+            tokenSymbol: tokenSymbol,
+            stackedAlgop: 0,
+            stackedAlgopPercentage: 0,
+          });
         }
       });
-      // void this.getBidbackPercentages();
+
+      this.totalBidbackStaked = await this.rewardsSystem.getTotalBidbackStakes(
+        this.getBidbackIndex,
+      );
+
+      const bidbackUserList = auction.bidbacks;
+
+      if (auction.bidbacks) {
+        Object.keys(bidbackUserList).forEach((account) => {
+          this.userBid.forEach((bidder) => {
+            bidder.account = (account === bidder.account) ? bidder.stackedAlgop = bidbackUserList[account as unknown as number] : bidder.stackedAlgop = 0;
+            if (typeof bidder.stackedAlgop === 'number') {
+              bidder.stackedAlgopPercentage = (bidder.stackedAlgop > 0) ? (bidder.stackedAlgop / this.totalBidbackStaked) * 100 : 0;
+            }
+          });
+        });
+      }
       this.loadingTable = false;
     });
   }

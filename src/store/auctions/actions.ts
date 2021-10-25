@@ -6,8 +6,10 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 
 const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   async getHotBids() {
+    const algopainterAuctionSystemCurrentAddress = process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS_97;
     try {
-      const res = await api.get('auctions/?ended=false&order.expirationDt=1');
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const res = await api.get(`auctions/?ended=false&address=${algopainterAuctionSystemCurrentAddress}&order.expirationDt=1`);
       const hotBids = res.data as [];
       this.commit('auctions/SET_HOT_BIDS', hotBids);
     } catch (e) {
@@ -43,16 +45,19 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     const account = value.account as string || '';
     const collectionOwner = value.collectionOwner as string;
     const itemIndex = value.itemIndex as number;
+    const algopainterAuctionSystemCurrentAddress = process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS_97;
 
     try {
-      const res = await api.get(`auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}`);
+      const res =
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        await api.get(`auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}&address=${algopainterAuctionSystemCurrentAddress}`);
       const auctions = res.data as [];
       const auctionsLength = auctions.length;
       // eslint-disable-next-line no-mixed-operators
       if (auctionsLength && collectionOwner || auctionsLength && itemIndex) {
         const lastAuction = auctions[auctionsLength - 1] as IAuctionItem;
-        const expirationDate = lastAuction;
-        this.commit('auctions/SET_PIRS_AUCTION', expirationDate);
+        console.log('lastAuction', lastAuction);
+        this.commit('auctions/SET_PIRS_AUCTION', lastAuction);
       } else {
         this.commit('auctions/SET_AUCTIONS', auctions);
       }

@@ -90,7 +90,7 @@
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.AuctionCreated"
+              v-else
               size="60px"
               color="positive"
               text-color="white"
@@ -104,6 +104,58 @@
             </div>
             <div>
               {{ secondStepLabel }}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 step">
+          <div class="avatar">
+            <q-avatar
+              v-if="createAuctionStatus < CreatingAuctionStatus.SettingBidbackAwaitingInput"
+              size="60px"
+              color="grey"
+              text-color="white"
+            >
+              <q-icon name="mdi-cancel" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidbackAwaitingInput"
+              size="60px"
+              color="warning"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidbackAwaitingConfirmation"
+              size="60px"
+              color="primary"
+              text-color="white"
+            >
+              <q-spinner color="white" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidbackError"
+              size="60px"
+              color="negative"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert-circle" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidbackCompleted"
+              size="60px"
+              color="positive"
+              text-color="white"
+            >
+              <q-icon name="mdi-check" />
+            </q-avatar>
+          </div>
+          <div class="label">
+            <div class="title">
+              {{ $t('dashboard.sellYourArt.statuses.createBidBack') }}
+            </div>
+            <div>
+              {{ bidBackLabel }}
             </div>
           </div>
         </div>
@@ -134,6 +186,14 @@ enum CreatingAuctionStatus {
   CreateAuctionAwaitingConfirmation,
   CreateAuctionError,
   AuctionCreated,
+  SettingBidbackAwaitingInput,
+  SettingBidbackAwaitingConfirmation,
+  SettingBidbackError,
+  SettingBidbackCompleted,
+  SettingPirsAwaitingInput,
+  SettingPirsAwaitingConfirmation,
+  SettingPirsError,
+  SettingPirsCompleted,
 }
 
 @Options({
@@ -172,6 +232,21 @@ export default class CreateAuctionStatusCard extends Vue {
       case CreatingAuctionStatus.AuctionCreated:
         return this.$t('dashboard.sellYourArt.statuses.createAuctionCreated');
       default:
+        return this.$t('dashboard.sellYourArt.statuses.createAuction');
+    }
+  }
+
+  get bidBackLabel() {
+    switch (this.createAuctionStatus) {
+      case CreatingAuctionStatus.SettingBidbackAwaitingInput:
+        return this.$t('dashboard.sellYourArt.statuses.bidbackAwaitingInput');
+      case CreatingAuctionStatus.SettingBidbackAwaitingConfirmation:
+        return this.$t('dashboard.sellYourArt.statuses.bidbackAwaitingConfirmation');
+      case CreatingAuctionStatus.SettingBidbackError:
+        return this.$t('dashboard.sellYourArt.statuses.bidbackError');
+      case CreatingAuctionStatus.SettingBidbackCompleted:
+        return this.$t('dashboard.sellYourArt.statuses.bidbackCompleted');
+      default:
         return '';
     }
   }
@@ -179,7 +254,9 @@ export default class CreateAuctionStatusCard extends Vue {
   get okBtnDisabled() {
     return this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
       this.createAuctionStatus !== CreatingAuctionStatus.ContractApprovedError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError;
+      this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
+      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError &&
+      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackCompleted;
   }
 }
 </script>

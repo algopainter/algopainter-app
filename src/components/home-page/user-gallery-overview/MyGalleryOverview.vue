@@ -663,10 +663,11 @@ export default class MyGalleryOverview extends Vue {
       const response = this.$store.getters['collections/GET_USER_PAST_IMAGES'] as IAxiosPaginated;
       if (this.isConnected) {
         this.galleryTabs[3].data = response.data;
-        this.galleryTabs[3].cont = response.count;
-        this.galleryTabs[3].contLabel = ` (${response.count})`;
+        this.galleryTabs[3].cont = response.count > 0 ? response.count : 0;
+        console.log('this.galleryTabs[3].cont', this.galleryTabs[3].cont);
+        this.galleryTabs[3].contLabel = ` (${this.galleryTabs[3].cont})`;
         this.galleryTabs[3].maxPages = response.pages;
-        this.galleryTabs[3].noData = (this.galleryTabs[3].data.length === 0);
+        this.galleryTabs[3].noData = (this.galleryTabs[3].data === undefined);
       }
       this.galleryTabs[3].loadingData = false;
     });

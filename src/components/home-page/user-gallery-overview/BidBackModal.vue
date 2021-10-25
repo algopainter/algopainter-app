@@ -173,13 +173,20 @@ export default class BidBackModal extends Vue {
       );
 
       const bidbackUserList = auction.bidbacks;
+      let isVariableSet = false;
 
       if (auction.bidbacks) {
         Object.keys(bidbackUserList).forEach((account) => {
           this.userBid.forEach((bidder) => {
-            bidder.account = (account === bidder.account) ? bidder.stackedAlgop = bidbackUserList[account as unknown as number] : bidder.stackedAlgop = 0;
+            if (account === bidder.account) {
+              bidder.stackedAlgop = bidbackUserList[account as unknown as number];
+              isVariableSet = true;
+            } else if (!isVariableSet) {
+              bidder.stackedAlgop = 0;
+            }
             if (typeof bidder.stackedAlgop === 'number') {
               bidder.stackedAlgopPercentage = (bidder.stackedAlgop > 0) ? (bidder.stackedAlgop / this.totalBidbackStaked) * 100 : 0;
+              bidder.stackedAlgopPercentage = bidder.stackedAlgopPercentage.toFixed(2) as unknown as number;
             }
           });
         });

@@ -491,6 +491,7 @@ export default class PirsItem extends Vue.with(Props) {
       if (this.isConnected) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const itemPirs = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
+        console.log('itemPirs', itemPirs);
         this.auctionExpirationDt = itemPirs.expirationDt;
         this.tokenPriceAddress = itemPirs.minimumBid.tokenPriceAddress;
         this.highestBidAmount = (itemPirs.highestBid) ? itemPirs.highestBid.amount : 0;

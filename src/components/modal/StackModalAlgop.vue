@@ -85,11 +85,28 @@ import { Vue, Options, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import { mapGetters } from 'vuex';
 import { QDialog, Notify } from 'quasar';
+import getAlgoPainterContractByNetworkId, { getRewardsSystemContractByNetworkId } from 'src/eth/Config';
+import { numberToString } from 'src/helpers/format/numberToString';
+import { auctionCoins } from 'src/helpers/auctionCoins';
+import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
+import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import { NetworkInfo } from 'src/store/user/types';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import UserUtils from 'src/helpers/user';
+
+enum PlacingBidbackStatus {
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  PlaceBidbackAwaitingInput,
+  PlaceBidbackAwaitingConfirmation,
+  PlaceBidbackError,
+  BidbackCreated,
+}
 
 class Props {
   algopStack= prop({
@@ -119,16 +136,18 @@ class Props {
 
 export default class MyPaint extends Vue.with(Props) {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
+  auctionCoinTokenProxy!: ERC20TokenProxy;
+  auctionSystemProxy!: AlgoPainterAuctionSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
   modal: boolean = true;
-  isContractApproved: boolean = true;
   isDisabled: boolean = true;
   stakeAmount: number | null | string = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
+  placingBidbackStatus: PlacingBidbackStatus | null = null;
 
   show() {
     this.$refs.dialog.show();
@@ -192,16 +211,28 @@ export default class MyPaint extends Vue.with(Props) {
 
   mounted() {
     this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
     void this.setAccountBalance();
   }
 
   async stakeAlgop() {
     this.isConfirmBtnLoading = true;
+
+    const { decimalPlaces } = this.coinDetails;
+
+    const stakeAmount = currencyToBlockchain(
+      Number(this.stakeAmount),
+      decimalPlaces,
+    );
+
+    await this.approveContractTransfer(stakeAmount);
+
     try {
       if (this.stakeAmount && typeof this.stakeAmount === 'number') {
         await this.rewardsSystem.stakeBidback(this.art.index, this.stakeAmount, this.account).on('transactionHash', () => {
           Notify.create({
-            message: 'Algop unstaked successfully',
+            message: 'Algop staked successfully',
             color: 'green',
             icon: 'mdi-check',
           });
@@ -222,8 +253,55 @@ export default class MyPaint extends Vue.with(Props) {
     this.isConfirmBtnLoading = false;
   }
 
-  approveContract() {
-    this.isContractApproved = false;
+  get auctionRewardsContractAddress() {
+    return getRewardsSystemContractByNetworkId(this.networkInfo.id);
+  }
+
+  get algoPainterContractByNetworkId() {
+    return getAlgoPainterContractByNetworkId(this.networkInfo.id) as string;
+  }
+
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      const { tokenPriceAddress } = this.art.minimumBid;
+
+      return coin.tokenAddress.toLowerCase() === tokenPriceAddress;
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
+
+  async approveContractTransfer(amount: number) {
+    this.placingBidbackStatus = PlacingBidbackStatus.CheckingAllowance;
+
+    const allowance = await this.auctionCoinTokenProxy
+      .allowance(this.account, this.auctionRewardsContractAddress);
+
+    if (allowance < amount) {
+      this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingInput;
+
+      const { decimalPlaces } = this.coinDetails;
+
+      const allowanceAmount = currencyToBlockchain(
+        Number.MAX_SAFE_INTEGER,
+        decimalPlaces,
+      );
+
+      await this.auctionCoinTokenProxy.approve(
+        this.auctionRewardsContractAddress,
+        numberToString(allowanceAmount),
+        this.account,
+      ).on('error', () => {
+        this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
+      }).on('transactionHash', () => {
+        this.placingBidbackStatus =
+          PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
+      });
+    }
   }
 }
 </script>

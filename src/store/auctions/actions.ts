@@ -56,7 +56,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       // eslint-disable-next-line no-mixed-operators
       if (auctionsLength && collectionOwner || auctionsLength && itemIndex) {
         const lastAuction = auctions[auctionsLength - 1] as IAuctionItem;
-        console.log('lastAuction', lastAuction);
         this.commit('auctions/SET_PIRS_AUCTION', lastAuction);
       } else {
         this.commit('auctions/SET_AUCTIONS', auctions);
@@ -102,7 +101,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     const perPage = value.perPage as string;
     try {
       const result =
-        await api.get(`users/${account}/auctions/biding/?page=${page}&perPage=${perPage}&order.expirationDt=-1`);
+        await api.get(`users/${account}/auctions/biding/?page=${page}&perPage=${perPage}&order.expirationDt=1`);
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {
@@ -136,10 +135,10 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     this.commit('auctions/SET_BID_BACK_INDEX', value.auctionIndex);
   },
 
-  openPirsModal(type, value: {auctionId: string, auctionIndex: number}) {
+  openPirsModal(type, value: {collectionOwner: string, itemIndex: number}) {
     this.commit('auctions/SET_OPEN_PIRS_MODAL');
-    this.commit('auctions/SET_PIRS_ID', value.auctionId);
-    this.commit('auctions/SET_PIRS_INDEX', value.auctionIndex);
+    this.commit('auctions/SET_PIRS_COLLECTION_OWNER', value.collectionOwner);
+    this.commit('auctions/SET_PIRS_ITEM_INDEX', value.itemIndex);
   },
 };
 

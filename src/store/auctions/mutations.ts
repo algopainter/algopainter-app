@@ -41,11 +41,11 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_IMAGE_PAST_OWNERS(state: AuctionStateInterface, payload) {
     state.owner = payload as [];
   },
-  SET_PIRS_ID(state: AuctionStateInterface, payload) {
-    state.pirsId = payload as number;
+  SET_PIRS_COLLECTION_OWNER(state: AuctionStateInterface, payload) {
+    state.pirsCollectionOwner = payload as string;
   },
-  SET_PIRS_INDEX(state: AuctionStateInterface, payload) {
-    state.pirsIndex = payload as number;
+  SET_PIRS_ITEM_INDEX(state: AuctionStateInterface, payload) {
+    state.pirsItemIndex = payload as number;
   },
   SET_OPEN_PIRS_MODAL(state: AuctionStateInterface) {
     state.openPirsModal = !state.openPirsModal;

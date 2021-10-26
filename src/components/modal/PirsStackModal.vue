@@ -75,14 +75,32 @@ import AlgoButton from 'components/common/Button.vue';
 import { mapGetters } from 'vuex';
 import { QDialog, Notify } from 'quasar';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
+import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import { NetworkInfo } from 'src/store/user/types';
 import { Watch } from 'vue-property-decorator';
 import { IMyGallery } from 'src/models/IMyGallery';
 import UserUtils from 'src/helpers/user';
+import getAlgoPainterContractByNetworkId, { getRewardsSystemContractByNetworkId } from 'src/eth/Config';
+import { numberToString } from 'src/helpers/format/numberToString';
+import { auctionCoins } from 'src/helpers/auctionCoins';
+import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
+import { IAuctionItem } from 'src/models/IAuctionItem';
+
+enum SettingPirsStatus {
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  SetPirsAwaitingInput,
+  SetPirsAwaitingConfirmation,
+  SetPirsError,
+  PirsSet,
+}
 
 class Props {
-  algopStack= prop({
-    type: Number,
+  itemPirs = prop({
+    type: Object as PropType<IAuctionItem>,
     required: true,
   })
 
@@ -108,36 +126,47 @@ class Props {
 
 export default class PirsStackModal extends Vue.with(Props) {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
+  auctionCoinTokenProxy!: ERC20TokenProxy;
+  auctionSystemProxy!: AlgoPainterAuctionSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
   modal: boolean = true;
-  isContractApproved: boolean = true;
   isDisabled: boolean = true;
   stakeAmount: number | null | string = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
+  settingPirsStatus: SettingPirsStatus | null = null;
 
-  show() {
-    this.$refs.dialog.show();
+  mounted() {
+    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
+    void this.setAccountBalance();
   }
 
-  hide() {
-    this.$refs.dialog.hide();
+  get auctionRewardsContractAddress() {
+    return getRewardsSystemContractByNetworkId(this.networkInfo.id);
   }
 
-  onDialogHide() {
-    this.$emit('hide');
+  get algoPainterContractByNetworkId() {
+    return getAlgoPainterContractByNetworkId(this.networkInfo.id) as string;
   }
 
-  closeModal() {
-    this.modal = false;
-  }
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      const { tokenPriceAddress } = this.itemPirs.minimumBid;
 
-  declare $refs: {
-    dialog: QDialog;
-  };
+      return coin.tokenAddress.toLowerCase() === tokenPriceAddress;
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
 
   async setAccountBalance() {
     if (this.isConnected) {
@@ -179,16 +208,49 @@ export default class PirsStackModal extends Vue.with(Props) {
     }
   }
 
-  mounted() {
-    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-    void this.setAccountBalance();
+  async approveContractTransfer(amount: number) {
+    this.settingPirsStatus = SettingPirsStatus.CheckingAllowance;
+
+    const allowance = await this.auctionCoinTokenProxy
+      .allowance(this.account, this.auctionRewardsContractAddress);
+
+    if (allowance < amount) {
+      this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingInput;
+
+      const { decimalPlaces } = this.coinDetails;
+
+      const allowanceAmount = currencyToBlockchain(
+        Number.MAX_SAFE_INTEGER,
+        decimalPlaces,
+      );
+
+      await this.auctionCoinTokenProxy.approve(
+        this.auctionRewardsContractAddress,
+        numberToString(allowanceAmount),
+        this.account,
+      ).on('error', () => {
+        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
+      }).on('transactionHash', () => {
+        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
+      });
+    }
   }
 
   async stakeAlgop() {
     this.isConfirmBtnLoading = true;
+
+    const { decimalPlaces } = this.coinDetails;
+
+    const stakeAmount = currencyToBlockchain(
+      Number(this.stakeAmount),
+      decimalPlaces,
+    );
+
+    await this.approveContractTransfer(stakeAmount);
+
     try {
       if (this.stakeAmount && typeof this.stakeAmount === 'number') {
-        await this.rewardsSystem.stakePirs(this.art.nft.index, this.stakeAmount, this.account).on('transactionHash', () => {
+        await this.rewardsSystem.stakePirs(this.itemPirs.index, this.stakeAmount, this.account).on('transactionHash', () => {
           Notify.create({
             message: 'Algop unstaked successfully',
             color: 'green',
@@ -211,9 +273,25 @@ export default class PirsStackModal extends Vue.with(Props) {
     this.isConfirmBtnLoading = false;
   }
 
-  approveContract() {
-    this.isContractApproved = false;
+  show() {
+    this.$refs.dialog.show();
   }
+
+  hide() {
+    this.$refs.dialog.hide();
+  }
+
+  onDialogHide() {
+    this.$emit('hide');
+  }
+
+  closeModal() {
+    this.modal = false;
+  }
+
+  declare $refs: {
+    dialog: QDialog;
+  };
 }
 </script>
 <style scoped>

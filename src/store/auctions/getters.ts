@@ -33,11 +33,11 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   openPirsModal(state: AuctionStateInterface): boolean {
     return state.openPirsModal;
   },
-  getPirsId(state: AuctionStateInterface): number | undefined {
-    return state.pirsId;
+  getPirsCollectionOwner(state: AuctionStateInterface): string | undefined {
+    return state.pirsCollectionOwner;
   },
-  getPirsIndex(state: AuctionStateInterface): number | undefined {
-    return state.pirsIndex;
+  getPirsItemIndex(state: AuctionStateInterface): number | undefined {
+    return state.pirsItemIndex;
   },
 };
 

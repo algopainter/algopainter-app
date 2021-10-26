@@ -73,14 +73,32 @@ import { mapGetters } from 'vuex';
 import AlgoButton from 'components/common/Button.vue';
 import { QDialog, Notify } from 'quasar';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
+import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import { NetworkInfo } from 'src/store/user/types';
 import { Watch } from 'vue-property-decorator';
 import { IMyGallery } from 'src/models/IMyGallery';
 import UserUtils from 'src/helpers/user';
+import getAlgoPainterContractByNetworkId, { getRewardsSystemContractByNetworkId } from 'src/eth/Config';
+import { numberToString } from 'src/helpers/format/numberToString';
+import { auctionCoins } from 'src/helpers/auctionCoins';
+import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
+import { IAuctionItem } from 'src/models/IAuctionItem';
+
+enum SettingPirsStatus {
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  SetPirsAwaitingInput,
+  SetPirsAwaitingConfirmation,
+  SetPirsError,
+  PirsSet,
+}
 
 class Props {
-  algopStack= prop({
-    type: Number,
+  itemPirs = prop({
+    type: Object as PropType<IAuctionItem>,
     required: true,
   })
 
@@ -105,36 +123,112 @@ class Props {
 })
 export default class PirsUnstackModal extends Vue.with(Props) {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
+  auctionCoinTokenProxy!: ERC20TokenProxy;
+  auctionSystemProxy!: AlgoPainterAuctionSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
   modal: boolean = true;
-  isContractApproved: boolean = true;
   isDisabled: boolean = true;
   unstakeAmount: number | null | string = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
+  settingPirsStatus: SettingPirsStatus | null = null;
 
-  show() {
-    this.$refs.dialog.show();
+  mounted() {
+    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
+    void this.setAccountBalance();
   }
 
-  hide() {
-    this.$refs.dialog.hide();
+  get auctionRewardsContractAddress() {
+    return getRewardsSystemContractByNetworkId(this.networkInfo.id);
   }
 
-  onDialogHide() {
-    this.$emit('hide');
+  get algoPainterContractByNetworkId() {
+    return getAlgoPainterContractByNetworkId(this.networkInfo.id) as string;
   }
 
-  closeModal() {
-    this.modal = false;
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      const { tokenPriceAddress } = this.itemPirs.minimumBid;
+
+      return coin.tokenAddress.toLowerCase() === tokenPriceAddress;
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
   }
 
-  declare $refs: {
-    dialog: QDialog;
-  };
+  async approveContractTransfer(amount: number) {
+    this.settingPirsStatus = SettingPirsStatus.CheckingAllowance;
+
+    const allowance = await this.auctionCoinTokenProxy
+      .allowance(this.account, this.auctionRewardsContractAddress);
+
+    if (allowance < amount) {
+      this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingInput;
+
+      const { decimalPlaces } = this.coinDetails;
+
+      const allowanceAmount = currencyToBlockchain(
+        Number.MAX_SAFE_INTEGER,
+        decimalPlaces,
+      );
+
+      await this.auctionCoinTokenProxy.approve(
+        this.auctionRewardsContractAddress,
+        numberToString(allowanceAmount),
+        this.account,
+      ).on('error', () => {
+        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
+      }).on('transactionHash', () => {
+        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
+      });
+    }
+  }
+
+  async unstakeAlgop() {
+    this.isConfirmBtnLoading = true;
+
+    const { decimalPlaces } = this.coinDetails;
+
+    const unstakeAmount = currencyToBlockchain(
+      Number(this.unstakeAmount),
+      decimalPlaces,
+    );
+
+    await this.approveContractTransfer(unstakeAmount);
+
+    try {
+      if (this.unstakeAmount && typeof this.unstakeAmount === 'number') {
+        await this.rewardsSystem.unstakePirs(this.itemPirs.index, this.unstakeAmount, this.account).on('transactionHash', () => {
+          Notify.create({
+            message: 'Algop unstaked successfully',
+            color: 'green',
+            icon: 'mdi-check',
+          });
+        }).on('error', () => {
+          Notify.create({
+            message: 'It was not possible to unstake',
+            color: 'red',
+            icon: 'mdi-alert',
+          });
+          // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
+        });
+      }
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log('error.code', error.code);
+    }
+
+    this.isConfirmBtnLoading = false;
+  }
 
   async setAccountBalance() {
     if (this.isConnected) {
@@ -180,40 +274,24 @@ export default class PirsUnstackModal extends Vue.with(Props) {
     }
   }
 
-  mounted() {
-    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-    void this.setAccountBalance();
+  closeModal() {
+    this.modal = false;
   }
 
-  async unstakeAlgop() {
-    this.isConfirmBtnLoading = true;
-    try {
-      if (this.unstakeAmount && typeof this.unstakeAmount === 'number') {
-        await this.rewardsSystem.unstakePirs(this.art.nft.index, this.unstakeAmount, this.account).on('transactionHash', () => {
-          Notify.create({
-            message: 'Algop unstaked successfully',
-            color: 'green',
-            icon: 'mdi-check',
-          });
-        }).on('error', () => {
-          Notify.create({
-            message: 'It was not possible to unstake',
-            color: 'red',
-            icon: 'mdi-alert',
-          });
-          // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
-        });
-      }
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      console.log('error.code', error.code);
-    }
+  declare $refs: {
+    dialog: QDialog;
+  };
 
-    this.isConfirmBtnLoading = false;
+  show() {
+    this.$refs.dialog.show();
   }
 
-  approveContract() {
-    this.isContractApproved = false;
+  hide() {
+    this.$refs.dialog.hide();
+  }
+
+  onDialogHide() {
+    this.$emit('hide');
   }
 }
 </script>

@@ -11,8 +11,8 @@ export interface AuctionStateInterface {
     openBidBackModal: boolean;
     bidBackId: string | undefined,
     bidbackIndex: number | undefined,
-    pirsId: number | undefined,
-    pirsIndex: number | undefined,
+    pirsCollectionOwner: string | undefined,
+    pirsItemIndex: number | undefined,
     pirsAuction: [],
     openPirsModal: boolean,
 }

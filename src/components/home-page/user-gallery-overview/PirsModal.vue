@@ -24,7 +24,7 @@
       </div>
       <div class="q-pa-md">
         <q-table
-          :rows="userBid"
+          :rows="pastOwnersList"
           :columns="columns"
           row-key="name"
           hide-bottom
@@ -46,17 +46,14 @@ import { mapGetters } from 'vuex';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 
 interface IUserOwner {
-  stackedAlgop: number;
-  stackedAlgopPercentage: number;
   name: string;
   account: string
-}
-
-interface IBidbackPercentages {
-  percentages: [],
-  users: [],
+  formattedAccount: string | unknown;
+  stackedAlgop: number;
+  stackedAlgopPercentage: number;
 }
 
 @Options({
@@ -72,7 +69,8 @@ interface IBidbackPercentages {
       ]),
     ...mapGetters(
       'auctions', [
-        'getPirsIndex',
+        'getPirsItemIndex',
+        'getPirsCollectionOwner',
       ]),
   },
 })
@@ -81,38 +79,39 @@ export default class PirsModal extends Vue {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  getPirsIndex!: number;
+  getPirsItemIndex!: number;
+  getPirsCollectionOwner!: string;
   isConnected!: boolean;
   totalPirsStakes: number = 0;
 
   modal: boolean = false;
   userBalance: number = 0;
   formattedBalance: string = '';
+  totalPirsStaked: number = 0;
 
-  userBid: IUserOwner[] = [];
+  pastOwnersList: IUserOwner[] = [];
   loadingTable: boolean = true;
-  bidBackAmount: number = 0;
   columns = [
     {
       name: 'name',
       required: true,
       label: 'Name',
       align: 'left',
-      field: (userBid: { name: string; account: string; }) => (userBid.name) ? userBid.name : userBid.account,
+      field: (pastOwnersList: { name: string; account: string; }) => (pastOwnersList.name) ? pastOwnersList.name : pastOwnersList.account,
       sortable: true,
     },
     {
       name: 'stackedAlgop',
       required: true,
       label: 'ALGOP Stacked',
-      field: (userBid: { stackedAlgop: number; }) => userBid.stackedAlgop,
+      field: (pastOwnersList: { stackedAlgop: number; }) => pastOwnersList.stackedAlgop,
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
       label: 'Pirs %',
-      field: (userBid: { stackedAlgopPercentage: number; }) => userBid.stackedAlgopPercentage,
+      field: (pastOwnersList: { stackedAlgopPercentage: number; }) => pastOwnersList.stackedAlgopPercentage,
       sortable: true,
     },
   ];
@@ -123,59 +122,78 @@ export default class PirsModal extends Vue {
   }
 
   mounted() {
-    void this.getTotalPirsStakes();
     void this.setAccountBalance();
   }
 
-  async getTotalPirsStakes() {
-    try {
-      this.totalPirsStakes = await this.rewardsSystem.getTotalPirsStakes(this.getPirsIndex);
-    } catch {
-      console.log('error getPirsPercentages');
-    }
-  }
+  auction: IAuctionItem | null = null;
 
-  // nao tem essa função no contrato
-  async getBidbackPercentages() {
-    try {
-      const response = await this.rewardsSystem.getBidbackPercentages(this.getPirsIndex) as unknown as IBidbackPercentages;
-      const bidbackPercentages = response.percentages;
-
-      for (let i = 0; i < this.userBid.length; i++) {
-        this.userBid[i].stackedAlgopPercentage = (typeof bidbackPercentages[i] === 'undefined') ? 0 : bidbackPercentages[i];
-      }
-    } catch {
-      console.log('error getPirsPercentages');
-    }
+  getAuctionPirs() {
+    void this.$store.dispatch({
+      type: 'auctions/getAuctions',
+      collectionOwner: this.getPirsCollectionOwner,
+      itemIndex: this.getPirsItemIndex,
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.auction = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
+    });
   }
 
   getImagePastOwners() {
     this.loadingTable = true;
+
     void this.$store.dispatch({
       type: 'auctions/getImagePastOwners',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      imgId: this.auctionId as string,
-    }).then(() => {
+      imgId: this.auction?.item._id as string,
+    }).then(async() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const response = this.$store.getters['auctions/getImagePastOwners'] as IOwnerPirs[];
       const pastOwners: IOwnerPirs[] = [];
-      const bidderAccounts: string|string[] = [];
 
       response.forEach(owner => {
         pastOwners.push(owner);
       });
 
       pastOwners.forEach(owner => {
-        console.log('owner', owner);
-        const account = this.formatAccount(owner.account);
+        const account = owner.account;
+        const formattedAccount = this.formatAccount(account);
         const name = this.formatName(owner.name);
 
-        if (!bidderAccounts.includes(account)) {
-          bidderAccounts.push(account);
-          this.userBid.push({ name: name, account: account, stackedAlgop: 0, stackedAlgopPercentage: 0 });
-        }
+        this.pastOwnersList.push({
+          name: name,
+          account: account,
+          formattedAccount: formattedAccount,
+          stackedAlgop: 0,
+          stackedAlgopPercentage: 0,
+        });
       });
-      // void this.getBidbackPercentages();
+
+      if (this.auction) {
+        this.totalPirsStaked = await this.rewardsSystem.getTotalPirsStakes(
+          this.auction?.index,
+        );
+      }
+
+      const pirsUserList = this.auction?.pirs;
+      let isVariableSet = false;
+
+      if (pirsUserList) {
+        Object.keys(pirsUserList).forEach((account) => {
+          this.pastOwnersList.forEach((pastOwner) => {
+            if (account === pastOwner.account) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              pastOwner.stackedAlgop = pirsUserList[account as unknown as number] as any;
+              isVariableSet = true;
+            } else if (!isVariableSet) {
+              pastOwner.stackedAlgop = 0;
+            }
+            if (typeof pastOwner.stackedAlgop === 'number') {
+              pastOwner.stackedAlgopPercentage = (pastOwner.stackedAlgop > 0) ? (pastOwner.stackedAlgop / this.totalPirsStaked) * 100 : 0;
+              pastOwner.stackedAlgopPercentage = pastOwner.stackedAlgopPercentage.toFixed(2) as unknown as number;
+            }
+          });
+        });
+      }
+
       this.loadingTable = false;
     });
   }
@@ -192,11 +210,6 @@ export default class PirsModal extends Vue {
     return nameArray[0];
   }
 
-  get auctionId() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['auctions/getPirsId'];
-  }
-
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
@@ -204,12 +217,18 @@ export default class PirsModal extends Vue {
     }
   }
 
-  @Watch('auctionId')
+  @Watch('getPirsCollectionOwner')
   onAuctionIdChanged() {
-    this.userBid = [];
-    if (this.auctionId !== '') {
-      void this.getImagePastOwners();
+    this.pastOwnersList = [];
+
+    if (this.getPirsCollectionOwner !== '') {
+      void this.getAuctionPirs();
     }
+  }
+
+  @Watch('auction')
+  onAuctionChanged() {
+    void this.getImagePastOwners();
   }
 
   @Watch('userBalance')
@@ -233,8 +252,8 @@ export default class PirsModal extends Vue {
   openPirsModal() {
     void this.$store.dispatch({
       type: 'auctions/openPirsModal',
-      auctionId: '',
-      auctionIndex: '',
+      collectionOwner: '',
+      itemIndex: undefined,
     });
   }
 }

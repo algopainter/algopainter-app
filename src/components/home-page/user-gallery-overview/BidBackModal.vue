@@ -131,6 +131,7 @@ export default class BidBackModal extends Vue {
 
   getAuctions() {
     this.loadingTable = true;
+
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
       account: this.auctionId as string,
@@ -191,6 +192,7 @@ export default class BidBackModal extends Vue {
           });
         });
       }
+
       this.loadingTable = false;
     });
   }

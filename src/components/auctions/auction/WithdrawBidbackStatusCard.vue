@@ -6,104 +6,56 @@
     <q-card-section>
       <div class="steps row q-col-gutter-md">
         <div class="col-12 step">
-          <div class="avatar">
-            <q-avatar
-              v-if="withdrawBidbackStatus === WithdrawBidbackStatus.CheckingContractApproved"
-              size="60px"
-              color="primary"
-            >
-              <q-spinner color="white" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.ContractApprovedAwaitingInput"
-              size="60px"
-              color="warning"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.ContractApprovedAwaitingConfirmation"
-              size="60px"
-              color="primary"
-            >
-              <q-spinner color="white" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.ContractApprovedError"
-              size="60px"
-              color="negative"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert-circle" />
-            </q-avatar>
-            <q-avatar
-              v-else
-              size="60px"
-              color="positive"
-              text-color="white"
-            >
-              <q-icon name="mdi-check" />
-            </q-avatar>
-          </div>
-          <div class="label">
-            <div class="title">
-              {{ $t('dashboard.auctionPage.claimBidbackStatuses.contractApprove') }}
+          <div class="col-12 step">
+            <div class="avatar">
+              <q-avatar
+                v-if="withdrawBidbackStatus < WithdrawBidbackStatus.WithdrawBidbackAwaitingInput"
+                size="60px"
+                color="grey"
+                text-color="white"
+              >
+                <q-icon name="mdi-cancel" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.WithdrawBidbackAwaitingInput"
+                size="60px"
+                color="warning"
+                text-color="white"
+              >
+                <q-icon name="mdi-alert" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation"
+                size="60px"
+                color="primary"
+                text-color="white"
+              >
+                <q-spinner color="white" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.WithdrawBidbackError"
+                size="60px"
+                color="negative"
+                text-color="white"
+              >
+                <q-icon name="mdi-alert-circle" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.BidbackWithdrawn"
+                size="60px"
+                color="positive"
+                text-color="white"
+              >
+                <q-icon name="mdi-check" />
+              </q-avatar>
             </div>
-            <div>
-              {{ firstStepLabel }}
-            </div>
-          </div>
-        </div>
-        <div class="col-12 step">
-          <div class="avatar">
-            <q-avatar
-              v-if="withdrawBidbackStatus < WithdrawBidbackStatus.WithdrawBidbackAwaitingInput"
-              size="60px"
-              color="grey"
-              text-color="white"
-            >
-              <q-icon name="mdi-cancel" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.WithdrawBidbackAwaitingInput"
-              size="60px"
-              color="warning"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation"
-              size="60px"
-              color="primary"
-              text-color="white"
-            >
-              <q-spinner color="white" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.WithdrawBidbackError"
-              size="60px"
-              color="negative"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert-circle" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="withdrawBidbackStatus === WithdrawBidbackStatus.BidbackWithdrawn"
-              size="60px"
-              color="positive"
-              text-color="white"
-            >
-              <q-icon name="mdi-check" />
-            </q-avatar>
-          </div>
-          <div class="label">
-            <div class="title">
-              {{ $t('dashboard.auctionPage.claimBidback') }}
-            </div>
-            <div>
-              {{ secondStepLabel }}
+            <div class="label">
+              <div class="title">
+                {{ $t('dashboard.auctionPage.claimBidback') }}
+              </div>
+              <div>
+                {{ secondStepLabel }}
+              </div>
             </div>
           </div>
         </div>

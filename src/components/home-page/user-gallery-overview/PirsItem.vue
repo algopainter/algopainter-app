@@ -452,8 +452,6 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   openPirsModal() {
-    console.log('this.art.collectionOwner', this.art.collectionOwner);
-    console.log('this.art.nft.index', this.art.nft.index);
     void this.$store.dispatch({
       type: 'auctions/openPirsModal',
       collectionOwner: this.art.collectionOwner,
@@ -533,6 +531,7 @@ export default class PirsItem extends Vue.with(Props) {
         this.highestBidAmount = (itemPirs.highestBid) ? itemPirs.highestBid.amount : 0;
         this.auctionTokenSymbol = itemPirs.minimumBid.tokenSymbol;
         this.auctionEnded = itemPirs.ended;
+        this.auctionIndex = itemPirs.index;
         void this.getPirsPercentage();
         void this.getUserStackedPirs();
         if (itemPirs) {

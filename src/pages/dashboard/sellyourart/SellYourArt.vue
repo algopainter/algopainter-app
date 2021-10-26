@@ -157,6 +157,29 @@
                   />
                 </v-field>
               </div>
+              <div
+                v-if="isCreator"
+                class="col-12"
+              >
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.bidBack')"
+                  name="pirs"
+                  rules="required"
+                >
+                  <q-input
+                    type="number"
+                    :label="$t('dashboard.sellYourArt.pirs')"
+                    :model-value="field.value"
+                    :error-message="errorMessage"
+                    :error="!!errorMessage"
+                    :rules="[val => val <= 30 || 'Please insert a number that is smaller than 30',
+                             val => val >= 0 || 'The number must be bigger than 0']"
+                    @update:modelValue="handleChange"
+                  />
+                </v-field>
+              </div>
               <div class="col-12">
                 <div class="q-mr-md q-mb-md">
                   {{ $t('dashboard.auctionPage.feeMessage') }}
@@ -181,6 +204,7 @@
     >
       <create-auction-status-card
         :create-auction-status="createAuctionStatus"
+        :is-creator="isCreator"
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
@@ -219,6 +243,7 @@ interface INewAuction {
   endTime: string;
   coin: string;
   bidBack: number;
+  pirs: number;
 }
 
 interface IAllowedTokens {
@@ -272,7 +297,9 @@ export default class SellYourArt extends Vue {
   loading: boolean = false;
   loadingCoins: boolean = false;
   bidbackSystem!: AlgoPainterBidBackPirsProxy;
+  pirsSystem!: AlgoPainterBidBackPirsProxy;
   auctionId!: number;
+  isCreator: boolean = false;
 
   coin: string = '3';
 
@@ -296,6 +323,10 @@ export default class SellYourArt extends Vue {
     void this.getFee();
   }
   */
+
+  mounted() {
+    void this.validatePirs();
+  }
 
   get auctionSystemContractAddress() {
     return getAuctionSystemContractByNetworkId(this.networkInfo.id);
@@ -330,6 +361,19 @@ export default class SellYourArt extends Vue {
     return this.selectedCoin.label;
   }
 
+  async validatePirs() {
+    const { id } = this.$route.params;
+
+    this.image = await getImage(id as string);
+    if (this.image.creator === this.userAccount) {
+      this.isCreator = true;
+    } else {
+      this.isCreator = false;
+    }
+    // console.log('creatorrr', this.image.collectionOwner);
+    // console.log('userAccount', this.userAccount);
+  }
+
   get nowFormatted() {
     return moment().format('YYYY/MM/DD');
   }
@@ -341,6 +385,7 @@ export default class SellYourArt extends Vue {
 
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.bidbackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
 
     void this.loadImage();
     void this.loadAvailableTokens();
@@ -442,7 +487,7 @@ export default class SellYourArt extends Vue {
 
       await this.approveContract();
 
-      const { minimumPrice, endDate, endTime, bidBack } = auction;
+      const { minimumPrice, endDate, endTime, bidBack, pirs } = auction;
       const { decimalPlaces } = this.selectedCoin;
 
       const minimumPriceFormatted = currencyToBlockchain(
@@ -471,8 +516,8 @@ export default class SellYourArt extends Vue {
       this.createAuctionStatus = CreatingAuctionStatus.AuctionCreated;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
-      console.log('id leilao ', this.auctionId);
       await this.setBidback(bidBack);
+      await this.setInvestorPirs(pirs);
 
       this.creatingAuction = false;
     } catch {
@@ -481,7 +526,6 @@ export default class SellYourArt extends Vue {
   }
 
   async setBidback(bidBack: number) {
-    console.log('setBidBack', this.auctionId, bidBack, this.userAccount);
     this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackAwaitingInput;
     await this.bidbackSystem.setBidbackRate(
       this.auctionId,
@@ -489,12 +533,30 @@ export default class SellYourArt extends Vue {
       this.userAccount,
     ).on('transactionHash', () => {
       this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackAwaitingConfirmation;
-      console.log('StransactionHash');
     }).on('error', () => {
-      console.log('error');
       this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackError;
     });
     this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackCompleted;
+  }
+
+  async setInvestorPirs(pirs: number) {
+    const { id } = this.$route.params;
+    this.image = await getImage(id as string);
+    console.log('params', this.image.collectionOwner, this.image.nft.index, pirs);
+    this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingInput;
+    await this.pirsSystem.setInvestorPirsRate(
+      this.image.collectionOwner,
+      this.image.nft.index,
+      pirs,
+      this.userAccount,
+    ).on('transactionHash', () => {
+      this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
+      console.log('transactionHash pirs');
+    }).on('error', () => {
+      this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
+      console.log('error pirs');
+    });
+    this.createAuctionStatus = CreatingAuctionStatus.SettingPirsCompleted;
   }
 
   onCloseStatusDialog() {

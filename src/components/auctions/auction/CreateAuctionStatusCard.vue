@@ -142,7 +142,7 @@
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidbackCompleted"
+              v-else
               size="60px"
               color="positive"
               text-color="white"
@@ -159,13 +159,68 @@
             </div>
           </div>
         </div>
+        <div
+          v-if="isCreator"
+          class="col-12 step"
+        >
+          <div class="avatar">
+            <q-avatar
+              v-if="createAuctionStatus < CreatingAuctionStatus.SettingPirsAwaitingInput"
+              size="60px"
+              color="grey"
+              text-color="white"
+            >
+              <q-icon name="mdi-cancel" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingPirsAwaitingInput"
+              size="60px"
+              color="warning"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingPirsAwaitingConfirmation"
+              size="60px"
+              color="primary"
+              text-color="white"
+            >
+              <q-spinner color="white" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingPirsError"
+              size="60px"
+              color="negative"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert-circle" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingPirsCompleted"
+              size="60px"
+              color="positive"
+              text-color="white"
+            >
+              <q-icon name="mdi-check" />
+            </q-avatar>
+          </div>
+          <div class="label">
+            <div class="title">
+              {{ $t('dashboard.sellYourArt.statuses.createpirs') }}
+            </div>
+            <div>
+              {{ pirsLabel }}
+            </div>
+          </div>
+        </div>
       </div>
     </q-card-section>
     <q-card-section class="flex justify-end">
       <algo-button
         :label="$t('dashboard.auctionPage.okButton')"
         color="primary"
-        :disable="okBtnDisabled"
+        :disable="btnDisable"
         @click="$emit('requestClose')"
       />
     </q-card-section>
@@ -203,6 +258,7 @@ enum CreatingAuctionStatus {
 })
 export default class CreateAuctionStatusCard extends Vue {
   @Prop({ required: true }) createAuctionStatus!: CreatingAuctionStatus;
+  @Prop({ required: true }) isCreator!: boolean;
 
   CreatingAuctionStatus = CreatingAuctionStatus;
 
@@ -236,6 +292,21 @@ export default class CreateAuctionStatusCard extends Vue {
     }
   }
 
+  get pirsLabel() {
+    switch (this.createAuctionStatus) {
+      case CreatingAuctionStatus.SettingPirsAwaitingInput:
+        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingInput');
+      case CreatingAuctionStatus.SettingPirsAwaitingConfirmation:
+        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingConfirmation');
+      case CreatingAuctionStatus.SettingPirsError:
+        return this.$t('dashboard.sellYourArt.statuses.pirsError');
+      case CreatingAuctionStatus.SettingPirsCompleted:
+        return this.$t('dashboard.sellYourArt.statuses.pirsCompleted');
+      default:
+        return this.$t('dashboard.sellYourArt.statuses.createBidBack');
+    }
+  }
+
   get bidBackLabel() {
     switch (this.createAuctionStatus) {
       case CreatingAuctionStatus.SettingBidbackAwaitingInput:
@@ -247,7 +318,7 @@ export default class CreateAuctionStatusCard extends Vue {
       case CreatingAuctionStatus.SettingBidbackCompleted:
         return this.$t('dashboard.sellYourArt.statuses.bidbackCompleted');
       default:
-        return '';
+        return this.$t('dashboard.sellYourArt.statuses.createBidBack');
     }
   }
 
@@ -255,8 +326,11 @@ export default class CreateAuctionStatusCard extends Vue {
     return this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
       this.createAuctionStatus !== CreatingAuctionStatus.ContractApprovedError &&
       this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackCompleted;
+      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError;
+  }
+
+  get btnDisable() {
+    return this.okBtnDisabled === true || this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError;
   }
 }
 </script>

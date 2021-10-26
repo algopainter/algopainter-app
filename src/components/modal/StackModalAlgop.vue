@@ -149,6 +149,13 @@ export default class MyPaint extends Vue.with(Props) {
   formattedBalance: string = '';
   placingBidbackStatus: PlacingBidbackStatus | null = null;
 
+  mounted() {
+    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
+    void this.setAccountBalance();
+  }
+
   show() {
     this.$refs.dialog.show();
   }
@@ -207,13 +214,6 @@ export default class MyPaint extends Vue.with(Props) {
     if (this.isConnected) {
       this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
     }
-  }
-
-  mounted() {
-    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
-    void this.setAccountBalance();
   }
 
   async stakeAlgop() {

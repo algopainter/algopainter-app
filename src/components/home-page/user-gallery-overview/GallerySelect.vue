@@ -348,8 +348,7 @@ export default class gallerySelect extends Vue.with(Props) {
         this.art.index,
         this.account,
       ).on('transactionHash', () => {
-        this.withdrawBidbackStatus =
-          WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
+        this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
       }).on('error', () => {
         this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackError;
       });

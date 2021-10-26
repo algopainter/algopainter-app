@@ -17,6 +17,9 @@ const mutation: MutationTree<CollectionsStateInterface> = {
   SET_USER_PAST_IMAGES(state: CollectionsStateInterface, payload) {
     state.userPastImages = payload as [];
   },
+  SET_IMAGE_PAST_OWNERS(state: CollectionsStateInterface, payload) {
+    state.imagePastOwners = payload as [];
+  },
 };
 
 export default mutation;

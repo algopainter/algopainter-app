@@ -205,11 +205,6 @@ class Props {
     type: Object as PropType<IAuctionItem>,
     required: true,
   })
-
-  btnName = prop({
-    type: String,
-    required: true,
-  })
 }
 
 enum WithdrawBidbackStatus {

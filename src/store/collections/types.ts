@@ -7,4 +7,5 @@ export interface CollectionsStateInterface {
     collections: [],
     userOnSale: [],
     userPastImages: [],
+    imagePastOwners: [],
 }

@@ -664,7 +664,6 @@ export default class MyGalleryOverview extends Vue {
       if (this.isConnected) {
         this.galleryTabs[3].data = response.data;
         this.galleryTabs[3].cont = response.count > 0 ? response.count : 0;
-        console.log('this.galleryTabs[3].cont', this.galleryTabs[3].cont);
         this.galleryTabs[3].contLabel = ` (${this.galleryTabs[3].cont})`;
         this.galleryTabs[3].maxPages = response.pages;
         this.galleryTabs[3].noData = (this.galleryTabs[3].data === undefined);
@@ -687,8 +686,8 @@ export default class MyGalleryOverview extends Vue {
       const response = this.$store.getters['auctions/getBidBack'] as IAxiosPaginated;
       if (this.isConnected) {
         this.galleryTabs[4].data = response.data;
-        this.galleryTabs[4].cont = response.count;
-        this.galleryTabs[4].contLabel = ` (${response.count})`;
+        this.galleryTabs[4].cont = response.count > 0 ? response.count : 0;
+        this.galleryTabs[4].contLabel = ` (${this.galleryTabs[4].cont})`;
         this.galleryTabs[4].maxPages = response.pages;
         this.galleryTabs[4].noData = (this.galleryTabs[4].data.length === 0);
       }

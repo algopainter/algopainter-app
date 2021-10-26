@@ -106,11 +106,6 @@ enum PlacingBidbackStatus {
 }
 
 class Props {
-  algopStack= prop({
-    type: Number,
-    required: true,
-  })
-
   art = prop({
     type: Object as PropType<IAuctionItem>,
     required: true,

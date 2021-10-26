@@ -109,11 +109,6 @@ enum PlacingBidbackStatus {
 }
 
 class Props {
-  algopStack= prop({
-    type: Number,
-    required: true,
-  })
-
   art = prop({
     type: Object as PropType<IAuctionItem>,
     required: true,
@@ -216,6 +211,38 @@ export default class MyPaint extends Vue.with(Props) {
     }
   }
 
+  async approveContractTransfer(amount: number) {
+    this.placingBidbackStatus = PlacingBidbackStatus.CheckingAllowance;
+
+    const allowance = await this.auctionCoinTokenProxy
+      .allowance(this.account, this.auctionRewardsContractAddress);
+
+    console.log('allowance', allowance);
+
+    if (allowance < amount) {
+      this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingInput;
+
+      console.log('allowance', allowance);
+
+      const { decimalPlaces } = this.coinDetails;
+
+      const allowanceAmount = currencyToBlockchain(
+        Number.MAX_SAFE_INTEGER,
+        decimalPlaces,
+      );
+
+      await this.auctionCoinTokenProxy.approve(
+        this.auctionRewardsContractAddress,
+        numberToString(allowanceAmount),
+        this.account,
+      ).on('error', () => {
+        this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
+      }).on('transactionHash', () => {
+        this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
+      });
+    }
+  }
+
   async stakeAlgop() {
     this.isConfirmBtnLoading = true;
 
@@ -227,6 +254,8 @@ export default class MyPaint extends Vue.with(Props) {
     );
 
     await this.approveContractTransfer(stakeAmount);
+
+    console.log('stakeAlgop');
 
     try {
       if (this.stakeAmount && typeof this.stakeAmount === 'number') {
@@ -273,35 +302,6 @@ export default class MyPaint extends Vue.with(Props) {
     }
 
     return coin;
-  }
-
-  async approveContractTransfer(amount: number) {
-    this.placingBidbackStatus = PlacingBidbackStatus.CheckingAllowance;
-
-    const allowance = await this.auctionCoinTokenProxy
-      .allowance(this.account, this.auctionRewardsContractAddress);
-
-    if (allowance < amount) {
-      this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingInput;
-
-      const { decimalPlaces } = this.coinDetails;
-
-      const allowanceAmount = currencyToBlockchain(
-        Number.MAX_SAFE_INTEGER,
-        decimalPlaces,
-      );
-
-      await this.auctionCoinTokenProxy.approve(
-        this.auctionRewardsContractAddress,
-        numberToString(allowanceAmount),
-        this.account,
-      ).on('error', () => {
-        this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
-      }).on('transactionHash', () => {
-        this.placingBidbackStatus =
-          PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
-      });
-    }
   }
 }
 </script>

@@ -57,6 +57,17 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
       console.log('error message - getUserPastImages');
     }
   },
+  async getImagePastOwners(type, value) {
+    const id = value.id as string;
+    try {
+      const res = await api.get(`histories/images/${id}/owners`);
+      console.log('res - getImagePastOwners', res);
+      const history: [] = res.data;
+      this.commit('collections/SET_IMAGE_PAST_OWNERS', history);
+    } catch (e) {
+      console.log('error message - getUserPastImages');
+    }
+  },
 };
 
 export default actions;

@@ -18,6 +18,9 @@ const getters: GetterTree<CollectionsStateInterface, StateInterface> = {
   GET_USER_PAST_IMAGES(state: CollectionsStateInterface): [] {
     return state.userPastImages as [];
   },
+  GET_IMAGE_PAST_OWNERS(state: CollectionsStateInterface): [] {
+    return state.imagePastOwners as [];
+  },
 };
 
 export default getters;

@@ -386,6 +386,9 @@ export default {
     cancel: 'Cancel',
     confirm: 'Confirm',
     interact: 'Interact with your wallet',
+    error: 'An error occurred while staking',
+    confirmWallet: 'Awaiting for the blockchain confirmation',
+    stakeSucess: 'Staked successfully',
   },
   unstackModalAlgop: {
     title: 'Unstake Algop',
@@ -396,5 +399,8 @@ export default {
     cancel: 'Cancel',
     confirm: 'Confirm',
     interact: 'Interact with your wallet',
+    error: 'An error occurred while unstaking',
+    confirmWallet: 'Awaiting for the blockchain confirmation',
+    stakeSucess: 'Unstaked successfully',
   },
 };

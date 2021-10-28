@@ -3,7 +3,7 @@
     ref="dialog"
     v-model="modal"
     class="q-gutter-md"
-    @hide="onDialogHide"
+    persistent
   >
     <q-card
       class="q-pa-md"
@@ -47,12 +47,50 @@
               </q-btn>
             </template>
           </q-input>
+          <p
+            v-if="settingPirsStatus === SettingPirsStatus.CheckingAllowance"
+            class="q-mb-lg"
+          >
+            <q-icon
+              name="mdi-alert-circle"
+              color="yellow"
+              size="md"
+            /> {{ $t('dashboard.stackModalAlgop.interact') }}
+          </p>
+          <p
+            v-else-if="settingPirsStatus === SettingPirsStatus.IncreateAllowanceAwaitingConfirmation"
+          >
+            <q-icon
+              name="mdi-alert"
+              color="yellow"
+              size="md"
+            />{{ $t('dashboard.stackModalAlgop.confirmWallet') }}
+          </p>
+          <p
+            v-else-if="settingPirsStatus === SettingPirsStatus.IncreateAllowanceError"
+          >
+            <q-icon
+              name="mdi-alert-circle"
+              color="red"
+              size="md"
+            />{{ $t('dashboard.stackModalAlgop.error') }}
+          </p>
+          <p
+            v-else-if="settingPirsStatus === SettingPirsStatus.IncreateAllowanceCompleted"
+          >
+            <q-icon
+              name="mdi-check"
+              color="green"
+              size="md"
+            /> {{ $t('dashboard.stackModalAlgop.stakeSucess') }}
+          </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup
               type="submit"
               color="primary"
               class=""
+              :disabled="isCancelDisabled"
               :label="$t('dashboard.stackModalAlgop.cancel')"
             />
             <algo-button
@@ -60,6 +98,7 @@
               color="primary"
               :label="$t('dashboard.stackModalAlgop.confirm')"
               :disabled="isDisabled"
+              :loading="isConfirmBtnLoading"
               @click="stakeAlgop"
             />
           </div>
@@ -73,7 +112,7 @@ import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import { mapGetters } from 'vuex';
-import { QDialog, Notify } from 'quasar';
+import { QDialog } from 'quasar';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
@@ -92,6 +131,7 @@ enum SettingPirsStatus {
   IncreateAllowanceAwaitingInput,
   IncreateAllowanceAwaitingConfirmation,
   IncreateAllowanceError,
+  IncreateAllowanceCompleted,
   SetPirsAwaitingInput,
   SetPirsAwaitingConfirmation,
   SetPirsError,
@@ -131,6 +171,7 @@ export default class PirsStackModal extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
+  isCancelDisabled: boolean = false;
   modal: boolean = true;
   isDisabled: boolean = true;
   stakeAmount: number | null | string = null;
@@ -138,6 +179,7 @@ export default class PirsStackModal extends Vue.with(Props) {
   balance: number = 0;
   formattedBalance: string = '';
   settingPirsStatus: SettingPirsStatus | null = null;
+  SettingPirsStatus = SettingPirsStatus;
 
   mounted() {
     this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
@@ -238,6 +280,7 @@ export default class PirsStackModal extends Vue.with(Props) {
 
   async stakeAlgop() {
     this.isConfirmBtnLoading = true;
+    this.isCancelDisabled = true;
 
     const { decimalPlaces } = this.coinDetails;
 
@@ -251,23 +294,20 @@ export default class PirsStackModal extends Vue.with(Props) {
     try {
       if (this.stakeAmount && typeof this.stakeAmount === 'number') {
         await this.rewardsSystem.stakePirs(this.itemPirs.index, this.stakeAmount, this.account).on('transactionHash', () => {
-          Notify.create({
-            message: 'Algop unstaked successfully',
-            color: 'green',
-            icon: 'mdi-check',
-          });
+          this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
-          Notify.create({
-            message: 'It was not possible to unstake',
-            color: 'red',
-            icon: 'mdi-alert',
-          });
+          this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
           // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });
+        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
+        this.isCancelDisabled = false;
+        this.isDisabled = true;
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       console.log('error.code', error.code);
+    } finally {
+      this.isDisabled = true;
     }
 
     this.isConfirmBtnLoading = false;
@@ -277,13 +317,13 @@ export default class PirsStackModal extends Vue.with(Props) {
     this.$refs.dialog.show();
   }
 
-  hide() {
-    this.$refs.dialog.hide();
-  }
+  // hide() {
+  //   this.$refs.dialog.hide();
+  // }
 
-  onDialogHide() {
-    this.$emit('hide');
-  }
+  // onDialogHide() {
+  //   this.$emit('hide');
+  // }
 
   closeModal() {
     this.modal = false;

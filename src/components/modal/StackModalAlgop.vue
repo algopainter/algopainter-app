@@ -300,6 +300,7 @@ export default class MyPaint extends Vue.with(Props) {
         }).on('error', () => {
           this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
           this.isCancelDisabled = false;
+          this.isDisabled = true;
           // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });
 
@@ -311,6 +312,7 @@ export default class MyPaint extends Vue.with(Props) {
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       console.log('error.code', error.code);
+      this.isDisabled = true;
     } finally {
       this.isDisabled = true;
     }

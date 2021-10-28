@@ -12,11 +12,36 @@
       </router-link>
     </div>
     <div class="col row items-center">
-      <div class="title col-12 text-white text-bold">
+      <div
+        v-if="bid.name.slice(0, 2) === '0x'"
+        class="title col-12 text-white text-bold"
+      >
         <i18n-t keypath="dashboard.auctionPage.highestBidBy">
-          <template #highestBidBy>
-            <span class="username">
+          <template
+            #highestBidBy
+          >
+            <span
+              class="username"
+            >
               {{ formatedAccount }}
+
+            </span>
+          </template>
+        </i18n-t>
+      </div>
+      <div
+        v-else
+        class="title col-12 text-white text-bold"
+      >
+        <i18n-t keypath="dashboard.auctionPage.highestBidBy">
+          <template
+            #highestBidBy
+          >
+            <span
+              class="username"
+            >
+              {{ bid.name }}
+
             </span>
           </template>
         </i18n-t>

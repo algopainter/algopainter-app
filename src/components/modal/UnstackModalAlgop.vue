@@ -266,6 +266,7 @@ export default class MyPaint extends Vue.with(Props) {
 
   async unstakeAlgop() {
     this.isConfirmBtnLoading = true;
+    this.isCancelDisabled = true;
 
     const { decimalPlaces } = this.coinDetails;
 

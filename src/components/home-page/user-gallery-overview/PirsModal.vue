@@ -18,7 +18,7 @@
           </p>
           <p class="q-mb-none">
             <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.totalPirsAmount`) }}</span>
-            {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ totalPirsStakes }}
+            {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ totalPirsStaked }}
           </p>
         </div>
       </div>
@@ -82,7 +82,6 @@ export default class PirsModal extends Vue {
   getPirsItemIndex!: number;
   getPirsCollectionOwner!: string;
   isConnected!: boolean;
-  totalPirsStakes: number = 0;
 
   modal: boolean = false;
   userBalance: number = 0;

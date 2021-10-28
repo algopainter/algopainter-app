@@ -289,7 +289,7 @@ export default {
     myPainting: 'My Painting',
     newPainting: 'New Painting',
     bidbackTab: {
-      lastBids: 'Last Bids',
+      lastBid: 'Last Bid',
       auctionStatuses: {
         youWon: 'You won!',
         youAreLosing: 'You are losing!',
@@ -302,12 +302,12 @@ export default {
       bidback: 'Bidback',
       bidbackBtn: 'Bidback Share',
       symbol: '#',
-      earned: 'ALGOP Earned',
+      earned: 'Prize earned',
     },
     pirsTab: {
       pirs: 'PIRS',
       btnPirs: 'Pirs Share',
-      lastBids: 'Last Bids',
+      lastBids: 'Last Bid',
       auctionStatuses: {
         youWon: 'You won!',
         youAreLosing: 'You are losing!',
@@ -319,7 +319,7 @@ export default {
       stakedAlgop: 'ALGOP staked',
       withdrawAmount: 'You can withdraw {amount} ALGOP of pirs',
       symbol: '#',
-      earned: 'ALGOP Earned',
+      earned: 'Prize earned',
       lastText: 'There is no bid so far',
     },
   },

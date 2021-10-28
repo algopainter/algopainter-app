@@ -23,7 +23,7 @@
       </div>
       <div>
         <div class="text-bold text-h4 q-mt-md">
-          {{ $t('dashboard.gallery.bidbackTab.lastBids') }}
+          {{ $t('dashboard.gallery.bidbackTab.lastBid') }}
         </div>
         <p class="coin text-h6">
           {{ lastBid }}
@@ -93,7 +93,10 @@
     </div>
     <div class="col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12 items-center field-stack">
       <div>
-        <span class="text-bold flex">
+        <span
+          v-if="showHarvestBtn"
+          class="text-bold flex"
+        >
           {{ $t('dashboard.gallery.bidbackTab.earned') }}
         </span>
         <div
@@ -101,7 +104,7 @@
           class="flex container"
         >
           <q-input
-            v-model="harvestAmount"
+            v-model="userCurrentPrizeAmount"
             fill-mask="0"
             input-class="text-left"
             class="input-stack-algop"
@@ -115,7 +118,7 @@
             @click="claimBidback"
           />
         </div>
-        <span>
+        <span class="text-bold">
           {{ $t('dashboard.gallery.bidbackTab.stakedAlgop') }}
         </span>
         <div class="flex container">
@@ -248,13 +251,13 @@ export default class gallerySelect extends Vue.with(Props) {
   algopStacked: number = 0;
   openModal: boolean = false;
   openModalUnstack: boolean = false;
-  auctionBidBack: number | null = null;
-  isCoinHarvestDisabled: boolean = true;
+  auctionBidBack: number = 0;
+  isCoinHarvestDisabled: boolean = false;
   disableUnstackBtn: boolean = true;
   disableStackBtn: boolean = true;
   lastBid: string = '';
-  harvestAmount: number = 0;
   showHarvestBtn: boolean = false;
+  userCurrentPrizeAmount: number = 0;
 
   withdrawingBidback: boolean = false;
   displayingStatus: boolean = false;
@@ -286,10 +289,21 @@ export default class gallerySelect extends Vue.with(Props) {
 
   mounted() {
     void this.getBidbackPercentage();
-    void this.getUserStackedBidback();
     void this.getLastBid();
     void this.getTime();
     void this.formatTime();
+  }
+
+  async getBidbackPercentage() {
+    try {
+      this.auctionBidBack = await this.bidBackPirsSystem.getBidbackRate(this.art.index);
+      if (this.auctionBidBack > 0) {
+        void this.getCurrentPrizeAmount();
+      }
+      void this.getUserStackedBidback();
+    } catch (error) {
+      console.log('error getBidbackPercentage');
+    }
   }
 
   getLastBid() {
@@ -327,9 +341,8 @@ export default class gallerySelect extends Vue.with(Props) {
       });
     }
 
-    this.isCoinHarvestDisabled = (this.algopStacked <= 0 || !this.art.ended);
     this.disableUnstackBtn = (this.algopStacked <= 0);
-    this.showHarvestBtn = (this.art.ended && this.algopStacked > 0);
+    this.showHarvestBtn = (this.art.ended && this.algopStacked > 0 && this.auctionBidBack > 0);
   }
 
   async claimBidback() {
@@ -348,6 +361,7 @@ export default class gallerySelect extends Vue.with(Props) {
         this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackError;
       });
 
+      this.isCoinHarvestDisabled = true;
       this.withdrawBidbackStatus = WithdrawBidbackStatus.BidbackWithdrawn;
     } catch {
       this.withdrawingBidback = false;
@@ -355,12 +369,20 @@ export default class gallerySelect extends Vue.with(Props) {
     this.withdrawingBidback = false;
   }
 
-  async getBidbackPercentage() {
-    try {
-      this.auctionBidBack = await this.bidBackPirsSystem.getBidbackRate(this.art.index);
-    } catch (error) {
-      console.log('error getBidbackPercentage');
-    }
+  async getCurrentPrizeAmount() {
+    const totalBidbackStaked = await this.rewardsSystem.getTotalBidbackStakes(
+      this.art.index,
+    );
+
+    const auctionHighestBid = this.art.highestBid.amount / 1000000000000000000;
+
+    const auctionBidbackRate = this.auctionBidBack / 100;
+
+    const totalBidbackPrize = (auctionBidbackRate > 0) ? auctionBidbackRate * auctionHighestBid : 0;
+
+    const userBidbackShare = this.algopStacked / totalBidbackStaked;
+
+    this.userCurrentPrizeAmount = userBidbackShare * totalBidbackPrize;
   }
 
   stackCoin() {

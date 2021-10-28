@@ -2,7 +2,7 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
-    @hide="onDialogHide"
+    persistent
   >
     <q-card class="q-pa-md">
       <p class="text-bold text-h6">
@@ -45,19 +45,47 @@
             </template>
           </q-input>
           <p
-            v-if="isConfirmBtnLoading"
+            v-if="placingBidbackStatus === PlacingBidbackStatus.CheckingAllowance"
             class="q-mb-lg"
           >
             <q-icon
               name="mdi-alert-circle"
               color="yellow"
               size="md"
-            /> {{ $t('dashboard.stackModalAlgop.interact') }}
+            /> {{ $t('dashboard.unstackModalAlgop.interact') }}
+          </p>
+          <p
+            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation"
+          >
+            <q-icon
+              name="mdi-alert"
+              color="yellow"
+              size="md"
+            />{{ $t('dashboard.unstackModalAlgop.confirmWallet') }}
+          </p>
+          <p
+            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceError"
+          >
+            <q-icon
+              name="mdi-alert-circle"
+              color="red"
+              size="md"
+            />{{ $t('dashboard.unstackModalAlgop.error') }}
+          </p>
+          <p
+            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceCompleted"
+          >
+            <q-icon
+              name="mdi-check"
+              color="green"
+              size="md"
+            /> {{ $t('dashboard.unstackModalAlgop.stakeSucess') }}
           </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup
               type="submit"
+              :disabled="isCancelDisabled"
               color="primary"
               class=""
               :label="$t('dashboard.unstackModalAlgop.cancel')"
@@ -81,7 +109,7 @@ import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 import { mapGetters } from 'vuex';
 import AlgoButton from 'components/common/Button.vue';
-import { QDialog, Notify } from 'quasar';
+import { QDialog } from 'quasar';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
@@ -99,6 +127,7 @@ enum PlacingBidbackStatus {
   IncreateAllowanceAwaitingInput,
   IncreateAllowanceAwaitingConfirmation,
   IncreateAllowanceError,
+  IncreateAllowanceCompleted,
   PlaceBidbackAwaitingInput,
   PlaceBidbackAwaitingConfirmation,
   PlaceBidbackError,
@@ -134,23 +163,25 @@ export default class MyPaint extends Vue.with(Props) {
   isConnected!: boolean;
   modal: boolean = true;
   isDisabled: boolean = true;
+  isCancelDisabled: boolean = false;
   unstakeAmount: number | null | string = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
   placingBidbackStatus: PlacingBidbackStatus | null = null;
+  PlacingBidbackStatus = PlacingBidbackStatus;
 
   show() {
     this.$refs.dialog.show();
   }
 
-  hide() {
-    this.$refs.dialog.hide();
-  }
+  // hide() {
+  //   this.$refs.dialog.hide();
+  // }
 
-  onDialogHide() {
-    this.$emit('hide');
-  }
+  // onDialogHide() {
+  //   this.$emit('hide');
+  // }
 
   closeModal() {
     this.modal = false;
@@ -248,19 +279,15 @@ export default class MyPaint extends Vue.with(Props) {
     try {
       if (this.unstakeAmount && typeof this.unstakeAmount === 'number') {
         await this.rewardsSystem.unstakeBidback(this.art.index, this.unstakeAmount, this.account).on('transactionHash', () => {
-          Notify.create({
-            message: 'Algop unstaked successfully',
-            color: 'green',
-            icon: 'mdi-check',
-          });
+          this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
-          Notify.create({
-            message: 'It was not possible to unstake',
-            color: 'red',
-            icon: 'mdi-alert',
-          });
+          this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
+          this.isCancelDisabled = false;
           // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });
+        this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceCompleted;
+        this.isCancelDisabled = false;
+        this.isDisabled = true;
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

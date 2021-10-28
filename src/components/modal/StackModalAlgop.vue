@@ -2,8 +2,8 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
+    persistent
     class="q-gutter-md"
-    @hide="onDialogHide"
   >
     <q-card
       class="q-pa-md"
@@ -48,7 +48,7 @@
             </template>
           </q-input>
           <p
-            v-if="isConfirmBtnLoading"
+            v-if="placingBidbackStatus === PlacingBidbackStatus.CheckingAllowance"
             class="q-mb-lg"
           >
             <q-icon
@@ -57,10 +57,38 @@
               size="md"
             /> {{ $t('dashboard.stackModalAlgop.interact') }}
           </p>
+          <p
+            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation"
+          >
+            <q-icon
+              name="mdi-alert"
+              color="yellow"
+              size="md"
+            />{{ $t('dashboard.stackModalAlgop.confirmWallet') }}
+          </p>
+          <p
+            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceError"
+          >
+            <q-icon
+              name="mdi-alert-circle"
+              color="red"
+              size="md"
+            />{{ $t('dashboard.stackModalAlgop.error') }}
+          </p>
+          <p
+            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceCompleted"
+          >
+            <q-icon
+              name="mdi-check"
+              color="green"
+              size="md"
+            /> {{ $t('dashboard.stackModalAlgop.stakeSucess') }}
+          </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup
               type="submit"
+              :disabled="isCancelDisabled"
               color="primary"
               class=""
               :label="$t('dashboard.stackModalAlgop.cancel')"
@@ -84,7 +112,7 @@ import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import { mapGetters } from 'vuex';
-import { QDialog, Notify } from 'quasar';
+import { QDialog } from 'quasar';
 import getAlgoPainterContractByNetworkId, { getRewardsSystemContractByNetworkId } from 'src/eth/Config';
 import { numberToString } from 'src/helpers/format/numberToString';
 import { auctionCoins } from 'src/helpers/auctionCoins';
@@ -102,6 +130,7 @@ enum PlacingBidbackStatus {
   IncreateAllowanceAwaitingInput,
   IncreateAllowanceAwaitingConfirmation,
   IncreateAllowanceError,
+  IncreateAllowanceCompleted,
   PlaceBidbackAwaitingInput,
   PlaceBidbackAwaitingConfirmation,
   PlaceBidbackError,
@@ -136,6 +165,7 @@ export default class MyPaint extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
+  isCancelDisabled: boolean = false;
   modal: boolean = true;
   isDisabled: boolean = true;
   stakeAmount: number | null | string = null;
@@ -144,6 +174,7 @@ export default class MyPaint extends Vue.with(Props) {
   formattedBalance: string = '';
   placingBidbackStatus: PlacingBidbackStatus | null = null;
 
+  PlacingBidbackStatus = PlacingBidbackStatus;
   mounted() {
     this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
     this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
@@ -153,15 +184,18 @@ export default class MyPaint extends Vue.with(Props) {
 
   show() {
     this.$refs.dialog.show();
+    console.log('show');
   }
 
-  hide() {
-    this.$refs.dialog.hide();
-  }
+  // hide() {
+  //   this.$refs.dialog.hide();
+  //   console.log('hide');
+  // }
 
-  onDialogHide() {
-    this.$emit('hide');
-  }
+  // onDialogHide() {
+  //   this.$emit('hide');
+  //   console.log('onDialogHide');
+  // }
 
   closeModal() {
     this.modal = false;
@@ -239,12 +273,14 @@ export default class MyPaint extends Vue.with(Props) {
         this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
       }).on('transactionHash', () => {
         this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
+        console.log('foi aqui. approveContractTransfer');
       });
     }
   }
 
   async stakeAlgop() {
     this.isConfirmBtnLoading = true;
+    this.isCancelDisabled = true;
 
     const { decimalPlaces } = this.coinDetails;
 
@@ -254,32 +290,30 @@ export default class MyPaint extends Vue.with(Props) {
     );
 
     await this.approveContractTransfer(stakeAmount);
-
     console.log('stakeAlgop');
 
     try {
       if (this.stakeAmount && typeof this.stakeAmount === 'number') {
         await this.rewardsSystem.stakeBidback(this.art.index, this.stakeAmount, this.account).on('transactionHash', () => {
-          Notify.create({
-            message: 'Algop staked successfully',
-            color: 'green',
-            icon: 'mdi-check',
-          });
+          console.log('stakeAlgop transactionHash');
+          this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
-          Notify.create({
-            message: 'It was not possible to stake',
-            color: 'red',
-            icon: 'mdi-alert',
-          });
+          this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
+          this.isCancelDisabled = false;
           // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });
+
+        this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceCompleted;
+        this.isCancelDisabled = false;
+        this.isDisabled = true;
+        this.isConfirmBtnLoading = false;
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       console.log('error.code', error.code);
+    } finally {
+      this.isDisabled = true;
     }
-
-    this.isConfirmBtnLoading = false;
   }
 
   get auctionRewardsContractAddress() {

@@ -44,12 +44,50 @@
               </q-btn>
             </template>
           </q-input>
+          <p
+            v-if="settingPirsStatus === SettingPirsStatus.CheckingAllowance"
+            class="q-mb-lg"
+          >
+            <q-icon
+              name="mdi-alert-circle"
+              color="yellow"
+              size="md"
+            /> {{ $t('dashboard.stackModalAlgop.interact') }}
+          </p>
+          <p
+            v-else-if="settingPirsStatus === SettingPirsStatus.IncreateAllowanceAwaitingConfirmation"
+          >
+            <q-icon
+              name="mdi-alert"
+              color="yellow"
+              size="md"
+            />{{ $t('dashboard.stackModalAlgop.confirmWallet') }}
+          </p>
+          <p
+            v-else-if="settingPirsStatus === SettingPirsStatus.IncreateAllowanceError"
+          >
+            <q-icon
+              name="mdi-alert-circle"
+              color="red"
+              size="md"
+            />{{ $t('dashboard.stackModalAlgop.error') }}
+          </p>
+          <p
+            v-else-if="settingPirsStatus === SettingPirsStatus.IncreateAllowanceCompleted"
+          >
+            <q-icon
+              name="mdi-check"
+              color="green"
+              size="md"
+            /> {{ $t('dashboard.stackModalAlgop.stakeSucess') }}
+          </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
               v-close-popup
               type="submit"
               color="primary"
               class=""
+              :disabled="isCancelDisabled"
               :label="$t('dashboard.unstackModalAlgop.cancel')"
             />
             <algo-button
@@ -71,7 +109,7 @@ import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
 import { mapGetters } from 'vuex';
 import AlgoButton from 'components/common/Button.vue';
-import { QDialog, Notify } from 'quasar';
+import { QDialog } from 'quasar';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
@@ -90,6 +128,7 @@ enum SettingPirsStatus {
   IncreateAllowanceAwaitingInput,
   IncreateAllowanceAwaitingConfirmation,
   IncreateAllowanceError,
+  IncreateAllowanceCompleted,
   SetPirsAwaitingInput,
   SetPirsAwaitingConfirmation,
   SetPirsError,
@@ -130,11 +169,13 @@ export default class PirsUnstackModal extends Vue.with(Props) {
   isConnected!: boolean;
   modal: boolean = true;
   isDisabled: boolean = true;
+  isCancelDisabled: boolean = false;
   unstakeAmount: number | null | string = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
   settingPirsStatus: SettingPirsStatus | null = null;
+  SettingPirsStatus = SettingPirsStatus;
 
   mounted() {
     this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
@@ -208,19 +249,14 @@ export default class PirsUnstackModal extends Vue.with(Props) {
     try {
       if (this.unstakeAmount && typeof this.unstakeAmount === 'number') {
         await this.rewardsSystem.unstakePirs(this.itemPirs.index, this.unstakeAmount, this.account).on('transactionHash', () => {
-          Notify.create({
-            message: 'Algop unstaked successfully',
-            color: 'green',
-            icon: 'mdi-check',
-          });
+          this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
-          Notify.create({
-            message: 'It was not possible to unstake',
-            color: 'red',
-            icon: 'mdi-alert',
-          });
+          this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
           // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });
+        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
+        this.isCancelDisabled = false;
+        this.isDisabled = true;
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

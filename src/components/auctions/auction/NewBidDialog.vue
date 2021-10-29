@@ -38,6 +38,7 @@
                   :hint="`${minimumLabel}: ${minimumValue} ${coinSymbol}`"
                   :error="!!errorMessage"
                   :error-message="errorMessage"
+                  :rules="[val => val < balance || 'Insufficient funds. Check your wallet.']"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
               </v-field>
@@ -108,7 +109,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options, Ref, Prop } from 'vue-property-decorator';
+import { Vue, Options, Ref, Prop, Watch } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import { mapGetters } from 'vuex';
 import { Form as VForm, Field as VField } from 'vee-validate';
@@ -123,6 +124,7 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import NewBidStatusCard from './NewBidStatusCard.vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
+import UserUtils from 'src/helpers/user';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 
 enum PlacingBidStatus {
@@ -151,6 +153,7 @@ interface INewBid {
     ...mapGetters('user', {
       userAccount: 'account',
       networkInfo: 'networkInfo',
+      isConnected: 'isConnected',
     }),
   },
 })
@@ -167,13 +170,36 @@ export default class NewBidDialog extends Vue {
   userBalance: number = 0;
   bidFee: number = 0;
   bidAmount: number = 0;
+  balance: number = 0;
+  isConnected!: boolean;
 
   placingBid: boolean = false;
   placingBidStatus: PlacingBidStatus | null = null;
   displayingStatus: boolean = false;
+  formattedBalance: string = '';
 
   get auctionSystemContractAddress() {
     return getAuctionSystemContractByNetworkId(this.networkInfo.id);
+  }
+
+  @Watch('balance')
+  onBalanceChanged() {
+    if (this.isConnected) {
+      void this.setAccountBalance();
+    }
+  }
+
+  async setAccountBalance() {
+    if (this.isConnected) {
+      this.balance = (
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
+      void this.setformattedBalance();
+    }
+  }
+
+  setformattedBalance() {
+    this.formattedBalance = UserUtils.formatAccountBalance(this.balance, 2);
   }
 
   get coinDetails() {
@@ -205,7 +231,6 @@ export default class NewBidDialog extends Vue {
   get userBalanceFormatted() {
     const { decimalPlaces } = this.coinDetails;
     const amount = blockchainToCurrency(this.userBalance, decimalPlaces);
-
     return this.formatValue(amount);
   }
 
@@ -244,6 +269,7 @@ export default class NewBidDialog extends Vue {
     this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.auctionCoinTokenProxy = new ERC20TokenProxy(this.auction.minimumBid.tokenPriceAddress);
     void this.loadBlockchainData();
+    void this.setAccountBalance();
   }
 
   show() {

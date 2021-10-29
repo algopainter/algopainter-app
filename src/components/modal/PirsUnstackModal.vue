@@ -251,6 +251,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
         await this.rewardsSystem.unstakePirs(this.itemPirs.index, this.unstakeAmount, this.account).on('transactionHash', () => {
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
+          this.isCancelDisabled = false;
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
           // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });

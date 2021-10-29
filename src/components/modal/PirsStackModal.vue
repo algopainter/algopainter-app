@@ -296,6 +296,7 @@ export default class PirsStackModal extends Vue.with(Props) {
         await this.rewardsSystem.stakePirs(this.itemPirs.index, this.stakeAmount, this.account).on('transactionHash', () => {
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
+          this.isCancelDisabled = false;
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
           // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });

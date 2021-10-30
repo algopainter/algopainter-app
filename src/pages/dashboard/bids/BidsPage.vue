@@ -105,7 +105,6 @@ export default class BidsPage extends Vue.with(Props) {
             return true;
           }
           this.bidOff = false;
-          console.log('test3');
           // eslint-disable-next-line no-unsafe-finally
           return false;
         }

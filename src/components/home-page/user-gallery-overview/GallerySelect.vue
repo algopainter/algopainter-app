@@ -93,31 +93,31 @@
     </div>
     <div class="col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12 items-center field-stack">
       <div>
-        <span
-          v-if="showHarvestBtn"
-          class="text-bold flex"
-        >
-          {{ $t('dashboard.gallery.bidbackTab.earned') }}
-        </span>
-        <div
-          v-if="showHarvestBtn"
-          class="flex container"
-        >
-          <q-input
-            v-model="userCurrentPrizeAmount"
-            fill-mask="0"
-            input-class="text-left"
-            class="input-stack-algop"
-            readonly
-          />
-          <algo-button
-            :label="$t('dashboard.gallery.bidbackTab.harvest')"
-            color="primary"
-            class="btn-havest"
-            :disable="isCoinHarvestDisabled"
-            @click="claimBidback"
-          />
-        </div>
+        <template v-if="showHarvestBtn">
+          <span
+            class="text-bold flex"
+          >
+            {{ $t('dashboard.gallery.bidbackTab.earned') }}
+          </span>
+          <div
+            class="flex container"
+          >
+            <q-input
+              v-model="userCurrentPrizeAmount"
+              fill-mask="0"
+              input-class="text-left"
+              class="input-stack-algop"
+              readonly
+            />
+            <algo-button
+              :label="$t('dashboard.gallery.bidbackTab.harvest')"
+              color="primary"
+              class="btn-havest"
+              :disable="isCoinHarvestDisabled"
+              @click="claimBidback"
+            />
+          </div>
+        </template>
         <span class="text-bold">
           {{ $t('dashboard.gallery.bidbackTab.stakedAlgop') }}
         </span>
@@ -127,6 +127,7 @@
             fill-mask="0"
             input-class="text-left"
             class="input-stack-algop"
+            readonly
           />
           <algo-button
             label="-"

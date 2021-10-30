@@ -11,6 +11,7 @@ function state(): CollectionsStateInterface {
     userOnSale: [],
     userPastImages: [],
     imagePastOwners: [],
+    userPirsTabImages: [],
   };
 }
 

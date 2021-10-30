@@ -326,7 +326,6 @@ export default class EditProfile extends Vue {
       const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
 
       if (isError(signatureOrError as Error)) {
-        console.log('assinatura negada ou api com falha, tratar cada erro aqui');
         return;
       }
 

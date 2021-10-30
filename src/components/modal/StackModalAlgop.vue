@@ -184,7 +184,6 @@ export default class MyPaint extends Vue.with(Props) {
 
   show() {
     this.$refs.dialog.show();
-    console.log('show');
   }
 
   // hide() {
@@ -251,12 +250,8 @@ export default class MyPaint extends Vue.with(Props) {
     const allowance = await this.auctionCoinTokenProxy
       .allowance(this.account, this.auctionRewardsContractAddress);
 
-    console.log('allowance', allowance);
-
     if (allowance < amount) {
       this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingInput;
-
-      console.log('allowance', allowance);
 
       const { decimalPlaces } = this.coinDetails;
 
@@ -273,7 +268,6 @@ export default class MyPaint extends Vue.with(Props) {
         this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
       }).on('transactionHash', () => {
         this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
-        console.log('foi aqui. approveContractTransfer');
       });
     }
   }
@@ -290,12 +284,10 @@ export default class MyPaint extends Vue.with(Props) {
     );
 
     await this.approveContractTransfer(stakeAmount);
-    console.log('stakeAlgop');
 
     try {
       if (this.stakeAmount && typeof this.stakeAmount === 'number') {
         await this.rewardsSystem.stakeBidback(this.art.index, this.stakeAmount, this.account).on('transactionHash', () => {
-          console.log('stakeAlgop transactionHash');
           this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
           this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;

@@ -377,6 +377,7 @@ import GallerySelect from './GallerySelect.vue';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 import PirsItem from './PirsItem.vue';
+import { mapGetters } from 'vuex';
 
 @Options({
   components: {
@@ -387,6 +388,12 @@ import PirsItem from './PirsItem.vue';
     MyGallerySkeleton,
     GallerySelect,
     PirsItem,
+  },
+  computed: {
+    ...mapGetters(
+      'collections', [
+        'pirsTabImages',
+      ]),
   },
 })
 export default class MyGalleryOverview extends Vue {
@@ -400,6 +407,7 @@ export default class MyGalleryOverview extends Vue {
   btnBidsClicked: boolean = false;
   */
 
+  pirsTabImages!: IAxiosPaginated;
   loadMoreBtn: boolean = false;
   btnLoadMoreMsg: string = 'Load More';
   loadMoreCounter: number = 1;
@@ -652,22 +660,23 @@ export default class MyGalleryOverview extends Vue {
   getPirs(page:number = 1) {
     this.galleryTabs[3].loadingData = true;
     this.galleryTabs[3].currentPage = page;
+
     this.currentBtnClicked = 4;
+
     void this.$store.dispatch({
-      type: 'collections/getUserPastImages',
+      type: 'collections/getUserPirsTabImages',
       account: this.accountAddress,
       page: page,
       perPage: '9',
     }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['collections/GET_USER_PAST_IMAGES'] as IAxiosPaginated;
       if (this.isConnected) {
-        this.galleryTabs[3].data = response.data;
-        this.galleryTabs[3].cont = response.count > 0 ? response.count : 0;
+        this.galleryTabs[3].data = this.pirsTabImages.data;
+        this.galleryTabs[3].cont = this.pirsTabImages.count > 0 ? this.pirsTabImages.count : 0;
         this.galleryTabs[3].contLabel = ` (${this.galleryTabs[3].cont})`;
-        this.galleryTabs[3].maxPages = response.pages;
+        this.galleryTabs[3].maxPages = this.pirsTabImages.pages;
         this.galleryTabs[3].noData = (this.galleryTabs[3].data === undefined);
       }
+
       this.galleryTabs[3].loadingData = false;
     });
   }
@@ -677,7 +686,7 @@ export default class MyGalleryOverview extends Vue {
     this.galleryTabs[4].currentPage = page;
     this.currentBtnClicked = 5;
     void this.$store.dispatch({
-      type: 'auctions/getBidBack',
+      type: 'auctions/getBidback',
       account: this.accountAddress, // '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a',
       page: page,
       perPage: '9',
@@ -797,27 +806,27 @@ export default class MyGalleryOverview extends Vue {
   async loadMorePirs() {
     this.loadMoreCounterPirs++;
     this.loadMoreBtn = true;
+
     await this.$store.dispatch({
-      type: 'collections/getUserPastImages',
+      type: 'collections/getUserPirsTabImages',
       account: this.accountAddress,
       page: this.loadMoreCounterPirs,
       perPage: '9',
     }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const response = this.$store.getters['collections/GET_USER_PAST_IMAGES'] as IAxiosPaginated;
-      const likeMobile = response.data;
-      this.galleryTabs[3].cont = response.count;
-      this.galleryTabs[3].contLabel = ` (${response.count})`;
-      if (likeMobile.length === 0) {
+      this.galleryTabs[3].cont = this.pirsTabImages.count;
+      this.galleryTabs[3].contLabel = ` (${this.pirsTabImages.count})`;
+
+      if (this.pirsTabImages.data.length === 0) {
         this.btnLoadMoreMsg = 'Nothing else to show';
         this.noMoreImages = true;
         this.galleryTabs[3].noData = (this.galleryTabs[3].data.length === 0);
       } else {
-        likeMobile.forEach((i) => {
+        this.pirsTabImages.data.forEach((i) => {
           this.galleryTabs[3].data.push(i);
         });
       }
       this.loadMoreBtn = false;
+
       this.galleryTabs[3].loadingData = false;
     });
   }

@@ -191,11 +191,6 @@ export default class AuctionModal extends Vue.with(Props) {
     return UserUtils.formatAccountBalance(this.userBalance, 2);
   }
 
-  claimItem() {
-    console.log('You claimed the prize');
-    // Fazer um put para alterar o dono do item e adicionar o id do antigo dono da imagem no array de antigos donos
-  }
-
   show() {
     this.$refs.dialog.show();
   }

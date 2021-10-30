@@ -3,23 +3,23 @@
     <div class="col-12 col-md-3 col-lg-3  col-xl-3 col-sm-6 col-xs-12">
       <q-img
         class="previewImage"
-        :src="art.nft.previewImage"
+        :src="art.item.previewImage"
         alt="img art"
       />
     </div>
     <div class="col-12 col-md-3 col-lg-4  col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
         <div class="text-title text-bold text-h6">
-          {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.nft.index }} {{ art.title }}
+          {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.item.index }} {{ art.item.title }}
           <q-tooltip
             anchor="bottom middle"
             max-width="200px"
             class="bg-primary"
           >
-            {{ art.title }}
+            {{ art.item.title }}
           </q-tooltip>
         </div>
-        {{ art.description }}
+        {{ art.item.description }}
       </div>
       <!-- <div>
         <div class="text-bold text-h4 q-mt-md">
@@ -144,30 +144,32 @@
     </div>
     <div class="col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12 items-center field-stack">
       <div>
-        <span class="text-bold flex">
-          {{ $t('dashboard.gallery.pirsTab.earned') }}
-        </span>
-        <div
-          v-if="showHarvestBtn"
-          class="flex container"
-        >
-          <q-input
-            v-model="coinHarvestAmount"
-            fill-mask="0"
-            input-class="text-left"
-            class="input-stack-algop"
-            :disable="true"
-            readonly
-          />
-          <algo-button
-            :label="$t('dashboard.gallery.pirsTab.harvest')"
-            color="primary"
-            class="btn-havest"
-            :disable="isCoinHarvestDisabled"
-            @click="harvestAlgop"
-          />
-        </div>
-        <span>
+        <template v-if="showHarvestBtn">
+          <span
+            class="text-bold flex"
+          >
+            {{ $t('dashboard.gallery.pirsTab.earned') }}
+          </span>
+          <div
+            class="flex container"
+          >
+            <q-input
+              v-model="coinHarvestAmount"
+              fill-mask="0"
+              input-class="text-left"
+              class="input-stack-algop"
+              :disable="true"
+              readonly
+            />
+            <algo-button
+              :label="$t('dashboard.gallery.pirsTab.harvest')"
+              color="primary"
+              class="btn-havest"
+              @click="harvestAlgop"
+            />
+          </div>
+        </template>
+        <span class="text-bold">
           {{ $t('dashboard.gallery.pirsTab.stakedAlgop') }}
         </span>
         <div class="flex container">
@@ -176,6 +178,7 @@
             fill-mask="0"
             input-class="text-left"
             class="input-stack-algop"
+            readonly
           />
           <algo-button
             label="-"
@@ -193,12 +196,12 @@
           <pirs-stack-modal
             v-model="openModal"
             :art="art"
-            :item-pirs="itemPirs"
+            :item-pirs="art"
           />
           <pirs-unstack-modal
             v-model="openModalUnstack"
             :art="art"
-            :item-pirs="itemPirs"
+            :item-pirs="art"
           />
         </div>
       </div>
@@ -240,7 +243,6 @@ import { Vue, prop, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import PirsStackModal from 'src/components/modal/PirsStackModal.vue';
 import PirsUnstackModal from 'src/components/modal/PirsUnstackModal.vue';
-import { IMyGallery } from 'src/models/IMyGallery';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import { mapGetters } from 'vuex';
@@ -256,7 +258,7 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 
 class Props {
   art = prop({
-    type: Object as PropType<IMyGallery>,
+    type: Object as PropType<IAuctionItem>,
     required: true,
   })
 }
@@ -298,26 +300,14 @@ export default class PirsItem extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   // isConnected!: boolean;
-  canStack: boolean = false;
+
   coinHarvestAmount: number = 0;
-  coinStakeAmount: number = 0;
   openModal: boolean = false;
   openModalUnstack: boolean = false;
   auctionPirsRate: number | null = null;
-  isCoinHarvestDisabled: boolean = true;
   disableUnstackBtn: boolean = true;
   lastBid: string = '';
-  auctionExpirationDt: string = '';
-  tokenPriceAddress: string = '';
-  highestBidAmount: number = 0;
-  auctionTokenSymbol: string = '';
-  auctionIndex: number = 0;
-  itemPirs: unknown = [];
-  auctionPirs: unknown[] = [];
-  auctionEnded: boolean = false;
-  auctionId: string = '';
   showHarvestBtn: boolean = false;
-
   withdrawingPirs: boolean = false;
   displayingStatus: boolean = false;
   withdrawPirsStatus: WithdrawPirsStatus | null = null;
@@ -349,7 +339,10 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   mounted() {
-    void this.getPirsItem();
+    void this.getPirsPercentage();
+    void this.getUserStackedPirs();
+    void this.getLastBid();
+    void this.getTime();
     void this.formatTime();
   }
 
@@ -364,13 +357,15 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   getLastBid() {
-    if (this.highestBidAmount) {
+    const highestBidAmount = (this.art.highestBid) ? this.art.highestBid.amount : 0;
+
+    if (highestBidAmount) {
       const bidAmount = blockchainToCurrency(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.highestBidAmount,
+        highestBidAmount,
         this.coinDetails.decimalPlaces,
       );
-      this.lastBid = `${bidAmount} ${this.auctionTokenSymbol}`;
+      this.lastBid = `${bidAmount} ${this.art.minimumBid.tokenSymbol}`;
     } else {
       this.lastBid = 'There is no bid so far';
     }
@@ -385,7 +380,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
-      return coin.tokenAddress.toLowerCase() === this.tokenPriceAddress;
+      return coin.tokenAddress.toLowerCase() === this.art.minimumBid.tokenPriceAddress;
     });
 
     if (!coin) {
@@ -396,15 +391,13 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   getUserStackedPirs() {
-    if (this.auctionPirs) {
-      Object.keys(this.auctionPirs).forEach(() => {
-        this.algopStacked = this.auctionPirs[this.account as unknown as number] as number;
-      });
+    if (this.art.pirs) {
+      this.algopStacked = this.art.pirs[this.account as unknown as number] as number;
     }
 
-    this.isCoinHarvestDisabled = (this.algopStacked <= 0 || !this.auctionEnded);
     this.disableUnstackBtn = (this.algopStacked <= 0);
-    this.showHarvestBtn = (this.auctionEnded && this.algopStacked > 0);
+    // this.showHarvestBtn = (this.auctionEnded && this.algopStacked > 0);
+    this.showHarvestBtn = (this.algopStacked > 0 && this.art.ended);
   }
 
   async harvestAlgop() {
@@ -415,7 +408,7 @@ export default class PirsItem extends Vue.with(Props) {
       this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
 
       await this.rewardsSystem.claimPirs(
-        this.art.nft.index,
+        this.art.index,
         this.account,
       ).on('transactionHash', () => {
         this.withdrawPirsStatus =
@@ -433,14 +426,10 @@ export default class PirsItem extends Vue.with(Props) {
 
   async getPirsPercentage() {
     try {
-      this.auctionPirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.auctionIndex);
+      this.auctionPirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.art.index);
     } catch (error) {
       console.log('Error - getPirsPercentage - PirsItem');
     }
-  }
-
-  stackAlgo() {
-    this.canStack = true;
   }
 
   stackCoin() {
@@ -454,8 +443,8 @@ export default class PirsItem extends Vue.with(Props) {
   openPirsModal() {
     void this.$store.dispatch({
       type: 'auctions/openPirsModal',
-      collectionOwner: this.art.collectionOwner,
-      itemIndex: this.art.nft.index,
+      collectionOwner: this.art.item.collectionOwner,
+      itemIndex: this.art.item.index,
     });
   }
 
@@ -473,14 +462,14 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   formatTime(): void {
-    this.monthExpirations = moment(this.auctionExpirationDt).format('MMM');
-    this.dayExpirations = moment(this.auctionExpirationDt).format('DD');
-    this.yearExpirations = moment(this.auctionExpirationDt).format('YYYY');
-    this.hoursExpirations = moment(this.auctionExpirationDt).format('LT');
+    this.monthExpirations = moment(this.art.expirationDt).format('MMM');
+    this.dayExpirations = moment(this.art.expirationDt).format('DD');
+    this.yearExpirations = moment(this.art.expirationDt).format('YYYY');
+    this.hoursExpirations = moment(this.art.expirationDt).format('LT');
   }
 
   getTime() {
-    const newEnded = moment(this.auctionExpirationDt);
+    const newEnded = moment(this.art.expirationDt);
     const timeLeft = moment.duration(newEnded.diff(moment()));
     this.countYear = timeLeft.years() || 0;
     this.countDays = timeLeft.days() || 0;
@@ -494,7 +483,7 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   get isEnded() {
-    return moment().isAfter(this.auctionExpirationDt);
+    return moment().isAfter(this.art.expirationDt);
   }
 
   @Watch('now')
@@ -514,32 +503,6 @@ export default class PirsItem extends Vue.with(Props) {
     this.lastCountHours = this.countHours;
     this.lastCountMinutes = this.countMinutes;
     this.lastCountSeconds = this.countSeconds;
-  }
-
-  getPirsItem() {
-    void this.$store.dispatch({
-      type: 'auctions/getAuctions',
-      collectionOwner: this.art.collectionOwner,
-      itemIndex: this.art.nft.index,
-    }).then(() => {
-      if (this.isConnected) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const itemPirs = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
-        this.itemPirs = itemPirs;
-        this.auctionExpirationDt = itemPirs.expirationDt;
-        this.tokenPriceAddress = itemPirs.minimumBid.tokenPriceAddress;
-        this.highestBidAmount = (itemPirs.highestBid) ? itemPirs.highestBid.amount : 0;
-        this.auctionTokenSymbol = itemPirs.minimumBid.tokenSymbol;
-        this.auctionEnded = itemPirs.ended;
-        this.auctionIndex = itemPirs.index;
-        void this.getPirsPercentage();
-        void this.getUserStackedPirs();
-        if (itemPirs) {
-          void this.getLastBid();
-          void this.getTime();
-        }
-      }
-    });
   }
 }
 

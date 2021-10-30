@@ -305,7 +305,6 @@ export default class SellYourArt extends Vue {
 
   allowedTokens: IAllowedTokens = {};
 
-  creatingAuction: boolean = false;
   displayingStatus: boolean = false;
   createAuctionStatus: CreatingAuctionStatus | null = null;
   createBidBackStatus: CreatingAuctionStatus | null = null;
@@ -370,8 +369,6 @@ export default class SellYourArt extends Vue {
     } else {
       this.isCreator = false;
     }
-    // console.log('creatorrr', this.image.collectionOwner);
-    // console.log('userAccount', this.userAccount);
   }
 
   get nowFormatted() {
@@ -478,7 +475,6 @@ export default class SellYourArt extends Vue {
 
   async createAuction(auction: INewAuction) {
     try {
-      this.creatingAuction = true;
       this.displayingStatus = true;
 
       if (!this.image || !this.selectedCoin) {
@@ -518,10 +514,8 @@ export default class SellYourArt extends Vue {
       this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
       await this.setBidback(bidBack);
       await this.setInvestorPirs(pirs);
-
-      this.creatingAuction = false;
     } catch {
-      this.creatingAuction = false;
+      this.displayingStatus = false;
     }
   }
 
@@ -542,7 +536,6 @@ export default class SellYourArt extends Vue {
   async setInvestorPirs(pirs: number) {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
-    console.log('params', this.image.collectionOwner, this.image.nft.index, pirs);
     this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingInput;
     await this.pirsSystem.setInvestorPirsRate(
       this.image.collectionOwner,
@@ -551,10 +544,8 @@ export default class SellYourArt extends Vue {
       this.userAccount,
     ).on('transactionHash', () => {
       this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
-      console.log('transactionHash pirs');
     }).on('error', () => {
       this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
-      console.log('error pirs');
     });
     this.createAuctionStatus = CreatingAuctionStatus.SettingPirsCompleted;
   }

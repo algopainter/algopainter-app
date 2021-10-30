@@ -8,4 +8,5 @@ export interface CollectionsStateInterface {
     userOnSale: [],
     userPastImages: [],
     imagePastOwners: [],
+    userPirsTabImages: [],
 }

@@ -220,7 +220,7 @@
       <algo-button
         :label="$t('dashboard.auctionPage.okButton')"
         color="primary"
-        :disable="btnDisable"
+        :disable="okBtnDisabled"
         @click="$emit('requestClose')"
       />
     </q-card-section>
@@ -292,21 +292,6 @@ export default class CreateAuctionStatusCard extends Vue {
     }
   }
 
-  get pirsLabel() {
-    switch (this.createAuctionStatus) {
-      case CreatingAuctionStatus.SettingPirsAwaitingInput:
-        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingInput');
-      case CreatingAuctionStatus.SettingPirsAwaitingConfirmation:
-        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingConfirmation');
-      case CreatingAuctionStatus.SettingPirsError:
-        return this.$t('dashboard.sellYourArt.statuses.pirsError');
-      case CreatingAuctionStatus.SettingPirsCompleted:
-        return this.$t('dashboard.sellYourArt.statuses.pirsCompleted');
-      default:
-        return this.$t('dashboard.sellYourArt.statuses.createBidBack');
-    }
-  }
-
   get bidBackLabel() {
     switch (this.createAuctionStatus) {
       case CreatingAuctionStatus.SettingBidbackAwaitingInput:
@@ -322,16 +307,42 @@ export default class CreateAuctionStatusCard extends Vue {
     }
   }
 
-  get okBtnDisabled() {
-    return this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
-      this.createAuctionStatus !== CreatingAuctionStatus.ContractApprovedError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError;
+  get pirsLabel() {
+    switch (this.createAuctionStatus) {
+      case CreatingAuctionStatus.SettingPirsAwaitingInput:
+        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingInput');
+      case CreatingAuctionStatus.SettingPirsAwaitingConfirmation:
+        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingConfirmation');
+      case CreatingAuctionStatus.SettingPirsError:
+        return this.$t('dashboard.sellYourArt.statuses.pirsError');
+      case CreatingAuctionStatus.SettingPirsCompleted:
+        return this.$t('dashboard.sellYourArt.statuses.pirsCompleted');
+      default:
+        return this.$t('dashboard.sellYourArt.statuses.createBidBack');
+    }
   }
 
+  // CreatingAuctionStatus.SettingBidbackCompleted && !isCreator -> botão liberado
+  // CreatingAuctionStatus.SettingPirsCompleted && isCreator
+
+  get okBtnDisabled() {
+    console.log('this.createAuctionStatus', this.createAuctionStatus);
+    return (
+      !this.isCreator &&
+      this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
+      this.createAuctionStatus !== CreatingAuctionStatus.ContractApprovedError &&
+      this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
+      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError) ||
+      (
+        this.isCreator && this.createAuctionStatus !== CreatingAuctionStatus.SettingPirsError
+      );
+  }
+
+  /*
   get btnDisable() {
     return this.okBtnDisabled === true || this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError;
   }
+  */
 }
 </script>
 

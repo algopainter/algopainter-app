@@ -83,7 +83,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
 
   async getBids(type, value: Record<string, unknown>) {
     const account = value.account as string;
-
     try {
       const result = await api.get(`users/${account}/auctions/biding`);
       const bids = result.data as [];
@@ -95,13 +94,12 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
-  async getBidBack(type, value: Record<string, unknown>) {
+  async getBidback(type, value: Record<string, unknown>) {
     const account = value.account as string;
     const page = value.page as number;
     const perPage = value.perPage as string;
     try {
-      const result =
-        await api.get(`users/${account}/auctions/biding/?page=${page}&perPage=${perPage}&order.expirationDt=1`);
+      const result = await api.get(`users/${account}/auctions/biding?forBidbacks=true&page=${page}&perPage=${perPage}&order.expirationDt=1`);
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {

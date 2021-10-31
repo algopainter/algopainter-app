@@ -81,6 +81,14 @@
               @click="endAuction"
             />
             <algoButton
+              v-else-if="auction && auctionEndedWithNoBids"
+              class="q-my-md action full-width"
+              color="primary"
+              label="Return your NFT"
+              :disable="loadingGoToAuctionId"
+              @click="cancelAuction"
+            />
+            <algoButton
               v-else
               class="q-my-md action full-width"
               color="primary"
@@ -100,12 +108,21 @@
       </div>
     </div>
     <q-dialog
-      v-model="displayingStatus"
+      v-model="displayEndAuctionStatus"
       persistent
     >
       <end-auction-status-card
         :end-auction-status="endAuctionStatus"
-        @request-close="onCloseStatusDialog"
+        @request-close="onCloseEndAuctionDialog"
+      />
+    </q-dialog>
+    <q-dialog
+      v-model="displayCancelAuctionStatus"
+      persistent
+    >
+      <delete-auction-status-card
+        :delete-auction-status="deleteAuctionStatus"
+        @request-close="onCloseCancelAuctionDialog"
       />
     </q-dialog>
   </div>
@@ -131,6 +148,15 @@ import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterAuctionSystemProxy, {
   EndAuctionStatus,
 } from 'src/eth/AlgoPainterAuctionSystemProxy';
+import { now } from 'src/helpers/timer';
+import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
+
+enum DeletingAuctionStatus {
+  DeleteAuctionAwaitingInput,
+  DeleteAuctionAwaitingConfirmation,
+  DeleteAuctionError,
+  AuctionDeleted,
+}
 
 class Props {
   art = prop({
@@ -155,29 +181,44 @@ class Props {
     ShareArtIcons,
     LikeAnimation,
     EndAuctionStatusCard,
+    DeleteAuctionStatusCard,
   },
   computed: {
-    ...mapGetters('user', {
-      networkInfo: 'networkInfo',
-    }),
+    ...mapGetters(
+      'user', {
+        networkInfo: 'networkInfo',
+        account: 'account',
+        isConnected: 'isConnected',
+      }),
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
+  account!: string;
+  isConnected!: boolean;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
+  deleteAuctionStatus: DeletingAuctionStatus | null = null;
+  endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
+  displayEndAuctionStatus: boolean = false;
+  displayCancelAuctionStatus: boolean = false;
 
-  // like feature variables
   likeClicked: boolean = false;
   wasLiked: boolean = false;
   likes!: number;
   goToAuctionId: string | null = null;
-  auction: IAuctionItem | null = null;
+  auction!: IAuctionItem;
   loadingGoToAuctionId: boolean = true;
-  endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
-  displayingStatus: boolean = false;
 
   collectionArtController: CollectionArtController =
     new CollectionArtController();
+
+  mounted() {
+    if (this.isConnected) {
+      void this.loadData();
+    }
+    this.likes = this.art.likes;
+    void this.loadAuctionData();
+  }
 
   get auctionEnded() {
     if (!this.auction) {
@@ -185,6 +226,15 @@ export default class GalleryItem extends Vue.with(Props) {
     }
 
     return this.auction.highestBid &&
+      moment(this.auction.expirationDt).isBefore(moment());
+  }
+
+  get auctionEndedWithNoBids() {
+    if (!this.auction) {
+      return false;
+    }
+
+    return this.auction.bids.length === 0 &&
       moment(this.auction.expirationDt).isBefore(moment());
   }
 
@@ -223,14 +273,6 @@ export default class GalleryItem extends Vue.with(Props) {
     return this.$t('dashboard.auctionPage.claimBtn', { amount, coin });
   }
 
-  mounted() {
-    if (this.isConnected) {
-      void this.loadData();
-    }
-    this.likes = this.art.likes;
-    void this.loadAuctionData();
-  }
-
   async loadAuctionData() {
     this.loadingGoToAuctionId = true;
 
@@ -248,24 +290,15 @@ export default class GalleryItem extends Vue.with(Props) {
     this.loadingGoToAuctionId = false;
   }
 
+  get now() {
+    return now.value;
+  }
+
   loadData() {
     this.wasLiked =
       (this.art.likers as string[]).filter(
-        (liker) => liker.toLowerCase() === this.account,
+        (liker) => liker.toLowerCase() === this.account.toLowerCase(),
       ).length !== 0;
-  }
-
-  get account() {
-    if (this.isConnected) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-      return this.$store.getters['user/account'].toLowerCase();
-    }
-    return null;
-  }
-
-  get isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-    return this.$store.getters['user/isConnected'];
   }
 
   favoriteClicked(wasLiked: boolean) {
@@ -333,7 +366,7 @@ export default class GalleryItem extends Vue.with(Props) {
 
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
 
-    this.displayingStatus = true;
+    this.displayEndAuctionStatus = true;
     this.endAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
 
     await this.auctionSystem.endAuction(
@@ -349,17 +382,38 @@ export default class GalleryItem extends Vue.with(Props) {
     this.endAuctionStatus = EndAuctionStatus.AuctionEnded;
   }
 
-  onCloseStatusDialog() {
-    this.displayingStatus = false;
+  async cancelAuction() {
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+
+    this.displayCancelAuctionStatus = true;
+    this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionAwaitingInput;
+
+    await this.auctionSystem.cancelAuction(this.auction.index, this.account).on('transactionHash', () => {
+      this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation;
+    }).on('error', () => {
+      this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
+    });
+
+    this.deleteAuctionStatus = DeletingAuctionStatus.AuctionDeleted;
+  }
+
+  onCloseEndAuctionDialog() {
+    this.displayEndAuctionStatus = false;
+  }
+
+  onCloseCancelAuctionDialog() {
+    this.displayCancelAuctionStatus = false;
+
+    if (this.deleteAuctionStatus === DeletingAuctionStatus.AuctionDeleted) {
+      this.$q.notify({
+        type: 'positive',
+        message: this.$t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionDeleted'),
+      });
+    }
   }
 
   openAuctionModal() {
     void this.$store.dispatch('auctions/openAuctionModal');
-  }
-
-  get accountAdress() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['user/account'] as string;
   }
 }
 

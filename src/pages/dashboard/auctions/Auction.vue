@@ -161,15 +161,10 @@ import { NetworkInfo } from 'src/store/user/types';
 import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
 
 enum DeletingAuctionStatus {
-  CheckingContractApproved,
-  ContractApprovedAwaitingInput,
-  ContractApprovedAwaitingConfirmation,
-  ContractApprovedError,
   DeleteAuctionAwaitingInput,
   DeleteAuctionAwaitingConfirmation,
   DeleteAuctionError,
   AuctionDeleted,
-  ConnectYourWallet,
 }
 
 @Options({

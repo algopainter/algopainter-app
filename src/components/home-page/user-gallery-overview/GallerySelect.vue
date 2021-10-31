@@ -30,11 +30,6 @@
         </p>
       </div>
       <div class="text-bold text-h6">
-        <!--
-        <p class="won-bid">
-          {{ $t('dashboard.gallery.bidbackTab.auctionStatuses.youWon') }}
-        </p>
-        -->
         <div
           v-if="isEnded"
           class="text-bold text-end"
@@ -159,7 +154,7 @@
         class="bidBack text-white column justify-center content-center q-mb-xl"
       >
         <div class="row justify-center items-center content-center">
-          {{ auctionBidBack + "%" }}
+          {{ auctionBidbackRate + "%" }}
         </div>
         <div class="row justify-center items-center content-center">
           {{ $t('dashboard.gallery.bidbackTab.bidback') }}
@@ -249,18 +244,16 @@ export default class gallerySelect extends Vue.with(Props) {
   account!: string;
   isConnected!: boolean;
 
-  algopStacked: number = 0;
   openModal: boolean = false;
   openModalUnstack: boolean = false;
-  auctionBidBack: number = 0;
-  isCoinHarvestDisabled: boolean = false;
-  disableUnstackBtn: boolean = true;
-  disableStackBtn: boolean = true;
-  lastBid: string = '';
+  algopStacked: number = 0;
   showHarvestBtn: boolean = false;
+  lastBid: string = '';
+  disableUnstackBtn: boolean = true;
+  auctionBidbackRate: number = 0;
   userCurrentPrizeAmount: number = 0;
+  isCoinHarvestDisabled: boolean = false;
 
-  withdrawingBidback: boolean = false;
   displayingStatus: boolean = false;
   withdrawBidbackStatus: WithdrawBidbackStatus | null = null;
 
@@ -297,13 +290,13 @@ export default class gallerySelect extends Vue.with(Props) {
 
   async getBidbackPercentage() {
     try {
-      this.auctionBidBack = await this.bidBackPirsSystem.getBidbackRate(this.art.index);
-      if (this.auctionBidBack > 0) {
+      this.auctionBidbackRate = await this.bidBackPirsSystem.getBidbackRate(this.art.index);
+      if (this.auctionBidbackRate > 0) {
         void this.getCurrentPrizeAmount();
       }
       void this.getUserStackedBidback();
     } catch (error) {
-      console.log('error getBidbackPercentage');
+      console.log('Error - getBidbackPercentage - GallerySelect');
     }
   }
 
@@ -314,13 +307,6 @@ export default class gallerySelect extends Vue.with(Props) {
     );
 
     this.lastBid = `${bidAmount} ${this.art.highestBid.tokenSymbol}`;
-  }
-
-  setFormatCurrency(amount: number) {
-    return blockchainToCurrency(
-      amount,
-      this.coinDetails.decimalPlaces,
-    );
   }
 
   get coinDetails() {
@@ -335,20 +321,24 @@ export default class gallerySelect extends Vue.with(Props) {
     return coin;
   }
 
+  setFormatCurrency(amount: number) {
+    return blockchainToCurrency(
+      amount,
+      this.coinDetails.decimalPlaces,
+    );
+  }
+
   getUserStackedBidback() {
     if (this.art.bidbacks) {
-      Object.keys(this.art.bidbacks).forEach(() => {
-        this.algopStacked = this.art.bidbacks[this.account as unknown as number] as number;
-      });
+      this.algopStacked = this.art.bidbacks[this.account as unknown as number] as number;
     }
 
-    this.disableUnstackBtn = (this.algopStacked <= 0);
-    this.showHarvestBtn = (this.art.ended && this.algopStacked > 0 && this.auctionBidBack > 0);
+    this.disableUnstackBtn = (this.algopStacked <= 0 || this.art.ended);
+    this.showHarvestBtn = (this.art.ended && this.algopStacked > 0 && this.auctionBidbackRate > 0);
   }
 
   async claimBidback() {
     try {
-      this.withdrawingBidback = true;
       this.displayingStatus = true;
 
       this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
@@ -363,11 +353,11 @@ export default class gallerySelect extends Vue.with(Props) {
       });
 
       this.isCoinHarvestDisabled = true;
+      this.disableUnstackBtn = true;
       this.withdrawBidbackStatus = WithdrawBidbackStatus.BidbackWithdrawn;
-    } catch {
-      this.withdrawingBidback = false;
+    } catch (e) {
+      console.log('error claimBidback bidback', e);
     }
-    this.withdrawingBidback = false;
   }
 
   async getCurrentPrizeAmount() {
@@ -377,11 +367,11 @@ export default class gallerySelect extends Vue.with(Props) {
 
     const auctionHighestBid = this.art.highestBid.amount / 1000000000000000000;
 
-    const auctionBidbackRate = this.auctionBidBack / 100;
+    const auctionBidbackRate = this.auctionBidbackRate / 100;
 
-    const totalBidbackPrize = (auctionBidbackRate > 0) ? auctionBidbackRate * auctionHighestBid : 0;
+    const totalBidbackPrize = auctionBidbackRate * auctionHighestBid;
 
-    const userBidbackShare = this.algopStacked / totalBidbackStaked;
+    const userBidbackShare = (totalBidbackStaked > 0) ? this.algopStacked / totalBidbackStaked : 0;
 
     this.userCurrentPrizeAmount = userBidbackShare * totalBidbackPrize;
   }
@@ -410,8 +400,6 @@ export default class gallerySelect extends Vue.with(Props) {
         type: 'positive',
         message: 'Auction created successfully',
       });
-
-      // void this.$router.push('/');
     }
   }
 

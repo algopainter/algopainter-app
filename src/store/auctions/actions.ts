@@ -72,7 +72,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     try {
       const result = await api.get(`/images/${imgId}/owners`);
       const owners = result.data as [];
-      console.log('owners', owners);
       this.commit('auctions/SET_IMAGE_PAST_OWNERS', owners);
     } catch (err) {
       console.log('error getImagePastOwners');

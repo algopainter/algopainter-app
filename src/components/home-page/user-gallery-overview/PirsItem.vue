@@ -21,20 +21,7 @@
         </div>
         {{ art.item.description }}
       </div>
-      <!-- <div>
-        <div class="text-bold text-h4 q-mt-md">
-          {{ $t('dashboard.gallery.bidbackTab.lastBids') }}
-        </div>
-        <p class="coin text-h6">
-          {{ lastBid }}
-        </p>
-      </div> -->
       <div class="text-bold text-h6">
-        <!--
-        <p class="won-bid">
-          {{ $t('dashboard.gallery.bidbackTab.auctionStatuses.youWon') }}
-        </p>
-        -->
         <div
           v-if="isEnded"
           class="text-bold text-end"
@@ -154,7 +141,7 @@
             class="flex container"
           >
             <q-input
-              v-model="coinHarvestAmount"
+              v-model="userCurrentPrizeAmount"
               fill-mask="0"
               input-class="text-left"
               class="input-stack-algop"
@@ -165,6 +152,7 @@
               :label="$t('dashboard.gallery.pirsTab.harvest')"
               color="primary"
               class="btn-havest"
+              :disable="isCoinHarvestDisabled"
               @click="harvestAlgop"
             />
           </div>
@@ -191,6 +179,7 @@
             label="+"
             color="primary"
             class="btn-staked"
+            :disable="art.ended"
             @click="stackCoin()"
           />
           <pirs-stack-modal
@@ -211,7 +200,7 @@
         class="pirs text-white column justify-center content-center q-mb-xl"
       >
         <div class="row justify-center items-center content-center">
-          {{ auctionPirsRate + "%" }}
+          {{ imagePirsRate + "%" }}
         </div>
         <div class="row justify-center items-center content-center">
           {{ $t('dashboard.gallery.pirsTab.pirs') }}
@@ -245,7 +234,7 @@ import PirsStackModal from 'src/components/modal/PirsStackModal.vue';
 import PirsUnstackModal from 'src/components/modal/PirsUnstackModal.vue';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
-import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';  
 import { NetworkInfo } from 'src/store/user/types';
 import WithdrawPirsStatusCard from 'components/auctions/auction/WithdrawPirsStatusCard.vue';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
@@ -299,19 +288,20 @@ export default class PirsItem extends Vue.with(Props) {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  // isConnected!: boolean;
+  isConnected!: boolean;
 
-  coinHarvestAmount: number = 0;
   openModal: boolean = false;
   openModalUnstack: boolean = false;
-  auctionPirsRate: number | null = null;
-  disableUnstackBtn: boolean = true;
-  lastBid: string = '';
+  algopStacked: number = 0;
   showHarvestBtn: boolean = false;
-  withdrawingPirs: boolean = false;
+  lastBid: string = '';
+  disableUnstackBtn: boolean = true;
+  imagePirsRate: number = 0;
+  userCurrentPrizeAmount: number = 0;
+  isCoinHarvestDisabled: boolean = false;
+
   displayingStatus: boolean = false;
   withdrawPirsStatus: WithdrawPirsStatus | null = null;
-  algopStacked: number = 0;
 
   days: number = 0;
   hours: number = 0;
@@ -340,26 +330,27 @@ export default class PirsItem extends Vue.with(Props) {
 
   mounted() {
     void this.getPirsPercentage();
-    void this.getUserStackedPirs();
     void this.getLastBid();
     void this.getTime();
     void this.formatTime();
   }
 
-  get isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['user/isConnected'] as boolean;
-  }
-
-  get accountAddress() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['user/account'] as string;
+  async getPirsPercentage() {
+    try {
+      this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.art.index);
+      if (this.imagePirsRate > 0) {
+        void this.getCurrentPrizeAmount();
+      }
+      void this.getUserStackedPirs();
+    } catch (error) {
+      console.log('Error - getPirsPercentage - PirsItem');
+    }
   }
 
   getLastBid() {
     const highestBidAmount = (this.art.highestBid) ? this.art.highestBid.amount : 0;
 
-    if (highestBidAmount) {
+    if (highestBidAmount !== 0) {
       const bidAmount = blockchainToCurrency(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         highestBidAmount,
@@ -369,13 +360,6 @@ export default class PirsItem extends Vue.with(Props) {
     } else {
       this.lastBid = 'There is no bid so far';
     }
-  }
-
-  setFormatCurrency(amount: number) {
-    return blockchainToCurrency(
-      amount,
-      this.coinDetails.decimalPlaces,
-    );
   }
 
   get coinDetails() {
@@ -390,19 +374,24 @@ export default class PirsItem extends Vue.with(Props) {
     return coin;
   }
 
+  setFormatCurrency(amount: number) {
+    return blockchainToCurrency(
+      amount,
+      this.coinDetails.decimalPlaces,
+    );
+  }
+
   getUserStackedPirs() {
     if (this.art.pirs) {
       this.algopStacked = this.art.pirs[this.account as unknown as number] as number;
     }
 
-    this.disableUnstackBtn = (this.algopStacked <= 0);
-    // this.showHarvestBtn = (this.auctionEnded && this.algopStacked > 0);
-    this.showHarvestBtn = (this.algopStacked > 0 && this.art.ended);
+    this.disableUnstackBtn = (this.algopStacked <= 0 || this.art.ended);
+    this.showHarvestBtn = (this.algopStacked > 0 && this.art.ended && this.imagePirsRate > 0);
   }
 
   async harvestAlgop() {
     try {
-      this.withdrawingPirs = true;
       this.displayingStatus = true;
 
       this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
@@ -417,19 +406,28 @@ export default class PirsItem extends Vue.with(Props) {
         this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsError;
       });
 
+      this.isCoinHarvestDisabled = true;
+      this.disableUnstackBtn = true;
       this.withdrawPirsStatus = WithdrawPirsStatus.PirsWithdrawn;
-    } catch {
-      this.withdrawingPirs = false;
+    } catch (e) {
+      console.log('error harvestAlgop pirs', e);
     }
-    this.withdrawingPirs = false;
   }
 
-  async getPirsPercentage() {
-    try {
-      this.auctionPirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.art.index);
-    } catch (error) {
-      console.log('Error - getPirsPercentage - PirsItem');
-    }
+  async getCurrentPrizeAmount() {
+    const totalBidbackStaked = await this.rewardsSystem.getTotalBidbackStakes(
+      this.art.index,
+    );
+
+    const auctionHighestBid = (this.art.highestBid) ? this.art.highestBid.amount / 1000000000000000000 : 0;
+
+    const auctionBidbackRate = this.imagePirsRate / 100;
+
+    const totalBidbackPrize = auctionBidbackRate * auctionHighestBid;
+
+    const userBidbackShare = (totalBidbackStaked > 0) ? this.algopStacked / totalBidbackStaked : 0;
+
+    this.userCurrentPrizeAmount = userBidbackShare * totalBidbackPrize;
   }
 
   stackCoin() {
@@ -456,8 +454,6 @@ export default class PirsItem extends Vue.with(Props) {
         type: 'positive',
         message: 'Auction created successfully',
       });
-
-      // void this.$router.push('/');
     }
   }
 

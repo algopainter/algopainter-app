@@ -167,6 +167,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
+
   modal: boolean = true;
   isDisabled: boolean = true;
   isCancelDisabled: boolean = false;
@@ -236,6 +237,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
 
   async unstakeAlgop() {
     this.isConfirmBtnLoading = true;
+    this.isCancelDisabled = true;
 
     const { decimalPlaces } = this.coinDetails;
 
@@ -251,20 +253,18 @@ export default class PirsUnstackModal extends Vue.with(Props) {
         await this.rewardsSystem.unstakePirs(this.itemPirs.index, this.unstakeAmount, this.account).on('transactionHash', () => {
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
-          this.isCancelDisabled = false;
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
-          // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });
         this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
-        this.isCancelDisabled = false;
-        this.isDisabled = true;
       }
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      console.log('error.code', error.code);
+    } catch (e) {
+      console.log('error - unstakeAlgop', e);
+    } finally {
+      this.isCancelDisabled = false;
+      this.unstakeAmount = 0;
+      this.isConfirmBtnLoading = false;
+      this.isDisabled = true;
     }
-
-    this.isConfirmBtnLoading = false;
   }
 
   async setAccountBalance() {

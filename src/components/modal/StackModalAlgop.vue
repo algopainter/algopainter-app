@@ -291,21 +291,15 @@ export default class MyPaint extends Vue.with(Props) {
           this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
           this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
-          this.isCancelDisabled = false;
-          this.isDisabled = true;
-          // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });
-
         this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceCompleted;
-        this.isCancelDisabled = false;
-        this.isDisabled = true;
-        this.isConfirmBtnLoading = false;
       }
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      console.log('error.code', error.code);
-      this.isDisabled = true;
+    } catch (e) {
+      console.log('error - stakeAlgop Bidback', e);
     } finally {
+      this.isCancelDisabled = false;
+      this.stakeAmount = 0;
+      this.isConfirmBtnLoading = false;
       this.isDisabled = true;
     }
   }

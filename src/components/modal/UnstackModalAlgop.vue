@@ -171,6 +171,13 @@ export default class MyPaint extends Vue.with(Props) {
   placingBidbackStatus: PlacingBidbackStatus | null = null;
   PlacingBidbackStatus = PlacingBidbackStatus;
 
+  mounted() {
+    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
+    void this.setAccountBalance();
+  }
+
   show() {
     this.$refs.dialog.show();
   }
@@ -235,13 +242,6 @@ export default class MyPaint extends Vue.with(Props) {
     }
   }
 
-  mounted() {
-    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
-    void this.setAccountBalance();
-  }
-
   get auctionRewardsContractAddress() {
     return getRewardsSystemContractByNetworkId(this.networkInfo.id);
   }
@@ -283,19 +283,17 @@ export default class MyPaint extends Vue.with(Props) {
           this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
           this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
-          this.isCancelDisabled = false;
-          // this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
         });
         this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceCompleted;
-        this.isCancelDisabled = false;
-        this.isDisabled = true;
       }
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      console.log('error.code', error.code);
+    } catch (e) {
+      console.log('error - stakeAlgop unstakeAlgop', e);
+    } finally {
+      this.isCancelDisabled = false;
+      this.unstakeAmount = 0;
+      this.isConfirmBtnLoading = false;
+      this.isDisabled = true;
     }
-
-    this.isConfirmBtnLoading = false;
   }
 
   async approveContractTransfer(amount: number) {

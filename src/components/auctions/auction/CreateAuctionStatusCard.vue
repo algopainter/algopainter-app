@@ -322,27 +322,13 @@ export default class CreateAuctionStatusCard extends Vue {
     }
   }
 
-  // CreatingAuctionStatus.SettingBidbackCompleted && !isCreator -> botão liberado
-  // CreatingAuctionStatus.SettingPirsCompleted && isCreator
-
   get okBtnDisabled() {
-    console.log('this.createAuctionStatus', this.createAuctionStatus);
-    return (
-      !this.isCreator &&
-      this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
+    return this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
       this.createAuctionStatus !== CreatingAuctionStatus.ContractApprovedError &&
       this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError) ||
-      (
-        this.isCreator && this.createAuctionStatus !== CreatingAuctionStatus.SettingPirsError
-      );
+      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError &&
+      this.createAuctionStatus !== CreatingAuctionStatus.SettingPirsError;
   }
-
-  /*
-  get btnDisable() {
-    return this.okBtnDisabled === true || this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError;
-  }
-  */
 }
 </script>
 

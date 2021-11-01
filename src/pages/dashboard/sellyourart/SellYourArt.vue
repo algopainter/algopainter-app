@@ -234,8 +234,7 @@ import { NetworkInfo } from 'src/store/user/types';
 import AlgoButton from 'components/common/Button.vue';
 import DateField from 'components/fields/DateField.vue';
 import TimeField from 'components/fields/TimeField.vue';
-import CreateAuctionStatusCard
-  from 'components/auctions/auction/CreateAuctionStatusCard.vue';
+import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
 
 interface INewAuction {
   minimumPrice: number;
@@ -309,20 +308,6 @@ export default class SellYourArt extends Vue {
   createAuctionStatus: CreatingAuctionStatus | null = null;
   createBidBackStatus: CreatingAuctionStatus | null = null;
 
-  /*
-  async getFee() {
-    await this.auctionSystem.getAuctionAmountInfo(10000, this.userAccount).on('transactionHash', () => {
-      console.log('auction');
-    }).on('error', () => {
-      console.log('error');
-    });
-  }
-
-  mounted() {
-    void this.getFee();
-  }
-  */
-
   mounted() {
     void this.validatePirs();
   }
@@ -364,11 +349,8 @@ export default class SellYourArt extends Vue {
     const { id } = this.$route.params;
 
     this.image = await getImage(id as string);
-    if (this.image.creator === this.userAccount) {
-      this.isCreator = true;
-    } else {
-      this.isCreator = false;
-    }
+
+    this.isCreator = (this.image.creator === this.userAccount);
   }
 
   get nowFormatted() {
@@ -513,7 +495,9 @@ export default class SellYourArt extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
       await this.setBidback(bidBack);
-      await this.setInvestorPirs(pirs);
+      if (this.isCreator) {
+        await this.setInvestorPirs(pirs);
+      }
     } catch {
       this.displayingStatus = false;
     }

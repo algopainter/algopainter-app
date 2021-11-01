@@ -6,6 +6,7 @@ export interface CollectionsStateInterface {
     images: [],
     collections: [],
     userOnSale: [],
+    userOnSalePublic: [],
     userPastImages: [],
     imagePastOwners: [],
     userPirsTabImages: [],

@@ -9,6 +9,7 @@ function state(): CollectionsStateInterface {
     images: [],
     collections: [],
     userOnSale: [],
+    userOnSalePublic: [],
     userPastImages: [],
     imagePastOwners: [],
     userPirsTabImages: [],

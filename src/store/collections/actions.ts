@@ -45,6 +45,20 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
       console.log('error message - getUserItems');
     }
   },
+  async getUserOnSalePublic(type, value) {
+    const account = value.account as string;
+    const page = value.page as string;
+    const perPage = value.perPage as string;
+    const collectionName = value.collectionName as string;
+    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    try {
+      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=true&includeExpired=false`);
+      const images: [] = res.data;
+      this.commit('collections/SET_USER_ON_SALE_PUBLIC', images);
+    } catch (e) {
+      console.log('error message - getUserItemsPublic');
+    }
+  },
   async getUserPastImages(type, value) {
     const account = value.account as string;
     const page = value.page as string;

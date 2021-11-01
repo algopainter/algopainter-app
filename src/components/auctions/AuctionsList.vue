@@ -4,7 +4,7 @@
       <div class="header">
         {{ $t('dashboard.auctions.hotBids') }}
       </div>
-      <div v-if="notHaveHot">
+      <div v-if="notHaveHot || auctions.length === 0">
         <p class="q-mt-lg text-primary text-bold text-h5">
           {{ $t('dashboard.commingSoon') }}
         </p>

@@ -207,9 +207,12 @@ export default {
     claimBtn: 'Claim: {amount} {coin}',
     endingAuction: 'End auction',
     youWin: 'You won the auction, now get your art!',
+    removeBids: 'Remove your Bid',
+    claimBid: 'Claim your bid',
     auctionEnded: 'Auction ended {endDate}',
     auctionRemainingTime: 'Auction ends in',
     deletingAuction: 'Deleting auction',
+    returnNft: 'Return your NFT',
     feeMessage: 'Listing is free, but if the NFT is sold, a fee of 2.5% will be deducted from the final amount.',
     statuses: {
       allowance: 'Allowance',
@@ -230,6 +233,18 @@ export default {
       awaitingConfirmation: 'Awaiting for the blockchain confirmation',
       auctionEnded: 'Auction ended successfully',
     },
+    removeBidStatuses: {
+      awaitingInput: 'Interact with your wallet to remove your bid',
+      error: 'An error occurred while trying to remove your bid',
+      awaitingConfirmation: 'Awaiting for the blockchain confirmation',
+      bidRemove: 'Remove bid successfully',
+    },
+    bidClaimStatus: {
+      awaitingInput: 'Interact with your wallet to claim your bid',
+      error: 'An error occurred while trying to claim your bid',
+      awaitingConfirmation: 'Awaiting for the blockchain confirmation',
+      bidClaim: 'claim bid successfully',
+    },
     cancelAuctionStatuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',
@@ -242,6 +257,11 @@ export default {
       deleteAuctionConfirmation: 'Awaiting for the blockchain confirmation',
       deleteAuctionError: 'An error occurred while trying to cancel the auction',
       deleteAuctionDeleted: 'Auction canceled successfully',
+      returnAuction: 'Return NFT',
+      returnAuctionInput: 'Interact with your wallet to retrieve your NFT',
+      returnAuctionConfirmation: 'Awaiting for the blockchain confirmation',
+      returnAuctionError: 'An error occurred while trying to retrieve your NFT',
+      returnAuctionDeleted: 'NFT successfully retrieved',
     },
     cancelAuction: 'Cancel auction',
     claimBidbackStatuses: {

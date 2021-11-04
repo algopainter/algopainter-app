@@ -98,7 +98,21 @@
               <q-icon name="mdi-check" />
             </q-avatar>
           </div>
-          <div class="label">
+          <div
+            v-if="bidStatus === PlacingBidStatus.PlaceBidError"
+            class="label"
+          >
+            <div class="title">
+              {{ $t('dashboard.auctionPage.statuses.error') }}
+            </div>
+            <div>
+              {{ secondStepLabel }}
+            </div>
+          </div>
+          <div
+            v-else
+            class="label"
+          >
             <div class="title">
               {{ $t('dashboard.auctionPage.statuses.placeBid') }}
             </div>
@@ -109,7 +123,21 @@
         </div>
       </div>
     </q-card-section>
-    <q-card-section class="flex justify-end">
+    <q-card-section
+      v-if="bidStatus === PlacingBidStatus.PlaceBidError"
+      class="flex justify-end"
+    >
+      <algo-button
+        :label="$t('dashboard.auctionPage.tryAgain')"
+        color="primary"
+        :disable="okBtnDisabled"
+        @click="$emit('requestClose')"
+      />
+    </q-card-section>
+    <q-card-section
+      v-else
+      class="flex justify-end"
+    >
       <algo-button
         :label="$t('dashboard.auctionPage.okButton')"
         color="primary"

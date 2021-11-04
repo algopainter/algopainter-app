@@ -39,7 +39,7 @@
                   :error="!!errorMessage"
                   :error-message="errorMessage"
                   :rules="[val => val < balance || 'Insufficient funds. Check your wallet.',
-                           val => val > minimumValue || `The amount must be greater than ${minimumValue}` ]"
+                           val => val > minimumValue || `Your bid value must be higher than the highest bid $${coinSymbol} ${minimumValue}` ]"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
               </v-field>

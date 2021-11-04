@@ -84,7 +84,7 @@
               v-else-if="auction && auctionEndedWithNoBids"
               class="q-my-md action full-width"
               color="primary"
-              label="Return your NFT"
+              label="Get your NFT back"
               :disable="loadingGoToAuctionId"
               @click="cancelAuction"
             />

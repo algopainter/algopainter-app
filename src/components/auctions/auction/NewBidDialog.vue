@@ -38,7 +38,8 @@
                   :hint="`${minimumLabel}: ${minimumValue} ${coinSymbol}`"
                   :error="!!errorMessage"
                   :error-message="errorMessage"
-                  :rules="[val => val < balance || 'Insufficient funds. Check your wallet.']"
+                  :rules="[val => val < balance || 'Insufficient funds. Check your wallet.',
+                           val => val > minimumValue || `The amount must be greater than ${minimumValue}` ]"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
               </v-field>

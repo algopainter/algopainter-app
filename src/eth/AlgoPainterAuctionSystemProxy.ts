@@ -49,6 +49,7 @@ export default class AlgoPainterAuctionSystemProxy {
       endAuction(auctionId: number): ContractSendMethod;
       withdraw(auctionId: number): ContractSendMethod;
       getAuctionAmountInfo(amount: number): ContractSendMethod;
+      getAuctionFeeRate(): ContractSendMethod;
     };
   };
 
@@ -59,6 +60,12 @@ export default class AlgoPainterAuctionSystemProxy {
       AlgoPainterAuctionSystem as AbiItem[],
       contractAddress,
     );
+  }
+
+  async getAuctionFeeRate() {
+    const response: unknown = await this.smartContract.methods.getAuctionFeeRate().call();
+
+    return response as number;
   }
 
   async getAllowedTokens(): Promise<string[]> {

@@ -115,7 +115,7 @@
               size="lg"
               color="primary"
               :label="myBids"
-              @click="withdraw"
+              @click="claimBid"
             />
           </div>
         </div>
@@ -155,6 +155,24 @@
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
+    <q-dialog
+      v-model="displayingRemoveBid"
+      persistent
+    >
+      <remove-bid
+        :remove-bid-status="removeBidStatus"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
+    <q-dialog
+      v-model="displayingClaimBid"
+      persistent
+    >
+      <claim-bid
+        :remove-bid-status="removeBidStatus"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
   </div>
 </template>
 
@@ -169,9 +187,11 @@ import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
-import AlgoPainterAuctionSystemProxy, { EndAuctionStatus } from 'src/eth/AlgoPainterAuctionSystemProxy';
+import AlgoPainterAuctionSystemProxy, { EndAuctionStatus, RemoveBidStatus } from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
 import GetArtEndAuction from 'components/auctions/auction/GetArtEndAuction.vue';
+import RemoveBid from 'components/auctions/auction/RemoveBid.vue';
+import ClaimBid from 'components/auctions/auction/ClaimBid.vue';
 
 class Props {
   bidsAuctions= prop({
@@ -184,6 +204,8 @@ class Props {
   components: {
     AlgoButton,
     GetArtEndAuction,
+    RemoveBid,
+    ClaimBid,
   },
   computed: {
     ...mapGetters('user', {
@@ -200,10 +222,13 @@ export default class BidsStatus extends Vue.with(Props) {
   auctionSystem!: AlgoPainterAuctionSystemProxy;
 
   displayingStatus: boolean = false;
+  displayingRemoveBid: boolean = false;
+  displayingClaimBid: boolean = false;
   myTotalBids: number = 0
   btnResult!: string;
   myBidsResult!: string;
   endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
+  removeBidStatus: RemoveBidStatus = RemoveBidStatus.RemoveBidAwaitingInput;
 
   beforeMount() {
     void this.myBids;
@@ -313,12 +338,39 @@ export default class BidsStatus extends Vue.with(Props) {
 
   onCloseStatusDialog() {
     this.displayingStatus = false;
+    this.displayingRemoveBid = false;
+    this.displayingClaimBid = false;
   }
 
-  withdraw() {
-    const withdrawBid = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+  async withdraw() {
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.displayingRemoveBid = true;
+    this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingInput;
+    await this.auctionSystem.withdraw(
+      this.bidsAuctions.index,
+      this.accountAdress,
+    ).on('transactionHash', () => {
+      this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingConfirmation;
+    }).on('error', () => {
+      this.removeBidStatus = RemoveBidStatus.RemoveBidError;
+    });
+    this.removeBidStatus = RemoveBidStatus.RemoveBid;
+    // void withdrawBid.withdraw(this.bidsAuctions.index, this.accountAdress);
+  }
 
-    void withdrawBid.withdraw(this.bidsAuctions.index, this.accountAdress);
+  async claimBid() {
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.displayingClaimBid = true;
+    this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingInput;
+    await this.auctionSystem.withdraw(
+      this.bidsAuctions.index,
+      this.accountAdress,
+    ).on('transactionHash', () => {
+      this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingConfirmation;
+    }).on('error', () => {
+      this.removeBidStatus = RemoveBidStatus.RemoveBidError;
+    });
+    this.removeBidStatus = RemoveBidStatus.RemoveBid;
   }
 }
 </script>

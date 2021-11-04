@@ -19,6 +19,13 @@ export enum DeletingAuctionStatus {
   AuctionDeleted,
 }
 
+export enum RemoveBidStatus {
+  RemoveBidAwaitingInput,
+  RemoveBidAwaitingConfirmation,
+  RemoveBidError,
+  RemoveBid,
+}
+
 export enum TokenType {
   ERC721 = 0,
   ERC1155 = 1,

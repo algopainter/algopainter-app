@@ -50,12 +50,12 @@
         {{ art.title }}
       </q-tooltip>
       <div class="item-actions row q-col-gutter-md justify-center">
-        <div class="col-auto">
+        <div class="row justify-center text-center">
           <algoButton
             icon="visibility"
-            class="q-my-md action"
-            :label="[ btnName ? null : $t('dashboard.auctionPage.btnView') ]"
-            :class="[ btnName ? null : 'q-px-xl' ]"
+            size="10px"
+            class="q-my-md item-visibility"
+            :class="[ btnName ? null : 'q-pl-auto' ]"
             color="primary"
             :to="`/collections/${art._id}`"
           />
@@ -120,7 +120,7 @@
       v-model="displayCancelAuctionStatus"
       persistent
     >
-      <delete-auction-status-card
+      <return-nft
         :delete-auction-status="deleteAuctionStatus"
         @request-close="onCloseCancelAuctionDialog"
       />
@@ -150,6 +150,7 @@ import AlgoPainterAuctionSystemProxy, {
 } from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { now } from 'src/helpers/timer';
 import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
+import ReturnNft from 'components/auctions/auction/ReturnNft.vue';
 
 enum DeletingAuctionStatus {
   DeleteAuctionAwaitingInput,
@@ -182,6 +183,7 @@ class Props {
     LikeAnimation,
     EndAuctionStatusCard,
     DeleteAuctionStatusCard,
+    ReturnNft
   },
   computed: {
     ...mapGetters(
@@ -512,6 +514,15 @@ export default class GalleryItem extends Vue.with(Props) {
   .item-actions {
     .action {
       min-width: unset;
+    }
+    .item-visibility{
+      align-items: center;
+      min-width: 30px;
+      text-align: center;
+      justify-content: center;
+    }
+    i {
+      margin-right: 0px !important;
     }
   }
 }

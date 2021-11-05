@@ -101,6 +101,27 @@ export default class AlgoPainterAuctionSystemProxy {
     ).send({ from });
   }
 
+  async createAuctionCall(
+    tokenType: number,
+    contractAddress: string,
+    tokenId: number,
+    minimumAmount: string,
+    endTime: number,
+    tokenPriceAddress: string,
+    from: string,
+  ) {
+    const response: unknown = await this.smartContract.methods.createAuction(
+      tokenType,
+      contractAddress,
+      tokenId,
+      minimumAmount,
+      endTime,
+      tokenPriceAddress,
+    ).call({ from });
+
+    return response as number;
+  }
+
   bid(auctionId: number, amount: string, from: string) {
     return this.smartContract.methods.bid(
       auctionId,

@@ -128,6 +128,7 @@
                   rules="required"
                 >
                   <time-field
+                    :disable="!formProps.values.endDate"
                     :model-value="field.value"
                     :options="endTimeOptions(formProps.values.endDate)"
                     :label="$t('dashboard.sellYourArt.endTime')"
@@ -456,7 +457,6 @@ export default class SellYourArt extends Vue {
         : hour !== currentHour || minute > currentMinute;
     };
   }
-  // aqui
 
   async approveContract() {
     this.createAuctionStatus = CreatingAuctionStatus.CheckingContractApproved;
@@ -504,6 +504,11 @@ export default class SellYourArt extends Vue {
       this.createAuctionStatus =
         CreatingAuctionStatus.CreateAuctionAwaitingInput;
 
+      if (await this.createAuctionResponse(minimumPriceFormatted, endDate, endTime) !== 'no error') {
+        this.displayingStatus = false;
+        return;
+      }
+
       const auctionResponse = await this.auctionSystem.createAuction(
         TokenType.ERC721,
         this.image.collectionOwner,
@@ -528,6 +533,40 @@ export default class SellYourArt extends Vue {
       }
     } catch {
       this.displayingStatus = false;
+    }
+  }
+
+  async createAuctionResponse(minimumPriceFormatted: number, endDate: string, endTime: string) {
+    if (this.image && this.selectedCoin) {
+      try {
+        await this.auctionSystem.createAuctionCall(
+          TokenType.ERC721,
+          this.image.collectionOwner,
+          this.image.nft.index,
+          numberToString(minimumPriceFormatted),
+          moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
+          this.selectedCoin.tokenAddress,
+          this.userAccount,
+        );
+        return 'no error';
+      } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        const obj = JSON.parse(e.message.replace('Internal JSON-RPC error.', '')) as {code: number, data: string, message: string};
+        switch (obj.message) {
+          case 'execution reverted: AlgoPainterAuctionSystem:INVALID_TIME_STAMP':
+            return this.$q.notify({
+              type: 'negative',
+              message: this.$t('dashboard.sellYourArt.errorHandling.invalidTimeStamp'),
+              icon: 'mdi-alert',
+            });
+          default:
+            return this.$q.notify({
+              type: 'negative',
+              message: this.$t('dashboard.sellYourArt.errorHandling.default'),
+              icon: 'mdi-alert',
+            });
+        }
+      }
     }
   }
 
@@ -565,10 +604,11 @@ export default class SellYourArt extends Vue {
   onCloseStatusDialog() {
     this.displayingStatus = false;
 
-    if (this.createAuctionStatus === CreatingAuctionStatus.AuctionCreated) {
+    if (this.createAuctionStatus === CreatingAuctionStatus.SettingBidbackCompleted ||
+    this.createAuctionStatus === CreatingAuctionStatus.SettingPirsCompleted) {
       this.$q.notify({
         type: 'positive',
-        message: 'Auction created successfully',
+        message: this.$t('dashboard.sellYourArt.auctionCreated'),
       });
 
       void this.$router.push('/');

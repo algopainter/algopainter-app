@@ -147,6 +147,7 @@ export default {
     endTime: 'End time',
     selectCoin: 'Select a coin',
     creatingAuction: 'Creating auction',
+    auctionCreated: 'Auction created successfully',
     statuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',
@@ -170,6 +171,10 @@ export default {
       pirsError: 'An error occurred while trying to set the pirs',
       pirsCompleted: 'Pirs setted successfully',
 
+    },
+    errorHandling: {
+      invalidTimeStamp: 'The auction must have a minimum end time of 1 day and maximum of 30 days',
+      default: 'It was not possible to create the auction.',
     },
   },
   auctionPage: {

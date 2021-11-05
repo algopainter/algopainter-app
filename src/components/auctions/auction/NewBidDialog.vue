@@ -39,7 +39,7 @@
                   :error="!!errorMessage"
                   :error-message="errorMessage"
                   :rules="[val => val < balance || 'Insufficient funds. Check your wallet.',
-                           val => val > minimumValue || `The amount must be greater than ${minimumValue}` ]"
+                           val => val > opponentBid || `Your bid value must be higher than the highest bid $${coinSymbol} ${minimumValue}` ]"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
               </v-field>
@@ -172,6 +172,7 @@ export default class NewBidDialog extends Vue {
   bidFee: number = 0;
   bidAmount: number = 0;
   balance: number = 0;
+  bidHighest: number = 0;
   isConnected!: boolean;
 
   placingBid: boolean = false;
@@ -219,6 +220,26 @@ export default class NewBidDialog extends Vue {
 
   get coinSymbol() {
     return this.coinDetails.label;
+  }
+
+  validateBid() {
+    const highestBid = this.auction.bids;
+    if (highestBid.length === 0) {
+      this.bidHighest = 0;
+    } else {
+      this.bidHighest = this.auction.highestBid.amount;
+    }
+  }
+
+  get opponentBid() {
+    const { decimalPlaces } = this.coinDetails;
+    const value = this.bidHighest;
+
+    const amount = blockchainToCurrency(value, decimalPlaces);
+
+    return this.$n(amount, 'decimal', {
+      maximumFractionDigits: decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   get minimumLabel() {
@@ -271,6 +292,7 @@ export default class NewBidDialog extends Vue {
     this.auctionCoinTokenProxy = new ERC20TokenProxy(this.auction.minimumBid.tokenPriceAddress);
     void this.loadBlockchainData();
     void this.setAccountBalance();
+    void this.validateBid();
   }
 
   show() {

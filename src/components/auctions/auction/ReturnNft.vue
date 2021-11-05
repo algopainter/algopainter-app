@@ -48,9 +48,34 @@
               <q-icon name="mdi-check" />
             </q-avatar>
           </div>
-          <div class="label">
+          <div
+            v-if="deleteAuctionStatus === DeletingAuctionStatus.DeleteAuctionError"
+            class="label"
+          >
             <div class="title">
-              {{ $t('dashboard.auctionPage.cancelAuctionStatuses.returnAuction') }}
+              {{ $t('dashboard.auctionPage.cancelAuctionStatuses.returnError') }}
+            </div>
+            <div>
+              {{ secondStepLabel }}
+            </div>
+          </div>
+          <div
+            v-else-if="deleteAuctionStatus === DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation"
+            class="label"
+          >
+            <div class="title">
+              {{ $t('dashboard.auctionPage.cancelAuctionStatuses.returnConfirm') }}
+            </div>
+            <div>
+              {{ secondStepLabel }}
+            </div>
+          </div>
+          <div
+            v-else
+            class="label"
+          >
+            <div class="title">
+              {{ $t('dashboard.auctionPage.cancelAuctionStatuses.returnSuccess') }}
             </div>
             <div>
               {{ secondStepLabel }}
@@ -94,7 +119,7 @@ export default class ReturnNft extends Vue {
       case DeletingAuctionStatus.DeleteAuctionError:
         return this.$t('dashboard.auctionPage.cancelAuctionStatuses.returnAuctionError');
       case DeletingAuctionStatus.AuctionDeleted:
-        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.returnAuctionDeleted');
+        return this.$t('dashboard.auctionPage.cancelAuctionStatuses.returnSuccesText');
       default:
         return '';
     }

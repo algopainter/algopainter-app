@@ -25,7 +25,6 @@
                 v-slot="{ field, handleChange, errorMessage }"
                 :label="$t('dashboard.auctionPage.amount')"
                 name="amount"
-                :rules="`required|min_value:${minimumBidAllowed}`"
               >
                 <q-input
                   :model-value="field.value"
@@ -39,7 +38,9 @@
                   :error="!!errorMessage"
                   :error-message="errorMessage"
                   :rules="[val => val < balance || 'Insufficient funds. Check your wallet.',
-                           val => val > opponentBid || `Your bid value must be higher than the highest bid $${coinSymbol} ${minimumValue}` ]"
+                           val => val >= minimunBid || `The Amount field must be ${minimunBid} or more`,
+                           val => val > opponentBid || `Your bid value must be higher than the highest bid $${coinSymbol} ${minimumValue}`,
+                  ]"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
               </v-field>
@@ -173,6 +174,7 @@ export default class NewBidDialog extends Vue {
   bidAmount: number = 0;
   balance: number = 0;
   bidHighest: number = 0;
+  bidMinimun: number = 0;
   isConnected!: boolean;
 
   placingBid: boolean = false;
@@ -225,7 +227,7 @@ export default class NewBidDialog extends Vue {
   validateBid() {
     const highestBid = this.auction.bids;
     if (highestBid.length === 0) {
-      this.bidHighest = 0;
+      this.bidMinimun = this.auction.minimumBid.amount;
     } else {
       this.bidHighest = this.auction.highestBid.amount;
     }
@@ -235,6 +237,16 @@ export default class NewBidDialog extends Vue {
     const { decimalPlaces } = this.coinDetails;
     const value = this.bidHighest;
 
+    const amount = blockchainToCurrency(value, decimalPlaces);
+
+    return this.$n(amount, 'decimal', {
+      maximumFractionDigits: decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
+  get minimunBid() {
+    const { decimalPlaces } = this.coinDetails;
+    const value = this.bidMinimun;
     const amount = blockchainToCurrency(value, decimalPlaces);
 
     return this.$n(amount, 'decimal', {

@@ -182,7 +182,23 @@
               </div>
               <div class="col-12">
                 <div class="q-mr-md q-mb-md">
-                  {{ $t('dashboard.auctionPage.feeMessage') }}
+                  <q-field
+                    ref="toggle"
+                    :value="isUserInformedAboutTheFee"
+                    :rules="[val => isUserInformedAboutTheFee === true || 'You must acknowledge the term above.']"
+                    borderless
+                    dense
+                  >
+                    <template #control>
+                      <q-checkbox
+                        v-model="isUserInformedAboutTheFee"
+                        color="green"
+                        :label="$t('dashboard.auctionPage.feeMessage', {
+                          auctionFeePercentage: auctionFeeRate
+                        })"
+                      />
+                    </template>
+                  </q-field>
                 </div>
                 <div class="flex justify-end">
                   <algo-button
@@ -308,8 +324,20 @@ export default class SellYourArt extends Vue {
   createAuctionStatus: CreatingAuctionStatus | null = null;
   createBidBackStatus: CreatingAuctionStatus | null = null;
 
+  isUserInformedAboutTheFee: boolean = false;
+  auctionFeeRate!: string;
+
   mounted() {
     void this.validatePirs();
+    void this.getAuctionFeeRate();
+  }
+
+  async getAuctionFeeRate() {
+    const auctionFeeRate = await this.auctionSystem.getAuctionFeeRate() / 10000;
+
+    this.auctionFeeRate = this.$n(auctionFeeRate, 'percent', {
+      maximumFractionDigits: 2,
+    } as unknown as string);
   }
 
   get auctionSystemContractAddress() {

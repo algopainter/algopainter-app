@@ -26,9 +26,9 @@
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <ShareArtIcons
+        <share-auction
           :art="previewImage"
-          :is-hot="isHot._id"
+          :_id="isHot._id"
         />
         <!--
         <div class="col-12 col-md-1 flex">
@@ -44,7 +44,30 @@
     <q-img
       class="art-image"
       :src="isHot.item.previewImage"
-    />
+    >
+      <div class="row justify-end pirs-bidback">
+        <div
+          class="bidBack text-white column justify-center content-center q-mb-xl"
+        >
+          <div class="row justify-center items-center content-center">
+            {{ auctionBidbackRate + "%" }}
+          </div>
+          <div class="row justify-center items-center content-center">
+            {{ $t('dashboard.gallery.bidbackTab.bidback') }}
+          </div>
+        </div>
+        <div
+          class="pirs text-white column justify-center content-center q-mb-xl"
+        >
+          <div class="row justify-center items-center content-center">
+            {{ imagePirsRate + "%" }}
+          </div>
+          <div class="row justify-center items-center content-center">
+            {{ $t('dashboard.gallery.pirsTab.pirs') }}
+          </div>
+        </div>
+      </div>
+    </q-img>
     <div class="details flex q-pa-sm">
       <div>
         <div
@@ -59,14 +82,16 @@
         </q-tooltip>
       </div>
 
-      <div class="highest-bid">
-        <i18n-t keypath="dashboard.auctions.highestBid">
+      <div
+        v-if="lastValueBid < 0"
+        class="highest-bid"
+      >
+        <i18n-t keypath="dashboard.auctions.minimumBid">
           <template #highestBid>
             <div
               class="flex items-center q-col-gutter-sm q-ml-xs"
             >
               <div
-                v-if="lastValueBid < 0"
                 class="price"
               >
                 <div class="row">
@@ -85,11 +110,37 @@
                   </q-tooltip>
                 </div>
               </div>
+            </div>
+          </template>
+        </i18n-t>
+      </div>
+      <div
+        v-else
+        class="highest-bid"
+      >
+        <i18n-t keypath="dashboard.auctions.highestBid">
+          <template #highestBid>
+            <div
+              class="flex items-center q-col-gutter-sm q-ml-xs"
+            >
               <div
-                v-else
                 class="price"
               >
-                {{ bidValue(isHot.bids[lastValueBid].amount) + ' ' + isHot.bids[lastValueBid].tokenSymbol }}
+                <div class="row">
+                  <div class="ellipsis q-mr-xs">
+                    {{ bidValue(isHot.highestBid.amount) }}
+                  </div>
+                  <div>
+                    {{ isHot.highestBid.tokenSymbol }}
+                  </div>
+                  <q-tooltip
+                    anchor="top middle"
+                    self="center middle"
+                    class="bg-primary"
+                  >
+                    {{ bidValue(isHot.highestBid.amount) + ' ' + isHot.highestBid.tokenSymbol }}
+                  </q-tooltip>
+                </div>
               </div>
             </div>
           </template>
@@ -113,12 +164,14 @@ import { Vue, Options, prop } from 'vue-class-component';
 
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
-import ShareArtIcons from 'src/components/common/ShareArtIcons.vue';
+import ShareAuction from 'src/components/common/ShareAuction.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
-
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
 class Props {
   isHot = prop({
     type: Object as PropType<IAuctionItem>,
@@ -130,13 +183,25 @@ class Props {
   components: {
     AlgoButton,
     LikeAnimation,
-    ShareArtIcons,
+    ShareAuction,
   },
   watch: {
     account: ['loadData'],
   },
+  computed: {
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
+  },
 })
 export default class AuctionItem extends Vue.with(Props) {
+  bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
+  networkInfo!: NetworkInfo;
+  auctionBidbackRate: number = 0;
+   imagePirsRate: number = 0;
   collectionArtController: CollectionArtController = new CollectionArtController();
 
   wasLiked: boolean = false;
@@ -174,11 +239,33 @@ export default class AuctionItem extends Vue.with(Props) {
     }
   }
 
+  created() {
+    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+  }
+
   mounted() {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     setTimeout(this.showRun, 0);
+    void this.getBidbackPercentage();
+    void this.getPirsPercentage();
     void this.loadData();
     void this.lastBid();
+  }
+
+  async getBidbackPercentage() {
+    try {
+      this.auctionBidbackRate = await this.bidBackPirsSystem.getBidbackRate(this.isHot.index);
+    } catch (error) {
+      console.log('Error - getBidbackPercentage - GallerySelect');
+    }
+  }
+
+  async getPirsPercentage() {
+    try {
+      this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.isHot.index);
+    } catch (error) {
+      console.log('Error - getPirsPercentage - PirsItem');
+    }
   }
 
   loadData() {
@@ -312,6 +399,34 @@ export default class AuctionItem extends Vue.with(Props) {
   border-radius: 5px;
   width: 300px;
   height: 300px;
+}
+
+.bidBack{
+  text-align: unset;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: $primary;
+  font-size: 9px;
+  margin-left: 9px ;
+}
+
+.pirs{
+  text-align: unset;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: $primary;
+  font-size: 9px;
+  margin-left: 9px ;
+  margin-right: -10px
+}
+
+.pirs-bidback{
+  margin-top: -13px;
+  margin-right: 0px;
+  background: none;
+  width: 100%;
 }
 
 .details {

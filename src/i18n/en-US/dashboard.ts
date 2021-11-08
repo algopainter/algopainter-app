@@ -183,7 +183,7 @@ export default {
     auctionDistribution: 'Auction Distribution',
     saleNumber: 'Sale {saleNumber} of {totalSales}',
     highestBidBy: 'Highest bid by {highestBidBy}',
-    bidBackPercentage: '{bidBackPercentage} bidback',
+    auctionRates: 'Rates: {bidbackRate}% bidback | {investorPirsRate}% investor pirs | {creatorPirsRate}% creator pirs',
     pirsDestination: '{pirs} of sales will go to {role}',
     previousBid: 'Offered {bidPrice} for {bidAtInDays} days ago',
     previousBidBy: 'by {name}',

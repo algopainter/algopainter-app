@@ -40,6 +40,13 @@
               {{ auction.item.title }}
             </q-tooltip>
           </div>
+          <div
+            class="col-12 title"
+            color="primary"
+          >
+            {{ $t('dashboard.auctionPage.auctionRates',
+                  { bidbackRate: auctionBidbackRate, investorPirsRate: itemInvestorPirsRate, creatorPirsRate: collectionCreatorPirsRate }) }}
+          </div>
           <div class="col-12">
             <div v-if="auctionEnded">
               {{ $t('dashboard.auctionPage.auctionEnded', { endDate: endTimeFormatted }) }}
@@ -155,6 +162,7 @@ import AuctionInfo from './tabs/AuctionInfo.vue';
 import BidsList from './tabs/BidsList.vue';
 import AuctionHistory from './tabs/AuctionHistory.vue';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 
 import { NetworkInfo } from 'src/store/user/types';
 
@@ -195,8 +203,12 @@ export default class Auction extends Vue {
   account!: string;
   isConnected!: boolean;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
+  bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
   displayingStatus: boolean = false;
   deleteAuctionStatus: DeletingAuctionStatus | null = null;
+  auctionBidbackRate: number = 0;
+  itemInvestorPirsRate: number = 0;
+  collectionCreatorPirsRate: number = 0;
 
   get auctionId(): string {
     const { id } = this.$route.params;
@@ -281,14 +293,48 @@ export default class Auction extends Vue {
       void this.loadAuctionDetails();
     }, 5000) as unknown as number;
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
   }
 
   unmounted() {
     clearInterval(this.reloadInterval);
   }
 
+  async getBidbackRate() {
+    if (this.auction) {
+      try {
+        this.auctionBidbackRate = await this.bidBackPirsSystem.getBidbackRate(this.auction.index);
+      } catch (error) {
+        console.log('Error - getBidbackRate - Auction');
+      }
+    }
+  }
+
+  async getInvestorPirsRate() {
+    if (this.auction) {
+      try {
+        this.itemInvestorPirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.auction.index);
+      } catch (error) {
+        console.log('Error - getInvestorPirsRate - Auction');
+      }
+    }
+  }
+
+  async getCreatorPirsRate() {
+    if (this.auction) {
+      try {
+        this.collectionCreatorPirsRate = await this.bidBackPirsSystem.getCreatorPirsRate(this.auction.index);
+      } catch (error) {
+        console.log('Error - collectionCreatorPirsRate - Auction');
+      }
+    }
+  }
+
   async loadAuctionDetails() {
     this.auction = await getAuctionDetails(this.auctionId);
+    void this.getBidbackRate();
+    void this.getInvestorPirsRate();
+    void this.getCreatorPirsRate();
   }
 
   async getAuctionData() {

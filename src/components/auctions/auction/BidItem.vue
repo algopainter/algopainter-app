@@ -15,6 +15,9 @@
       <div class="col-12 user-name">
         {{ bid.name }}
       </div>
+      <div class="col-12">
+        {{ bidDateAndHour }}
+      </div>
     </div>
   </div>
 </template>
@@ -25,6 +28,7 @@ import { Vue, Prop } from 'vue-property-decorator';
 import { IBid } from 'src/models/IBid';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
+import moment from 'moment';
 
 export default class BidItem extends Vue {
   @Prop({ required: true }) bid!: IBid;
@@ -40,6 +44,10 @@ export default class BidItem extends Vue {
     }
 
     return coin;
+  }
+
+  get bidDateAndHour() {
+    return moment(this.bid.createdAt).format('MMMM Do YYYY, h:mm:ss a');
   }
 
   get bidValue() {

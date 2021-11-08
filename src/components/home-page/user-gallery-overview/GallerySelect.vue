@@ -1,16 +1,13 @@
 <template>
   <div class="row justify-between q-mb-md">
     <div class="col-12 col-md-3 col-lg-3 col-xl-3 col-xl-2 col-sm-6 col-xs-12">
-      <q-img
-        class="previewImage"
-        :src="art.item.previewImage"
-        alt="img art"
-      />
+      <q-img class="previewImage" :src="art.item.previewImage" alt="img art" />
     </div>
     <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
         <div class="text-title text-bold text-h6">
-          {{ $t('dashboard.gallery.bidbackTab.symbol') }}{{ art.item.index }} {{ art.item.title }}
+          {{ $t('dashboard.gallery.bidbackTab.symbol') }}{{ art.item.index }}
+          {{ art.item.title }}
           <q-tooltip
             anchor="bottom middle"
             max-width="200px"
@@ -30,42 +27,31 @@
         </p>
       </div>
       <div class="text-bold text-h6">
-        <div
-          v-if="isEnded"
-          class="text-bold text-end"
-        >
+        <div v-if="isEnded" class="text-bold text-end">
           {{ $t('dashboard.bid.auctionEnd') }}
-          <div
-            class="text-bold"
-          >
-            {{ monthExpirations }} <span class="text-bold"> {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span>
+          <div class="text-bold">
+            {{ monthExpirations }}
+            <span class="text-bold">
+              {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span
+            >
             {{ yearExpirations }}
           </div>
-          <p> {{ hoursExpirations }} </p>
+          <p>{{ hoursExpirations }}</p>
         </div>
-        <div
-          v-else
-        >
-          <div
-            class="text-bold row  justify-center text-end"
-          >
+        <div v-else>
+          <div class="text-bold row justify-center text-end">
             {{ $t('dashboard.bid.auctionTime') }}
           </div>
-          <div
-            class="text-bold"
-          >
-            <div
-              class="row justify-center time q-gutter-sm "
-            >
+          <div class="text-bold">
+            <div class="row justify-center time q-gutter-sm">
               <div>
-                <div class="text-bold">
-                  <!-- {{ days }}  -->{{ countDays }}
-                </div>
+                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
               <div>
                 <div class="text-bold">
-                  <!-- {{ hours }}--> {{ countHours }}
+                  <!-- {{ hours }}-->
+                  {{ countHours }}
                 </div>
                 <span>{{ $t('dashboard.bid.hours') }}</span>
               </div>
@@ -77,7 +63,8 @@
               </div>
               <div>
                 <div class="text-bold">
-                  <!-- {{ seconds }} --> {{ countSeconds }}
+                  <!-- {{ seconds }} -->
+                  {{ countSeconds }}
                 </div>
                 <span>{{ $t('dashboard.bid.seconds') }}</span>
               </div>
@@ -86,17 +73,19 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12 items-center field-stack">
+    <div
+      class="
+        col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12
+        items-center
+        field-stack
+      "
+    >
       <div>
         <template v-if="showHarvestBtn">
-          <span
-            class="text-bold flex"
-          >
+          <span class="text-bold flex">
             {{ $t('dashboard.gallery.bidbackTab.earned') }}
           </span>
-          <div
-            class="flex container"
-          >
+          <div class="flex container">
             <q-input
               v-model="userCurrentPrizeAmount"
               fill-mask="0"
@@ -138,14 +127,8 @@
             :disable="art.ended"
             @click="stackCoin()"
           />
-          <stack-modal-algop
-            v-model="openModal"
-            :art="art"
-          />
-          <UnstackModalAlgop
-            v-model="openModalUnstack"
-            :art="art"
-          />
+          <stack-modal-algop v-model="openModal" :art="art" />
+          <UnstackModalAlgop v-model="openModalUnstack" :art="art" />
         </div>
       </div>
     </div>
@@ -154,7 +137,7 @@
         class="bidBack text-white column justify-center content-center q-mb-xl"
       >
         <div class="row justify-center items-center content-center">
-          {{ auctionBidbackRate + "%" }}
+          {{ auctionBidbackRate + '%' }}
         </div>
         <div class="row justify-center items-center content-center">
           {{ $t('dashboard.gallery.bidbackTab.bidback') }}
@@ -168,10 +151,7 @@
         @click="openBidBackModal()"
       />
     </div>
-    <q-dialog
-      v-model="displayingStatus"
-      persistent
-    >
+    <q-dialog v-model="displayingStatus" persistent>
       <withdraw-bidback-status-card
         :withdraw-bidback-status="withdrawBidbackStatus"
         @request-close="onCloseStatusDialog"
@@ -203,7 +183,7 @@ class Props {
   art = prop({
     type: Object as PropType<IAuctionItem>,
     required: true,
-  })
+  });
 }
 
 enum WithdrawBidbackStatus {
@@ -228,15 +208,9 @@ enum WithdrawBidbackStatus {
     now: ['getTime'],
   },
   computed: {
-    ...mapGetters(
-      'user', [
-        'networkInfo',
-        'account',
-        'isConnected',
-      ]),
+    ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
   },
 })
-
 export default class gallerySelect extends Vue.with(Props) {
   bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
@@ -262,10 +236,10 @@ export default class gallerySelect extends Vue.with(Props) {
   minutes: number = 0;
   minuReal: number = 0;
   seconds: number = 0;
-  monthExpirations: string = ''
-  dayExpirations: string = ''
-  yearExpirations: string = ''
-  hoursExpirations!: string ;
+  monthExpirations: string = '';
+  dayExpirations: string = '';
+  yearExpirations: string = '';
+  hoursExpirations!: string;
   countDays: number = 0;
   countHours: number = 0;
   countMinutes: number = 0;
@@ -290,7 +264,9 @@ export default class gallerySelect extends Vue.with(Props) {
 
   async getBidbackPercentage() {
     try {
-      this.auctionBidbackRate = await this.bidBackPirsSystem.getBidbackRate(this.art.index);
+      this.auctionBidbackRate = await this.bidBackPirsSystem.getBidbackRate(
+        this.art.index
+      );
       if (this.auctionBidbackRate > 0) {
         void this.getCurrentPrizeAmount();
       }
@@ -303,7 +279,7 @@ export default class gallerySelect extends Vue.with(Props) {
   getLastBid() {
     const bidAmount = blockchainToCurrency(
       this.art.highestBid.amount,
-      this.coinDetails.decimalPlaces,
+      this.coinDetails.decimalPlaces
     );
 
     this.lastBid = `${bidAmount} ${this.art.highestBid.tokenSymbol}`;
@@ -311,7 +287,10 @@ export default class gallerySelect extends Vue.with(Props) {
 
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
-      return coin.tokenAddress.toLowerCase() === this.art.minimumBid.tokenPriceAddress;
+      return (
+        coin.tokenAddress.toLowerCase() ===
+        this.art.minimumBid.tokenPriceAddress
+      );
     });
 
     if (!coin) {
@@ -322,35 +301,38 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   setFormatCurrency(amount: number) {
-    return blockchainToCurrency(
-      amount,
-      this.coinDetails.decimalPlaces,
-    );
+    return blockchainToCurrency(amount, this.coinDetails.decimalPlaces);
   }
 
   getUserStackedBidback() {
     if (this.art.bidbacks) {
-      this.algopStacked = this.art.bidbacks[this.account as unknown as number] as number;
+      this.algopStacked = this.art.bidbacks[
+        this.account as unknown as number
+      ] as number;
     }
 
-    this.disableUnstackBtn = (this.algopStacked <= 0 || this.art.ended);
-    this.showHarvestBtn = (this.art.ended && this.algopStacked > 0 && this.auctionBidbackRate > 0);
+    this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
+    this.showHarvestBtn =
+      this.art.ended && this.algopStacked > 0 && this.auctionBidbackRate > 0;
   }
 
   async claimBidback() {
     try {
       this.displayingStatus = true;
 
-      this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
+      this.withdrawBidbackStatus =
+        WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
 
-      await this.rewardsSystem.claimBidback(
-        this.art.index,
-        this.account,
-      ).on('transactionHash', () => {
-        this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
-      }).on('error', () => {
-        this.withdrawBidbackStatus = WithdrawBidbackStatus.WithdrawBidbackError;
-      });
+      await this.rewardsSystem
+        .claimBidback(this.art.index, this.account)
+        .on('transactionHash', () => {
+          this.withdrawBidbackStatus =
+            WithdrawBidbackStatus.WithdrawBidbackAwaitingConfirmation;
+        })
+        .on('error', () => {
+          this.withdrawBidbackStatus =
+            WithdrawBidbackStatus.WithdrawBidbackError;
+        });
 
       this.isCoinHarvestDisabled = true;
       this.disableUnstackBtn = true;
@@ -362,7 +344,7 @@ export default class gallerySelect extends Vue.with(Props) {
 
   async getCurrentPrizeAmount() {
     const totalBidbackStaked = await this.rewardsSystem.getTotalBidbackStakes(
-      this.art.index,
+      this.art.index
     );
 
     const auctionHighestBid = this.art.highestBid.amount / 1000000000000000000;
@@ -371,7 +353,8 @@ export default class gallerySelect extends Vue.with(Props) {
 
     const totalBidbackPrize = auctionBidbackRate * auctionHighestBid;
 
-    const userBidbackShare = (totalBidbackStaked > 0) ? this.algopStacked / totalBidbackStaked : 0;
+    const userBidbackShare =
+      totalBidbackStaked > 0 ? this.algopStacked / totalBidbackStaked : 0;
 
     this.userCurrentPrizeAmount = userBidbackShare * totalBidbackPrize;
   }
@@ -406,7 +389,7 @@ export default class gallerySelect extends Vue.with(Props) {
   formatTime(): void {
     this.monthExpirations = moment(this.art.expirationDt).format('MMM');
     this.dayExpirations = moment(this.art.expirationDt).format('DD');
-    this.yearExpirations = moment(this.art.expirationDt).format('YYYY');
+    this.yearExpirations = this.art.expirationDt.format('YYYY');
     this.hoursExpirations = moment(this.art.expirationDt).format('LT');
   }
 
@@ -430,8 +413,18 @@ export default class gallerySelect extends Vue.with(Props) {
   @Watch('now')
   onPropertyChanged() {
     if (!this.stopCount) {
-      if (this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
-        if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
+      if (
+        this.countDays <= 0 &&
+        this.countHours <= 0 &&
+        this.countMinutes <= 0 &&
+        this.countSeconds <= 0
+      ) {
+        if (
+          this.lastCountDays === 0 &&
+          this.lastCountHours === 0 &&
+          this.lastCountMinutes === 0 &&
+          this.lastCountSeconds === 1
+        ) {
           this.formatTime();
           window.location.reload();
         }
@@ -446,7 +439,6 @@ export default class gallerySelect extends Vue.with(Props) {
     this.lastCountSeconds = this.countSeconds;
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -457,81 +449,80 @@ export default class gallerySelect extends Vue.with(Props) {
   text-overflow: ellipsis;
 }
 
-.won-bid{
+.won-bid {
   color: $positive;
 }
 
-.btn-staked{
+.btn-staked {
   min-width: 30px;
   margin-right: 10px;
   height: 30px;
   margin-top: 20px;
 }
 
-.btn-havest{
+.btn-havest {
   min-width: 100px;
   height: 50px;
   margin-top: 10px;
 }
 
-.previewImage{
+.previewImage {
   width: 290px;
 }
-.input-stack-algop{
-  width:170px;
+.input-stack-algop {
+  width: 170px;
   margin-right: 10px;
 }
-.container{
+.container {
   width: 300px;
 }
-.bidBack{
+.bidBack {
   text-align: unset;
   height: 100px;
   width: 100px;
   border-radius: 50%;
   background-color: $primary;
 }
-.coin{
+.coin {
   color: $primary;
 }
-.text-end{
+.text-end {
   width: 170px;
   font-size: 16px;
 }
-@media  (max-width:470px) {
-  .text{
+@media (max-width: 470px) {
+  .text {
     text-align: center;
     align-items: center;
   }
   .text-title {
-  white-space: nowrap;
-  width: 100%;
-  overflow: hidden;
-  text-align: center;
-  text-overflow: ellipsis;
-}
-  .text-last{
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+  }
+  .text-last {
     text-align: center;
   }
   .previewImage {
     width: 100%;
   }
-  .field-stack{
+  .field-stack {
     width: 100%;
     margin-left: 10%;
   }
-  .ended-part{
+  .ended-part {
     text-align: center;
     display: flex;
     justify-content: space-between;
   }
-  .load-more{
+  .load-more {
     height: 10px;
     margin-top: 10%;
   }
-  .text-end{
+  .text-end {
     width: 100%;
-
   }
 }
 </style>

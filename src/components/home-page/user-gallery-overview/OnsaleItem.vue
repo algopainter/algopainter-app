@@ -26,10 +26,19 @@
         </router-link>
       </div>
       <q-space />
-      <ShareArtIcons
-        :art="art.nft.previewImage"
-        :_id="art._id"
-      />
+      <div v-if="auction && auctionEndedWithNoBids">
+        <ShareArtIcons
+          :art="art.nft.previewImage"
+          :_id="art._id"
+        />
+      </div>
+      <div v-else>
+        <ShareAuction
+          :art="art.nft.previewImage"
+          :_id="art._id"
+        />
+      </div>
+
       <LikeAnimation
         :liked="wasLiked"
         :likes="likes || art.likes"
@@ -40,7 +49,7 @@
       class="art-image"
       :src="art.nft.previewImage"
     >
-     <div class="row justify-end pirs-bidback">
+      <div class="row justify-end pirs-bidback">
         <div
           class="bidBack text-white column justify-center content-center q-mb-xl"
         >
@@ -224,6 +233,7 @@ import { api } from 'src/boot/axios';
 import { IMyGallery } from 'src/models/IMyGallery';
 import AlgoButton from '../../common/Button.vue';
 import ShareArtIcons from '../../common/ShareArtIcons.vue';
+import ShareAuction from '../../common/ShareAuction.vue';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import EndAuctionStatusCard from 'components/auctions/auction/EndAuctionStatusCard.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
@@ -273,6 +283,7 @@ class Props {
     EndAuctionStatusCard,
     DeleteAuctionStatusCard,
     ReturnNft,
+    ShareAuction,
   },
   computed: {
     ...mapGetters(

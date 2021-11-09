@@ -14,7 +14,7 @@
       <p class="title">
         {{ bidsAuctions.item.description }}
       </p>
-      <div class="row q-gutter-sm">
+      <div class="row">
         <div
           v-for="(user, i) in bidsAuctions.users"
           :key="i"

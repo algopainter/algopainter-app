@@ -328,11 +328,11 @@ export default class AuctionsList extends Vue {
     // 1024 and up
     1130: {
       itemsToShow: 3,
-      snapAlign: 'center',
+      snapAlign: 'start',
     },
     1450: {
-      itemsToShow: 4,
-      snapAlign: 'center',
+      itemsToShow: 3,
+      snapAlign: 'start',
     },
   };
 

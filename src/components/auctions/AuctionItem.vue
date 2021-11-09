@@ -406,8 +406,9 @@ export default class AuctionItem extends Vue.with(Props) {
   border-radius: 50%;
   background-color: $primary;
   font-size: 9px;
-  margin-left: 9px;
-  margin-right: -10px;
+=======
+  margin-left: 1px;
+  margin-right: -10px
 }
 
 .pirs-bidBack {

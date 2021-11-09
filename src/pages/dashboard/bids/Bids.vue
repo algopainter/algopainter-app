@@ -51,6 +51,8 @@ export default class Bids extends Vue {
   loading: boolean = true;
   dias: number = 0;
 
+  reloadInterval: number = 0;
+
   get auctionBidsFiltered() {
     return this.auctionsBid.filter((auction: IAuctionItem) => {
       return !auction.ended;
@@ -64,6 +66,14 @@ export default class Bids extends Vue {
 
   mounted() {
     void this.getBids();
+
+    this.reloadInterval = setInterval(() => {
+      void this.getBids();
+    }, 5000) as unknown as number;
+  }
+
+  unmounted() {
+    clearInterval(this.reloadInterval);
   }
 
   get accountAdress() {

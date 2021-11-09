@@ -180,7 +180,7 @@ export default class PirsModal extends Vue {
           this.pastOwnersList.forEach((pastOwner) => {
             if (account === pastOwner.account) {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              pastOwner.stackedAlgop = pirsUserList[account as unknown as number] as any;
+              pastOwner.stackedAlgop = pirsUserList[account as unknown as number] as number;
               isVariableSet = true;
             } else if (!isVariableSet) {
               pastOwner.stackedAlgop = 0;

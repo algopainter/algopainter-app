@@ -234,7 +234,7 @@ import PirsStackModal from 'src/components/modal/PirsStackModal.vue';
 import PirsUnstackModal from 'src/components/modal/PirsUnstackModal.vue';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
-import { mapGetters } from 'vuex';  
+import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
 import WithdrawPirsStatusCard from 'components/auctions/auction/WithdrawPirsStatusCard.vue';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';

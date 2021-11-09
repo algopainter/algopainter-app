@@ -2,7 +2,10 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
-    @hide="onDialogHide; openAuctionModal()"
+    @hide="
+      onDialogHide;
+      openAuctionModal();
+    "
   >
     <q-card class="q-pa-lg q-mb-sm">
       <p class="row justify-center text-h5 text-bold">
@@ -12,9 +15,7 @@
         <p class="text-bold">
           {{ $t(`dashboard.auctions.currentBalance`) }}
         </p>
-        <p>
-          {{ $t(`dashboard.algop`) }} {{ formattedBalance() }}
-        </p>
+        <p>{{ $t(`dashboard.algop`) }} {{ formattedBalance() }}</p>
       </div>
       <div class="column">
         <div class="row justify-center">
@@ -23,24 +24,29 @@
             color="primary"
             :label="$t('dashboard.auctions.pirs')"
             :disable="!isAPastOwner"
-            @click="changeCurrentBtnClicked(1), disableHarvestButton(), disableStackButton()"
+            @click="
+              changeCurrentBtnClicked(1),
+                disableHarvestButton(),
+                disableStackButton()
+            "
           />
           <algoButton
             class="q-my-md action"
             color="primary"
-            :label="$t('dashboard.auctions.bidback')"
+            :label="$t('dashboard.auctions.bidBack')"
             :disable="!hasBidded"
-            @click="changeCurrentBtnClicked(2), disableHarvestButton(), disableStackButton()"
+            @click="
+              changeCurrentBtnClicked(2),
+                disableHarvestButton(),
+                disableStackButton()
+            "
           />
         </div>
         <div class="row">
           <p>{{ testValue + ' ' + $t('dashboard.auctions.BNBearned') }}</p>
         </div>
         <div class="row justify-center">
-          <q-input
-            unmasked-value
-            placeholder="0.000"
-          />
+          <q-input unmasked-value placeholder="0.000" />
           <algoButton
             class="q-my-md q-ml-sm action"
             :label="$t('dashboard.auctions.harvest')"
@@ -52,11 +58,8 @@
           <p>{{ testValue + ' ' + $t('dashboard.auctions.stakedAlgop') }}</p>
         </div>
         <div class="row">
-          <q-input
-            unmasked-value
-            placeholder="0.000"
-          />
-          <div class="row ">
+          <q-input unmasked-value placeholder="0.000" />
+          <div class="row">
             <div>
               <q-btn
                 class="q-my-md q-mx-sm action"
@@ -98,7 +101,7 @@ class Props {
   OpenModal = prop({
     type: Boolean,
     required: true,
-  })
+  });
 }
 @Options({
   components: {
@@ -110,10 +113,10 @@ export default class AuctionModal extends Vue.with(Props) {
   testMessage: string = 'Stack Algop';
   testValue: number = 0;
   currentBtnClicked: undefined | number = 0;
-  isAPastOwner:boolean = true;
-  hasBidded:boolean = false;
-  hasStackedPirs:boolean = true;
-  hasStackedBidback:boolean = false;
+  isAPastOwner: boolean = true;
+  hasBidded: boolean = false;
+  hasStackedPirs: boolean = true;
+  hasStackedBidBack: boolean = false;
   isAuctionWinner: boolean = false; // Check if the auction is over before setting this variable to true
   isHarvestBtn: boolean = false;
   isStackBtnEnabled: boolean = false;
@@ -133,7 +136,7 @@ export default class AuctionModal extends Vue.with(Props) {
       this.isHarvestBtn = false;
     } else if (this.currentBtnClicked === 1 && !this.hasStackedPirs) {
       this.isHarvestBtn = false;
-    } else if (this.currentBtnClicked === 2 && !this.hasStackedBidback) {
+    } else if (this.currentBtnClicked === 2 && !this.hasStackedBidBack) {
       this.isHarvestBtn = false;
     } else {
       this.isHarvestBtn = true;
@@ -145,7 +148,7 @@ export default class AuctionModal extends Vue.with(Props) {
       this.isUnstackBtnEnabled = false;
     } else if (this.currentBtnClicked === 1 && !this.hasStackedPirs) {
       this.isUnstackBtnEnabled = false;
-    } else if (this.currentBtnClicked === 2 && !this.hasStackedBidback) {
+    } else if (this.currentBtnClicked === 2 && !this.hasStackedBidBack) {
       this.isUnstackBtnEnabled = false;
     } else {
       this.isUnstackBtnEnabled = true;
@@ -182,9 +185,10 @@ export default class AuctionModal extends Vue.with(Props) {
   }
 
   async setAccountBalance() {
-    this.userBalance = (
+    this.userBalance =
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
+      await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']
+      );
   }
 
   formattedBalance() {
@@ -226,7 +230,7 @@ p {
 }
 
 @media (max-width: 450px) {
-  .avatar{
+  .avatar {
     width: 140px;
     height: 140px;
   }

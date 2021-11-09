@@ -2,23 +2,20 @@
   <div v-if="loading === false">
     <div class="art-header flex q-pb-sm">
       <div class="users flex q-pb-sm">
-        <div
-          v-for="(bid, index) in isHot.users"
-          :key="index"
-        >
-          <router-link :to="{name: 'customUrl', params: { customUrl: bid.customProfile || bid.account } }">
-            <q-avatar
-              v-if="changeAvatar(bid.avatar)"
-              size="lg"
-              round
-            >
+        <div v-for="(bid, index) in isHot.users" :key="index">
+          <router-link
+            :to="{
+              name: 'customUrl',
+              params: { customUrl: bid.customProfile || bid.account },
+            }"
+          >
+            <q-avatar v-if="changeAvatar(bid.avatar)" size="lg" round>
               <img
                 :src="bid.avatar || '/placeholder-images/do-utilizador.png'"
-              >
-              <q-tooltip
-                class="bg-primary"
-              >
-                {{ bid.role }}{{ $t('dashboard.homePage.colon') }} {{ bid.name }}
+              />
+              <q-tooltip class="bg-primary">
+                {{ bid.role }}{{ $t('dashboard.homePage.colon') }}
+                {{ bid.name }}
               </q-tooltip>
             </q-avatar>
           </router-link>
@@ -26,10 +23,7 @@
       </div>
       <q-space />
       <div class="actions flex items-center q-col-gutter-sm">
-        <share-auction
-          :art="previewImage"
-          :_id="isHot._id"
-        />
+        <share-auction :art="previewImage" :_id="isHot._id" />
         <!--
         <div class="col-12 col-md-1 flex">
           <LikeAnimation
@@ -41,26 +35,30 @@
         -->
       </div>
     </div>
-    <q-img
-      class="art-image"
-      :src="isHot.item.previewImage"
-    >
-      <div class="row justify-end pirs-bidback">
+    <q-img class="art-image" :src="isHot.item.previewImage">
+      <div class="row justify-end pirs-bidBack">
         <div
-          class="bidBack text-white column justify-center content-center q-mb-xl"
+          class="
+            bidBack
+            text-white
+            column
+            justify-center
+            content-center
+            q-mb-xl
+          "
         >
           <div class="row justify-center items-center content-center">
-            {{ auctionBidbackRate + "%" }}
+            {{ auctionBidBackRate + '%' }}
           </div>
           <div class="row justify-center items-center content-center">
-            {{ $t('dashboard.gallery.bidbackTab.bidback') }}
+            {{ $t('dashboard.gallery.bidBackTab.bidBack') }}
           </div>
         </div>
         <div
           class="pirs text-white column justify-center content-center q-mb-xl"
         >
           <div class="row justify-center items-center content-center">
-            {{ imagePirsRate + "%" }}
+            {{ imagePirsRate + '%' }}
           </div>
           <div class="row justify-center items-center content-center">
             {{ $t('dashboard.gallery.pirsTab.pirs') }}
@@ -70,30 +68,20 @@
     </q-img>
     <div class="details flex q-pa-sm">
       <div>
-        <div
-          class="name"
-        >
-          {{ $t('dashboard.homePage.symbol') }}{{ isHot.item.index }} {{ isHot.item.title }}
+        <div class="name">
+          {{ $t('dashboard.homePage.symbol') }}{{ isHot.item.index }}
+          {{ isHot.item.title }}
         </div>
-        <q-tooltip
-          class="bg-primary"
-        >
+        <q-tooltip class="bg-primary">
           {{ isHot.item.title }}
         </q-tooltip>
       </div>
 
-      <div
-        v-if="lastValueBid < 0"
-        class="highest-bid"
-      >
+      <div v-if="lastValueBid < 0" class="highest-bid">
         <i18n-t keypath="dashboard.auctions.minimumBid">
           <template #highestBid>
-            <div
-              class="flex items-center q-col-gutter-sm q-ml-xs"
-            >
-              <div
-                class="price"
-              >
+            <div class="flex items-center q-col-gutter-sm q-ml-xs">
+              <div class="price">
                 <div class="row">
                   <div class="ellipsis q-mr-xs">
                     {{ bidValue(isHot.minimumBid.amount) }}
@@ -106,7 +94,11 @@
                     self="center middle"
                     class="bg-primary"
                   >
-                    {{ bidValue(isHot.minimumBid.amount) + ' ' + isHot.minimumBid.tokenSymbol }}
+                    {{
+                      bidValue(isHot.minimumBid.amount) +
+                      ' ' +
+                      isHot.minimumBid.tokenSymbol
+                    }}
                   </q-tooltip>
                 </div>
               </div>
@@ -114,18 +106,11 @@
           </template>
         </i18n-t>
       </div>
-      <div
-        v-else
-        class="highest-bid"
-      >
+      <div v-else class="highest-bid">
         <i18n-t keypath="dashboard.auctions.highestBid">
           <template #highestBid>
-            <div
-              class="flex items-center q-col-gutter-sm q-ml-xs"
-            >
-              <div
-                class="price"
-              >
+            <div class="flex items-center q-col-gutter-sm q-ml-xs">
+              <div class="price">
                 <div class="row">
                   <div class="ellipsis q-mr-xs">
                     {{ bidValue(isHot.highestBid.amount) }}
@@ -138,7 +123,11 @@
                     self="center middle"
                     class="bg-primary"
                   >
-                    {{ bidValue(isHot.highestBid.amount) + ' ' + isHot.highestBid.tokenSymbol }}
+                    {{
+                      bidValue(isHot.highestBid.amount) +
+                      ' ' +
+                      isHot.highestBid.tokenSymbol
+                    }}
                   </q-tooltip>
                 </div>
               </div>
@@ -189,20 +178,16 @@ class Props {
     account: ['loadData'],
   },
   computed: {
-    ...mapGetters(
-      'user', [
-        'networkInfo',
-        'account',
-        'isConnected',
-      ]),
+    ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
   },
 })
 export default class AuctionItem extends Vue.with(Props) {
   bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
   networkInfo!: NetworkInfo;
-  auctionBidbackRate: number = 0;
-   imagePirsRate: number = 0;
-  collectionArtController: CollectionArtController = new CollectionArtController();
+  auctionBidBackRate: number = 0;
+  imagePirsRate: number = 0;
+  collectionArtController: CollectionArtController =
+    new CollectionArtController();
 
   wasLiked: boolean = false;
 
@@ -232,7 +217,7 @@ export default class AuctionItem extends Vue.with(Props) {
   stopFunction: boolean = false; */
 
   changeAvatar(bid: unknown) {
-    if (typeof (bid) !== 'undefined') {
+    if (typeof bid !== 'undefined') {
       return 'src/assets/do-utilizador.png';
     } else {
       return this.isHot.users;
@@ -246,23 +231,27 @@ export default class AuctionItem extends Vue.with(Props) {
   mounted() {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     setTimeout(this.showRun, 0);
-    void this.getBidbackPercentage();
+    void this.getBidBackPercentage();
     void this.getPirsPercentage();
     void this.loadData();
     void this.lastBid();
   }
 
-  async getBidbackPercentage() {
+  async getBidBackPercentage() {
     try {
-      this.auctionBidbackRate = await this.bidBackPirsSystem.getBidbackRate(this.isHot.index);
+      this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(
+        this.isHot.index
+      );
     } catch (error) {
-      console.log('Error - getBidbackPercentage - GallerySelect');
+      console.log('Error - getBidBackPercentage - GallerySelect');
     }
   }
 
   async getPirsPercentage() {
     try {
-      this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.isHot.index);
+      this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(
+        this.isHot.index
+      );
     } catch (error) {
       console.log('Error - getPirsPercentage - PirsItem');
     }
@@ -270,8 +259,7 @@ export default class AuctionItem extends Vue.with(Props) {
 
   loadData() {
     this.wasLiked =
-      this.isHot.likers.filter((liker) => liker === this.account)
-        .length !== 0;
+      this.isHot.likers.filter((liker) => liker === this.account).length !== 0;
     this.likes = this.isHot.likes;
   }
 
@@ -299,7 +287,7 @@ export default class AuctionItem extends Vue.with(Props) {
         (error) => {
           // tratar erro
           console.log('"like" post error: ', error);
-        },
+        }
       );
     this.like();
   }
@@ -316,7 +304,7 @@ export default class AuctionItem extends Vue.with(Props) {
         (error) => {
           // tratar erro
           console.log('"like" delete error: ', error);
-        },
+        }
       );
     this.like(true);
   }
@@ -340,7 +328,10 @@ export default class AuctionItem extends Vue.with(Props) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const coin = auctionCoins.find((coin) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return coin.tokenAddress.toLowerCase() === this.isHot.minimumBid.tokenPriceAddress;
+      return (
+        coin.tokenAddress.toLowerCase() ===
+        this.isHot.minimumBid.tokenPriceAddress
+      );
     });
 
     if (!coin) {
@@ -351,10 +342,7 @@ export default class AuctionItem extends Vue.with(Props) {
   }
 
   bidValue(bids: number) {
-    const amount = blockchainToCurrency(
-      bids,
-      this.coinDetails.decimalPlaces,
-    );
+    const amount = blockchainToCurrency(bids, this.coinDetails.decimalPlaces);
     return this.$n(amount, 'decimal', {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       maximumFractionDigits: this.coinDetails.decimalPlaces,
@@ -374,14 +362,14 @@ export default class AuctionItem extends Vue.with(Props) {
 </script>
 
 <style lang="scss" scoped>
-.btn-dropdown{
+.btn-dropdown {
   color: #f4538d;
 }
-.link-sharer{
+.link-sharer {
   text-decoration: none;
   color: black;
 }
-.btn-dropdown:before{
+.btn-dropdown:before {
   box-shadow: none;
   border: none;
 }
@@ -401,28 +389,28 @@ export default class AuctionItem extends Vue.with(Props) {
   height: 300px;
 }
 
-.bidBack{
+.bidBack {
   text-align: unset;
   height: 50px;
   width: 50px;
   border-radius: 50%;
   background-color: $primary;
   font-size: 9px;
-  margin-left: 9px ;
+  margin-left: 9px;
 }
 
-.pirs{
+.pirs {
   text-align: unset;
   height: 50px;
   width: 50px;
   border-radius: 50%;
   background-color: $primary;
   font-size: 9px;
-  margin-left: 9px ;
-  margin-right: -10px
+  margin-left: 9px;
+  margin-right: -10px;
 }
 
-.pirs-bidback{
+.pirs-bidBack {
   margin-top: -13px;
   margin-right: 0px;
   background: none;
@@ -434,7 +422,7 @@ export default class AuctionItem extends Vue.with(Props) {
   flex-direction: column;
   align-items: flex-start;
 
-.name {
+  .name {
     font-weight: bold;
     font-size: 1.4rem;
     text-overflow: ellipsis;
@@ -442,7 +430,7 @@ export default class AuctionItem extends Vue.with(Props) {
     white-space: nowrap;
     text-align: left;
     width: 250px;
-}
+  }
 
   .price {
     color: $positive;
@@ -458,11 +446,11 @@ export default class AuctionItem extends Vue.with(Props) {
     }
   }
 
-  .btn-place-a-bid{
+  .btn-place-a-bid {
     width: 300px;
   }
 
-  .ellipsis{
+  .ellipsis {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -470,5 +458,4 @@ export default class AuctionItem extends Vue.with(Props) {
     max-width: 120px;
   }
 }
-
 </style>

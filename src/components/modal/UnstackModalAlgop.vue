@@ -1,9 +1,5 @@
 <template>
-  <q-dialog
-    ref="dialog"
-    v-model="modal"
-    persistent
-  >
+  <q-dialog ref="dialog" v-model="modal" persistent>
     <q-card class="q-pa-md">
       <p class="text-bold text-h6">
         {{ $t('dashboard.unstackModalAlgop.title') }}
@@ -30,56 +26,55 @@
             rounded
             outlined
             suffix="$ALGOP"
-            :rules="[val => !!val || $t('dashboard.unstackModalAlgop.noAlgop')]"
+            :rules="[
+              (val) => !!val || $t('dashboard.unstackModalAlgop.noAlgop'),
+            ]"
             no-error-icon="false"
             :bind="validateInput()"
           >
             <template #append>
-              <q-btn
-                rounded
-                color="primary"
-                @click="maxStakeAmount"
-              >
+              <q-btn rounded color="primary" @click="maxStakeAmount">
                 {{ $t('dashboard.unstackModalAlgop.max') }}
               </q-btn>
             </template>
           </q-input>
           <p
-            v-if="placingBidbackStatus === PlacingBidbackStatus.CheckingAllowance"
+            v-if="
+              placingBidBackStatus === PlacingBidBackStatus.CheckingAllowance
+            "
             class="q-mb-lg"
           >
-            <q-icon
-              name="mdi-alert-circle"
-              color="yellow"
-              size="md"
-            /> {{ $t('dashboard.unstackModalAlgop.interact') }}
+            <q-icon name="mdi-alert-circle" color="yellow" size="md" />
+            {{ $t('dashboard.unstackModalAlgop.interact') }}
           </p>
           <p
-            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation"
+            v-else-if="
+              placingBidBackStatus ===
+              PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation
+            "
           >
-            <q-icon
-              name="mdi-alert"
-              color="yellow"
-              size="md"
-            />{{ $t('dashboard.unstackModalAlgop.confirmWallet') }}
+            <q-icon name="mdi-alert" color="yellow" size="md" />{{
+              $t('dashboard.unstackModalAlgop.confirmWallet')
+            }}
           </p>
           <p
-            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceError"
+            v-else-if="
+              placingBidBackStatus ===
+              PlacingBidBackStatus.IncreateAllowanceError
+            "
           >
-            <q-icon
-              name="mdi-alert-circle"
-              color="red"
-              size="md"
-            />{{ $t('dashboard.unstackModalAlgop.error') }}
+            <q-icon name="mdi-alert-circle" color="red" size="md" />{{
+              $t('dashboard.unstackModalAlgop.error')
+            }}
           </p>
           <p
-            v-else-if="placingBidbackStatus === PlacingBidbackStatus.IncreateAllowanceCompleted"
+            v-else-if="
+              placingBidBackStatus ===
+              PlacingBidBackStatus.IncreateAllowanceCompleted
+            "
           >
-            <q-icon
-              name="mdi-check"
-              color="green"
-              size="md"
-            /> {{ $t('dashboard.unstackModalAlgop.stakeSucess') }}
+            <q-icon name="mdi-check" color="green" size="md" />
+            {{ $t('dashboard.unstackModalAlgop.stakeSucess') }}
           </p>
           <div class="q-gutter-sm row justify-center">
             <algo-button
@@ -113,7 +108,9 @@ import { QDialog } from 'quasar';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
-import getAlgoPainterContractByNetworkId, { getRewardsSystemContractByNetworkId } from 'src/eth/Config';
+import getAlgoPainterContractByNetworkId, {
+  getRewardsSystemContractByNetworkId,
+} from 'src/eth/Config';
 import { numberToString } from 'src/helpers/format/numberToString';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
@@ -122,23 +119,23 @@ import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import UserUtils from 'src/helpers/user';
 
-enum PlacingBidbackStatus {
+enum PlacingBidBackStatus {
   CheckingAllowance,
   IncreateAllowanceAwaitingInput,
   IncreateAllowanceAwaitingConfirmation,
   IncreateAllowanceError,
   IncreateAllowanceCompleted,
-  PlaceBidbackAwaitingInput,
-  PlaceBidbackAwaitingConfirmation,
-  PlaceBidbackError,
-  BidbackCreated,
+  PlaceBidBackAwaitingInput,
+  PlaceBidBackAwaitingConfirmation,
+  PlaceBidBackError,
+  BidBackCreated,
 }
 
 class Props {
   art = prop({
     type: Object as PropType<IAuctionItem>,
     required: true,
-  })
+  });
 }
 
 @Options({
@@ -146,12 +143,7 @@ class Props {
     AlgoButton,
   },
   computed: {
-    ...mapGetters(
-      'user', [
-        'networkInfo',
-        'account',
-        'isConnected',
-      ]),
+    ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
   },
 })
 export default class MyPaint extends Vue.with(Props) {
@@ -168,13 +160,17 @@ export default class MyPaint extends Vue.with(Props) {
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
-  placingBidbackStatus: PlacingBidbackStatus | null = null;
-  PlacingBidbackStatus = PlacingBidbackStatus;
+  placingBidBackStatus: PlacingBidBackStatus | null = null;
+  PlacingBidBackStatus = PlacingBidBackStatus;
 
   mounted() {
     this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
+    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(
+      this.networkInfo
+    );
+    this.auctionCoinTokenProxy = new ERC20TokenProxy(
+      this.algoPainterContractByNetworkId
+    );
     void this.setAccountBalance();
   }
 
@@ -200,9 +196,10 @@ export default class MyPaint extends Vue.with(Props) {
 
   async setAccountBalance() {
     if (this.isConnected) {
-      this.balance = (
+      this.balance =
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']
+        );
       void this.setformattedBalance();
     }
   }
@@ -213,7 +210,9 @@ export default class MyPaint extends Vue.with(Props) {
 
   async maxStakeAmount() {
     try {
-      this.unstakeAmount = await this.rewardsSystem.getTotalBidbackStakes(this.art.index);
+      this.unstakeAmount = await this.rewardsSystem.getTotalBidBackStakes(
+        this.art.index
+      );
     } catch (error) {
       console.log('error maxStakeAmount');
     }
@@ -272,19 +271,25 @@ export default class MyPaint extends Vue.with(Props) {
 
     const unstakeAmount = currencyToBlockchain(
       Number(this.unstakeAmount),
-      decimalPlaces,
+      decimalPlaces
     );
 
     await this.approveContractTransfer(unstakeAmount);
 
     try {
       if (this.unstakeAmount && typeof this.unstakeAmount === 'number') {
-        await this.rewardsSystem.unstakeBidback(this.art.index, this.unstakeAmount, this.account).on('transactionHash', () => {
-          this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
-        }).on('error', () => {
-          this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
-        });
-        this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceCompleted;
+        await this.rewardsSystem
+          .unstakeBidBack(this.art.index, this.unstakeAmount, this.account)
+          .on('transactionHash', () => {
+            this.placingBidBackStatus =
+              PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation;
+          })
+          .on('error', () => {
+            this.placingBidBackStatus =
+              PlacingBidBackStatus.IncreateAllowanceError;
+          });
+        this.placingBidBackStatus =
+          PlacingBidBackStatus.IncreateAllowanceCompleted;
       }
     } catch (e) {
       console.log('error - stakeAlgop unstakeAlgop', e);
@@ -297,43 +302,50 @@ export default class MyPaint extends Vue.with(Props) {
   }
 
   async approveContractTransfer(amount: number) {
-    this.placingBidbackStatus = PlacingBidbackStatus.CheckingAllowance;
+    this.placingBidBackStatus = PlacingBidBackStatus.CheckingAllowance;
 
-    const allowance = await this.auctionCoinTokenProxy
-      .allowance(this.account, this.auctionRewardsContractAddress);
+    const allowance = await this.auctionCoinTokenProxy.allowance(
+      this.account,
+      this.auctionRewardsContractAddress
+    );
 
     if (allowance < amount) {
-      this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceAwaitingInput;
+      this.placingBidBackStatus =
+        PlacingBidBackStatus.IncreateAllowanceAwaitingInput;
 
       const { decimalPlaces } = this.coinDetails;
 
       const allowanceAmount = currencyToBlockchain(
         Number.MAX_SAFE_INTEGER,
-        decimalPlaces,
+        decimalPlaces
       );
 
-      await this.auctionCoinTokenProxy.approve(
-        this.auctionRewardsContractAddress,
-        numberToString(allowanceAmount),
-        this.account,
-      ).on('error', () => {
-        this.placingBidbackStatus = PlacingBidbackStatus.IncreateAllowanceError;
-      }).on('transactionHash', () => {
-        this.placingBidbackStatus =
-          PlacingBidbackStatus.IncreateAllowanceAwaitingConfirmation;
-      });
+      await this.auctionCoinTokenProxy
+        .approve(
+          this.auctionRewardsContractAddress,
+          numberToString(allowanceAmount),
+          this.account
+        )
+        .on('error', () => {
+          this.placingBidBackStatus =
+            PlacingBidBackStatus.IncreateAllowanceError;
+        })
+        .on('transactionHash', () => {
+          this.placingBidBackStatus =
+            PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation;
+        });
     }
   }
 }
 </script>
 <style scoped>
-.margin{
+.margin {
   margin: 0px auto;
 }
-.inputAl{
- width: 90%;
+.inputAl {
+  width: 90%;
 }
-.variable-balance{
+.variable-balance {
   width: 30%;
 }
 </style>

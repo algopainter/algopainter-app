@@ -1,7 +1,5 @@
 <template>
-  <q-page
-    class="q-page q-gutter-lg q-pb-lg"
-  >
+  <q-page class="q-page q-gutter-lg q-pb-lg">
     <div
       v-if="loading"
       class="flex flex-center q-pa-xl"
@@ -34,9 +32,7 @@
         <div class="row q-col-gutter-md">
           <div class="col-12 header title">
             {{ auction.item.title }}
-            <q-tooltip
-              class="bg-primary"
-            >
+            <q-tooltip class="bg-primary">
               {{ auction.item.title }}
             </q-tooltip>
           </div>
@@ -44,12 +40,21 @@
             class="col-12 title"
             color="primary"
           >
-            {{ $t('dashboard.auctionPage.auctionRates',
-                  { bidbackRate: auctionBidbackRate, investorPirsRate: itemInvestorPirsRate, creatorPirsRate: collectionCreatorPirsRate }) }}
+            {{
+              $t('dashboard.auctionPage.auctionRates', {
+                bidBackRate: auctionBidBackRate,
+                investorPirsRate: itemInvestorPirsRate,
+                creatorPirsRate: collectionCreatorPirsRate,
+              })
+            }}
           </div>
           <div class="col-12">
             <div v-if="auctionEnded">
-              {{ $t('dashboard.auctionPage.auctionEnded', { endDate: endTimeFormatted }) }}
+              {{
+                $t('dashboard.auctionPage.auctionEnded', {
+                  endDate: endTimeFormatted,
+                })
+              }}
             </div>
             <div
               v-else
@@ -186,12 +191,7 @@ enum DeletingAuctionStatus {
     CountdownTimer,
   },
   computed: {
-    ...mapGetters(
-      'user', [
-        'networkInfo',
-        'account',
-        'isConnected',
-      ]),
+    ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
   },
 })
 export default class Auction extends Vue {
@@ -206,7 +206,7 @@ export default class Auction extends Vue {
   bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
   displayingStatus: boolean = false;
   deleteAuctionStatus: DeletingAuctionStatus | null = null;
-  auctionBidbackRate: number = 0;
+  auctionBidBackRate: number = 0;
   itemInvestorPirsRate: number = 0;
   collectionCreatorPirsRate: number = 0;
 
@@ -252,8 +252,7 @@ export default class Auction extends Vue {
       return false;
     }
 
-    return this.expirationDate &&
-      this.expirationDate.isBefore(now.value);
+    return this.expirationDate && this.expirationDate.isBefore(now.value);
   }
 
   async cancelAuction() {
@@ -261,11 +260,15 @@ export default class Auction extends Vue {
     if (this.auction) {
       if (this.auction.bids.length === 0) {
         this.displayingStatus = true;
-        await this.auctionSystem.cancelAuction(this.auction.index, this.account).on('transactionHash', () => {
-          this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation;
-        }).on('error', () => {
-          this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
-        });
+        await this.auctionSystem
+          .cancelAuction(this.auction.index, this.account)
+          .on('transactionHash', () => {
+            this.deleteAuctionStatus =
+              DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation;
+          })
+          .on('error', () => {
+            this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
+          });
         this.deleteAuctionStatus = DeletingAuctionStatus.AuctionDeleted;
       } else {
         Notify.create({
@@ -300,12 +303,14 @@ export default class Auction extends Vue {
     clearInterval(this.reloadInterval);
   }
 
-  async getBidbackRate() {
+  async getBidBackRate() {
     if (this.auction) {
       try {
-        this.auctionBidbackRate = await this.bidBackPirsSystem.getBidbackRate(this.auction.index);
+        this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(
+          this.auction.index,
+        );
       } catch (error) {
-        console.log('Error - getBidbackRate - Auction');
+        console.log('Error - getBidBackRate - Auction');
       }
     }
   }
@@ -313,7 +318,8 @@ export default class Auction extends Vue {
   async getInvestorPirsRate() {
     if (this.auction) {
       try {
-        this.itemInvestorPirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.auction.index);
+        this.itemInvestorPirsRate =
+          await this.bidBackPirsSystem.getInvestorPirsRate(this.auction.index);
       } catch (error) {
         console.log('Error - getInvestorPirsRate - Auction');
       }
@@ -323,7 +329,8 @@ export default class Auction extends Vue {
   async getCreatorPirsRate() {
     if (this.auction) {
       try {
-        this.collectionCreatorPirsRate = await this.bidBackPirsSystem.getCreatorPirsRate(this.auction.index);
+        this.collectionCreatorPirsRate =
+          await this.bidBackPirsSystem.getCreatorPirsRate(this.auction.index);
       } catch (error) {
         console.log('Error - collectionCreatorPirsRate - Auction');
       }
@@ -332,7 +339,7 @@ export default class Auction extends Vue {
 
   async loadAuctionDetails() {
     this.auction = await getAuctionDetails(this.auctionId);
-    void this.getBidbackRate();
+    void this.getBidBackRate();
     void this.getInvestorPirsRate();
     void this.getCreatorPirsRate();
   }
@@ -372,7 +379,9 @@ export default class Auction extends Vue {
     if (this.deleteAuctionStatus === DeletingAuctionStatus.AuctionDeleted) {
       this.$q.notify({
         type: 'positive',
-        message: this.$t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionDeleted'),
+        message: this.$t(
+          'dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionDeleted',
+        ),
       });
 
       void this.$router.push('/');
@@ -386,7 +395,7 @@ export default class Auction extends Vue {
   font-weight: bold;
 }
 
-.title{
+.title {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -394,7 +403,7 @@ export default class Auction extends Vue {
   width: 100%;
 }
 
-.description{
+.description {
   word-wrap: break-word;
 }
 

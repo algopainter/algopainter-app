@@ -8,14 +8,20 @@
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="createAuctionStatus === CreatingAuctionStatus.CheckingContractApproved"
+              v-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.CheckingContractApproved
+              "
               size="60px"
               color="primary"
             >
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.ContractApprovedAwaitingInput"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.ContractApprovedAwaitingInput
+              "
               size="60px"
               color="warning"
               text-color="white"
@@ -23,26 +29,27 @@
               <q-icon name="mdi-alert" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.ContractApprovedAwaitingConfirmation"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.ContractApprovedAwaitingConfirmation
+              "
               size="60px"
               color="primary"
             >
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.ContractApprovedError"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.ContractApprovedError
+              "
               size="60px"
               color="negative"
               text-color="white"
             >
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
-            <q-avatar
-              v-else
-              size="60px"
-              color="positive"
-              text-color="white"
-            >
+            <q-avatar v-else size="60px" color="positive" text-color="white">
               <q-icon name="mdi-check" />
             </q-avatar>
           </div>
@@ -58,7 +65,10 @@
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="createAuctionStatus < CreatingAuctionStatus.CreateAuctionAwaitingInput"
+              v-if="
+                createAuctionStatus <
+                CreatingAuctionStatus.CreateAuctionAwaitingInput
+              "
               size="60px"
               color="grey"
               text-color="white"
@@ -66,7 +76,10 @@
               <q-icon name="mdi-cancel" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionAwaitingInput"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.CreateAuctionAwaitingInput
+              "
               size="60px"
               color="warning"
               text-color="white"
@@ -74,7 +87,10 @@
               <q-icon name="mdi-alert" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionAwaitingConfirmation"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.CreateAuctionAwaitingConfirmation
+              "
               size="60px"
               color="primary"
               text-color="white"
@@ -82,19 +98,16 @@
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionError"
+              v-else-if="
+                createAuctionStatus === CreatingAuctionStatus.CreateAuctionError
+              "
               size="60px"
               color="negative"
               text-color="white"
             >
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
-            <q-avatar
-              v-else
-              size="60px"
-              color="positive"
-              text-color="white"
-            >
+            <q-avatar v-else size="60px" color="positive" text-color="white">
               <q-icon name="mdi-check" />
             </q-avatar>
           </div>
@@ -110,7 +123,10 @@
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="createAuctionStatus < CreatingAuctionStatus.SettingBidbackAwaitingInput"
+              v-if="
+                createAuctionStatus <
+                CreatingAuctionStatus.SettingBidBackAwaitingInput
+              "
               size="60px"
               color="grey"
               text-color="white"
@@ -118,7 +134,10 @@
               <q-icon name="mdi-cancel" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidbackAwaitingInput"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.SettingBidBackAwaitingInput
+              "
               size="60px"
               color="warning"
               text-color="white"
@@ -126,7 +145,10 @@
               <q-icon name="mdi-alert" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidbackAwaitingConfirmation"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.SettingBidBackAwaitingConfirmation
+              "
               size="60px"
               color="primary"
               text-color="white"
@@ -134,19 +156,17 @@
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidbackError"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.SettingBidBackError
+              "
               size="60px"
               color="negative"
               text-color="white"
             >
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
-            <q-avatar
-              v-else
-              size="60px"
-              color="positive"
-              text-color="white"
-            >
+            <q-avatar v-else size="60px" color="positive" text-color="white">
               <q-icon name="mdi-check" />
             </q-avatar>
           </div>
@@ -159,13 +179,13 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="isCreator"
-          class="col-12 step"
-        >
+        <div v-if="isCreator" class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="createAuctionStatus < CreatingAuctionStatus.SettingPirsAwaitingInput"
+              v-if="
+                createAuctionStatus <
+                CreatingAuctionStatus.SettingPirsAwaitingInput
+              "
               size="60px"
               color="grey"
               text-color="white"
@@ -173,7 +193,10 @@
               <q-icon name="mdi-cancel" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingPirsAwaitingInput"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.SettingPirsAwaitingInput
+              "
               size="60px"
               color="warning"
               text-color="white"
@@ -181,7 +204,10 @@
               <q-icon name="mdi-alert" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingPirsAwaitingConfirmation"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.SettingPirsAwaitingConfirmation
+              "
               size="60px"
               color="primary"
               text-color="white"
@@ -189,7 +215,9 @@
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingPirsError"
+              v-else-if="
+                createAuctionStatus === CreatingAuctionStatus.SettingPirsError
+              "
               size="60px"
               color="negative"
               text-color="white"
@@ -197,7 +225,10 @@
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
             <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingPirsCompleted"
+              v-else-if="
+                createAuctionStatus ===
+                CreatingAuctionStatus.SettingPirsCompleted
+              "
               size="60px"
               color="positive"
               text-color="white"
@@ -241,10 +272,10 @@ enum CreatingAuctionStatus {
   CreateAuctionAwaitingConfirmation,
   CreateAuctionError,
   AuctionCreated,
-  SettingBidbackAwaitingInput,
-  SettingBidbackAwaitingConfirmation,
-  SettingBidbackError,
-  SettingBidbackCompleted,
+  SettingBidBackAwaitingInput,
+  SettingBidBackAwaitingConfirmation,
+  SettingBidBackError,
+  SettingBidBackCompleted,
   SettingPirsAwaitingInput,
   SettingPirsAwaitingConfirmation,
   SettingPirsError,
@@ -265,15 +296,21 @@ export default class CreateAuctionStatusCard extends Vue {
   get firstStepLabel() {
     switch (this.createAuctionStatus) {
       case CreatingAuctionStatus.CheckingContractApproved:
-        return this.$t('dashboard.sellYourArt.statuses.checkingContractApproved');
+        return this.$t(
+          'dashboard.sellYourArt.statuses.checkingContractApproved'
+        );
       case CreatingAuctionStatus.ContractApprovedAwaitingInput:
         return this.$t('dashboard.sellYourArt.statuses.approveContractInput');
       case CreatingAuctionStatus.ContractApprovedAwaitingConfirmation:
-        return this.$t('dashboard.sellYourArt.statuses.approveContractConfirmation');
+        return this.$t(
+          'dashboard.sellYourArt.statuses.approveContractConfirmation'
+        );
       case CreatingAuctionStatus.ContractApprovedError:
         return this.$t('dashboard.sellYourArt.statuses.approveContractError');
       default:
-        return this.$t('dashboard.sellYourArt.statuses.approveContractAvailable');
+        return this.$t(
+          'dashboard.sellYourArt.statuses.approveContractAvailable'
+        );
     }
   }
 
@@ -282,7 +319,9 @@ export default class CreateAuctionStatusCard extends Vue {
       case CreatingAuctionStatus.CreateAuctionAwaitingInput:
         return this.$t('dashboard.sellYourArt.statuses.createAuctionInput');
       case CreatingAuctionStatus.CreateAuctionAwaitingConfirmation:
-        return this.$t('dashboard.sellYourArt.statuses.createAuctionConfirmation');
+        return this.$t(
+          'dashboard.sellYourArt.statuses.createAuctionConfirmation'
+        );
       case CreatingAuctionStatus.CreateAuctionError:
         return this.$t('dashboard.sellYourArt.statuses.createAuctionError');
       case CreatingAuctionStatus.AuctionCreated:
@@ -294,14 +333,16 @@ export default class CreateAuctionStatusCard extends Vue {
 
   get bidBackLabel() {
     switch (this.createAuctionStatus) {
-      case CreatingAuctionStatus.SettingBidbackAwaitingInput:
-        return this.$t('dashboard.sellYourArt.statuses.bidbackAwaitingInput');
-      case CreatingAuctionStatus.SettingBidbackAwaitingConfirmation:
-        return this.$t('dashboard.sellYourArt.statuses.bidbackAwaitingConfirmation');
-      case CreatingAuctionStatus.SettingBidbackError:
-        return this.$t('dashboard.sellYourArt.statuses.bidbackError');
-      case CreatingAuctionStatus.SettingBidbackCompleted:
-        return this.$t('dashboard.sellYourArt.statuses.bidbackCompleted');
+      case CreatingAuctionStatus.SettingBidBackAwaitingInput:
+        return this.$t('dashboard.sellYourArt.statuses.bidBackAwaitingInput');
+      case CreatingAuctionStatus.SettingBidBackAwaitingConfirmation:
+        return this.$t(
+          'dashboard.sellYourArt.statuses.bidBackAwaitingConfirmation'
+        );
+      case CreatingAuctionStatus.SettingBidBackError:
+        return this.$t('dashboard.sellYourArt.statuses.bidBackError');
+      case CreatingAuctionStatus.SettingBidBackCompleted:
+        return this.$t('dashboard.sellYourArt.statuses.bidBackCompleted');
       default:
         return this.$t('dashboard.sellYourArt.statuses.createBidBack');
     }
@@ -312,7 +353,9 @@ export default class CreateAuctionStatusCard extends Vue {
       case CreatingAuctionStatus.SettingPirsAwaitingInput:
         return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingInput');
       case CreatingAuctionStatus.SettingPirsAwaitingConfirmation:
-        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingConfirmation');
+        return this.$t(
+          'dashboard.sellYourArt.statuses.pirsAwaitingConfirmation'
+        );
       case CreatingAuctionStatus.SettingPirsError:
         return this.$t('dashboard.sellYourArt.statuses.pirsError');
       case CreatingAuctionStatus.SettingPirsCompleted:
@@ -323,18 +366,27 @@ export default class CreateAuctionStatusCard extends Vue {
   }
 
   get okBtnDisabled() {
-    return (this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
-      this.createAuctionStatus !== CreatingAuctionStatus.ContractApprovedError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackCompleted &&
-      !this.isCreator) || (this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
-      this.createAuctionStatus !== CreatingAuctionStatus.ContractApprovedError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingBidbackError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingPirsError &&
-      this.createAuctionStatus !== CreatingAuctionStatus.SettingPirsCompleted &&
-      this.isCreator);
+    return (
+      (this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
+        this.createAuctionStatus !==
+          CreatingAuctionStatus.ContractApprovedError &&
+        this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
+        this.createAuctionStatus !==
+          CreatingAuctionStatus.SettingBidBackError &&
+        this.createAuctionStatus !==
+          CreatingAuctionStatus.SettingBidBackCompleted &&
+        !this.isCreator) ||
+      (this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
+        this.createAuctionStatus !==
+          CreatingAuctionStatus.ContractApprovedError &&
+        this.createAuctionStatus !== CreatingAuctionStatus.CreateAuctionError &&
+        this.createAuctionStatus !==
+          CreatingAuctionStatus.SettingBidBackError &&
+        this.createAuctionStatus !== CreatingAuctionStatus.SettingPirsError &&
+        this.createAuctionStatus !==
+          CreatingAuctionStatus.SettingPirsCompleted &&
+        this.isCreator)
+    );
   }
 }
 </script>
@@ -343,7 +395,7 @@ export default class CreateAuctionStatusCard extends Vue {
 .header {
   background: $primary;
   font-size: 1.4rem;
-  color: #FFF;
+  color: #fff;
 }
 
 .steps {

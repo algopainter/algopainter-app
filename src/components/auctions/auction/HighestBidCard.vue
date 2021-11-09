@@ -49,6 +49,17 @@
       <div class="col-12 price text-bold">
         {{ `${bidValue} ${bid.tokenSymbol}` }}
       </div>
+      <div
+        class="text-bold text-end text-white"
+      >
+        <div
+          class="text-bold"
+        >
+          {{ monthExpirations }} <span class="text-bold"> {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span>
+          {{ yearExpirations }}
+        </div>
+        {{ hoursExpirations }}
+      </div>
     </div>
   </div>
 </template>
@@ -59,12 +70,18 @@ import UserUtils from 'src/helpers/user';
 import { IBid } from 'src/models/IBid';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
+import moment from 'moment';
 
 export default class HighestBidCard extends Vue {
   @Prop({ required: true }) bid!: IBid;
   @Prop({ required: true }) tokenPriceAddress!: string;
 
   userBalance: number = 0;
+
+  monthExpirations!: string;
+  dayExpirations!: string;
+  yearExpirations!: string;
+  hoursExpirations!: string ;
 
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
@@ -76,6 +93,17 @@ export default class HighestBidCard extends Vue {
     }
 
     return coin;
+  }
+
+  beforeMount() {
+    void this.formatTime();
+  }
+
+  formatTime(): void {
+    this.monthExpirations = moment(this.bid.createdAt).format('MMM');
+    this.dayExpirations = moment(this.bid.createdAt).format('DD');
+    this.yearExpirations = moment(this.bid.createdAt).format('YYYY');
+    this.hoursExpirations = moment(this.bid.createdAt).format('LT');
   }
 
   get bidValue() {

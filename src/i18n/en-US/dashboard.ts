@@ -403,7 +403,6 @@ export default {
     win: "You're winning!",
     yourBid: 'Your Bid',
     yourLastBid: 'Your Last Bid',
-    viewArt: 'View Art',
     bidAgain: 'Bid again',
     removeBid: 'Remove your bid',
     of: ',',

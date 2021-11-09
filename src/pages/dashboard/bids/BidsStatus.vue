@@ -54,8 +54,8 @@
         <algo-button
           size="lg"
           color="primary"
-          :label="$t('dashboard.bid.viewArt')"
-          :to="`/collections/${bidsAuctions.item._id}`"
+          :label="$t('dashboard.bid.bidAgain')"
+          :to="`/auctions/${bidsAuctions._id}`"
         />
       </div>
     </div>

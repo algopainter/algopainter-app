@@ -83,7 +83,6 @@
             <div>
               {{ bidCorreting(MyHighBid) }}
             </div>
-            {{ myBidsResult }}
             <div class="q-ml-sm">
               {{ bidsAuctions.highestBid.tokenSymbol }}
             </div>

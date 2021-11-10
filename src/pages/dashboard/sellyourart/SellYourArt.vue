@@ -702,7 +702,7 @@ export default class SellYourArt extends Vue {
 
   async setBidBack(bidBack: number) {
     this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackAwaitingInput;
-    await this.bidBackSystem.setBidbackRate(
+    await this.bidBackSystem.setBidBackRate(
       this.auctionId,
       bidBack,
       this.userAccount,

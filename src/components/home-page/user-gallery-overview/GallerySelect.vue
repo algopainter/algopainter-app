@@ -188,7 +188,7 @@ import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
-import WithdrawBidBackStatusCard from 'components/auctions/auction/WithdrawBidBackStatusCard.vue';
+import WithdrawBidBackStatusCard from 'src/components/auctions/auction/WithdrawBidBackStatusCard.vue';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import moment from 'moment';

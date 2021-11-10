@@ -274,6 +274,7 @@ export default class AccountDetails extends Vue {
 </script>
 
 <style lang="scss" scoped>
+
 .user-info {
   @media (max-width: $breakpoint-xs-max) {
     text-align: center;
@@ -293,8 +294,10 @@ export default class AccountDetails extends Vue {
   }
 }
 .btn-edit{
+  margin-left: 26px;
    @media (max-width: $breakpoint-xs-max){
     width: 100%;
+    margin-left: 1px;
    }
 }
 

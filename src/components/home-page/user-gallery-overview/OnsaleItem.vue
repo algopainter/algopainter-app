@@ -228,7 +228,6 @@
 import { PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import { Vue, Options, prop } from 'vue-class-component';
-import { Notify } from 'quasar';
 
 import { api } from 'src/boot/axios';
 import { IMyGallery } from 'src/models/IMyGallery';
@@ -467,31 +466,25 @@ export default class OnsaleItem extends Vue.with(Props) {
     }
   }
 
-  postFavoriteArt() {
-    this.collectionArtController
-      .favoriteArt(this.art._id, this.account)
-      .then(
-        (result) => {
-          if (result.isFailure) {
-            this.like(true);
-            this.likeClicked = false;
-            this.$q.notify({
-              type: 'positive',
-              message: 'like successfully',
-            });
-          }
-          this.likeClicked = false;
-        },
-        (error) => {
-          console.log('"like" post error: ', error);
-          Notify.create({
-            message: 'dislike has not been completed.',
-            color: 'red',
-            icon: 'mdi-alert',
-          });
-          this.likeClicked = false;
-        },
-      );
+  async postFavoriteArt() {
+    try {
+      await this.collectionArtController
+        .favoriteArt(this.art._id, this.account);
+
+      this.like(true);
+      this.likeClicked = false;
+      this.$q.notify({
+        type: 'positive',
+        message: this.$t('dashboard.gallery.msgLikeSucesse'),
+      });
+      this.likeClicked = false;
+    } catch (e) {
+      this.$q.notify({
+        type: 'negative',
+        message: this.$t('dashboard.gallery.msgErrorLike'),
+      });
+    }
+    this.likeClicked = false;
     this.like();
   }
 

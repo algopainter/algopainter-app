@@ -72,7 +72,7 @@ export default class BidItem extends Vue {
 
   get bidValue() {
     const amount = blockchainToCurrency(
-      this.bid.amount,
+      this.bid.netAmount,
       this.coinDetails.decimalPlaces,
     );
 

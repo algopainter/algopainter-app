@@ -11,7 +11,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     try {
       const res = await api.get(
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        `auctions/?ended=false&address=${algopainterAuctionSystemCurrentAddress}&order.expirationDt=1`
+        `auctions/?ended=false&address=${algopainterAuctionSystemCurrentAddress}&order.expirationDt=1`,
       );
       const hotBids = res.data as [];
       this.commit('auctions/SET_HOT_BIDS', hotBids);
@@ -56,7 +56,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
 
         await api.get(
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}&address=${algopainterAuctionSystemCurrentAddress}`
+          `auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}&address=${algopainterAuctionSystemCurrentAddress}`,
         );
       const auctions = res.data as [];
       const auctionsLength = auctions.length;
@@ -109,7 +109,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     const perPage = value.perPage as string;
     try {
       const result = await api.get(
-        `users/${account}/auctions/biding?forBidBacks=true&page=${page}&perPage=${perPage}&order.expirationDt=1`
+        `users/${account}/auctions/biding?forBidBacks=true&page=${page}&perPage=${perPage}&order.expirationDt=1`,
       );
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);

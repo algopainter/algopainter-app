@@ -45,12 +45,12 @@ interface Ioptions {
   socialNetworks: string;
 }
 export default class ShareAuction extends Vue.with(Props) {
-  messageTwitter: string = "🔥Hey, look at this artwork on the AlgoPainter platform! Amazing, isn't it?"
-  message: string = "Hey,  look at this artwork on the AlgoPainter platform! Amazing, isn't it?"
+  messageTwitter: string = '🔥Check out this amazing NFT artwork I saw. It can be yours. How about placing a bid?'
+  message: string = 'Check out this amazing NFT artwork I saw. It can be yours. How about placing a bid?'
   share(id: string, socialMedia: string) {
     const urlsShared: {[index: string]:string} = {
       Facebook: `https://www.facebook.com/sharer/sharer.php?u=https://appv2.algopainter.art/auctions/${this._id}&quote=${this.message}`,
-      Twitter: `http://twitter.com/share?text=${this.messageTwitter}&url=https://appv2.algopainter.art/auctions/${this._id}&hashtags=AlgoPainter,ALGOP,NFTS`,
+      Twitter: `http://twitter.com/share?text=${this.messageTwitter}&url=https://appv2.algopainter.art/auctions/${this._id}&hashtags=AlgoPainter,ALGOP,NFT`,
       Telegram: `https://telegram.me/share/?url=https://appv2.algopainter.art/auctions/${this._id}%3F&text=${this.message}`,
     };
     const linkElement = document.createElement('a');

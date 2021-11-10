@@ -126,7 +126,7 @@
             :key="index"
           >
             <div>
-              <gallery-item
+              <onsale-item
                 :art="item"
                 :btn-name="'dashboard.homePage.goToAuction'"
                 @favoriteClicked="favoriteClicked"
@@ -395,6 +395,7 @@ import { ICollection } from 'src/models/ICollection';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import GallerySelect from './GallerySelect.vue';
+import OnsaleItem from './OnsaleItem.vue';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 import PirsItem from './PirsItem.vue';
@@ -409,6 +410,7 @@ import { mapGetters } from 'vuex';
     MyGallerySkeleton,
     GallerySelect,
     PirsItem,
+    OnsaleItem,
   },
   computed: {
     ...mapGetters('collections', ['pirsTabImages']),

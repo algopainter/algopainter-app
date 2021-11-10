@@ -328,6 +328,8 @@ export default {
     title: 'Collection',
     gwei: 'Gwei',
     expressions: 'Expressions',
+    msgErrorLike: 'Error dislike.',
+    msgLikeSucesse: 'Like successfully',
     monero: 'Monero',
     myPainting: 'My Painting',
     newPainting: 'New Painting',

@@ -756,7 +756,7 @@ export default class MyGalleryOverview extends Vue {
           this.galleryTabs[4].cont = response.count > 0 ? response.count : 0;
           this.galleryTabs[4].contLabel = ` (${this.galleryTabs[4].cont})`;
           this.galleryTabs[4].maxPages = response.pages;
-          this.galleryTabs[4].noData = this.galleryTabs[4].data.length === 0;
+          this.galleryTabs[4].noData = this.galleryTabs[4].data.length === 0 ;
         }
         this.galleryTabs[4].loadingData = false;
       });

@@ -28,7 +28,7 @@ export default {
     gallery: 'Gallery',
     pirs: 'PIRS',
     bid: 'BidBack',
-    personalNoBid: 'Oh 😔 nothing around here? How do you want to be a big name in the art world?',
+    personalNoBid: 'Oh 😔 nothing around here? How do you want to be a big name in the art world? ',
     pirsVal: '{creators} creators / {investors} investors',
     sell: 'SELL',
     goToAuction: 'Go to auction',

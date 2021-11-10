@@ -452,10 +452,9 @@ export default class OnsaleItem extends Vue.with(Props) {
   }
 
   loadData() {
-    this.wasLiked =
-      (this.art.likers as string[]).filter(
-        (liker) => liker.toLowerCase() === this.account.toLowerCase(),
-      ).length !== 0;
+    this.wasLiked = this.art.likers.filter(
+      (liker) => liker === this.account.toLowerCase(),
+    ).length !== 0;
   }
 
   favoriteClicked(wasLiked: boolean) {

@@ -9,12 +9,12 @@
     />
     <div>
       <p class="text-bold title">
-        {{ bidsAuctions.item.title }}
+        {{ `# ${bidsAuctions.item.index} ${bidsAuctions.item.title}` }}
       </p>
       <p class="title">
         {{ bidsAuctions.item.description }}
       </p>
-      <div class="row q-gutter-sm">
+      <div class="row">
         <div
           v-for="(user, i) in bidsAuctions.users"
           :key="i"

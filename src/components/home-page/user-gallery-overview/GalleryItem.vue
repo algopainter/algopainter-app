@@ -183,7 +183,7 @@ class Props {
     LikeAnimation,
     EndAuctionStatusCard,
     DeleteAuctionStatusCard,
-    ReturnNft
+    ReturnNft,
   },
   computed: {
     ...mapGetters(

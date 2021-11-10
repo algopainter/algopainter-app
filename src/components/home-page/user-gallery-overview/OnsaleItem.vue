@@ -470,13 +470,7 @@ export default class OnsaleItem extends Vue.with(Props) {
     try {
       await this.collectionArtController
         .favoriteArt(this.art._id, this.account);
-
       this.like(true);
-      this.likeClicked = false;
-      this.$q.notify({
-        type: 'positive',
-        message: this.$t('dashboard.gallery.msgLikeSucesse'),
-      });
       this.likeClicked = false;
       this.like();
     } catch (e) {

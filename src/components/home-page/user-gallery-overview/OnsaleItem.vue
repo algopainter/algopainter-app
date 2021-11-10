@@ -228,6 +228,7 @@
 import { PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import { Vue, Options, prop } from 'vue-class-component';
+import { Notify } from 'quasar';
 
 import { api } from 'src/boot/axios';
 import { IMyGallery } from 'src/models/IMyGallery';
@@ -332,14 +333,7 @@ export default class OnsaleItem extends Vue.with(Props) {
       void this.loadData();
     }
     this.likes = this.art.likes;
-    // void this.getBidbackPercentage();
-    // void this.getPirsPercentage();
-    void this.test();
     void this.loadAuctionData();
-  }
-
-  test() {
-    console.log('primeiro');
   }
 
   get auctionEnded() {
@@ -482,11 +476,20 @@ export default class OnsaleItem extends Vue.with(Props) {
           if (result.isFailure) {
             this.like(true);
             this.likeClicked = false;
+            this.$q.notify({
+              type: 'positive',
+              message: 'like successfully',
+            });
           }
           this.likeClicked = false;
         },
         (error) => {
           console.log('"like" post error: ', error);
+          Notify.create({
+            message: 'dislike has not been completed.',
+            color: 'red',
+            icon: 'mdi-alert',
+          });
           this.likeClicked = false;
         },
       );
@@ -588,12 +591,6 @@ export default class OnsaleItem extends Vue.with(Props) {
   cursor: pointer;
 }
 
-.teste {
-  width: 100px;
-  height: 100px;
-  background-color: red;
-}
-
 .bidBack{
   text-align: unset;
   height: 50px;
@@ -622,12 +619,12 @@ export default class OnsaleItem extends Vue.with(Props) {
   width: 100%;
 }
 
-  .ellipsis{
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    text-align: left;
-    max-width: 120px;
+.ellipsis{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  max-width: 120px;
   }
 
 .users {
@@ -648,13 +645,13 @@ export default class OnsaleItem extends Vue.with(Props) {
     font-weight: bold;
   }
 
-  .highest-bid {
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    b {
-      margin-left: 5px;
-    }
+.highest-bid {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  b {
+    margin-left: 5px;
+  }
   }
 
 .details {

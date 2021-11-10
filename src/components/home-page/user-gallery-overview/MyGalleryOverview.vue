@@ -10,12 +10,13 @@
       rounded
       outlined
       bottom-slots
-      @update:model-value="
-        filterCollection(1, currentCollection.label, 'desktop')
-      "
+      @update:model-value="filterCollection(1, currentCollection.label, 'desktop')"
     >
       <template #before>
-        <q-icon name="filter_list" color="primary" />
+        <q-icon
+          name="filter_list"
+          color="primary"
+        />
       </template>
     </q-select>
     <div class="q-mx-auto row items-center justify-center">
@@ -36,7 +37,7 @@
     <div
       v-if="
         !galleryTabs[0].loadingButtons &&
-        currentBtnClicked === galleryTabs[0].btnIndex
+          currentBtnClicked === galleryTabs[0].btnIndex
       "
       class="col-12 flex q-col-gutter-md justify-center"
     >
@@ -45,7 +46,10 @@
           v-if="!galleryTabs[0].noData"
           class="col-12 flex q-col-gutter-md justify-center"
         >
-          <div v-for="(item, index) in galleryTabs[0].data" :key="index">
+          <div
+            v-for="(item, index) in galleryTabs[0].data"
+            :key="index"
+          >
             <div>
               <gallery-item
                 :art="item"
@@ -55,7 +59,10 @@
             </div>
           </div>
         </div>
-        <div v-else class="col-12 q-mt-lg justify-center">
+        <div
+          v-else
+          class="col-12 q-mt-lg justify-center"
+        >
           <p class="text-h6 text-primary text-center q-pb-md text-noItems">
             {{ $t('dashboard.homePage.personalNoItems') }}
           </p>
@@ -110,8 +117,14 @@
       class="col-12 flex q-col-gutter-md justify-center"
     >
       <div v-if="!galleryTabs[1].loadingData">
-        <div v-if="!galleryTabs[1].noData" class="col-12 flex q-col-gutter-md">
-          <div v-for="(item, index) in galleryTabs[1].data" :key="index">
+        <div
+          v-if="!galleryTabs[1].noData"
+          class="col-12 flex q-col-gutter-md"
+        >
+          <div
+            v-for="(item, index) in galleryTabs[1].data"
+            :key="index"
+          >
             <div>
               <gallery-item
                 :art="item"
@@ -121,7 +134,10 @@
             </div>
           </div>
         </div>
-        <div v-else class="col-12 q-mt-lg">
+        <div
+          v-else
+          class="col-12 q-mt-lg"
+        >
           <div class="text-h6 text-primary text-center q-pb-md">
             {{ $t('dashboard.homePage.noItemsForSalePrivate1') }}
           </div>
@@ -177,13 +193,22 @@
           v-if="!galleryTabs[2].noData"
           class="col-12 flex q-col-gutter-md justify-center"
         >
-          <div v-for="(item, index) in galleryTabs[2].data" :key="index">
+          <div
+            v-for="(item, index) in galleryTabs[2].data"
+            :key="index"
+          >
             <div>
-              <gallery-item :art="item" @favoriteClicked="favoriteClicked" />
+              <gallery-item
+                :art="item"
+                @favoriteClicked="favoriteClicked"
+              />
             </div>
           </div>
         </div>
-        <div v-else class="col-12 q-mt-lg justify-center">
+        <div
+          v-else
+          class="col-12 q-mt-lg justify-center"
+        >
           <div class="text-h6 text-primary text-center q-pb-md">
             {{ $t('dashboard.homePage.noItems') }}
           </div>
@@ -227,10 +252,19 @@
         />
       </div>
     </div>
-    <div v-else-if="currentBtnClicked === galleryTabs[3].btnIndex" class="col">
+    <div
+      v-else-if="currentBtnClicked === galleryTabs[3].btnIndex"
+      class="col"
+    >
       <div v-if="!galleryTabs[3].loadingData">
-        <div v-if="!galleryTabs[3].noData" class="col">
-          <div v-for="(item, index) in galleryTabs[3].data" :key="index">
+        <div
+          v-if="!galleryTabs[3].noData"
+          class="col"
+        >
+          <div
+            v-for="(item, index) in galleryTabs[3].data"
+            :key="index"
+          >
             <pirs-item
               :art="item"
               :btn-name="'dashboard.auctions.stackAlgop'"
@@ -238,7 +272,10 @@
             />
           </div>
         </div>
-        <div v-else class="text-h6 text-primary text-center q-pb-md">
+        <div
+          v-else
+          class="text-h6 text-primary text-center q-pb-md"
+        >
           {{ $t('dashboard.homePage.personalNoPirs') }}
         </div>
       </div>
@@ -280,10 +317,19 @@
         />
       </div>
     </div>
-    <div v-else-if="currentBtnClicked === galleryTabs[4].btnIndex" class="col">
+    <div
+      v-else-if="currentBtnClicked === galleryTabs[4].btnIndex"
+      class="col"
+    >
       <div v-if="!galleryTabs[4].loadingData">
-        <div v-if="!galleryTabs[4].noData" class="col">
-          <div v-for="(item, index) in galleryTabs[4].data" :key="index">
+        <div
+          v-if="!galleryTabs[4].noData"
+          class="col"
+        >
+          <div
+            v-for="(item, index) in galleryTabs[4].data"
+            :key="index"
+          >
             <gallery-select
               :art="item"
               :btn-name="'dashboard.auctions.stackAlgop'"
@@ -291,7 +337,10 @@
             />
           </div>
         </div>
-        <div v-else class="text-h6 text-primary text-center q-pb-md">
+        <div
+          v-else
+          class="text-h6 text-primary text-center q-pb-md"
+        >
           {{ $t('dashboard.homePage.personalNoBid') }}
         </div>
       </div>
@@ -520,7 +569,7 @@ export default class MyGalleryOverview extends Vue {
 
   filterCollection(
     page: number = 1,
-    currentCollection: string = 'All Collections'
+    currentCollection: string = 'All Collections',
   ) {
     this.currentCollection = currentCollection;
     const device = window.innerWidth <= 768 ? 'mobile' : 'desktop';
@@ -556,7 +605,7 @@ export default class MyGalleryOverview extends Vue {
   async getGalleryArts(
     page: number = 1,
     collection: string = this.currentCollection,
-    watcher: boolean = false
+    watcher: boolean = false,
   ) {
     this.galleryTabs[0].loadingData = true;
     this.galleryTabs[0].currentPage = page;
@@ -591,7 +640,7 @@ export default class MyGalleryOverview extends Vue {
   async getOnSale(
     page: number = 1,
     collection: string = this.currentCollection,
-    watcher: boolean = false
+    watcher: boolean = false,
   ) {
     this.galleryTabs[1].loadingData = true;
     this.galleryTabs[1].currentPage = page;
@@ -626,7 +675,7 @@ export default class MyGalleryOverview extends Vue {
   async getLikes(
     page: number = 1,
     collection: string = this.currentCollection,
-    watcher: boolean = false
+    watcher: boolean = false,
   ) {
     this.galleryTabs[2].loadingData = true;
     this.galleryTabs[2].currentPage = page;
@@ -713,7 +762,7 @@ export default class MyGalleryOverview extends Vue {
 
   async loadMore(
     collection: string = this.currentCollection,
-    filter: boolean = false
+    filter: boolean = false,
   ) {
     if (filter) {
       this.galleryTabs[0].loadingData = true;
@@ -753,7 +802,7 @@ export default class MyGalleryOverview extends Vue {
 
   async loadMoreOnSale(
     collection: string = this.currentCollection,
-    filter: boolean = false
+    filter: boolean = false,
   ) {
     if (filter) {
       this.galleryTabs[1].loadingData = true;
@@ -793,7 +842,7 @@ export default class MyGalleryOverview extends Vue {
 
   async loadMoreLike(
     collection: string = this.currentCollection,
-    filter: boolean = false
+    filter: boolean = false,
   ) {
     if (filter) {
       this.galleryTabs[2].loadingData = true;

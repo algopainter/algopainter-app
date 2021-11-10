@@ -1,7 +1,11 @@
 <template>
   <div class="row justify-between q-mb-md">
     <div class="col-12 col-md-3 col-lg-3 col-xl-3 col-xl-2 col-sm-6 col-xs-12">
-      <q-img class="previewImage" :src="art.item.previewImage" alt="img art" />
+      <q-img
+        class="previewImage"
+        :src="art.item.previewImage"
+        alt="img art"
+      />
     </div>
     <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
@@ -27,13 +31,15 @@
         </p>
       </div>
       <div class="text-bold text-h6">
-        <div v-if="isEnded" class="text-bold text-end">
+        <div
+          v-if="isEnded"
+          class="text-bold text-end"
+        >
           {{ $t('dashboard.bid.auctionEnd') }}
           <div class="text-bold">
             {{ monthExpirations }}
             <span class="text-bold">
-              {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span
-            >
+              {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span>
             {{ yearExpirations }}
           </div>
           <p>{{ hoursExpirations }}</p>
@@ -45,7 +51,9 @@
           <div class="text-bold">
             <div class="row justify-center time q-gutter-sm">
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
               <div>
@@ -127,8 +135,14 @@
             :disable="art.ended"
             @click="stackCoin()"
           />
-          <stack-modal-algop v-model="openModal" :art="art" />
-          <UnstackModalAlgop v-model="openModalUnstack" :art="art" />
+          <stack-modal-algop
+            v-model="openModal"
+            :art="art"
+          />
+          <UnstackModalAlgop
+            v-model="openModalUnstack"
+            :art="art"
+          />
         </div>
       </div>
     </div>
@@ -151,9 +165,12 @@
         @click="openBidBackModal()"
       />
     </div>
-    <q-dialog v-model="displayingStatus" persistent>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
       <withdraw-bidBack-status-card
-        :withdraw-bidBack-status="withdrawBidBackStatus"
+        :withdraw-bid-back-status="withdrawBidBackStatus"
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
@@ -265,7 +282,7 @@ export default class gallerySelect extends Vue.with(Props) {
   async getBidBackPercentage() {
     try {
       this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(
-        this.art.index
+        this.art.index,
       );
       if (this.auctionBidBackRate > 0) {
         void this.getCurrentPrizeAmount();
@@ -279,7 +296,7 @@ export default class gallerySelect extends Vue.with(Props) {
   getLastBid() {
     const bidAmount = blockchainToCurrency(
       this.art.highestBid.amount,
-      this.coinDetails.decimalPlaces
+      this.coinDetails.decimalPlaces,
     );
 
     this.lastBid = `${bidAmount} ${this.art.highestBid.tokenSymbol}`;
@@ -344,7 +361,7 @@ export default class gallerySelect extends Vue.with(Props) {
 
   async getCurrentPrizeAmount() {
     const totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(
-      this.art.index
+      this.art.index,
     );
 
     const auctionHighestBid = this.art.highestBid.amount / 1000000000000000000;

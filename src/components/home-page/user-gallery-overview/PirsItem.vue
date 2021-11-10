@@ -1,7 +1,11 @@
 <template>
   <div class="row justify-between q-mb-md">
     <div class="col-12 col-md-3 col-lg-3 col-xl-3 col-sm-6 col-xs-12">
-      <q-img class="previewImage" :src="art.item.previewImage" alt="img art" />
+      <q-img
+        class="previewImage"
+        :src="art.item.previewImage"
+        alt="img art"
+      />
     </div>
     <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
@@ -19,7 +23,10 @@
         {{ art.item.description }}
       </div>
       <div class="text-bold text-h6">
-        <div v-if="isEnded" class="text-bold text-end">
+        <div
+          v-if="isEnded"
+          class="text-bold text-end"
+        >
           <div>
             <div class="text-bold text-h4 q-mt-md">
               {{ $t('dashboard.gallery.pirsTab.lastBids') }}
@@ -52,11 +59,15 @@
               class="row justify-center time-year q-gutter-sm"
             >
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countYear }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countYear }}
+                </div>
                 <span> {{ $t('dashboard.bid.year') }} </span>
               </div>
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
 
@@ -81,9 +92,14 @@
                 <span>{{ $t('dashboard.bid.seconds') }}</span>
               </div>
             </div>
-            <div v-else class="row justify-start time q-gutter-sm">
+            <div
+              v-else
+              class="row justify-start time q-gutter-sm"
+            >
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
 
@@ -167,7 +183,11 @@
             :disable="art.ended"
             @click="stackCoin()"
           />
-          <pirs-stack-modal v-model="openModal" :art="art" :item-pirs="art" />
+          <pirs-stack-modal
+            v-model="openModal"
+            :art="art"
+            :item-pirs="art"
+          />
           <pirs-unstack-modal
             v-model="openModalUnstack"
             :art="art"
@@ -193,7 +213,10 @@
         @click="openPirsModal()"
       />
     </div>
-    <q-dialog v-model="displayingStatus" persistent>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
       <withdraw-pirs-status-card
         :withdraw-pirs-status="withdrawPirsStatus"
         @request-close="onCloseStatusDialog"
@@ -308,7 +331,7 @@ export default class PirsItem extends Vue.with(Props) {
   async getPirsPercentage() {
     try {
       this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(
-        this.art.index
+        this.art.index,
       );
       if (this.imagePirsRate > 0) {
         void this.getCurrentPrizeAmount();
@@ -328,7 +351,7 @@ export default class PirsItem extends Vue.with(Props) {
       const bidAmount = blockchainToCurrency(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         highestBidAmount,
-        this.coinDetails.decimalPlaces
+        this.coinDetails.decimalPlaces,
       );
       this.lastBid = `${bidAmount} ${this.art.minimumBid.tokenSymbol}`;
     } else {
@@ -394,7 +417,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   async getCurrentPrizeAmount() {
     const totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(
-      this.art.index
+      this.art.index,
     );
 
     const auctionHighestBid = this.art.highestBid

@@ -1,5 +1,9 @@
 <template>
-  <q-dialog ref="dialog" v-model="paint.isModal" @hide="onDialogHide">
+  <q-dialog
+    ref="dialog"
+    v-model="paint.isModal"
+    @hide="onDialogHide"
+  >
     <q-card class="row q-pa-md">
       <div
         class="
@@ -29,7 +33,10 @@
         </div>
         <div class="q-pa-md">
           <p>{{ $t('dashboard.myPaint.bidBack') }}</p>
-          <q-select v-model="paint.bidBack" :options="royalties">
+          <q-select
+            v-model="paint.bidBack"
+            :options="royalties"
+          >
             <template #append>
               <q-btn flat>
                 {{ $t('dashboard.myPaint.percent') }}
@@ -40,7 +47,10 @@
         <div class="row">
           <div class="col-xs-12 col-sm-6 items-center q-pa-md">
             <p>{{ $t('dashboard.myPaint.creator') }}</p>
-            <q-select v-model="paint.royalties" :options="royalties">
+            <q-select
+              v-model="paint.royalties"
+              :options="royalties"
+            >
               <template #append>
                 <q-btn flat>
                   {{ $t('dashboard.myPaint.percent') }}
@@ -50,7 +60,10 @@
           </div>
           <div class="col-xs-12 col-sm-6 items-center q-pa-md">
             <p>{{ $t('dashboard.myPaint.investors') }}</p>
-            <q-select v-model="paint.investors" :options="royalties">
+            <q-select
+              v-model="paint.investors"
+              :options="royalties"
+            >
               <template #append>
                 <q-btn flat>
                   {{ $t('dashboard.myPaint.percent') }}
@@ -61,7 +74,12 @@
         </div>
         <div class="row justify-evenly q-gutter-xs">
           <div>
-            <algo-button size="lg" color="primary" type="reset" outline>
+            <algo-button
+              size="lg"
+              color="primary"
+              type="reset"
+              outline
+            >
               {{ $t('dashboard.myPaint.buttonReload') }}
             </algo-button>
           </div>

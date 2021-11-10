@@ -1,5 +1,9 @@
 <template>
-  <q-dialog ref="dialog" v-model="modal" persistent>
+  <q-dialog
+    ref="dialog"
+    v-model="modal"
+    persistent
+  >
     <q-card class="q-pa-md">
       <p class="text-bold text-h6">
         {{ $t('dashboard.unstackModalAlgop.title') }}
@@ -33,7 +37,11 @@
             :bind="validateInput()"
           >
             <template #append>
-              <q-btn rounded color="primary" @click="maxStakeAmount">
+              <q-btn
+                rounded
+                color="primary"
+                @click="maxStakeAmount"
+              >
                 {{ $t('dashboard.unstackModalAlgop.max') }}
               </q-btn>
             </template>
@@ -44,36 +52,52 @@
             "
             class="q-mb-lg"
           >
-            <q-icon name="mdi-alert-circle" color="yellow" size="md" />
+            <q-icon
+              name="mdi-alert-circle"
+              color="yellow"
+              size="md"
+            />
             {{ $t('dashboard.unstackModalAlgop.interact') }}
           </p>
           <p
             v-else-if="
               placingBidBackStatus ===
-              PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation
+                PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation
             "
           >
-            <q-icon name="mdi-alert" color="yellow" size="md" />{{
+            <q-icon
+              name="mdi-alert"
+              color="yellow"
+              size="md"
+            />{{
               $t('dashboard.unstackModalAlgop.confirmWallet')
             }}
           </p>
           <p
             v-else-if="
               placingBidBackStatus ===
-              PlacingBidBackStatus.IncreateAllowanceError
+                PlacingBidBackStatus.IncreateAllowanceError
             "
           >
-            <q-icon name="mdi-alert-circle" color="red" size="md" />{{
+            <q-icon
+              name="mdi-alert-circle"
+              color="red"
+              size="md"
+            />{{
               $t('dashboard.unstackModalAlgop.error')
             }}
           </p>
           <p
             v-else-if="
               placingBidBackStatus ===
-              PlacingBidBackStatus.IncreateAllowanceCompleted
+                PlacingBidBackStatus.IncreateAllowanceCompleted
             "
           >
-            <q-icon name="mdi-check" color="green" size="md" />
+            <q-icon
+              name="mdi-check"
+              color="green"
+              size="md"
+            />
             {{ $t('dashboard.unstackModalAlgop.stakeSucess') }}
           </p>
           <div class="q-gutter-sm row justify-center">
@@ -166,10 +190,10 @@ export default class MyPaint extends Vue.with(Props) {
   mounted() {
     this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
     this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(
-      this.networkInfo
+      this.networkInfo,
     );
     this.auctionCoinTokenProxy = new ERC20TokenProxy(
-      this.algoPainterContractByNetworkId
+      this.algoPainterContractByNetworkId,
     );
     void this.setAccountBalance();
   }
@@ -198,7 +222,7 @@ export default class MyPaint extends Vue.with(Props) {
     if (this.isConnected) {
       this.balance =
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']
+        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'],
         );
       void this.setformattedBalance();
     }
@@ -211,7 +235,7 @@ export default class MyPaint extends Vue.with(Props) {
   async maxStakeAmount() {
     try {
       this.unstakeAmount = await this.rewardsSystem.getTotalBidBackStakes(
-        this.art.index
+        this.art.index,
       );
     } catch (error) {
       console.log('error maxStakeAmount');
@@ -271,7 +295,7 @@ export default class MyPaint extends Vue.with(Props) {
 
     const unstakeAmount = currencyToBlockchain(
       Number(this.unstakeAmount),
-      decimalPlaces
+      decimalPlaces,
     );
 
     await this.approveContractTransfer(unstakeAmount);
@@ -306,7 +330,7 @@ export default class MyPaint extends Vue.with(Props) {
 
     const allowance = await this.auctionCoinTokenProxy.allowance(
       this.account,
-      this.auctionRewardsContractAddress
+      this.auctionRewardsContractAddress,
     );
 
     if (allowance < amount) {
@@ -317,14 +341,14 @@ export default class MyPaint extends Vue.with(Props) {
 
       const allowanceAmount = currencyToBlockchain(
         Number.MAX_SAFE_INTEGER,
-        decimalPlaces
+        decimalPlaces,
       );
 
       await this.auctionCoinTokenProxy
         .approve(
           this.auctionRewardsContractAddress,
           numberToString(allowanceAmount),
-          this.account
+          this.account,
         )
         .on('error', () => {
           this.placingBidBackStatus =

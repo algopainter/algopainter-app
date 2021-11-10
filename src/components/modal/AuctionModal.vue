@@ -26,8 +26,8 @@
             :disable="!isAPastOwner"
             @click="
               changeCurrentBtnClicked(1),
-                disableHarvestButton(),
-                disableStackButton()
+              disableHarvestButton(),
+              disableStackButton()
             "
           />
           <algoButton
@@ -37,8 +37,8 @@
             :disable="!hasBidded"
             @click="
               changeCurrentBtnClicked(2),
-                disableHarvestButton(),
-                disableStackButton()
+              disableHarvestButton(),
+              disableStackButton()
             "
           />
         </div>
@@ -46,7 +46,10 @@
           <p>{{ testValue + ' ' + $t('dashboard.auctions.BNBearned') }}</p>
         </div>
         <div class="row justify-center">
-          <q-input unmasked-value placeholder="0.000" />
+          <q-input
+            unmasked-value
+            placeholder="0.000"
+          />
           <algoButton
             class="q-my-md q-ml-sm action"
             :label="$t('dashboard.auctions.harvest')"
@@ -58,7 +61,10 @@
           <p>{{ testValue + ' ' + $t('dashboard.auctions.stakedAlgop') }}</p>
         </div>
         <div class="row">
-          <q-input unmasked-value placeholder="0.000" />
+          <q-input
+            unmasked-value
+            placeholder="0.000"
+          />
           <div class="row">
             <div>
               <q-btn
@@ -187,7 +193,7 @@ export default class AuctionModal extends Vue.with(Props) {
   async setAccountBalance() {
     this.userBalance =
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']
+      await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'],
       );
   }
 

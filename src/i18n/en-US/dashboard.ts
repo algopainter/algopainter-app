@@ -13,12 +13,9 @@ export default {
   selectAlgoP: 'Select an AlgoPainter',
   wrong: 'Wrong Network',
   migrate: 'Migrate to a Binance SmartChain',
-  commingSoon:
-    'For now, there are no auctions available. Stay tuned they will soon show up here!',
-  sellerSoon:
-    'Nothing around here yet, but we will see the top sellers here soon!',
-  buyerSoon:
-    'Nothing around here yet, but we will see the top buyers here soon!',
+  commingSoon: 'For now, there are no auctions available. Stay tuned they will soon show up here!',
+  sellerSoon: 'Nothing around here yet, but we will see the top sellers here soon!',
+  buyerSoon: 'Nothing around here yet, but we will see the top buyers here soon!',
   homePage: {
     title: 'Gallery',
     publicTitle: 'Public profile',
@@ -41,18 +38,14 @@ export default {
     publicNoBids: 'This user did not place a bid yet',
     personalNoBids: 'You never placed a bid',
     publicNoItems: 'This user does not have items yet',
-    noItems:
-      'Oops! No art around here. Who will be the lucky one to be appreciated here first? ',
+    noItems: 'Oops! No art around here. Who will be the lucky one to be appreciated here first? ',
     noItemsForSalePrivate1: "You don't have any artwork for sale yet!",
     noItemsForSalePrivate2: '(May I know why? 🤨)',
     noItemsForSalePublic1: 'No artwork for sale here yet.',
-    noItemsForSalePublic2:
-      '(Maybe the artist is looking for a great inspiration 🧐)',
+    noItemsForSalePublic2: '(Maybe the artist is looking for a great inspiration 🧐)',
     noItemPublic: "Hey stalker, there's no art around here yet.",
-    personalNoItems:
-      "Ohh! 😔 You don't have any items yet. Why not mint your first artwork?",
-    personalNoPirs:
-      'Oh 😔 nothing around here? How do you want to be a big name in the art world?',
+    personalNoItems: "Ohh! 😔 You don't have any items yet. Why not mint your first artwork?",
+    personalNoPirs: 'Oh 😔 nothing around here? How do you want to be a big name in the art world?',
     btnBioFalse: '...Read more',
     btnBioTrue: 'Show less',
     collectiblesGallery: 'Collection',
@@ -157,29 +150,24 @@ export default {
     selectCoin: 'Select a coin',
     creatingAuction: 'Creating auction',
     auctionCreated: 'Auction created successfully',
-    bidBackTooltip:
-      // eslint-disable-next-line max-len
-      'A user can create an auction and set a BidBack percentage. It will incentivize all the users to send bids because all the bidders will join the BidBack pool and receive an artwork sell price percentage.',
-    pirsTooltip:
-      // eslint-disable-next-line max-len
-      'The PIRS (Perpetual Inclusive Royalty System) will bring attention to your artwork because all the owners will receive a royalty incentivate to buy and sell. Only the first owner can set the PIRS percentage. The following owners will only receive the corresponding value.',
+    // eslint-disable-next-line max-len
+    bidBackTooltip: 'A user can create an auction and set a BidBack percentage. It will incentivize all the users to send bids because all the bidders will join the BidBack pool and receive an artwork sell price percentage.',
+    // eslint-disable-next-line max-len
+    pirsTooltip: 'The PIRS (Perpetual Inclusive Royalty System) will bring attention to your artwork because all the owners will receive a royalty incentivate to buy and sell. Only the first owner can set the PIRS percentage. The following owners will only receive the corresponding value.',
     creatorTooltip: 'This is the PIRS percentage (i.e., the royalty) that the artist, who created the collection, will receive.',
     statuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',
-      approveContractInput:
-        'Interact with your wallet to approve the auction smart contract',
+      approveContractInput: 'Interact with your wallet to approve the auction smart contract',
       approveContractConfirmation: 'Awaiting for the blockchain confirmation',
-      approveContractError:
-        'An error occurred while trying to approve the auction smart contract',
+      approveContractError: 'An error occurred while trying to approve the auction smart contract',
       approveContractAvailable: 'Smart contract approved',
       createAuction: 'Create auction',
       createBidBack: 'Set bidBack',
       createpirs: 'Set pirs',
       createAuctionInput: 'Interact with your wallet to create the auction',
       createAuctionConfirmation: 'Awaiting for the blockchain confirmation',
-      createAuctionError:
-        'An error occurred while trying to create the auction',
+      createAuctionError: 'An error occurred while trying to create the auction',
       createAuctionCreated: 'Auction created successfully',
       bidBackAwaitingInput: 'Interact with your wallet to set the bidBack',
       bidBackAwaitingConfirmation: 'Awaiting for the blockchain confirmation',
@@ -191,8 +179,7 @@ export default {
       pirsCompleted: 'PIRS setted successfully',
     },
     errorHandling: {
-      invalidTimeStamp:
-        'The auction must have a minimum end time of 1 day and maximum of 30 days',
+      invalidTimeStamp: 'The auction must have a minimum end time of 1 day and maximum of 30 days',
       default: 'It was not possible to create the auction.',
     },
   },
@@ -202,8 +189,7 @@ export default {
     auctionDistribution: 'Auction Distribution',
     saleNumber: 'Sale {saleNumber} of {totalSales}',
     highestBidBy: 'Highest bid by {highestBidBy}',
-    auctionRates:
-      'Rates: {bidBackRate}% bidBack / {investorPirsRate}% investor PIRS / {creatorPirsRate}% creator PIRS',
+    auctionRates: 'Rates: {bidBackRate}% bidBack / {investorPirsRate}% investor PIRS / {creatorPirsRate}% creator PIRS',
     pirsDestination: '{pirs} of sales will go to {role}',
     previousBid: 'Offered {bidPrice} for {bidAtInDays} days ago',
     previousBidBy: 'by {name}',
@@ -239,17 +225,14 @@ export default {
     auctionRemainingTime: 'Auction ends in',
     deletingAuction: 'Deleting auction',
     returnNft: 'Get your NFT back',
-    feeMessage:
-      'Listing is free, but if the NFT is sold, a fee of {auctionFeePercentage} will be deducted from the final amount.',
+    feeMessage: 'Listing is free, but if the NFT is sold, a fee of {auctionFeePercentage} will be deducted from the final amount.',
     statuses: {
       allowance: 'YOU ARE SO FANCY!',
       error: 'ERROR',
       checkingAllowance: 'Checking if has enough allowance',
-      allowanceInput:
-        'Interact with your wallet to increase contract allowance',
+      allowanceInput: 'Interact with your wallet to increase contract allowance',
       allowanceConfirmation: 'Awaiting for the blockchain confirmation',
-      allowanceError:
-        'An error occurred while trying to increase the contract allowance',
+      allowanceError: 'An error occurred while trying to increase the contract allowance',
       allowanceAvailable: 'You have enough balance available.',
       placeBid: 'Place bid',
       placeBidInput: 'Interact with your wallet to place the bid',
@@ -258,17 +241,14 @@ export default {
       placeBidAvailable: 'Bid placed successfully',
     },
     endAuctionStatuses: {
-      awaitingInput:
-        'Approve your victory in your wallet to receive your new masterpiece.',
-      error:
-        "I don't understand what's going on. To receive the auction prize, you need to approve it in your wallet.",
+      awaitingInput: 'Approve your victory in your wallet to receive your new masterpiece.',
+      error: "I don't understand what's going on. To receive the auction prize, you need to approve it in your wallet.",
       awaitingConfirmation: 'Awaiting for the blockchain confirmation',
       auctionEnded: 'Art received successfully. You rocked!',
     },
     removeBidStatuses: {
       awaitingInput: 'Approve in your wallet to remove the bid',
-      error:
-        'The removal of the bid could not be completed. To remove the bid, approve it in your wallet.',
+      error: 'The removal of the bid could not be completed. To remove the bid, approve it in your wallet.',
       awaitingConfirmation: 'Awaiting for the blockchain confirmation',
       bidRemove: 'Bid removed successfully. See you at the next auction?',
     },
@@ -281,17 +261,14 @@ export default {
     cancelAuctionStatuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',
-      approveContractInput:
-        'Interact with your wallet to approve the auction smart contract',
+      approveContractInput: 'Interact with your wallet to approve the auction smart contract',
       approveContractConfirmation: 'Awaiting for the blockchain confirmation',
-      approveContractError:
-        'An error occurred while trying to approve the auction smart contract',
+      approveContractError: 'An error occurred while trying to approve the auction smart contract',
       approveContractAvailable: 'Smart contract approved',
       deleteAuction: 'Cancel auction',
       deleteAuctionInput: 'Interact with your wallet to cancel the auction',
       deleteAuctionConfirmation: 'Awaiting for the blockchain confirmation',
-      deleteAuctionError:
-        'An error occurred while trying to cancel the auction',
+      deleteAuctionError: 'An error occurred while trying to cancel the auction',
       deleteAuctionDeleted: 'Auction canceled successfully',
       returnAuction: 'Get your NFT back',
       returnError: "You didn't get the NFT back",
@@ -300,19 +277,16 @@ export default {
       returnSuccesText: "Admire your art because it's yours again",
       returnAuctionInput: 'To get your NFT back, approve it in your wallet.',
       returnAuctionConfirmation: 'Awaiting for the blockchain confirmation',
-      returnAuctionError:
-        "We couldn't get your NFT back because you declined the action in your wallet.",
+      returnAuctionError: "We couldn't get your NFT back because you declined the action in your wallet.",
       returnAuctionDeleted: 'NFT successfully retrieved',
     },
     cancelAuction: 'Cancel auction',
     claimBidBackStatuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',
-      approveContractInput:
-        'Interact with your wallet to approve the auction smart contract',
+      approveContractInput: 'Interact with your wallet to approve the auction smart contract',
       approveContractConfirmation: 'Awaiting for the blockchain confirmation',
-      approveContractError:
-        'An error occurred while trying to approve the auction smart contract',
+      approveContractError: 'An error occurred while trying to approve the auction smart contract',
       approveContractAvailable: 'Smart contract approved',
       claimBidBack: 'Claim bidBack',
       claimBidBackInput: 'Interact with your wallet to claim the bidBack',
@@ -323,11 +297,9 @@ export default {
     claimPirsStatuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',
-      approveContractInput:
-        'Interact with your wallet to approve the auction smart contract',
+      approveContractInput: 'Interact with your wallet to approve the auction smart contract',
       approveContractConfirmation: 'Awaiting for the blockchain confirmation',
-      approveContractError:
-        'An error occurred while trying to approve the auction smart contract',
+      approveContractError: 'An error occurred while trying to approve the auction smart contract',
       approveContractAvailable: 'Smart contract approved',
       claimPirs: 'Claim PIRS',
       claimPirsInput: 'Interact with your wallet to claim the PIRS',
@@ -419,8 +391,7 @@ export default {
   },
   bid: {
     title: 'Bids',
-    congratulations:
-      'Congratulations, you won the auction for this artwork. Now, claim your NFT and add it to your gallery.',
+    congratulations: 'Congratulations, you won the auction for this artwork. Now, claim your NFT and add it to your gallery.',
     youWon: 'You won!',
     claim: 'Claim artwork',
     winBid: 'Winning bid',

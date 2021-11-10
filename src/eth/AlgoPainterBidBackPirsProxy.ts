@@ -8,9 +8,15 @@ import { getBidBackPirsContractByNetworkId } from './Config';
 export default class AlgoPainterBidBackPirsProxy {
   declare smartContract: {
     methods: {
-      getBidbackRate(auctionId: number): ContractSendMethod;
-      getInvestorPirsRate(auctionId: number): ContractSendMethod;
-      getCreatorPirsRate(auctionId: number): ContractSendMethod;
+      getBidbackRate(
+        auctionId: number
+      ): ContractSendMethod;
+      getInvestorPirsRate(
+        auctionId: number
+      ): ContractSendMethod;
+      getCreatorPirsRate(
+        auctionId: number
+      ): ContractSendMethod;
       setBidbackRate(
         auctionId: number,
         bidBackRate: number
@@ -28,48 +34,61 @@ export default class AlgoPainterBidBackPirsProxy {
 
     this.smartContract = new window.web3.eth.Contract(
       AlgoPainterBidBackPirs as AbiItem[],
-      contractAddress
+      contractAddress,
     );
   }
 
-  async getBidBackRate(auctionId: number) {
-    const response: unknown = await this.smartContract.methods
-      .getBidbackRate(auctionId)
-      .call();
+  async getBidbackRate(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getBidbackRate(
+      auctionId,
+    ).call();
 
     return response as number;
   }
 
-  async getInvestorPirsRate(auctionId: number) {
-    const response: unknown = await this.smartContract.methods
-      .getInvestorPirsRate(auctionId)
-      .call();
+  async getInvestorPirsRate(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getInvestorPirsRate(
+      auctionId,
+    ).call();
 
     return response as number;
   }
 
-  async getCreatorPirsRate(auctionId: number) {
-    const response: unknown = await this.smartContract.methods
-      .getCreatorPirsRate(auctionId)
-      .call();
+  async getCreatorPirsRate(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getCreatorPirsRate(
+      auctionId,
+    ).call();
 
     return response as number;
   }
 
-  setBidBackRate(auctionId: number, bidBackRate: number, from: string) {
-    return this.smartContract.methods
-      .setBidbackRate(auctionId, bidBackRate)
-      .send({ from });
+  setBidbackRate(
+    auctionId: number,
+    bidbackRate: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.setBidbackRate(
+      auctionId,
+      bidbackRate,
+    ).send({ from });
   }
 
   setInvestorPirsRate(
     tokenAddress: string,
     tokenId: number,
     investorPirsRate: number,
-    from: string
+    from: string,
   ) {
-    return this.smartContract.methods
-      .setInvestorPirsRate(tokenAddress, tokenId, investorPirsRate)
-      .send({ from });
+    return this.smartContract.methods.setInvestorPirsRate(
+      tokenAddress,
+      tokenId,
+      investorPirsRate,
+    ).send({ from });
   }
 }

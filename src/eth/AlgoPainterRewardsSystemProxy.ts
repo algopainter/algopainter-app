@@ -7,18 +7,48 @@ import { getRewardsSystemContractByNetworkId } from './Config';
 export default class AlgoPainterRewardsSystemProxy {
   declare smartContract: {
     methods: {
-      getTotalBidbackStakes(auctionId: number): ContractSendMethod;
-      getTotalPirsStakes(auctionId: number): ContractSendMethod;
-      getBidbackUsers(auctionId: number): ContractSendMethod;
-      getBidbackPercentages(auctionId: number): ContractSendMethod;
-      stakeBidback(auctionId: number, amount: number): ContractSendMethod;
-      unstakeBidback(auctionId: number, amount: number): ContractSendMethod;
-      stakePirs(auctionId: number, amount: number): ContractSendMethod;
-      unstakePirs(auctionId: number, amount: number): ContractSendMethod;
-      withdrawBidback(auctionId: number, amount: number): ContractSendMethod;
-      withdrawPirs(auctionId: number, amount: number): ContractSendMethod;
-      claimBidback(auctionId: number): ContractSendMethod;
-      claimPirs(auctionId: number): ContractSendMethod;
+      getTotalBidbackStakes(
+        auctionId: number,
+      ): ContractSendMethod;
+      getTotalPirsStakes(
+        auctionId: number,
+      ): ContractSendMethod;
+      getBidbackUsers(
+        auctionId: number,
+      ): ContractSendMethod;
+      getBidbackPercentages(
+        auctionId: number,
+      ): ContractSendMethod;
+      stakeBidback(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      unstakeBidback(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      stakePirs(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      unstakePirs(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      withdrawBidback(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      withdrawPirs(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
+      claimBidback(
+        auctionId: number
+      ): ContractSendMethod;
+      claimPirs(
+        auctionId: number
+      ): ContractSendMethod;
     };
   };
 
@@ -27,83 +57,131 @@ export default class AlgoPainterRewardsSystemProxy {
 
     this.smartContract = new window.web3.eth.Contract(
       AlgoPainterRewardsSystem as AbiItem[],
-      contractAddress
+      contractAddress,
     );
   }
 
-  async getTotalBidBackStakes(auctionId: number) {
-    const response: unknown = await this.smartContract.methods
-      .getTotalBidbackStakes(auctionId)
-      .call();
+  async getTotalBidbackStakes(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getTotalBidbackStakes(
+      auctionId,
+    ).call();
 
     return response as number;
   }
 
-  async getTotalPirsStakes(auctionId: number) {
-    const response: unknown = await this.smartContract.methods
-      .getTotalPirsStakes(auctionId)
-      .call();
+  async getTotalPirsStakes(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getTotalPirsStakes(
+      auctionId,
+    ).call();
 
     return response as number;
   }
 
-  async getBidBackUsers(auctionId: number) {
-    const response: unknown = await this.smartContract.methods
-      .getBidbackUsers(auctionId)
-      .call();
+  async getBidbackUsers(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getBidbackUsers(
+      auctionId,
+    ).call();
 
     return response as number;
   }
 
-  async getBidBackPercentages(auctionId: number) {
-    const response: unknown = await this.smartContract.methods
-      .getBidbackPercentages(auctionId)
-      .call();
+  async getBidbackPercentages(
+    auctionId: number,
+  ) {
+    const response: unknown = await this.smartContract.methods.getBidbackPercentages(
+      auctionId,
+    ).call();
 
     return response as [];
   }
 
-  stakeBidBack(auctionId: number, amount: number, from: string) {
-    return this.smartContract.methods
-      .stakeBidback(auctionId, amount)
-      .send({ from });
+  stakeBidback(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.stakeBidback(
+      auctionId,
+      amount,
+    ).send({ from });
   }
 
-  unstakeBidBack(auctionId: number, amount: number, from: string) {
-    return this.smartContract.methods
-      .unstakeBidback(auctionId, amount)
-      .send({ from });
+  unstakeBidback(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.unstakeBidback(
+      auctionId,
+      amount,
+    ).send({ from });
   }
 
-  stakePirs(auctionId: number, amount: number, from: string) {
-    return this.smartContract.methods
-      .stakePirs(auctionId, amount)
-      .send({ from });
+  stakePirs(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.stakePirs(
+      auctionId,
+      amount,
+    ).send({ from });
   }
 
-  unstakePirs(auctionId: number, amount: number, from: string) {
-    return this.smartContract.methods
-      .unstakePirs(auctionId, amount)
-      .send({ from });
+  unstakePirs(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.unstakePirs(
+      auctionId,
+      amount,
+    ).send({ from });
   }
 
-  withdrawBidBack(auctionId: number, amount: number, from: string) {
-    return this.smartContract.methods
-      .withdrawBidback(auctionId, amount)
-      .send({ from });
+  withdrawBidback(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.withdrawBidback(
+      auctionId,
+      amount,
+    ).send({ from });
   }
 
-  withdrawPirs(auctionId: number, amount: number, from: string) {
-    return this.smartContract.methods
-      .withdrawPirs(auctionId, amount)
-      .send({ from });
+  withdrawPirs(
+    auctionId: number,
+    amount: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.withdrawPirs(
+      auctionId,
+      amount,
+    ).send({ from });
   }
 
-  claimBidBack(auctionId: number, from: string) {
-    return this.smartContract.methods.claimBidback(auctionId).send({ from });
+  claimBidback(
+    auctionId: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.claimBidback(
+      auctionId,
+    ).send({ from });
   }
 
-  claimPirs(auctionId: number, from: string) {
-    return this.smartContract.methods.claimPirs(auctionId).send({ from });
+  claimPirs(
+    auctionId: number,
+    from: string,
+  ) {
+    return this.smartContract.methods.claimPirs(
+      auctionId,
+    ).send({ from });
   }
 }

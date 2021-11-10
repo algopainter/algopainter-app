@@ -8,9 +8,7 @@
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="
-                withdrawPirsStatus ===
-                WithdrawPirsStatus.CheckingContractApproved
+              v-if="withdrawPirsStatus === WithdrawPirsStatus.CheckingContractApproved
               "
               size="60px"
               color="primary"
@@ -18,10 +16,7 @@
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="
-                withdrawPirsStatus ===
-                WithdrawPirsStatus.ContractApprovedAwaitingInput
-              "
+              v-else-if=" withdrawPirsStatus === WithdrawPirsStatus.ContractApprovedAwaitingInput"
               size="60px"
               color="warning"
               text-color="white"
@@ -29,34 +24,32 @@
               <q-icon name="mdi-alert" />
             </q-avatar>
             <q-avatar
-              v-else-if="
-                withdrawPirsStatus ===
-                WithdrawPirsStatus.ContractApprovedAwaitingConfirmation
-              "
+              v-else-if="withdrawPirsStatus === WithdrawPirsStatus.ContractApprovedAwaitingConfirmation"
               size="60px"
               color="primary"
             >
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="
-                withdrawPirsStatus === WithdrawPirsStatus.ContractApprovedError
-              "
+              v-else-if="withdrawPirsStatus === WithdrawPirsStatus.ContractApprovedError"
               size="60px"
               color="negative"
               text-color="white"
             >
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
-            <q-avatar v-else size="60px" color="positive" text-color="white">
+            <q-avatar
+              v-else
+              size="60px"
+              color="positive"
+              text-color="white"
+            >
               <q-icon name="mdi-check" />
             </q-avatar>
           </div>
           <div class="label">
             <div class="title">
-              {{
-                $t('dashboard.auctionPage.claimBidBackStatuses.contractApprove')
-              }}
+              {{ $t('dashboard.auctionPage.claimBidBackStatuses.contractApprove') }}
             </div>
             <div>
               {{ firstStepLabel }}
@@ -66,10 +59,7 @@
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="
-                withdrawPirsStatus <
-                WithdrawPirsStatus.WithdrawPirsAwaitingInput
-              "
+              v-if="withdrawPirsStatus < WithdrawPirsStatus.WithdrawPirsAwaitingInput"
               size="60px"
               color="grey"
               text-color="white"
@@ -77,10 +67,7 @@
               <q-icon name="mdi-cancel" />
             </q-avatar>
             <q-avatar
-              v-else-if="
-                withdrawPirsStatus ===
-                WithdrawPirsStatus.WithdrawPirsAwaitingInput
-              "
+              v-else-if="withdrawPirsStatus === WithdrawPirsStatus.WithdrawPirsAwaitingInput"
               size="60px"
               color="warning"
               text-color="white"
@@ -88,10 +75,7 @@
               <q-icon name="mdi-alert" />
             </q-avatar>
             <q-avatar
-              v-else-if="
-                withdrawPirsStatus ===
-                WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation
-              "
+              v-else-if="withdrawPirsStatus === WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation"
               size="60px"
               color="primary"
               text-color="white"
@@ -99,9 +83,7 @@
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="
-                withdrawPirsStatus === WithdrawPirsStatus.WithdrawPirsError
-              "
+              v-else-if="withdrawPirsStatus === WithdrawPirsStatus.WithdrawPirsError"
               size="60px"
               color="negative"
               text-color="white"
@@ -109,9 +91,7 @@
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
             <q-avatar
-              v-else-if="
-                withdrawPirsStatus === WithdrawPirsStatus.PirsWithdrawn
-              "
+              v-else-if="withdrawPirsStatus === WithdrawPirsStatus.PirsWithdrawn"
               size="60px"
               color="positive"
               text-color="white"
@@ -170,46 +150,28 @@ export default class WithdrawPirsStatusCard extends Vue {
   get firstStepLabel() {
     switch (this.withdrawPirsStatus) {
       case WithdrawPirsStatus.CheckingContractApproved:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.checkingContractApproved'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.checkingContractApproved');
       case WithdrawPirsStatus.ContractApprovedAwaitingInput:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.approveContractInput'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.approveContractInput');
       case WithdrawPirsStatus.ContractApprovedAwaitingConfirmation:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.approveContractConfirmation'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.approveContractConfirmation');
       case WithdrawPirsStatus.ContractApprovedError:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.approveContractError'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.approveContractError');
       default:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.approveContractAvailable'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.approveContractAvailable');
     }
   }
 
   get secondStepLabel() {
     switch (this.withdrawPirsStatus) {
       case WithdrawPirsStatus.WithdrawPirsAwaitingInput:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.createAuctionInput'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.createAuctionInput');
       case WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.claimPirsConfirmation'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.claimPirsConfirmation');
       case WithdrawPirsStatus.WithdrawPirsError:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.claimPirsError'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.claimPirsError');
       case WithdrawPirsStatus.PirsWithdrawn:
-        return this.$t(
-          'dashboard.auctionPage.claimPirsStatuses.claimedPirsSuccessfully'
-        );
+        return this.$t('dashboard.auctionPage.claimPirsStatuses.claimedPirsSuccessfully');
       default:
         return '';
     }
@@ -229,7 +191,7 @@ export default class WithdrawPirsStatusCard extends Vue {
 .header {
   background: $primary;
   font-size: 1.4rem;
-  color: #fff;
+  color: #FFF;
 }
 
 .steps {

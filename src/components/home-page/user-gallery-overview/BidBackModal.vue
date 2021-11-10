@@ -1,23 +1,21 @@
 <template>
-  <q-dialog ref="dialog" v-model="modal" @hide="openBidBackModal()">
+  <q-dialog
+    ref="dialog"
+    v-model="modal"
+    @hide="openBidBackModal()"
+  >
     <q-card class="q-pa-lg">
       <p class="row justify-center text-h5 text-bold text-primary">
         {{ ' ' + $t('dashboard.auctions.bidBackModal.title') }}
       </p>
       <div v-if="!loadingTable">
         <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{
-            $t(`dashboard.auctions.bidBackModal.yourBalance`)
-          }}</span>
-          {{ $t(`dashboard.auctions.bidBackModal.algop`) }}
-          {{ formattedBalance }}
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidBackModal.yourBalance`) }}</span>
+          {{ $t(`dashboard.auctions.bidBackModal.algop`) }} {{ formattedBalance }}
         </p>
         <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{
-            $t(`dashboard.auctions.bidBackModal.totalBidBackAmount`)
-          }}</span>
-          {{ $t(`dashboard.auctions.bidBackModal.algop`) }}
-          {{ totalBidBackStaked }}
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidBackModal.totalBidBackAmount`) }}</span>
+          {{ $t(`dashboard.auctions.bidBackModal.algop`) }} {{ totalBidBackStaked }}
         </p>
       </div>
       <div class="q-pa-md">
@@ -61,8 +59,16 @@ interface IUserBid {
     AlgoButton,
   },
   computed: {
-    ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
-    ...mapGetters('auctions', ['getBidBackIndex']),
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
+    ...mapGetters(
+      'auctions', [
+        'getBidBackIndex',
+      ]),
   },
 })
 export default class BidBackModal extends Vue {
@@ -86,8 +92,7 @@ export default class BidBackModal extends Vue {
       required: true,
       label: 'Name',
       align: 'left',
-      field: (userBid: { name: string; formattedAccount: string }) =>
-        userBid.name ? userBid.name : userBid.formattedAccount,
+      field: (userBid: { name: string; formattedAccount: string }) => userBid.name ? userBid.name : userBid.formattedAccount,
       sortable: true,
     },
     {
@@ -108,8 +113,7 @@ export default class BidBackModal extends Vue {
       name: 'participation',
       required: true,
       label: 'BidBack %',
-      field: (userBid: { stackedAlgopPercentage: number }) =>
-        userBid.stackedAlgopPercentage,
+      field: (userBid: { stackedAlgopPercentage: number }) => userBid.stackedAlgopPercentage,
       sortable: true,
     },
   ];
@@ -126,77 +130,69 @@ export default class BidBackModal extends Vue {
   getAuctions() {
     this.loadingTable = true;
 
-    void this.$store
-      .dispatch({
-        type: 'auctions/getAuctions',
-        account: this.auctionId as string,
-      })
-      .then(async () => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const auction = this.$store.getters[
-          'auctions/getAuctions'
-        ] as IAuctionItem;
-        const auctionBids = auction.bids;
-        const auctionBidsReversed: IBid[] = [];
-        const bidderAccounts: string | string[] = [];
+    void this.$store.dispatch({
+      type: 'auctions/getAuctions',
+      account: this.auctionId as string,
+    }).then(async() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;
+      const auctionBids = auction.bids;
+      const auctionBidsReversed: IBid[] = [];
+      const bidderAccounts: string | string[] = [];
 
-        auctionBids.forEach((bid) => {
-          auctionBidsReversed.push(bid);
-        });
-        auctionBidsReversed.reverse();
+      auctionBids.forEach((bid) => {
+        auctionBidsReversed.push(bid);
+      });
+      auctionBidsReversed.reverse();
 
-        auctionBidsReversed.forEach((bid) => {
-          const account = bid.account;
-          const formattedAccount = this.formatAccount(account);
-          const name = this.formatName(bid.name);
-          const tokenSymbol = bid.tokenSymbol;
-          const highestBid = bid.amount / 1000000000000000000;
+      auctionBidsReversed.forEach((bid) => {
+        const account = bid.account;
+        const formattedAccount = this.formatAccount(account);
+        const name = this.formatName(bid.name);
+        const tokenSymbol = bid.tokenSymbol;
+        const highestBid = bid.amount / 1000000000000000000;
 
-          if (!bidderAccounts.includes(account)) {
-            bidderAccounts.push(account);
+        if (!bidderAccounts.includes(account)) {
+          bidderAccounts.push(account);
 
-            this.userBid.push({
-              name: name,
-              account: account,
-              formattedAccount: formattedAccount,
-              highestBid: highestBid,
-              tokenSymbol: tokenSymbol,
-              stackedAlgop: 0,
-              stackedAlgopPercentage: 0,
-            });
-          }
-        });
-
-        this.totalBidBackStaked =
-          await this.rewardsSystem.getTotalBidBackStakes(this.getBidBackIndex);
-
-        const bidBackUserList = auction.bidBacks;
-        let isVariableSet = false;
-
-        if (auction.bidBacks) {
-          Object.keys(bidBackUserList).forEach((account) => {
-            this.userBid.forEach((bidder) => {
-              if (account === bidder.account) {
-                bidder.stackedAlgop =
-                  bidBackUserList[account as unknown as number];
-                isVariableSet = true;
-              } else if (!isVariableSet) {
-                bidder.stackedAlgop = 0;
-              }
-              if (typeof bidder.stackedAlgop === 'number') {
-                bidder.stackedAlgopPercentage =
-                  bidder.stackedAlgop > 0
-                    ? (bidder.stackedAlgop / this.totalBidBackStaked) * 100
-                    : 0;
-                bidder.stackedAlgopPercentage =
-                  bidder.stackedAlgopPercentage.toFixed(2) as unknown as number;
-              }
-            });
+          this.userBid.push({
+            name: name,
+            account: account,
+            formattedAccount: formattedAccount,
+            highestBid: highestBid,
+            tokenSymbol: tokenSymbol,
+            stackedAlgop: 0,
+            stackedAlgopPercentage: 0,
           });
         }
-
-        this.loadingTable = false;
       });
+
+      this.totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(this.getBidBackIndex);
+
+      const bidBackUserList = auction.bidBacks;
+      let isVariableSet = false;
+
+      if (auction.bidBacks) {
+        Object.keys(bidBackUserList).forEach((account) => {
+          this.userBid.forEach((bidder) => {
+            if (account === bidder.account) {
+              bidder.stackedAlgop = bidBackUserList[account as unknown as number];
+              isVariableSet = true;
+            } else if (!isVariableSet) {
+              bidder.stackedAlgop = 0;
+            }
+            if (typeof bidder.stackedAlgop === 'number') {
+              bidder.stackedAlgopPercentage = (bidder.stackedAlgop > 0)
+                ? (bidder.stackedAlgop / this.totalBidBackStaked) * 100
+                : 0;
+              bidder.stackedAlgopPercentage = bidder.stackedAlgopPercentage.toFixed(2) as unknown as number;
+            }
+          });
+        });
+      }
+
+      this.loadingTable = false;
+    });
   }
 
   formatAccount(account: string) {
@@ -205,10 +201,9 @@ export default class BidBackModal extends Vue {
 
   formatName(name: string) {
     const nameArray = name.split(' ');
-    nameArray[0] =
-      nameArray[0].length <= 11
-        ? nameArray[0]
-        : nameArray[0].slice(0, 11) + '...';
+    nameArray[0] = (nameArray[0].length <= 11)
+      ? nameArray[0]
+      : nameArray[0].slice(0, 11) + '...';
     return nameArray[0];
   }
 
@@ -240,10 +235,8 @@ export default class BidBackModal extends Vue {
   }
 
   async setAccountBalance() {
-    this.userBalance =
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']
-      );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    this.userBalance = await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
     void this.setformattedBalance();
   }
 

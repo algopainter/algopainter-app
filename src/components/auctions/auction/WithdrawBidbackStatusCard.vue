@@ -9,10 +9,7 @@
           <div class="col-12 step">
             <div class="avatar">
               <q-avatar
-                v-if="
-                  withdrawBidBackStatus <
-                  WithdrawBidBackStatus.WithdrawBidBackAwaitingInput
-                "
+                v-if="withdrawBidBackStatus < WithdrawBidBackStatus.WithdrawBidBackAwaitingInput"
                 size="60px"
                 color="grey"
                 text-color="white"
@@ -20,10 +17,7 @@
                 <q-icon name="mdi-cancel" />
               </q-avatar>
               <q-avatar
-                v-else-if="
-                  withdrawBidBackStatus ===
-                  WithdrawBidBackStatus.WithdrawBidBackAwaitingInput
-                "
+                v-else-if="withdrawBidBackStatus === WithdrawBidBackStatus.WithdrawBidBackAwaitingInput"
                 size="60px"
                 color="warning"
                 text-color="white"
@@ -31,10 +25,7 @@
                 <q-icon name="mdi-alert" />
               </q-avatar>
               <q-avatar
-                v-else-if="
-                  withdrawBidBackStatus ===
-                  WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation
-                "
+                v-else-if="withdrawBidBackStatus === WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation"
                 size="60px"
                 color="primary"
                 text-color="white"
@@ -42,10 +33,7 @@
                 <q-spinner color="white" />
               </q-avatar>
               <q-avatar
-                v-else-if="
-                  withdrawBidBackStatus ===
-                  WithdrawBidBackStatus.WithdrawBidBackError
-                "
+                v-else-if="withdrawBidBackStatus === WithdrawBidBackStatus.WithdrawBidBackError"
                 size="60px"
                 color="negative"
                 text-color="white"
@@ -53,10 +41,7 @@
                 <q-icon name="mdi-alert-circle" />
               </q-avatar>
               <q-avatar
-                v-else-if="
-                  withdrawBidBackStatus ===
-                  WithdrawBidBackStatus.BidBackWithdrawn
-                "
+                v-else-if="withdrawBidBackStatus === WithdrawBidBackStatus.BidBackWithdrawn"
                 size="60px"
                 color="positive"
                 text-color="white"
@@ -116,46 +101,28 @@ export default class WithdrawBidBackStatusCard extends Vue {
   get firstStepLabel() {
     switch (this.withdrawBidBackStatus) {
       case WithdrawBidBackStatus.CheckingContractApproved:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.checkingContractApproved'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.checkingContractApproved');
       case WithdrawBidBackStatus.ContractApprovedAwaitingInput:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.approveContractInput'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.approveContractInput');
       case WithdrawBidBackStatus.ContractApprovedAwaitingConfirmation:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.approveContractConfirmation'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.approveContractConfirmation');
       case WithdrawBidBackStatus.ContractApprovedError:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.approveContractError'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.approveContractError');
       default:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.approveContractAvailable'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.approveContractAvailable');
     }
   }
 
   get secondStepLabel() {
     switch (this.withdrawBidBackStatus) {
       case WithdrawBidBackStatus.WithdrawBidBackAwaitingInput:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.createAuctionInput'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.createAuctionInput');
       case WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.claimBidBackConfirmation'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.claimBidBackConfirmation');
       case WithdrawBidBackStatus.WithdrawBidBackError:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.claimBidBackError'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.claimBidBackError');
       case WithdrawBidBackStatus.BidBackWithdrawn:
-        return this.$t(
-          'dashboard.auctionPage.claimBidBackStatuses.claimedBidBackSuccessfully'
-        );
+        return this.$t('dashboard.auctionPage.claimBidBackStatuses.claimedBidBackSuccessfully');
       default:
         return '';
     }
@@ -164,8 +131,7 @@ export default class WithdrawBidBackStatusCard extends Vue {
   get okBtnDisabled() {
     return (
       this.withdrawBidBackStatus !== WithdrawBidBackStatus.BidBackWithdrawn &&
-      this.withdrawBidBackStatus !==
-        WithdrawBidBackStatus.ContractApprovedError &&
+      this.withdrawBidBackStatus !== WithdrawBidBackStatus.ContractApprovedError &&
       this.withdrawBidBackStatus !== WithdrawBidBackStatus.WithdrawBidBackError
     );
   }
@@ -176,7 +142,7 @@ export default class WithdrawBidBackStatusCard extends Vue {
 .header {
   background: $primary;
   font-size: 1.4rem;
-  color: #fff;
+  color: #FFF;
 }
 
 .steps {

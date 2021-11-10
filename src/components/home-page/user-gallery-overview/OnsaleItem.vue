@@ -57,7 +57,7 @@
             {{ auctionBidbackRate + "%" }}
           </div>
           <div class="row justify-center items-center content-center">
-            {{ $t('dashboard.gallery.bidbackTab.bidback') }}
+            {{ $t('dashboard.gallery.bidBackTab.bidBack') }}
           </div>
         </div>
         <div
@@ -470,21 +470,16 @@ export default class OnsaleItem extends Vue.with(Props) {
     try {
       await this.collectionArtController
         .favoriteArt(this.art._id, this.account);
-
       this.like(true);
       this.likeClicked = false;
-      this.$q.notify({
-        type: 'positive',
-        message: this.$t('dashboard.gallery.msgLikeSucesse'),
-      });
-      this.likeClicked = false;
+      this.like();
     } catch (e) {
       this.$q.notify({
         type: 'negative',
         message: this.$t('dashboard.gallery.msgErrorLike'),
       });
+      this.likeClicked = false;
     }
-    this.likeClicked = false;
     this.like();
   }
 

@@ -264,7 +264,7 @@ export default class GalleryItem extends Vue.with(Props) {
     const { label: coin, decimalPlaces } = this.coinDetails;
 
     const value = blockchainToCurrency(
-      highestBid ? highestBid.amount : 0,
+      highestBid ? highestBid.netAmount : 0,
       decimalPlaces,
     );
 

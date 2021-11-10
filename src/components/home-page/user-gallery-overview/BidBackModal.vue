@@ -150,7 +150,7 @@ export default class BidBackModal extends Vue {
         const formattedAccount = this.formatAccount(account);
         const name = this.formatName(bid.name);
         const tokenSymbol = bid.tokenSymbol;
-        const highestBid = bid.amount / 1000000000000000000;
+        const highestBid = bid.netAmount / 1000000000000000000;
 
         if (!bidderAccounts.includes(account)) {
           bidderAccounts.push(account);

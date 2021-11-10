@@ -377,7 +377,7 @@ export default class OnsaleItem extends Vue.with(Props) {
     const { label: coin, decimalPlaces } = this.coinDetails;
 
     const value = blockchainToCurrency(
-      highestBid ? highestBid.amount : 0,
+      highestBid ? highestBid.netAmount : 0,
       decimalPlaces,
     );
 
@@ -443,7 +443,7 @@ export default class OnsaleItem extends Vue.with(Props) {
     this.minimumBidvalue = this.auction.minimumBid.amount;
     this.lastValueBid = this.auction.bids.length;
     this.tokenSymbol = this.auction.minimumBid.tokenSymbol;
-    this.highestBidvalue = this.auction.highestBid.amount;
+    this.highestBidvalue = this.auction.highestBid.netAmount;
   }
 
   get now() {

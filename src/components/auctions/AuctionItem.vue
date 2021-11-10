@@ -53,7 +53,7 @@
             {{ auctionBidbackRate + "%" }}
           </div>
           <div class="row justify-center items-center content-center">
-            {{ $t('dashboard.gallery.bidbackTab.bidback') }}
+            {{ $t('dashboard.gallery.bidBackTab.bidBack') }}
           </div>
         </div>
         <div

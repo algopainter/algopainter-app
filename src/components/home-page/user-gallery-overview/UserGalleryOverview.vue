@@ -110,7 +110,7 @@
             :key="index"
           >
             <div>
-              <gallery-item
+              <onsale-item
                 :art="item"
                 :btn-name="'dashboard.homePage.goToAuction'"
                 @favoriteClicked="favoriteClicked"
@@ -288,6 +288,7 @@ import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 import { Watch } from 'vue-property-decorator';
+import OnsaleItem from './OnsaleItem.vue';
 
 @Options({
   components: {
@@ -296,6 +297,7 @@ import { Watch } from 'vue-property-decorator';
     LatestBidsItem,
     LatestBidsItemSkeleton,
     MyGallerySkeleton,
+    OnsaleItem,
   },
 })
 export default class UserGalleryOverview extends Vue {

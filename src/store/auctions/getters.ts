@@ -21,8 +21,8 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getBidBackId(state: AuctionStateInterface): string | undefined {
     return state.bidBackId;
   },
-  getBidbackIndex(state: AuctionStateInterface): number | undefined {
-    return state.bidbackIndex;
+  getBidBackIndex(state: AuctionStateInterface): number | undefined {
+    return state.bidBackIndex;
   },
   getPirsAuction(state: AuctionStateInterface): [] | undefined {
     return state.pirsAuction;

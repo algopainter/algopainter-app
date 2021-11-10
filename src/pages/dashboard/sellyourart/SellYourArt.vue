@@ -53,6 +53,10 @@
                     reverse-fill-mask
                     fill-mask="0"
                     color="primary"
+                    :rules="[
+                      (val) =>
+                        val > 0 || 'You must set a minimum bid to the auction.',
+                    ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
                     @update:modelValue="handleChange"
@@ -113,6 +117,11 @@
                     :model-value="field.value"
                     :options="endDateOptions"
                     :label="$t('dashboard.sellYourArt.endDate')"
+                    :rules="[
+                      (val) =>
+                        val !== '' ||
+                        'You must set an end date to the auction.',
+                    ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
                     @update:modelValue="handleChange"
@@ -132,6 +141,11 @@
                     :model-value="field.value"
                     :options="endTimeOptions(formProps.values.endDate)"
                     :label="$t('dashboard.sellYourArt.endTime')"
+                    :rules="[
+                      (val) =>
+                        val !== '' ||
+                        'You must set an end time to the auction.',
+                    ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
                     @update:modelValue="handleChange"
@@ -147,46 +161,100 @@
                   rules="required"
                 >
                   <q-input
-                    type="number"
+                    inputmode="number"
+                    mask="#.##"
+                    reverse-fill-mask
+                    fill-mask="0"
                     :label="$t('dashboard.sellYourArt.bidBack')"
                     :model-value="field.value"
                     :error-message="errorMessage"
                     :error="!!errorMessage"
-                    :rules="[val => val <= 30 || 'Please insert a number that is smaller than 30',
-                             val => val >= 0 || 'The number must be bigger than 0']"
+                    :rules="[
+                      (val) =>
+                        val >= 1 || 'The bidBack rate must be at least 1%',
+                      (val) =>
+                        val <= 30 ||
+                        'The bidBack rate cannot be bigger than 30%',
+                    ]"
                     @update:modelValue="handleChange"
                   />
+                  <q-tooltip class="bg-primary">
+                    {{ $t('dashboard.sellYourArt.bidBackTooltip') }}
+                  </q-tooltip>
                 </v-field>
               </div>
-              <div
-                v-if="isCreator"
-                class="col-12"
-              >
+              <div class="col-12">
                 <v-field
-                  v-slot="{ field, handleChange, errorMessage }"
+                  v-slot="{ field, handleChange }"
                   class="col-12"
-                  :label="$t('dashboard.sellYourArt.bidBack')"
+                  :label="$t('dashboard.sellYourArt.pirs')"
                   name="pirs"
-                  rules="required"
                 >
                   <q-input
-                    type="number"
+                    v-if="!isCreator"
+                    inputmode="number"
+                    mask="#.##"
+                    reverse-fill-mask
+                    fill-mask="0"
+                    :label="$t('dashboard.sellYourArt.pirs')"
+                    readonly
+                    disable
+                    :model-value="imagePirsRate * 100"
+                    @update:modelValue="handleChange"
+                  />
+                  <q-input
+                    v-else
+                    inputmode="number"
+                    mask="#.##"
+                    reverse-fill-mask
+                    fill-mask="0"
                     :label="$t('dashboard.sellYourArt.pirs')"
                     :model-value="field.value"
-                    :error-message="errorMessage"
-                    :error="!!errorMessage"
-                    :rules="[val => val <= 30 || 'Please insert a number that is smaller than 30',
-                             val => val >= 0 || 'The number must be bigger than 0']"
+                    :rules="[
+                      (val) => val >= 1 || 'The pirs rate must be at least 1%',
+                      (val) =>
+                        val <= 30 || 'The pirs rate cannot be bigger than 30%',
+                    ]"
+                    @update:modelValue="handleChange"
+                  />
+                  <q-tooltip class="bg-primary">
+                    {{ $t('dashboard.sellYourArt.pirsTooltip') }}
+                  </q-tooltip>
+                </v-field>
+              </div>
+              <div class="col-12">
+                <v-field
+                  v-slot="{ handleChange }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.creatorRoyalties')"
+                  name="royalties"
+                >
+                  <q-input
+                    inputmode="number"
+                    mask="#.##"
+                    reverse-fill-mask
+                    fill-mask="0"
+                    :label="$t('dashboard.sellYourArt.creatorRoyalties')"
+                    :model-value="collectionCreatorPirsRate * 100"
+                    disable
+                    readonly
                     @update:modelValue="handleChange"
                   />
                 </v-field>
+                <q-tooltip class="bg-primary">
+                  {{ $t('dashboard.sellYourArt.creatorTooltip') }}
+                </q-tooltip>
               </div>
               <div class="col-12">
                 <div class="q-mr-md q-mb-md">
                   <q-field
                     ref="toggle"
                     :value="isUserInformedAboutTheFee"
-                    :rules="[val => isUserInformedAboutTheFee === true || 'You must acknowledge the term above.']"
+                    :rules="[
+                      (val) =>
+                        isUserInformedAboutTheFee === true ||
+                        'You must acknowledge the term above.',
+                    ]"
                     borderless
                     dense
                   >
@@ -194,9 +262,11 @@
                       <q-checkbox
                         v-model="isUserInformedAboutTheFee"
                         color="green"
-                        :label="$t('dashboard.auctionPage.feeMessage', {
-                          auctionFeePercentage: auctionFeeRate
-                        })"
+                        :label="
+                          $t('dashboard.auctionPage.feeMessage', {
+                            auctionFeePercentage: auctionFeeRate,
+                          })
+                        "
                       />
                     </template>
                   </q-field>
@@ -275,10 +345,10 @@ enum CreatingAuctionStatus {
   CreateAuctionAwaitingConfirmation,
   CreateAuctionError,
   AuctionCreated,
-  SettingBidbackAwaitingInput,
-  SettingBidbackAwaitingConfirmation,
-  SettingBidbackError,
-  SettingBidbackCompleted,
+  SettingBidBackAwaitingInput,
+  SettingBidBackAwaitingConfirmation,
+  SettingBidBackError,
+  SettingBidBackCompleted,
   SettingPirsAwaitingInput,
   SettingPirsAwaitingConfirmation,
   SettingPirsError,
@@ -312,7 +382,7 @@ export default class SellYourArt extends Vue {
   image: IImage | null = null;
   loading: boolean = false;
   loadingCoins: boolean = false;
-  bidbackSystem!: AlgoPainterBidBackPirsProxy;
+  bidBackSystem!: AlgoPainterBidBackPirsProxy;
   pirsSystem!: AlgoPainterBidBackPirsProxy;
   auctionId!: number;
   isCreator: boolean = false;
@@ -328,13 +398,40 @@ export default class SellYourArt extends Vue {
   isUserInformedAboutTheFee: boolean = false;
   auctionFeeRate!: string;
 
+  imagePirsRate: number = 1;
+  collectionCreatorPirsRate: number = 1;
+
   mounted() {
     void this.validatePirs();
     void this.getAuctionFeeRate();
   }
 
+  // Aguardando atualização no contrato para recebimento do investor pirs rate no endpoint caso já tenha sido setado
+  getInvestorPirsRate() {
+    if (this.image) {
+      console.log('imagePirsRate', this.imagePirsRate);
+      this.imagePirsRate = 1;
+    }
+  }
+
+  // Aguardando atualização no contrato para recebimento do creator pirs rate no endpoint da imagem, já que preciso do auctionId pra puxar direto do contrato
+  getCreatorPirsRate() {
+    if (this.image) {
+      console.log('collectionCreatorPirsRate', this.collectionCreatorPirsRate);
+      this.collectionCreatorPirsRate = 1;
+    }
+    /*
+    try {
+      this.collectionCreatorPirsRate = await this.bidBackSystem.getCreatorPirsRate(this.image.nft);
+    } catch (error) {
+      console.log('Error - collectionCreatorPirsRate - Auction');
+    }
+    */
+  }
+
   async getAuctionFeeRate() {
-    const auctionFeeRate = await this.auctionSystem.getAuctionFeeRate() / 10000;
+    const auctionFeeRate =
+      (await this.auctionSystem.getAuctionFeeRate()) / 10000;
 
     this.auctionFeeRate = this.$n(auctionFeeRate, 'percent', {
       maximumFractionDigits: 2,
@@ -356,8 +453,9 @@ export default class SellYourArt extends Vue {
       return null;
     }
 
-    const selectedOption = this.allowedCoins
-      .find((option) => option.value === this.coin);
+    const selectedOption = this.allowedCoins.find(
+      (option) => option.value === this.coin,
+    );
 
     if (!selectedOption) {
       return null;
@@ -379,7 +477,11 @@ export default class SellYourArt extends Vue {
 
     this.image = await getImage(id as string);
 
-    this.isCreator = (this.image.creator === this.userAccount);
+    this.isCreator = this.image.creator === this.userAccount;
+
+    if (!this.isCreator) {
+      void this.getInvestorPirsRate();
+    }
   }
 
   get nowFormatted() {
@@ -392,7 +494,7 @@ export default class SellYourArt extends Vue {
     }
 
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.bidbackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
     this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
 
     void this.loadImage();
@@ -405,7 +507,9 @@ export default class SellYourArt extends Vue {
     this.loading = true;
 
     this.image = await getImage(id as string);
-    this.artTokenContract = new AlgoPainterItemProxy(this.image.collectionOwner);
+    this.artTokenContract = new AlgoPainterItemProxy(
+      this.image.collectionOwner,
+    );
 
     const owner = await this.artTokenContract.ownerOf(this.image.nft.index);
 
@@ -461,8 +565,10 @@ export default class SellYourArt extends Vue {
   async approveContract() {
     this.createAuctionStatus = CreatingAuctionStatus.CheckingContractApproved;
 
-    const contractApproved = await this.artTokenContract
-      .isApprovedForAll(this.userAccount, this.auctionSystemContractAddress);
+    const contractApproved = await this.artTokenContract.isApprovedForAll(
+      this.userAccount,
+      this.auctionSystemContractAddress,
+    );
 
     if (contractApproved) {
       return;
@@ -471,16 +577,19 @@ export default class SellYourArt extends Vue {
     this.createAuctionStatus =
       CreatingAuctionStatus.ContractApprovedAwaitingInput;
 
-    await this.artTokenContract.setApprovalForAll(
-      this.auctionSystemContractAddress,
-      true,
-      this.userAccount,
-    ).on('transactionHash', () => {
-      this.createAuctionStatus =
-        CreatingAuctionStatus.ContractApprovedAwaitingConfirmation;
-    }).on('error', () => {
-      this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedError;
-    });
+    await this.artTokenContract
+      .setApprovalForAll(
+        this.auctionSystemContractAddress,
+        true,
+        this.userAccount,
+      )
+      .on('transactionHash', () => {
+        this.createAuctionStatus =
+          CreatingAuctionStatus.ContractApprovedAwaitingConfirmation;
+      })
+      .on('error', () => {
+        this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedError;
+      });
   }
 
   async createAuction(auction: INewAuction) {
@@ -493,8 +602,13 @@ export default class SellYourArt extends Vue {
 
       await this.approveContract();
 
-      const { minimumPrice, endDate, endTime, bidBack, pirs } = auction;
+      const { minimumPrice, endDate, endTime, bidBack } = auction;
+      let { pirs } = auction;
       const { decimalPlaces } = this.selectedCoin;
+
+      if (typeof pirs === 'undefined') {
+        pirs = this.imagePirsRate;
+      }
 
       const minimumPriceFormatted = currencyToBlockchain(
         Number(minimumPrice),
@@ -504,30 +618,40 @@ export default class SellYourArt extends Vue {
       this.createAuctionStatus =
         CreatingAuctionStatus.CreateAuctionAwaitingInput;
 
-      if (await this.createAuctionResponse(minimumPriceFormatted, endDate, endTime) !== 'no error') {
+      if (
+        (await this.createAuctionResponse(
+          minimumPriceFormatted,
+          endDate,
+          endTime,
+        )) !== 'no error'
+      ) {
         this.displayingStatus = false;
         return;
       }
 
-      const auctionResponse = await this.auctionSystem.createAuction(
-        TokenType.ERC721,
-        this.image.collectionOwner,
-        this.image.nft.index,
-        numberToString(minimumPriceFormatted),
-        moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
-        this.selectedCoin.tokenAddress,
-        this.userAccount,
-      ).on('transactionHash', () => {
-        this.createAuctionStatus =
-          CreatingAuctionStatus.CreateAuctionAwaitingConfirmation;
-      }).on('error', () => {
-        this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionError;
-      });
+      const auctionResponse = await this.auctionSystem
+        .createAuction(
+          TokenType.ERC721,
+          this.image.collectionOwner,
+          this.image.nft.index,
+          numberToString(minimumPriceFormatted),
+          moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
+          this.selectedCoin.tokenAddress,
+          this.userAccount,
+        )
+        .on('transactionHash', () => {
+          this.createAuctionStatus =
+            CreatingAuctionStatus.CreateAuctionAwaitingConfirmation;
+        })
+        .on('error', () => {
+          this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionError;
+        });
 
       this.createAuctionStatus = CreatingAuctionStatus.AuctionCreated;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
-      await this.setBidback(bidBack);
+      this.auctionId = auctionResponse.events.AuctionCreated.returnValues
+        .auctionId as number;
+      await this.setBidBack(bidBack);
       if (this.isCreator) {
         await this.setInvestorPirs(pirs);
       }
@@ -536,7 +660,11 @@ export default class SellYourArt extends Vue {
     }
   }
 
-  async createAuctionResponse(minimumPriceFormatted: number, endDate: string, endTime: string) {
+  async createAuctionResponse(
+    minimumPriceFormatted: number,
+    endDate: string,
+    endTime: string,
+  ) {
     if (this.image && this.selectedCoin) {
       try {
         await this.auctionSystem.createAuctionCall(
@@ -551,12 +679,14 @@ export default class SellYourArt extends Vue {
         return 'no error';
       } catch (e) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        const obj = JSON.parse(e.message.replace('Internal JSON-RPC error.', '')) as {code: number, data: string, message: string};
+        const obj = JSON.parse(e.message.replace('Internal JSON-RPC error.', '')) as { code: number; data: string; message: string };
         switch (obj.message) {
           case 'execution reverted: AlgoPainterAuctionSystem:INVALID_TIME_STAMP':
             return this.$q.notify({
               type: 'negative',
-              message: this.$t('dashboard.sellYourArt.errorHandling.invalidTimeStamp'),
+              message: this.$t(
+                'dashboard.sellYourArt.errorHandling.invalidTimeStamp',
+              ),
               icon: 'mdi-alert',
             });
           default:
@@ -570,42 +700,49 @@ export default class SellYourArt extends Vue {
     }
   }
 
-  async setBidback(bidBack: number) {
-    this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackAwaitingInput;
-    await this.bidbackSystem.setBidbackRate(
+  async setBidBack(bidBack: number) {
+    this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackAwaitingInput;
+    await this.bidBackSystem.setBidbackRate(
       this.auctionId,
       bidBack,
       this.userAccount,
     ).on('transactionHash', () => {
-      this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackAwaitingConfirmation;
+      this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackAwaitingConfirmation;
     }).on('error', () => {
-      this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackError;
+      this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackError;
     });
-    this.createAuctionStatus = CreatingAuctionStatus.SettingBidbackCompleted;
+    this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackCompleted;
   }
 
   async setInvestorPirs(pirs: number) {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
     this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingInput;
-    await this.pirsSystem.setInvestorPirsRate(
-      this.image.collectionOwner,
-      this.image.nft.index,
-      pirs,
-      this.userAccount,
-    ).on('transactionHash', () => {
-      this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
-    }).on('error', () => {
-      this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
-    });
+    await this.pirsSystem
+      .setInvestorPirsRate(
+        this.image.collectionOwner,
+        this.image.nft.index,
+        pirs,
+        this.userAccount,
+      )
+      .on('transactionHash', () => {
+        this.createAuctionStatus =
+          CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
+      })
+      .on('error', () => {
+        this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
+      });
     this.createAuctionStatus = CreatingAuctionStatus.SettingPirsCompleted;
   }
 
   onCloseStatusDialog() {
     this.displayingStatus = false;
 
-    if (this.createAuctionStatus === CreatingAuctionStatus.SettingBidbackCompleted ||
-    this.createAuctionStatus === CreatingAuctionStatus.SettingPirsCompleted) {
+    if (
+      this.createAuctionStatus ===
+        CreatingAuctionStatus.SettingBidBackCompleted ||
+      this.createAuctionStatus === CreatingAuctionStatus.SettingPirsCompleted
+    ) {
       this.$q.notify({
         type: 'positive',
         message: this.$t('dashboard.sellYourArt.auctionCreated'),

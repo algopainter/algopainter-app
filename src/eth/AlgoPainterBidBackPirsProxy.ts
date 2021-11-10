@@ -9,22 +9,22 @@ export default class AlgoPainterBidBackPirsProxy {
   declare smartContract: {
     methods: {
       getBidbackRate(
-        auctionId: number,
+        auctionId: number
       ): ContractSendMethod;
       getInvestorPirsRate(
-        auctionId: number,
+        auctionId: number
       ): ContractSendMethod;
       getCreatorPirsRate(
-        auctionId: number,
+        auctionId: number
       ): ContractSendMethod;
       setBidbackRate(
         auctionId: number,
-        bidbackRate: number
+        bidBackRate: number
       ): ContractSendMethod;
       setInvestorPirsRate(
         tokenAddress: string,
         tokenId: number,
-        investorPirsRate: number,
+        investorPirsRate: number
       ): ContractSendMethod;
     };
   };

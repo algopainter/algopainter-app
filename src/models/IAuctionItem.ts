@@ -1,8 +1,8 @@
 import { IBid } from './IBid';
 
 export interface IAuctionItem {
-  address?: string,
-  bidbacks: unknown[];
+  address?: string;
+  bidBacks: unknown[];
   pirs: unknown[];
   _id: string;
   index: number;
@@ -15,9 +15,9 @@ export interface IAuctionItem {
     royalties: {
       type: string;
       value: number;
-    }
+    };
     service: number;
-  }
+  };
   withdraws: {
     account: string;
     amount: number;
@@ -39,7 +39,7 @@ export interface IAuctionItem {
     type: string;
     updatedAt: string;
     webSite: string;
-  }[]
+  }[];
   highestBid: IBid;
   isHot: boolean;
   ended: boolean;
@@ -53,7 +53,7 @@ export interface IAuctionItem {
     rawImage: string;
     title: string;
     _id: string;
-  }
+  };
   lowestBid: {
     amount: number;
     bidder: {
@@ -63,18 +63,18 @@ export interface IAuctionItem {
       createdAt: string;
       name: string;
       networks: {
-        name: string,
-        type: string,
-        url: string,
-      }
+        name: string;
+        type: string;
+        url: string;
+      };
       role: string;
-      type: string,
+      type: string;
       updatedAt: string;
       _id: string;
-    }
+    };
     createdAt: string;
     tokenSymbol: string;
-  }
+  };
   likers: string[];
   likes: number;
   minimumBid: {
@@ -82,30 +82,32 @@ export interface IAuctionItem {
     createdAt: string;
     tokenSymbol: string;
     tokenPriceAddress: string;
-  }
+  };
   returns: {
-    [account: string]: number
-  }[]
+    [account: string]: number;
+  }[];
   owner: string;
   startDt: string;
   updatedAt: string;
-  users: [{
-    account: string;
-    avatar: string;
-    bio: string;
-    createdAt: string;
-    name: string;
-    customProfile: string;
-    networks: {
-      name: string,
-      type: string,
-      url: string,
+  users: [
+    {
+      account: string;
+      avatar: string;
+      bio: string;
+      createdAt: string;
+      name: string;
+      customProfile: string;
+      networks: {
+        name: string;
+        type: string;
+        url: string;
+      };
+      role: string;
+      type: string;
+      updatedAt: string;
+      _id: string;
     }
-    role: string;
-    type: string;
-    updatedAt: string;
-    _id: string;
-  }];
+  ];
 
   _v: number;
 }

@@ -15,8 +15,16 @@
       <div class="col-12 user-name">
         {{ bid.name }}
       </div>
-      <div class="col-12">
-        {{ bidDateAndHour }}
+      <div
+        class="text-bold text-end"
+      >
+        <div
+          class="text-bold"
+        >
+          {{ monthExpirations }} <span class="text-bold"> {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span>
+          {{ yearExpirations }}
+        </div>
+        {{ hoursExpirations }}
       </div>
     </div>
   </div>
@@ -34,6 +42,11 @@ export default class BidItem extends Vue {
   @Prop({ required: true }) bid!: IBid;
   @Prop({ required: true }) tokenPriceAddress!: string;
 
+  monthExpirations!: string;
+  dayExpirations!: string;
+  yearExpirations!: string;
+  hoursExpirations!: string ;
+
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
       return coin.tokenAddress.toLowerCase() === this.tokenPriceAddress;
@@ -46,8 +59,15 @@ export default class BidItem extends Vue {
     return coin;
   }
 
-  get bidDateAndHour() {
-    return moment(this.bid.createdAt).format('MMMM Do YYYY, h:mm:ss a');
+  beforeMount() {
+    void this.formatTime();
+  }
+
+  formatTime(): void {
+    this.monthExpirations = moment(this.bid.createdAt).format('MMM');
+    this.dayExpirations = moment(this.bid.createdAt).format('DD');
+    this.yearExpirations = moment(this.bid.createdAt).format('YYYY');
+    this.hoursExpirations = moment(this.bid.createdAt).format('LT');
   }
 
   get bidValue() {

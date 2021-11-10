@@ -27,7 +27,7 @@ const mutation: MutationTree<AuctionStateInterface> = {
     state.bidBackId = payload as string;
   },
   SET_BID_BACK_INDEX(state: AuctionStateInterface, payload) {
-    state.bidbackIndex = payload as number;
+    state.bidBackIndex = payload as number;
   },
   SET_BIDS(state: AuctionStateInterface, payload) {
     state.bids = payload as [];

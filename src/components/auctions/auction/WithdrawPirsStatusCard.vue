@@ -8,14 +8,15 @@
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="withdrawPirsStatus === WithdrawPirsStatus.CheckingContractApproved"
+              v-if="withdrawPirsStatus === WithdrawPirsStatus.CheckingContractApproved
+              "
               size="60px"
               color="primary"
             >
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
-              v-else-if="withdrawPirsStatus === WithdrawPirsStatus.ContractApprovedAwaitingInput"
+              v-else-if=" withdrawPirsStatus === WithdrawPirsStatus.ContractApprovedAwaitingInput"
               size="60px"
               color="warning"
               text-color="white"
@@ -48,7 +49,7 @@
           </div>
           <div class="label">
             <div class="title">
-              {{ $t('dashboard.auctionPage.claimBidbackStatuses.contractApprove') }}
+              {{ $t('dashboard.auctionPage.claimBidBackStatuses.contractApprove') }}
             </div>
             <div>
               {{ firstStepLabel }}
@@ -177,9 +178,11 @@ export default class WithdrawPirsStatusCard extends Vue {
   }
 
   get okBtnDisabled() {
-    return this.withdrawPirsStatus !== WithdrawPirsStatus.PirsWithdrawn &&
+    return (
+      this.withdrawPirsStatus !== WithdrawPirsStatus.PirsWithdrawn &&
       this.withdrawPirsStatus !== WithdrawPirsStatus.ContractApprovedError &&
-      this.withdrawPirsStatus !== WithdrawPirsStatus.WithdrawPirsError;
+      this.withdrawPirsStatus !== WithdrawPirsStatus.WithdrawPirsError
+    );
   }
 }
 </script>

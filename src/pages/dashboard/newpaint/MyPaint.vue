@@ -32,9 +32,9 @@
           />
         </div>
         <div class="q-pa-md">
-          <p>{{ $t('dashboard.myPaint.bidback') }}</p>
+          <p>{{ $t('dashboard.myPaint.bidBack') }}</p>
           <q-select
-            v-model="paint.bidback"
+            v-model="paint.bidBack"
             :options="royalties"
           >
             <template #append>
@@ -108,7 +108,7 @@ import { QDialog } from 'quasar';
 
 interface ICreatePaint {
   descriptionPaint: string;
-  bidback: number;
+  bidBack: number;
   royalties: number;
   investors: number;
   isModal: boolean;
@@ -125,7 +125,7 @@ export default class MyPaint extends Vue {
 
   paint: ICreatePaint = {
     descriptionPaint: '',
-    bidback: 0,
+    bidBack: 0,
     royalties: 0,
     investors: 0,
     isModal: false,

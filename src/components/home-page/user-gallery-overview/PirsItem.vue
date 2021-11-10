@@ -1,16 +1,17 @@
 <template>
   <div class="row justify-between q-mb-md">
-    <div class="col-12 col-md-3 col-lg-3  col-xl-3 col-sm-6 col-xs-12">
+    <div class="col-12 col-md-3 col-lg-3 col-xl-3 col-sm-6 col-xs-12">
       <q-img
         class="previewImage"
         :src="art.item.previewImage"
         alt="img art"
       />
     </div>
-    <div class="col-12 col-md-3 col-lg-4  col-xl-3 col-sm-6 col-xs-12 text-last">
+    <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
         <div class="text-title text-bold text-h6">
-          {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.item.index }} {{ art.item.title }}
+          {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.item.index }}
+          {{ art.item.title }}
           <q-tooltip
             anchor="bottom middle"
             max-width="200px"
@@ -40,9 +41,7 @@
             </p>
           </div>
         </div>
-        <div
-          v-else
-        >
+        <div v-else>
           <div>
             <div class="text-bold text-h4 q-mt-md">
               {{ $t('dashboard.gallery.pirsTab.lastBids') }}
@@ -51,17 +50,13 @@
               {{ lastBid }}
             </p>
           </div>
-          <div
-            class="text-bold row  justify-center text-end"
-          >
+          <div class="text-bold row justify-center text-end">
             {{ $t('dashboard.bid.auctionTime') }}
           </div>
-          <div
-            class="text-bold"
-          >
+          <div class="text-bold">
             <div
               v-if="countYear >= 1"
-              class="row justify-center time-year q-gutter-sm "
+              class="row justify-center time-year q-gutter-sm"
             >
               <div>
                 <div class="text-bold">
@@ -78,7 +73,8 @@
 
               <div>
                 <div class="text-bold">
-                  <!-- {{ hours }}--> {{ countHours }}
+                  <!-- {{ hours }}-->
+                  {{ countHours }}
                 </div>
                 <span>{{ $t('dashboard.bid.hours') }}</span>
               </div>
@@ -90,14 +86,15 @@
               </div>
               <div>
                 <div class="text-bold">
-                  <!-- {{ seconds }} --> {{ countSeconds }}
+                  <!-- {{ seconds }} -->
+                  {{ countSeconds }}
                 </div>
                 <span>{{ $t('dashboard.bid.seconds') }}</span>
               </div>
             </div>
             <div
               v-else
-              class="row justify-start time q-gutter-sm "
+              class="row justify-start time q-gutter-sm"
             >
               <div>
                 <div class="text-bold">
@@ -108,7 +105,8 @@
 
               <div>
                 <div class="text-bold">
-                  <!-- {{ hours }}--> {{ countHours }}
+                  <!-- {{ hours }}-->
+                  {{ countHours }}
                 </div>
                 <span>{{ $t('dashboard.bid.hours') }}</span>
               </div>
@@ -120,7 +118,8 @@
               </div>
               <div>
                 <div class="text-bold">
-                  <!-- {{ seconds }} --> {{ countSeconds }}
+                  <!-- {{ seconds }} -->
+                  {{ countSeconds }}
                 </div>
                 <span>{{ $t('dashboard.bid.seconds') }}</span>
               </div>
@@ -129,17 +128,19 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12 items-center field-stack">
+    <div
+      class="
+        col-12 col-md-3 col-lg-3 col-sm-8 col-xs-12
+        items-center
+        field-stack
+      "
+    >
       <div>
         <template v-if="showHarvestBtn">
-          <span
-            class="text-bold flex"
-          >
+          <span class="text-bold flex">
             {{ $t('dashboard.gallery.pirsTab.earned') }}
           </span>
-          <div
-            class="flex container"
-          >
+          <div class="flex container">
             <q-input
               v-model="userCurrentPrizeAmount"
               fill-mask="0"
@@ -196,11 +197,9 @@
       </div>
     </div>
     <div class="col-12 col-md-2 col-lg-2 col-sm-4 col-xs-12 ended-part">
-      <div
-        class="pirs text-white column justify-center content-center q-mb-xl"
-      >
+      <div class="pirs text-white column justify-center content-center q-mb-xl">
         <div class="row justify-center items-center content-center">
-          {{ imagePirsRate + "%" }}
+          {{ imagePirsRate + '%' }}
         </div>
         <div class="row justify-center items-center content-center">
           {{ $t('dashboard.gallery.pirsTab.pirs') }}
@@ -249,7 +248,7 @@ class Props {
   art = prop({
     type: Object as PropType<IAuctionItem>,
     required: true,
-  })
+  });
 }
 
 enum WithdrawPirsStatus {
@@ -274,15 +273,9 @@ enum WithdrawPirsStatus {
     now: ['getTime'],
   },
   computed: {
-    ...mapGetters(
-      'user', [
-        'networkInfo',
-        'account',
-        'isConnected',
-      ]),
+    ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
   },
 })
-
 export default class PirsItem extends Vue.with(Props) {
   bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
@@ -308,10 +301,10 @@ export default class PirsItem extends Vue.with(Props) {
   minutes: number = 0;
   minuReal: number = 0;
   seconds: number = 0;
-  monthExpirations: string = ''
-  dayExpirations: string = ''
-  yearExpirations: string = ''
-  hoursExpirations!: string ;
+  monthExpirations: string = '';
+  dayExpirations: string = '';
+  yearExpirations: string = '';
+  hoursExpirations!: string;
   countDays: number = 0;
   countYear: number = 0;
   countHours: number = 0;
@@ -337,7 +330,9 @@ export default class PirsItem extends Vue.with(Props) {
 
   async getPirsPercentage() {
     try {
-      this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.art.index);
+      this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(
+        this.art.index,
+      );
       if (this.imagePirsRate > 0) {
         void this.getCurrentPrizeAmount();
       }
@@ -348,11 +343,13 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   getLastBid() {
-    const highestBidAmount = (this.art.highestBid) ? this.art.highestBid.amount : 0;
+    const highestBidAmount = this.art.highestBid
+      ? this.art.highestBid.amount
+      : 0;
 
     if (highestBidAmount !== 0) {
       const bidAmount = blockchainToCurrency(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         highestBidAmount,
         this.coinDetails.decimalPlaces,
       );
@@ -364,7 +361,10 @@ export default class PirsItem extends Vue.with(Props) {
 
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
-      return coin.tokenAddress.toLowerCase() === this.art.minimumBid.tokenPriceAddress;
+      return (
+        coin.tokenAddress.toLowerCase() ===
+        this.art.minimumBid.tokenPriceAddress
+      );
     });
 
     if (!coin) {
@@ -375,36 +375,37 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   setFormatCurrency(amount: number) {
-    return blockchainToCurrency(
-      amount,
-      this.coinDetails.decimalPlaces,
-    );
+    return blockchainToCurrency(amount, this.coinDetails.decimalPlaces);
   }
 
   getUserStackedPirs() {
     if (this.art.pirs) {
-      this.algopStacked = this.art.pirs[this.account as unknown as number] as number;
+      this.algopStacked = this.art.pirs[
+        this.account as unknown as number
+      ] as number;
     }
 
-    this.disableUnstackBtn = (this.algopStacked <= 0 || this.art.ended);
-    this.showHarvestBtn = (this.algopStacked > 0 && this.art.ended && this.imagePirsRate > 0);
+    this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
+    this.showHarvestBtn =
+      this.algopStacked > 0 && this.art.ended && this.imagePirsRate > 0;
   }
 
   async harvestAlgop() {
     try {
       this.displayingStatus = true;
 
-      this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
+      this.withdrawPirsStatus =
+        WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
 
-      await this.rewardsSystem.claimPirs(
-        this.art.index,
-        this.account,
-      ).on('transactionHash', () => {
-        this.withdrawPirsStatus =
-          WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
-      }).on('error', () => {
-        this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsError;
-      });
+      await this.rewardsSystem
+        .claimPirs(this.art.index, this.account)
+        .on('transactionHash', () => {
+          this.withdrawPirsStatus =
+            WithdrawPirsStatus.WithdrawPirsAwaitingConfirmation;
+        })
+        .on('error', () => {
+          this.withdrawPirsStatus = WithdrawPirsStatus.WithdrawPirsError;
+        });
 
       this.isCoinHarvestDisabled = true;
       this.disableUnstackBtn = true;
@@ -415,19 +416,22 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   async getCurrentPrizeAmount() {
-    const totalBidbackStaked = await this.rewardsSystem.getTotalBidbackStakes(
+    const totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(
       this.art.index,
     );
 
-    const auctionHighestBid = (this.art.highestBid) ? this.art.highestBid.amount / 1000000000000000000 : 0;
+    const auctionHighestBid = this.art.highestBid
+      ? this.art.highestBid.amount / 1000000000000000000
+      : 0;
 
-    const auctionBidbackRate = this.imagePirsRate / 100;
+    const auctionBidBackRate = this.imagePirsRate / 100;
 
-    const totalBidbackPrize = auctionBidbackRate * auctionHighestBid;
+    const totalBidBackPrize = auctionBidBackRate * auctionHighestBid;
 
-    const userBidbackShare = (totalBidbackStaked > 0) ? this.algopStacked / totalBidbackStaked : 0;
+    const userBidBackShare =
+      totalBidBackStaked > 0 ? this.algopStacked / totalBidBackStaked : 0;
 
-    this.userCurrentPrizeAmount = userBidbackShare * totalBidbackPrize;
+    this.userCurrentPrizeAmount = userBidBackShare * totalBidBackPrize;
   }
 
   stackCoin() {
@@ -485,8 +489,18 @@ export default class PirsItem extends Vue.with(Props) {
   @Watch('now')
   onPropertyChanged() {
     if (!this.stopCount) {
-      if (this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
-        if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
+      if (
+        this.countDays <= 0 &&
+        this.countHours <= 0 &&
+        this.countMinutes <= 0 &&
+        this.countSeconds <= 0
+      ) {
+        if (
+          this.lastCountDays === 0 &&
+          this.lastCountHours === 0 &&
+          this.lastCountMinutes === 0 &&
+          this.lastCountSeconds === 1
+        ) {
           this.formatTime();
           window.location.reload();
         }
@@ -501,95 +515,93 @@ export default class PirsItem extends Vue.with(Props) {
     this.lastCountSeconds = this.countSeconds;
   }
 }
-
 </script>
 
 <style scoped lang="scss">
-.text-title{
+.text-title {
   white-space: nowrap;
   width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.won-bid{
+.won-bid {
   color: $positive;
 }
 
-.btn-staked{
+.btn-staked {
   min-width: 30px;
   margin-right: 10px;
   height: 30px;
   margin-top: 20px;
 }
 
-.btn-havest{
+.btn-havest {
   min-width: 100px;
   height: 50px;
   margin-top: 10px;
 }
 
-.previewImage{
+.previewImage {
   width: 290px;
 }
-.input-stack-algop{
-  width:170px;
+.input-stack-algop {
+  width: 170px;
   margin-right: 10px;
 }
-.container{
+.container {
   width: 300px;
 }
-.pirs{
+.pirs {
   text-align: unset;
   height: 100px;
   width: 100px;
   border-radius: 50%;
   background-color: $primary;
 }
-.coin{
+.coin {
   color: $primary;
 }
-.text-end{
+.text-end {
   width: 170px;
   font-size: 16px;
 }
-@media  (max-width:470px) {
-  .text-last{
+@media (max-width: 470px) {
+  .text-last {
     text-align: center;
   }
-  .text-title{
-  white-space: nowrap;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .text-title {
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-  .time{
-    justify-content:center;
+  .time {
+    justify-content: center;
   }
   .previewImage {
     width: 100%;
   }
-  .field-stack{
+  .field-stack {
     width: 100%;
     margin-left: 10%;
   }
-  .ended-part{
+  .ended-part {
     text-align: center;
     display: flex;
     justify-content: space-between;
   }
-  .load-more{
+  .load-more {
     height: 10px;
     margin-top: 10%;
   }
-  .text-end{
+  .text-end {
     width: 100%;
-
   }
-   .text{
+  .text {
     text-align: center;
-    align-items: center
+    align-items: center;
   }
 }
 </style>

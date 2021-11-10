@@ -161,7 +161,6 @@
 <script lang="ts">
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
-
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
@@ -178,7 +177,6 @@ class Props {
     required: true,
   });
 }
-
 @Options({
   components: {
     AlgoButton,
@@ -203,21 +201,16 @@ export default class AuctionItem extends Vue.with(Props) {
   auctionBidbackRate: number = 0;
    imagePirsRate: number = 0;
   collectionArtController: CollectionArtController = new CollectionArtController();
-
   wasLiked: boolean = false;
-
   likes!: number;
-
   loading: boolean = true;
   previewImage: string = '';
   bidderTrue: string = '';
   lastBidLength: number = 0;
   lastValueBid: number = 0;
   valueCoin!: string;
-
   // usersOwner: unknown;
   // isHotUnkown: unknown;
-
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return this.$store.getters['user/isConnected'];
@@ -230,7 +223,6 @@ export default class AuctionItem extends Vue.with(Props) {
 
   /* functionCounter: number = 0;
   stopFunction: boolean = false; */
-
   changeAvatar(bid: unknown) {
     if (typeof (bid) !== 'undefined') {
       return 'src/assets/do-utilizador.png';
@@ -342,11 +334,9 @@ export default class AuctionItem extends Vue.with(Props) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       return coin.tokenAddress.toLowerCase() === this.isHot.minimumBid.tokenPriceAddress;
     });
-
     if (!coin) {
       throw new Error('COIN_NOT_FOUND');
     }
-
     return coin;
   }
 
@@ -360,12 +350,10 @@ export default class AuctionItem extends Vue.with(Props) {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
-
   // get reductionBidValue() {
   //   const coinReduction = this.valueCoin as unknown as number;
   //   return UserUtils.formatAccountBalance(coinReduction, 2);
   // }
-
   // showValue(bids: number) {
   //   this.bidValue(bids);
   //   return this.reductionBidValue;
@@ -390,17 +378,14 @@ export default class AuctionItem extends Vue.with(Props) {
     margin-left: -8px;
   }
 }
-
 .actions {
   cursor: pointer;
 }
-
 .art-image {
   border-radius: 5px;
   width: 300px;
   height: 300px;
 }
-
 .bidBack{
   text-align: unset;
   height: 50px;
@@ -410,7 +395,6 @@ export default class AuctionItem extends Vue.with(Props) {
   font-size: 9px;
   margin-left: 9px ;
 }
-
 .pirs{
   text-align: unset;
   height: 50px;
@@ -421,19 +405,16 @@ export default class AuctionItem extends Vue.with(Props) {
   margin-left: 1px;
   margin-right: -10px
 }
-
 .pirs-bidback{
   margin-top: -13px;
   margin-right: 0px;
   background: none;
   width: 100%;
 }
-
 .details {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
 .name {
     font-weight: bold;
     font-size: 1.4rem;
@@ -443,13 +424,11 @@ export default class AuctionItem extends Vue.with(Props) {
     text-align: left;
     width: 250px;
 }
-
   .price {
     color: $positive;
     font-size: 1.1rem;
     font-weight: bold;
   }
-
   .highest-bid {
     font-size: 1.1rem;
     display: flex;
@@ -457,11 +436,9 @@ export default class AuctionItem extends Vue.with(Props) {
       margin-left: 5px;
     }
   }
-
   .btn-place-a-bid{
     width: 300px;
   }
-
   .ellipsis{
     text-overflow: ellipsis;
     overflow: hidden;
@@ -470,5 +447,4 @@ export default class AuctionItem extends Vue.with(Props) {
     max-width: 120px;
   }
 }
-
 </style>

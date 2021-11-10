@@ -43,7 +43,7 @@
         </div>
         <div class="row justify-center ">
           <div>
-            {{ bidCorreting(bidsAuctions.highestBid.amount) }}
+            {{ bidCorreting(bidsAuctions.highestBid.netAmount) }}
           </div>
           <div class="q-ml-sm">
             {{ bidsAuctions.highestBid.tokenSymbol }}

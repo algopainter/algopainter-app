@@ -45,13 +45,13 @@
           <p>{{ hoursExpirations }}</p>
         </div>
         <div v-else>
-          <div class="text-bold row justify-center text-end">
+          <div class="text-bold row justify-start text-end">
             {{ $t('dashboard.bid.auctionTime') }}
           </div>
           <div class="text-bold">
-            <div class="row justify-center time q-gutter-sm">
+            <div class="row justify-start time q-gutter-sm">
               <div>
-                <div class="text-bold">
+                <div class="text-bold text-time">
                   <!-- {{ days }}  -->{{ countDays }}
                 </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
@@ -497,9 +497,14 @@ export default class gallerySelect extends Vue.with(Props) {
   text-align: unset;
   height: 100px;
   width: 100px;
+  margin-left: 45px;
   border-radius: 50%;
   background-color: $primary;
 }
+.time{
+    font-size: 0.9rem;
+    width: 100%;
+  }
 .coin {
   color: $primary;
 }
@@ -511,6 +516,13 @@ export default class gallerySelect extends Vue.with(Props) {
   .text {
     text-align: center;
     align-items: center;
+  }
+  .bidBack{
+    margin-top: 5px;
+    margin-left: 1px;
+  }
+  .time{
+    justify-content: center;
   }
   .text-title {
     white-space: nowrap;
@@ -526,12 +538,15 @@ export default class gallerySelect extends Vue.with(Props) {
     width: 100%;
   }
   .field-stack {
-    width: 100%;
-    margin-left: 10%;
+    width: 80%;
+    margin-left: 20%;
+    margin-top: 10px;
+    justify-content: center;
   }
   .ended-part {
     text-align: center;
     display: flex;
+    margin-left: 30px;
     justify-content: space-between;
   }
   .load-more {
@@ -540,6 +555,7 @@ export default class gallerySelect extends Vue.with(Props) {
   }
   .text-end {
     width: 100%;
+    justify-content: center;
   }
 }
 </style>

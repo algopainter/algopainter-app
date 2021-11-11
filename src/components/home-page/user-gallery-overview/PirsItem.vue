@@ -344,7 +344,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   getLastBid() {
     const highestBidAmount = this.art.highestBid
-      ? this.art.highestBid.amount
+      ? this.art.highestBid.netAmount
       : 0;
 
     if (highestBidAmount !== 0) {
@@ -421,7 +421,7 @@ export default class PirsItem extends Vue.with(Props) {
     );
 
     const auctionHighestBid = this.art.highestBid
-      ? this.art.highestBid.amount / 1000000000000000000
+      ? this.art.highestBid.netAmount / 1000000000000000000
       : 0;
 
     const auctionBidBackRate = this.imagePirsRate / 100;

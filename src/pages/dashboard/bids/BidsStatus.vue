@@ -43,7 +43,7 @@
         </div>
         <div class="row justify-center ">
           <div>
-            {{ bidCorreting(bidsAuctions.highestBid.amount) }}
+            {{ bidCorreting(bidsAuctions.highestBid.netAmount) }}
           </div>
           <div class="q-ml-sm">
             {{ bidsAuctions.highestBid.tokenSymbol }}
@@ -267,7 +267,7 @@ export default class BidsStatus extends Vue.with(Props) {
     const myBidsFilter = getBids.filter(function(item) {
       return account === item.account;
     });
-    const lastBid = last(myBidsFilter)?.amount;
+    const lastBid = last(myBidsFilter)?.netAmount;
     return lastBid as number;
   }
 

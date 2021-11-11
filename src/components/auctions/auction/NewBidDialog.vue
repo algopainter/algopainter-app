@@ -229,7 +229,7 @@ export default class NewBidDialog extends Vue {
     if (highestBid.length === 0) {
       this.bidMinimun = this.auction.minimumBid.amount;
     } else {
-      this.bidHighest = this.auction.highestBid.amount;
+      this.bidHighest = this.auction.highestBid.netAmount;
     }
   }
 
@@ -280,22 +280,13 @@ export default class NewBidDialog extends Vue {
     const { highestBid, minimumBid } = this.auction;
     const { decimalPlaces } = this.coinDetails;
 
-    const value = highestBid ? highestBid.amount : minimumBid.amount;
+    const value = highestBid ? highestBid.netAmount : minimumBid.amount;
 
     const amount = blockchainToCurrency(value, decimalPlaces);
 
     return this.$n(amount, 'decimal', {
       maximumFractionDigits: decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
-  }
-
-  get minimumBidAllowed() {
-    const { highestBid, minimumBid } = this.auction;
-    const { decimalPlaces } = this.coinDetails;
-
-    const value = highestBid ? highestBid.amount + 1 : minimumBid.amount;
-
-    return blockchainToCurrency(value, decimalPlaces);
   }
 
   mounted() {
@@ -337,7 +328,7 @@ export default class NewBidDialog extends Vue {
       ]);
 
       this.userBalance = balance;
-      this.bidFee = fee / 1000;
+      this.bidFee = fee / 10000;
 
       this.loadingBlockchainData = false;
     } catch {

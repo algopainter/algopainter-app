@@ -55,7 +55,7 @@
                     color="primary"
                     :rules="[
                       (val) =>
-                        val > 0 || 'You must set a minimum bid to the auction.',
+                        val > 0 || $t('dashboard.sellYourArt.setAMinimumPrice'),
                     ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
@@ -121,7 +121,7 @@
                     :rules="[
                       (val) =>
                         val !== '' ||
-                        'You must set an end date to the auction.',
+                        $t('dashboard.sellYourArt.setAnEndDate'),
                     ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
@@ -145,7 +145,7 @@
                     :rules="[
                       (val) =>
                         val !== '' ||
-                        'You must set an end time to the auction.',
+                        $t('dashboard.sellYourArt.setAnEndDate'),
                     ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
@@ -171,11 +171,8 @@
                     :error-message="errorMessage"
                     :error="!!errorMessage"
                     :rules="[
-                      (val) =>
-                        val >= 1 || 'The bidBack rate must be at least 1%',
-                      (val) =>
-                        val <= 30 ||
-                        'The bidBack rate cannot be bigger than 30%',
+                      (val) => val >= 1 || $t('dashboard.sellYourArt.minimumBidBackRate'),
+                      (val) => val <= 30 || $t('dashboard.sellYourArt.maximumBidBackRate'),
                     ]"
                     @update:modelValue="handleChange"
                   >
@@ -224,9 +221,8 @@
                     :label="$t('dashboard.sellYourArt.pirs')"
                     :model-value="field.value"
                     :rules="[
-                      (val) => val >= 1 || 'The PIRS rate must be at least 1%',
-                      (val) =>
-                        val <= 30 || 'The PIRS rate cannot be bigger than 30%',
+                      (val) => val >= 1 || $t('dashboard.sellYourArt.minimumPIRSRate'),
+                      (val) => val <= 30 || $t('dashboard.sellYourArt.maximumPIRSRate'),
                     ]"
                     @update:modelValue="handleChange"
                   >
@@ -274,9 +270,7 @@
                     ref="toggle"
                     :value="isUserInformedThatPirsCanBeOnlySetOnce"
                     :rules="[
-                      (val) =>
-                        isUserInformedThatPirsCanBeOnlySetOnce === true ||
-                        'You must acknowledge the term above.',
+                      (val) => isUserInformedThatPirsCanBeOnlySetOnce === true || $t('dashboard.sellYourArt.acknowledgeTerm'),
                     ]"
                     borderless
                     dense
@@ -294,9 +288,7 @@
                     ref="toggle"
                     :value="isUserInformedAboutTheFee"
                     :rules="[
-                      (val) =>
-                        isUserInformedAboutTheFee === true ||
-                        'You must acknowledge the term above.',
+                      (val) => isUserInformedAboutTheFee === true || $t('dashboard.sellYourArt.acknowledgeTerm'),
                     ]"
                     borderless
                     dense
@@ -514,7 +506,6 @@ export default class SellYourArt extends Vue {
     this.isCreator = !this.image.pirs.investorRate;
 
     if (!this.isCreator) {
-      // this.isUserInformedThatPirsCanBeOnlySetOnce = true;
       void this.getInvestorPirsRate();
     }
   }

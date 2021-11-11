@@ -742,7 +742,7 @@ export default class MyGalleryOverview extends Vue {
     void this.$store
       .dispatch({
         type: 'auctions/getBidBack',
-        account: this.accountAddress, // '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a',
+        account: this.accountAddress,
         page: page,
         perPage: '9',
       })

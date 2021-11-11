@@ -24,6 +24,10 @@ export interface IImage {
   collectionOwner: string;
   tags: string[];
   nft: IImageNFTInfo;
+  pirs: {
+    creatorRate:number;
+    investorRate: number | null;
+  };
   owner: string;
   creator: string;
   users: IProfile[];

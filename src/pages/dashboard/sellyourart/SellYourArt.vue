@@ -435,7 +435,7 @@ export default class SellYourArt extends Vue {
   isUserInformedThatPirsCanBeOnlySetOnce: boolean = false;
   auctionFeeRate!: string;
 
-  imagePirsRate!: number | null | null;
+  imagePirsRate!: number | null;
   collectionCreatorPirsRate!: number | null;
 
   mounted() {

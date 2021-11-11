@@ -295,7 +295,7 @@ export default class gallerySelect extends Vue.with(Props) {
 
   getLastBid() {
     const bidAmount = blockchainToCurrency(
-      this.art.highestBid.amount,
+      this.art.highestBid.netAmount,
       this.coinDetails.decimalPlaces,
     );
 
@@ -364,7 +364,7 @@ export default class gallerySelect extends Vue.with(Props) {
       this.art.index,
     );
 
-    const auctionHighestBid = this.art.highestBid.amount / 1000000000000000000;
+    const auctionHighestBid = this.art.highestBid.netAmount / 1000000000000000000;
 
     const auctionBidBackRate = this.auctionBidBackRate / 100;
 

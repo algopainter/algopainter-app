@@ -109,12 +109,12 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     const perPage = value.perPage as string;
     try {
       const result = await api.get(
-        `users/${account}/auctions/biding?forBidbacks=true&page=${page}&perPage=${perPage}&order.expirationDt=1`,
+        `users/${account}/auctions/biding?forBidbacks=true&page=${page}&perPage=${perPage}&order.expirationDt=1`
       );
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {
-      console.log('error getAuction msg');
+      console.log('error getBidBack msg');
     } finally {
       console.log('success msg');
     }

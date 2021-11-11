@@ -55,13 +55,14 @@
                     color="primary"
                     :rules="[
                       (val) =>
-                        val > 0 || 'You must set a minimum bid to the auction.',
+                        val > 0 || $t('dashboard.sellYourArt.setAMinimumPrice'),
                     ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
                     @update:modelValue="handleChange"
                   >
                     <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
                       <q-btn-dropdown
                         color="primary"
                         flat
@@ -120,7 +121,7 @@
                     :rules="[
                       (val) =>
                         val !== '' ||
-                        'You must set an end date to the auction.',
+                        $t('dashboard.sellYourArt.setAnEndDate'),
                     ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
@@ -144,7 +145,7 @@
                     :rules="[
                       (val) =>
                         val !== '' ||
-                        'You must set an end time to the auction.',
+                        $t('dashboard.sellYourArt.setAnEndDate'),
                     ]"
                     :error="!!errorMessage"
                     :error-message="errorMessage"
@@ -162,7 +163,7 @@
                 >
                   <q-input
                     inputmode="number"
-                    mask="#.##"
+                    mask="#"
                     reverse-fill-mask
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.bidBack')"
@@ -170,17 +171,18 @@
                     :error-message="errorMessage"
                     :error="!!errorMessage"
                     :rules="[
-                      (val) =>
-                        val >= 1 || 'The bidBack rate must be at least 1%',
-                      (val) =>
-                        val <= 30 ||
-                        'The bidBack rate cannot be bigger than 30%',
+                      (val) => val >= 1 || $t('dashboard.sellYourArt.minimumBidBackRate'),
+                      (val) => val <= 30 || $t('dashboard.sellYourArt.maximumBidBackRate'),
                     ]"
                     @update:modelValue="handleChange"
-                  />
-                  <q-tooltip class="bg-primary">
-                    {{ $t('dashboard.sellYourArt.bidBackTooltip') }}
-                  </q-tooltip>
+                  >
+                    <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
+                      <q-tooltip class="bg-primary">
+                        {{ $t('dashboard.sellYourArt.bidBackTooltip') }}
+                      </q-tooltip>
+                    </template>
+                  </q-input>
                 </v-field>
               </div>
               <div class="col-12">
@@ -193,33 +195,44 @@
                   <q-input
                     v-if="!isCreator"
                     inputmode="number"
-                    mask="#.##"
+                    mask="#"
+                    filled
                     reverse-fill-mask
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.pirs')"
                     readonly
-                    disable
-                    :model-value="imagePirsRate * 100"
+                    :hint="$t('dashboard.sellYourArt.readOnlyField')"
+                    :model-value="imagePirsRate ? imagePirsRate : 0"
                     @update:modelValue="handleChange"
-                  />
+                  >
+                    <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
+                      <q-tooltip class="bg-primary">
+                        {{ $t('dashboard.sellYourArt.pirsTooltip') }}
+                      </q-tooltip>
+                    </template>
+                  </q-input>
                   <q-input
                     v-else
                     inputmode="number"
-                    mask="#.##"
+                    mask="#"
                     reverse-fill-mask
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.pirs')"
                     :model-value="field.value"
                     :rules="[
-                      (val) => val >= 1 || 'The pirs rate must be at least 1%',
-                      (val) =>
-                        val <= 30 || 'The pirs rate cannot be bigger than 30%',
+                      (val) => val >= 1 || $t('dashboard.sellYourArt.minimumPIRSRate'),
+                      (val) => val <= 30 || $t('dashboard.sellYourArt.maximumPIRSRate'),
                     ]"
                     @update:modelValue="handleChange"
-                  />
-                  <q-tooltip class="bg-primary">
-                    {{ $t('dashboard.sellYourArt.pirsTooltip') }}
-                  </q-tooltip>
+                  >
+                    <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
+                      <q-tooltip class="bg-primary">
+                        {{ $t('dashboard.sellYourArt.pirsTooltip') }}
+                      </q-tooltip>
+                    </template>
+                  </q-input>
                 </v-field>
               </div>
               <div class="col-12">
@@ -231,39 +244,62 @@
                 >
                   <q-input
                     inputmode="number"
-                    mask="#.##"
+                    mask="#"
+                    :hint="$t('dashboard.sellYourArt.readOnlyField')"
+                    filled
                     reverse-fill-mask
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.creatorRoyalties')"
-                    :model-value="collectionCreatorPirsRate * 100"
-                    disable
+                    :model-value="collectionCreatorPirsRate ? collectionCreatorPirsRate : 0"
                     readonly
                     @update:modelValue="handleChange"
-                  />
+                  >
+                    <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
+                      <q-tooltip class="bg-primary">
+                        {{ $t('dashboard.sellYourArt.creatorTooltip') }}
+                      </q-tooltip>
+                    </template>
+                  </q-input>
                 </v-field>
-                <q-tooltip class="bg-primary">
-                  {{ $t('dashboard.sellYourArt.creatorTooltip') }}
-                </q-tooltip>
               </div>
               <div class="col-12">
-                <div class="q-mr-md q-mb-md">
+                <div class="q-mr-md">
+                  <q-field
+                    v-if="isCreator"
+                    ref="toggle"
+                    :value="isUserInformedThatPirsCanBeOnlySetOnce"
+                    :rules="[
+                      (val) => isUserInformedThatPirsCanBeOnlySetOnce === true || $t('dashboard.sellYourArt.acknowledgeTerm'),
+                    ]"
+                    borderless
+                    dense
+                    hide-bottom-space
+                  >
+                    <template #control>
+                      <q-checkbox
+                        v-model="isUserInformedThatPirsCanBeOnlySetOnce"
+                        color="green"
+                        :label="$t('dashboard.sellYourArt.pirsMessage')"
+                      />
+                    </template>
+                  </q-field>
                   <q-field
                     ref="toggle"
                     :value="isUserInformedAboutTheFee"
                     :rules="[
-                      (val) =>
-                        isUserInformedAboutTheFee === true ||
-                        'You must acknowledge the term above.',
+                      (val) => isUserInformedAboutTheFee === true || $t('dashboard.sellYourArt.acknowledgeTerm'),
                     ]"
                     borderless
                     dense
+                    hide-bottom-space
                   >
                     <template #control>
                       <q-checkbox
                         v-model="isUserInformedAboutTheFee"
                         color="green"
                         :label="
-                          $t('dashboard.auctionPage.feeMessage', {
+                          $t('dashboard.sellYourArt.feeMessage', {
                             auctionFeePercentage: auctionFeeRate,
                           })
                         "
@@ -396,37 +432,27 @@ export default class SellYourArt extends Vue {
   createBidBackStatus: CreatingAuctionStatus | null = null;
 
   isUserInformedAboutTheFee: boolean = false;
+  isUserInformedThatPirsCanBeOnlySetOnce: boolean = false;
   auctionFeeRate!: string;
 
-  imagePirsRate: number = 1;
-  collectionCreatorPirsRate: number = 1;
+  imagePirsRate!: number | null;
+  collectionCreatorPirsRate!: number | null;
 
   mounted() {
     void this.validatePirs();
     void this.getAuctionFeeRate();
   }
 
-  // Aguardando atualização no contrato para recebimento do investor pirs rate no endpoint caso já tenha sido setado
   getInvestorPirsRate() {
     if (this.image) {
-      console.log('imagePirsRate', this.imagePirsRate);
-      this.imagePirsRate = 1;
+      this.imagePirsRate = this.image.pirs.investorRate;
     }
   }
 
-  // Aguardando atualização no contrato para recebimento do creator pirs rate no endpoint da imagem, já que preciso do auctionId pra puxar direto do contrato
   getCreatorPirsRate() {
     if (this.image) {
-      console.log('collectionCreatorPirsRate', this.collectionCreatorPirsRate);
-      this.collectionCreatorPirsRate = 1;
+      this.collectionCreatorPirsRate = this.image.pirs.creatorRate;
     }
-    /*
-    try {
-      this.collectionCreatorPirsRate = await this.bidBackSystem.getCreatorPirsRate(this.image.nft);
-    } catch (error) {
-      console.log('Error - collectionCreatorPirsRate - Auction');
-    }
-    */
   }
 
   async getAuctionFeeRate() {
@@ -477,7 +503,7 @@ export default class SellYourArt extends Vue {
 
     this.image = await getImage(id as string);
 
-    this.isCreator = this.image.creator === this.userAccount;
+    this.isCreator = !this.image.pirs.investorRate;
 
     if (!this.isCreator) {
       void this.getInvestorPirsRate();
@@ -516,6 +542,8 @@ export default class SellYourArt extends Vue {
     if (owner.toLowerCase() !== this.userAccount) {
       return this.$router.push('/');
     }
+
+    void this.getCreatorPirsRate();
 
     this.loading = false;
   }
@@ -574,22 +602,17 @@ export default class SellYourArt extends Vue {
       return;
     }
 
-    this.createAuctionStatus =
-      CreatingAuctionStatus.ContractApprovedAwaitingInput;
+    this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedAwaitingInput;
 
-    await this.artTokenContract
-      .setApprovalForAll(
-        this.auctionSystemContractAddress,
-        true,
-        this.userAccount,
-      )
-      .on('transactionHash', () => {
-        this.createAuctionStatus =
-          CreatingAuctionStatus.ContractApprovedAwaitingConfirmation;
-      })
-      .on('error', () => {
-        this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedError;
-      });
+    await this.artTokenContract.setApprovalForAll(
+      this.auctionSystemContractAddress,
+      true,
+      this.userAccount,
+    ).on('transactionHash', () => {
+      this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedAwaitingConfirmation;
+    }).on('error', () => {
+      this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedError;
+    });
   }
 
   async createAuction(auction: INewAuction) {
@@ -607,7 +630,9 @@ export default class SellYourArt extends Vue {
       const { decimalPlaces } = this.selectedCoin;
 
       if (typeof pirs === 'undefined') {
-        pirs = this.imagePirsRate;
+        if (this.imagePirsRate) {
+          pirs = this.imagePirsRate;
+        }
       }
 
       const minimumPriceFormatted = currencyToBlockchain(
@@ -640,8 +665,7 @@ export default class SellYourArt extends Vue {
           this.userAccount,
         )
         .on('transactionHash', () => {
-          this.createAuctionStatus =
-            CreatingAuctionStatus.CreateAuctionAwaitingConfirmation;
+          this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionAwaitingConfirmation;
         })
         .on('error', () => {
           this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionError;
@@ -649,8 +673,8 @@ export default class SellYourArt extends Vue {
 
       this.createAuctionStatus = CreatingAuctionStatus.AuctionCreated;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.auctionId = auctionResponse.events.AuctionCreated.returnValues
-        .auctionId as number;
+      this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
+
       await this.setBidBack(bidBack);
       if (this.isCreator) {
         await this.setInvestorPirs(pirs);
@@ -702,6 +726,7 @@ export default class SellYourArt extends Vue {
 
   async setBidBack(bidBack: number) {
     this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackAwaitingInput;
+
     await this.bidBackSystem.setBidBackRate(
       this.auctionId,
       bidBack,

@@ -128,7 +128,7 @@
               >
                 <div class="row">
                   <div class="ellipsis q-mr-xs">
-                    {{ bidValue(isHot.highestBid.amount) }}
+                    {{ bidValue(isHot.highestBid.netAmount) }}
                   </div>
                   <div>
                     {{ isHot.highestBid.tokenSymbol }}
@@ -138,7 +138,7 @@
                     self="center middle"
                     class="bg-primary"
                   >
-                    {{ bidValue(isHot.highestBid.amount) + ' ' + isHot.highestBid.tokenSymbol }}
+                    {{ bidValue(isHot.highestBid.netAmount) + ' ' + isHot.highestBid.tokenSymbol }}
                   </q-tooltip>
                 </div>
               </div>

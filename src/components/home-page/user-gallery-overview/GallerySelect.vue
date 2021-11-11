@@ -497,6 +497,7 @@ export default class gallerySelect extends Vue.with(Props) {
   text-align: unset;
   height: 100px;
   width: 100px;
+  margin-left: 45px;
   border-radius: 50%;
   background-color: $primary;
 }
@@ -511,6 +512,11 @@ export default class gallerySelect extends Vue.with(Props) {
   .text {
     text-align: center;
     align-items: center;
+  }
+  
+  .bidBack{
+    margin-top: 5px;
+     margin-left: 1px;
   }
   .text-title {
     white-space: nowrap;

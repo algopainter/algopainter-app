@@ -728,7 +728,7 @@ export default class MyGalleryOverview extends Vue {
             this.pirsTabImages.count > 0 ? this.pirsTabImages.count : 0;
           this.galleryTabs[3].contLabel = ` (${this.galleryTabs[3].cont})`;
           this.galleryTabs[3].maxPages = this.pirsTabImages.pages;
-          this.galleryTabs[3].noData = this.galleryTabs[3].data === undefined;
+          this.galleryTabs[3].noData = this.galleryTabs[3].data.length === 0;
         }
 
         this.galleryTabs[3].loadingData = false;
@@ -756,7 +756,7 @@ export default class MyGalleryOverview extends Vue {
           this.galleryTabs[4].cont = response.count > 0 ? response.count : 0;
           this.galleryTabs[4].contLabel = ` (${this.galleryTabs[4].cont})`;
           this.galleryTabs[4].maxPages = response.pages;
-          this.galleryTabs[4].noData = this.galleryTabs[4].data.length === 0;
+          this.galleryTabs[4].noData = this.galleryTabs[4].data.length === 0 ;
         }
         this.galleryTabs[4].loadingData = false;
       });

@@ -46,11 +46,11 @@
             <div
               class="text-amount"
             >
-              {{ bidCorreting(bidsAuctions.highestBid.amount) }}
+              {{ bidCorreting(bidsAuctions.highestBid.netAmount) }}
               <q-tooltip
                 class="bg-primary"
               >
-                {{ bidsAuctions.highestBid.tokenSymbol }} {{ bidCorreting(bidsAuctions.highestBid.amount) }}
+                {{ bidsAuctions.highestBid.tokenSymbol }} {{ bidCorreting(bidsAuctions.highestBid.netAmount) }}
               </q-tooltip>
             </div>
             <div>

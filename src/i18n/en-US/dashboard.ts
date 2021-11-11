@@ -150,6 +150,9 @@ export default {
     minimumPIRSRate: 'The PIRS rate must be at least 1%',
     maximumPIRSRate: 'The PIRS rate cannot be bigger than 30%',
     acknowledgeTerm: 'You must acknowledge the term above.',
+    feeMessage: 'Listing is free, but if the NFT is sold, a fee of {auctionFeePercentage} will be deducted from the final amount.',
+    pirsMessage: 'I am aware that I can only set PIRS in the first auction for this artwork.',
+    readOnlyField: 'This is a read only field.',
     bidBack: 'BidBack %',
     pirs: 'PIRS %',
     creatorRoyalties: 'Creator royalties %',
@@ -233,7 +236,6 @@ export default {
     auctionRemainingTime: 'Auction ends in',
     deletingAuction: 'Deleting auction',
     returnNft: 'Get your NFT back',
-    feeMessage: 'Listing is free, but if the NFT is sold, a fee of {auctionFeePercentage} will be deducted from the final amount.',
     statuses: {
       allowance: 'YOU ARE SO FANCY!',
       error: 'ERROR',

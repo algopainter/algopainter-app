@@ -50,13 +50,13 @@
               {{ lastBid }}
             </p>
           </div>
-          <div class="text-bold row justify-center text-end">
+          <div class="text-bold row justify-start text-end">
             {{ $t('dashboard.bid.auctionTime') }}
           </div>
           <div class="text-bold">
             <div
               v-if="countYear >= 1"
-              class="row justify-center time-year q-gutter-sm"
+              class="row justify-start time-year q-gutter-sm"
             >
               <div>
                 <div class="text-bold">
@@ -536,6 +536,15 @@ export default class PirsItem extends Vue.with(Props) {
   margin-top: 20px;
 }
 
+.time-year{
+  font-size: 0.9rem;
+  width: 100%;
+}
+.time{
+  font-size: 0.9rem;
+  width: 100%;
+}
+
 .btn-havest {
   min-width: 100px;
   height: 50px;
@@ -556,6 +565,7 @@ export default class PirsItem extends Vue.with(Props) {
   text-align: unset;
   height: 100px;
   width: 100px;
+  margin-left: 40px;
   border-radius: 50%;
   background-color: $primary;
 }
@@ -576,7 +586,10 @@ export default class PirsItem extends Vue.with(Props) {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
+  .pirs{
+    margin-top: 5px;
+    margin-left: 1px;
+  }
   .time {
     justify-content: center;
   }
@@ -586,10 +599,14 @@ export default class PirsItem extends Vue.with(Props) {
   .field-stack {
     width: 100%;
     margin-left: 10%;
+    margin-top: 10px;
+    justify-content: center;
   }
   .ended-part {
     text-align: center;
+    margin-top: 10px;
     display: flex;
+    margin-left: 10px;
     justify-content: space-between;
   }
   .load-more {
@@ -598,6 +615,7 @@ export default class PirsItem extends Vue.with(Props) {
   }
   .text-end {
     width: 100%;
+    justify-content: center;
   }
   .text {
     text-align: center;

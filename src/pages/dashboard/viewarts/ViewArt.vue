@@ -439,6 +439,10 @@ export default class ViewArt extends Vue {
       rawImage: '',
       parameters: { name: 'fake' },
     },
+    pirs: {
+      creatorRate: 0,
+      investorRate: null,
+    },
     users: [this.user as IProfile],
     collectionName: '',
     collectionOwner: '',

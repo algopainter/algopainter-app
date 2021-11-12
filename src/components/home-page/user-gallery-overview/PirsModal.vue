@@ -102,7 +102,7 @@ export default class PirsModal extends Vue {
     {
       name: 'stackedAlgop',
       required: true,
-      label: 'ALGOP Stacked',
+      label: 'ALGOP Staked',
       field: (pastOwnersList: { stackedAlgop: number; }) => pastOwnersList.stackedAlgop,
       sortable: true,
     },
@@ -180,14 +180,14 @@ export default class PirsModal extends Vue {
           this.pastOwnersList.forEach((pastOwner) => {
             if (account === pastOwner.account) {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              pastOwner.stackedAlgop = pirsUserList[account as unknown as number] as number;
+              pastOwner.stackedAlgop = pirsUserList[account];
               isVariableSet = true;
             } else if (!isVariableSet) {
               pastOwner.stackedAlgop = 0;
             }
             if (typeof pastOwner.stackedAlgop === 'number') {
               pastOwner.stackedAlgopPercentage = (pastOwner.stackedAlgop > 0) ? (pastOwner.stackedAlgop / this.totalPirsStaked) * 100 : 0;
-              pastOwner.stackedAlgopPercentage = pastOwner.stackedAlgopPercentage.toFixed(2) as unknown as number;
+              pastOwner.stackedAlgopPercentage = parseFloat(pastOwner.stackedAlgopPercentage.toFixed(2));
             }
           });
         });

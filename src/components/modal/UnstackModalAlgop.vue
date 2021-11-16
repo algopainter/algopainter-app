@@ -180,7 +180,7 @@ export default class MyPaint extends Vue.with(Props) {
   modal: boolean = true;
   isDisabled: boolean = true;
   isCancelDisabled: boolean = false;
-  unstakeAmount: number | null | string = null;
+  unstakeAmount: number | null = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
@@ -303,7 +303,7 @@ export default class MyPaint extends Vue.with(Props) {
     try {
       if (this.unstakeAmount && typeof this.unstakeAmount === 'number') {
         await this.rewardsSystem
-          .unstakeBidback(this.art.index, this.unstakeAmount, this.account)
+          .unstakeBidback(this.art.index, numberToString(unstakeAmount), this.account)
           .on('transactionHash', () => {
             this.placingBidBackStatus =
               PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation;

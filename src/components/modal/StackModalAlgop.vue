@@ -179,7 +179,7 @@ export default class MyPaint extends Vue.with(Props) {
   isCancelDisabled: boolean = false;
   modal: boolean = true;
   isDisabled: boolean = true;
-  stakeAmount: number | null | string = null;
+  stakeAmount: number | null = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
@@ -310,27 +310,28 @@ export default class MyPaint extends Vue.with(Props) {
     await this.approveContractTransfer(stakeAmount);
 
     try {
-      if (this.stakeAmount && typeof this.stakeAmount === 'number') {
-        await this.rewardsSystem.stakeBidback(this.art.index, this.stakeAmount, this.account)
-          .on('transactionHash', () => {
-            this.placingBidBackStatus = PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation;
-          })
-          .on('error', () => {
-            this.placingBidBackStatus = PlacingBidBackStatus.IncreateAllowanceError;
-            setTimeout(() => {
-              this.$refs.dialog.hide();
-              this.$emit('hide');
-              this.placingBidBackStatus = null;
-            }, 3000);
-          });
-        this.placingBidBackStatus =
+      await this.rewardsSystem.stakeBidback(
+        this.art.index,
+        numberToString(stakeAmount),
+        this.account)
+        .on('transactionHash', () => {
+          this.placingBidBackStatus = PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation;
+        })
+        .on('error', () => {
+          this.placingBidBackStatus = PlacingBidBackStatus.IncreateAllowanceError;
+          setTimeout(() => {
+            this.$refs.dialog.hide();
+            this.$emit('hide');
+            this.placingBidBackStatus = null;
+          }, 3000);
+        });
+      this.placingBidBackStatus =
           PlacingBidBackStatus.IncreateAllowanceCompleted;
-        setTimeout(() => {
-          this.$refs.dialog.hide();
-          this.$emit('hide');
-          this.placingBidBackStatus = null;
-        }, 3000);
-      }
+      setTimeout(() => {
+        this.$refs.dialog.hide();
+        this.$emit('hide');
+        this.placingBidBackStatus = null;
+      }, 3000);
     } catch (e) {
       console.log('error - stakeAlgop BidBack', e);
     } finally {

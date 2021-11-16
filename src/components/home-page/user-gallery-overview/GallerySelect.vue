@@ -114,13 +114,10 @@
           {{ $t('dashboard.gallery.bidBackTab.stakedAlgop') }}
         </span>
         <div class="flex container">
-          <q-input
-            v-model="algopStacked"
-            fill-mask="0"
-            input-class="text-left"
+          <span
             class="input-stack-algop"
-            readonly
-          />
+          > {{ setFormatCurrency(algopStacked) }}
+          </span>
           <algo-button
             label="-"
             color="primary"
@@ -238,6 +235,7 @@ export default class gallerySelect extends Vue.with(Props) {
   openModal: boolean = false;
   openModalUnstack: boolean = false;
   algopStacked: number = 0;
+  teste: number = 0;
   showHarvestBtn: boolean = false;
   lastBid: string = '';
   disableUnstackBtn: boolean = true;
@@ -484,6 +482,9 @@ export default class gallerySelect extends Vue.with(Props) {
 .input-stack-algop {
   width: 170px;
   margin-right: 10px;
+  margin-top: 25px;
+  border-bottom: dashed;
+  border-bottom-width: 1px;
 }
 .container {
   width: 300px;

@@ -311,9 +311,19 @@ export default class MyPaint extends Vue.with(Props) {
           .on('error', () => {
             this.placingBidBackStatus =
               PlacingBidBackStatus.IncreateAllowanceError;
+            setTimeout(() => {
+              this.$refs.dialog.hide();
+              this.$emit('hide');
+              this.placingBidBackStatus = null;
+            }, 3000);
           });
         this.placingBidBackStatus =
           PlacingBidBackStatus.IncreateAllowanceCompleted;
+        setTimeout(() => {
+          this.$refs.dialog.hide();
+          this.$emit('hide');
+          this.placingBidBackStatus = null;
+        }, 3000);
       }
     } catch (e) {
       console.log('error - stakeAlgop unstakeAlgop', e);

@@ -297,8 +297,18 @@ export default class PirsStackModal extends Vue.with(Props) {
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
+          setTimeout(() => {
+            this.$refs.dialog.hide();
+            this.$emit('hide');
+            this.settingPirsStatus = null;
+          }, 3000);
         });
         this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
+        setTimeout(() => {
+          this.$refs.dialog.hide();
+          this.$emit('hide');
+          this.settingPirsStatus = null;
+        }, 3000);
       }
     } catch (e) {
       console.log('error - stakeAlgop Pirs', e);
@@ -321,10 +331,6 @@ export default class PirsStackModal extends Vue.with(Props) {
   // onDialogHide() {
   //   this.$emit('hide');
   // }
-
-  closeModal() {
-    this.modal = false;
-  }
 
   declare $refs: {
     dialog: QDialog;

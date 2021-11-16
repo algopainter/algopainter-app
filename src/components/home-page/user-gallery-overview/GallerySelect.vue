@@ -51,7 +51,7 @@
           <div class="text-bold">
             <div class="row justify-start time q-gutter-sm">
               <div>
-                <div class="text-bold text-time">
+                <div class="text-bold">
                   <!-- {{ days }}  -->{{ countDays }}
                 </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
@@ -335,18 +335,15 @@ export default class gallerySelect extends Vue.with(Props) {
     try {
       this.displayingStatus = true;
 
-      this.withdrawBidBackStatus =
-        WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
+      this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
 
       await this.rewardsSystem
         .claimBidBack(this.art.index, this.account)
         .on('transactionHash', () => {
-          this.withdrawBidBackStatus =
-            WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
+          this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
         })
         .on('error', () => {
-          this.withdrawBidBackStatus =
-            WithdrawBidBackStatus.WithdrawBidBackError;
+          this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackError;
         });
 
       this.isCoinHarvestDisabled = true;

@@ -451,7 +451,7 @@ export default class SellYourArt extends Vue {
 
   getCreatorPirsRate() {
     if (this.image) {
-      this.collectionCreatorPirsRate = this.image.pirs.creatorRate;
+      this.collectionCreatorPirsRate = this.image.pirs.creatorRate / 100;
     }
   }
 

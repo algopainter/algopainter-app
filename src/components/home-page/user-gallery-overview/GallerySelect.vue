@@ -51,7 +51,7 @@
           <div class="text-bold">
             <div class="row justify-start time q-gutter-sm">
               <div>
-                <div class="text-bold text-time">
+                <div class="text-bold">
                   <!-- {{ days }}  -->{{ countDays }}
                 </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>

@@ -61,7 +61,7 @@ export default class AlgoPainterRewardsSystemProxy {
     );
   }
 
-  async getTotalBidbackStakes(
+  async getTotalBidBackStakes(
     auctionId: number,
   ) {
     const response: unknown = await this.smartContract.methods.getTotalBidbackStakes(
@@ -167,7 +167,7 @@ export default class AlgoPainterRewardsSystemProxy {
     ).send({ from });
   }
 
-  claimBidback(
+  claimBidBack(
     auctionId: number,
     from: string,
   ) {

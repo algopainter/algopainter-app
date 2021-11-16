@@ -323,9 +323,7 @@ export default class gallerySelect extends Vue.with(Props) {
 
   getUserStackedBidBack() {
     if (this.art.bidBacks) {
-      this.algopStacked = this.art.bidBacks[
-        this.account as unknown as number
-      ] as number;
+      this.algopStacked = this.art.bidBacks[this.account as unknown as number] as number;
     }
 
     this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
@@ -337,18 +335,15 @@ export default class gallerySelect extends Vue.with(Props) {
     try {
       this.displayingStatus = true;
 
-      this.withdrawBidBackStatus =
-        WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
+      this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
 
       await this.rewardsSystem
         .claimBidBack(this.art.index, this.account)
         .on('transactionHash', () => {
-          this.withdrawBidBackStatus =
-            WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
+          this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
         })
         .on('error', () => {
-          this.withdrawBidBackStatus =
-            WithdrawBidBackStatus.WithdrawBidBackError;
+          this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackError;
         });
 
       this.isCoinHarvestDisabled = true;

@@ -329,8 +329,8 @@ export default class Auction extends Vue {
   async getCreatorPirsRate() {
     if (this.auction) {
       try {
-        this.collectionCreatorPirsRate =
-          await this.bidBackPirsSystem.getCreatorPirsRate(this.auction.index);
+        this.collectionCreatorPirsRate = await this.bidBackPirsSystem.getCreatorPirsRate(this.auction.index);
+        this.collectionCreatorPirsRate = this.collectionCreatorPirsRate / 100;
       } catch (error) {
         console.log('Error - collectionCreatorPirsRate - Auction');
       }

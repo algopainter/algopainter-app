@@ -380,9 +380,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   getUserStackedPirs() {
     if (this.art.pirs) {
-      this.algopStacked = this.art.pirs[
-        this.account as unknown as number
-      ] as number;
+      this.algopStacked = this.art.pirs[this.account];
     }
 
     this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;

@@ -115,6 +115,12 @@
         </span>
         <div class="flex container">
           <span
+            v-if="algopStacked < 0"
+            class="input-stack-algop"
+          > {{ algopStacked }}
+          </span>
+          <span
+            v-else
             class="input-stack-algop"
           > {{ setFormatCurrency(algopStacked) }}
           </span>

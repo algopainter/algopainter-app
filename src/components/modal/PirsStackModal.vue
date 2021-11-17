@@ -174,7 +174,7 @@ export default class PirsStackModal extends Vue.with(Props) {
   isCancelDisabled: boolean = false;
   modal: boolean = true;
   isDisabled: boolean = true;
-  stakeAmount: number | null | string = null;
+  stakeAmount: number | null = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
@@ -292,24 +292,25 @@ export default class PirsStackModal extends Vue.with(Props) {
     await this.approveContractTransfer(stakeAmount);
 
     try {
-      if (this.stakeAmount && typeof this.stakeAmount === 'number') {
-        await this.rewardsSystem.stakePirs(this.itemPirs.index, this.stakeAmount, this.account).on('transactionHash', () => {
-          this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
-        }).on('error', () => {
-          this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
-          setTimeout(() => {
-            this.$refs.dialog.hide();
-            this.$emit('hide');
-            this.settingPirsStatus = null;
-          }, 3000);
-        });
-        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
+      await this.rewardsSystem.stakePirs(
+        this.itemPirs.index,
+        numberToString(stakeAmount),
+        this.account).on('transactionHash', () => {
+        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
+      }).on('error', () => {
+        this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
         setTimeout(() => {
           this.$refs.dialog.hide();
           this.$emit('hide');
           this.settingPirsStatus = null;
         }, 3000);
-      }
+      });
+      this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
+      setTimeout(() => {
+        this.$refs.dialog.hide();
+        this.$emit('hide');
+        this.settingPirsStatus = null;
+      }, 3000);
     } catch (e) {
       console.log('error - stakeAlgop Pirs', e);
     } finally {

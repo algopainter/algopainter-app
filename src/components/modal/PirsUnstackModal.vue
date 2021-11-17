@@ -171,7 +171,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
   modal: boolean = true;
   isDisabled: boolean = true;
   isCancelDisabled: boolean = false;
-  unstakeAmount: number | null | string = null;
+  unstakeAmount: number | null = null;
   isConfirmBtnLoading: boolean = false;
   balance: number = 0;
   formattedBalance: string = '';
@@ -250,7 +250,10 @@ export default class PirsUnstackModal extends Vue.with(Props) {
 
     try {
       if (this.unstakeAmount && typeof this.unstakeAmount === 'number') {
-        await this.rewardsSystem.unstakePirs(this.itemPirs.index, this.unstakeAmount, this.account).on('transactionHash', () => {
+        await this.rewardsSystem.unstakePirs(
+          this.itemPirs.index,
+          numberToString(unstakeAmount),
+          this.account).on('transactionHash', () => {
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
         }).on('error', () => {
           this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;

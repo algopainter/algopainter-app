@@ -21,19 +21,19 @@ export default class AlgoPainterRewardsSystemProxy {
       ): ContractSendMethod;
       stakeBidback(
         auctionId: number,
-        amount: number
+        amount: string,
       ): ContractSendMethod;
       unstakeBidback(
         auctionId: number,
-        amount: number
+        amount: string,
       ): ContractSendMethod;
       stakePirs(
         auctionId: number,
-        amount: number
+        amount: string,
       ): ContractSendMethod;
       unstakePirs(
         auctionId: number,
-        amount: number
+        amount: string,
       ): ContractSendMethod;
       withdrawBidback(
         auctionId: number,
@@ -103,7 +103,7 @@ export default class AlgoPainterRewardsSystemProxy {
 
   stakeBidback(
     auctionId: number,
-    amount: number,
+    amount: string,
     from: string,
   ) {
     return this.smartContract.methods.stakeBidback(
@@ -114,7 +114,7 @@ export default class AlgoPainterRewardsSystemProxy {
 
   unstakeBidback(
     auctionId: number,
-    amount: number,
+    amount: string,
     from: string,
   ) {
     return this.smartContract.methods.unstakeBidback(
@@ -125,7 +125,7 @@ export default class AlgoPainterRewardsSystemProxy {
 
   stakePirs(
     auctionId: number,
-    amount: number,
+    amount: string,
     from: string,
   ) {
     return this.smartContract.methods.stakePirs(
@@ -136,7 +136,7 @@ export default class AlgoPainterRewardsSystemProxy {
 
   unstakePirs(
     auctionId: number,
-    amount: number,
+    amount: string,
     from: string,
   ) {
     return this.smartContract.methods.unstakePirs(

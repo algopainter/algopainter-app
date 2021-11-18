@@ -139,8 +139,9 @@ export default {
       interactionBtn: 'Staking',
       algop: '$ALGOP',
       rules: {
-        noMoney: 'You cannot stake more than you have in you wallet',
-        moreThanZero: 'You must stake an amount bigger than zero',
+        noMoney: 'You cannot stake more than you have in you wallet.',
+        moreThanZero: 'You must stake an amount bigger than zero.',
+        auctionEnded: 'This auction is over. You can no longer stake.',
       },
     },
     pirsModal: {

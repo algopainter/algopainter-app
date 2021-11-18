@@ -97,7 +97,18 @@
       </div>
       <div class="row justify-center">
         <p
-          v-if="stakeAmount && stakeAmount > userBalance"
+          v-if="getAuctionInfo.ended"
+          class="q-mb-none"
+        >
+          <q-icon
+            name="mdi-alert-circle"
+            color="yellow"
+            size="md"
+          />
+          {{ $t('dashboard.auctions.bidBackModalSimulator.rules.auctionEnded') }}
+        </p>
+        <p
+          v-else-if="stakeAmount && stakeAmount > userBalance"
           class="q-mb-none"
         >
           <q-icon
@@ -108,7 +119,7 @@
           {{ $t('dashboard.auctions.bidBackModalSimulator.rules.noMoney') }}
         </p>
         <p
-          v-if="stakeAmount === null || stakeAmount <= 0"
+          v-else-if="stakeAmount === null || stakeAmount <= 0"
           class="q-mb-none"
         >
           <q-icon
@@ -330,11 +341,9 @@ export default class BidBackModalSimulator extends Vue {
     }
   }
 
-  // Fix 0
-
   validateInput() {
     this.stakeAmount = Number(this.stakeAmount);
-    if (this.stakeAmount <= 0 || this.stakeAmount === null || this.stakeAmount > this.userBalance) {
+    if (this.stakeAmount <= 0 || this.stakeAmount === null || this.stakeAmount > this.userBalance || this.getAuctionInfo.ended) {
       this.isDisabled = true;
     } else {
       this.isDisabled = false;
@@ -464,7 +473,7 @@ export default class BidBackModalSimulator extends Vue {
               bidder.stakedAlgop = blockchainToCurrency(this.getAuctionInfo.bidbacks[account], this.coinDetails.decimalPlaces);
             }
             isVariableSet = true;
-          } else if (!isVariableSet) {
+          } else if (!isVariableSet && bidder.name !== 'You') {
             bidder.stakedAlgop = 0;
           }
           if (typeof bidder.stakedAlgop === 'number') {
@@ -529,7 +538,6 @@ export default class BidBackModalSimulator extends Vue {
   }
 
   openBidBackSimulatorModal() {
-    console.log('openBidBackSimulatorModal - BidBackSimulatorModal');
     void this.$store.dispatch({
       type: 'auctions/openBidBackSimulatorModal',
     });

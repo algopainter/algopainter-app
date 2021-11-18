@@ -400,7 +400,6 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   openBidBackSimulatorModal() {
-    console.log('openBidBackSimulatorModal - GallerySelect');
     void this.$store.dispatch({
       type: 'auctions/openBidBackSimulatorModal',
       auction: this.art,

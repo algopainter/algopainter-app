@@ -146,7 +146,6 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   },
 
   openBidBackSimulatorModal(type, value: {auction: IAuctionItem}) {
-    console.log('openBidBackSimulatorModal - value.auction', value.auction);
     this.commit('auctions/SET_OPEN_BID_BACK_SIMULATOR_MODAL');
     if (value.auction) {
       this.commit('auctions/SET_AUCTION_INFO', value.auction);

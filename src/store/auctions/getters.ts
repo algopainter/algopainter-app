@@ -38,7 +38,7 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
     return state.pirsItemIndex;
   },
   getAuctionInfo(state: AuctionStateInterface): IAuctionItem | undefined {
-    return state.auctionInfo;
+    return state.auctionInfo as IAuctionItem;
   },
 };
 

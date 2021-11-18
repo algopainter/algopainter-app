@@ -143,6 +143,8 @@ export default class BidBackModal extends Vue {
     if (this.getAuctionInfo) {
       void this.getAuctions();
     }
+  }
+
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
       return (

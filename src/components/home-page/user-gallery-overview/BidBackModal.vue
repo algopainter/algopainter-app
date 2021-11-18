@@ -14,7 +14,7 @@
         </p>
         <p class="q-mb-none">
           <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidBackModal.totalBidBackAmount`) }}</span>
-          {{ $t(`dashboard.auctions.bidBackModal.algop`) }} {{ totalBidBackStaked }}
+          {{ $t(`dashboard.auctions.bidBackModal.algop`) }} {{ setFormatCurrency(totalBidBackStaked) }}
         </p>
       </div>
       <div class="q-pa-md">
@@ -51,6 +51,8 @@ import { mapGetters } from 'vuex';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import { auctionCoins } from 'src/helpers/auctionCoins';
 
 interface IUserBid {
   name: string | null;
@@ -114,7 +116,7 @@ export default class BidBackModal extends Vue {
       name: 'stackedAlgop',
       required: true,
       label: 'ALGOP stacked',
-      field: (userBid: { stackedAlgop: number }) => userBid.stackedAlgop,
+      field: (userBid: { stackedAlgop: number }) => this.setFormatCurrency(userBid.stackedAlgop),
       sortable: true,
     },
     {
@@ -141,6 +143,23 @@ export default class BidBackModal extends Vue {
     if (this.getAuctionInfo) {
       void this.getAuctions();
     }
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      return (
+        coin.tokenAddress.toLowerCase() ===
+        '0x01a9188076f1231df2215f67b6a63231fe5e293e'
+      );
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
+
+  setFormatCurrency(amount: number) {
+    return blockchainToCurrency(amount, this.coinDetails.decimalPlaces);
   }
 
   getAuctions() {

@@ -47,7 +47,7 @@
                 <q-item-label class="text-bold">
                   {{
                     $t('dashboard.tokenBalance', {
-                      amount: formatAccountBalance(),
+                      amount: formattedAccountBalance,
                       token: 'ALGOP',
                     })
                   }}
@@ -120,8 +120,13 @@ export default class ProfileDropdownButton extends Vue {
     return this.$store.state.user.account;
   }
 
+  get formattedAccountBalance() {
+    return UserUtils.formatAccountBalance(this.balance, 2);
+  }
+
   mounted() {
     void this.loadUserProfile();
+    void this.setAccountBalance();
   }
 
   get isConnected() {
@@ -166,10 +171,6 @@ export default class ProfileDropdownButton extends Vue {
       inital,
       final,
     );
-  }
-
-  formatAccountBalance() {
-    return UserUtils.formatAccountBalance(this.balance, 2);
   }
 
   async goToProfilePage() {

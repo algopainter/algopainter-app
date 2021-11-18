@@ -525,7 +525,7 @@ export default class PirsItem extends Vue.with(Props) {
 }
 
 .btn-staked {
-  min-width: 30px;
+  min-width: 30px !important;
   margin-right: 10px;
   height: 30px;
   margin-top: 20px;
@@ -541,7 +541,7 @@ export default class PirsItem extends Vue.with(Props) {
 }
 
 .btn-havest {
-  min-width: 100px;
+  min-width: 100px !important;
   height: 50px;
   margin-top: 10px;
 }

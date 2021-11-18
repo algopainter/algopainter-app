@@ -1,5 +1,6 @@
 import { MutationTree } from 'vuex';
 import { AuctionStateInterface } from './types';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 
 const mutation: MutationTree<AuctionStateInterface> = {
   SET_HOT_BIDS(state: AuctionStateInterface, payload) {
@@ -21,13 +22,8 @@ const mutation: MutationTree<AuctionStateInterface> = {
     state.openAuctionModal = !state.openAuctionModal;
   },
   SET_OPEN_BID_BACK_MODAL(state: AuctionStateInterface) {
+    console.log('SET_OPEN_BID_BACK_MODAL');
     state.openBidBackModal = !state.openBidBackModal;
-  },
-  SET_BID_BACK_ID(state: AuctionStateInterface, payload) {
-    state.bidBackId = payload as string;
-  },
-  SET_BID_BACK_INDEX(state: AuctionStateInterface, payload) {
-    state.bidBackIndex = payload as number;
   },
   SET_BIDS(state: AuctionStateInterface, payload) {
     state.bids = payload as [];
@@ -49,6 +45,14 @@ const mutation: MutationTree<AuctionStateInterface> = {
   },
   SET_OPEN_PIRS_MODAL(state: AuctionStateInterface) {
     state.openPirsModal = !state.openPirsModal;
+  },
+  SET_OPEN_BID_BACK_SIMULATOR_MODAL(state: AuctionStateInterface) {
+    console.log('SET_OPEN_BID_BACK_SIMULATOR_MODA');
+    state.openBidBackSimulatorModal = !state.openBidBackSimulatorModal;
+  },
+  SET_AUCTION_INFO(state: AuctionStateInterface, payload) {
+    console.log('SET_AUCTION_INFO');
+    state.auctionInfo = payload as IAuctionItem;
   },
 };
 

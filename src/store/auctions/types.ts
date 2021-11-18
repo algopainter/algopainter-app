@@ -1,3 +1,4 @@
+import { IAuctionItem } from 'src/models/IAuctionItem';
 export interface AuctionStateInterface {
   hotBids: [],
   topSellers: [],
@@ -9,10 +10,10 @@ export interface AuctionStateInterface {
   auctionId: string | undefined,
   openAuctionModal: boolean,
   openBidBackModal: boolean,
-  bidBackId: string | undefined,
-  bidBackIndex: number | undefined,
   pirsCollectionOwner: string | undefined,
   pirsItemIndex: number | undefined,
   pirsAuction: [],
   openPirsModal: boolean,
+  openBidBackSimulatorModal: boolean,
+  auctionInfo: IAuctionItem | undefined,
 }

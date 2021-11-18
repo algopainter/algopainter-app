@@ -1,6 +1,7 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '..';
 import { AuctionStateInterface } from './types';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 
 const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getAuctions(state: AuctionStateInterface): [] | undefined {
@@ -12,17 +13,14 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   openBidBackModal(state: AuctionStateInterface): boolean {
     return state.openBidBackModal;
   },
+  openBidBackSimulatorModal(state: AuctionStateInterface): boolean {
+    return state.openBidBackSimulatorModal;
+  },
   getBids(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },
   getBidBack(state: AuctionStateInterface): [] | undefined {
     return state.bids;
-  },
-  getBidBackId(state: AuctionStateInterface): string | undefined {
-    return state.bidBackId;
-  },
-  getBidBackIndex(state: AuctionStateInterface): number | undefined {
-    return state.bidBackIndex;
   },
   getPirsAuction(state: AuctionStateInterface): [] | undefined {
     return state.pirsAuction;
@@ -38,6 +36,9 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   },
   getPirsItemIndex(state: AuctionStateInterface): number | undefined {
     return state.pirsItemIndex;
+  },
+  getAuctionInfo(state: AuctionStateInterface): IAuctionItem | undefined {
+    return state.auctionInfo;
   },
 };
 

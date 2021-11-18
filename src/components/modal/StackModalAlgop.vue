@@ -311,7 +311,7 @@ export default class MyPaint extends Vue.with(Props) {
 
     try {
       if (this.stakeAmount && typeof this.stakeAmount === 'number') {
-        await this.rewardsSystem.stakeBidback(this.art.index, this.stakeAmount, this.account)
+        await this.rewardsSystem.stakeBidback(this.art.index, numberToString(stakeAmount), this.account)
           .on('transactionHash', () => {
             this.placingBidBackStatus = PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation;
           })

@@ -2,7 +2,6 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
-    @hide="openBidBackModal()"
   >
     <q-card class="q-pa-lg">
       <p class="row justify-center text-h5 text-bold text-primary">
@@ -26,6 +25,15 @@
           hide-bottom
           flat
           :loading="loadingTable"
+        />
+      </div>
+      <div class="row justify-center">
+        <algo-button
+          class="q-my-md q-mx-sm action"
+          :label="$t('dashboard.auctions.bidBackModal.returnBtn')"
+          color="primary"
+          outline
+          @click="openBidBackModal()"
         />
       </div>
     </q-card>
@@ -67,7 +75,7 @@ interface IUserBid {
       ]),
     ...mapGetters(
       'auctions', [
-        'getBidBackIndex',
+        'getAuctionInfo',
       ]),
   },
 })
@@ -76,7 +84,7 @@ export default class BidBackModal extends Vue {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  getBidBackIndex!: number;
+  getAuctionInfo!: IAuctionItem;
   isConnected!: boolean;
 
   modal: boolean = false;
@@ -127,12 +135,20 @@ export default class BidBackModal extends Vue {
     void this.setAccountBalance();
   }
 
+  @Watch('getAuctionInfo')
+  onGetAuctionChanged() {
+    this.userBid = [];
+    if (this.getAuctionInfo) {
+      void this.getAuctions();
+    }
+  }
+
   getAuctions() {
     this.loadingTable = true;
 
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
-      account: this.auctionId as string,
+      account: this.getAuctionInfo._id,
     }).then(async() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;
@@ -167,7 +183,7 @@ export default class BidBackModal extends Vue {
         }
       });
 
-      this.totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(this.getBidBackIndex);
+      this.totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(this.getAuctionInfo.index);
       let isVariableSet = false;
 
       if (auction.bidbacks) {
@@ -204,23 +220,10 @@ export default class BidBackModal extends Vue {
     return nameArray[0];
   }
 
-  get auctionId() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['auctions/getBidBackId'];
-  }
-
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
       void this.setAccountBalance();
-    }
-  }
-
-  @Watch('auctionId')
-  onAuctionIdChanged() {
-    this.userBid = [];
-    if (this.auctionId !== '') {
-      void this.getAuctions();
     }
   }
 
@@ -242,10 +245,9 @@ export default class BidBackModal extends Vue {
   }
 
   openBidBackModal() {
+    console.log('openBidBackModal');
     void this.$store.dispatch({
       type: 'auctions/openBidBackModal',
-      auctionId: '',
-      auctionIndex: '',
     });
   }
 }

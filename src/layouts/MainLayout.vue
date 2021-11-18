@@ -29,9 +29,10 @@
         />
         <wrong-chain-dialog v-if="showWrongChainDialog" />
         <NewPaintingModal v-model="openModal" />
-        <AuctionModal v-model="isAuctionModalOpen" />
-        <BidBackModal v-model="isBidBackModalOpen" />
-        <PirsModal v-model="isPirsModalOpen" />
+        <AuctionModal v-model="openAuctionModal" />
+        <BidBackModal v-model="openBidBackModal" />
+        <BidBackSimulatorModal v-model="openBidBackSimulatorModal" />
+        <PirsModal v-model="openPirsModal" />
       </q-page-container>
     </q-layout>
   </div>
@@ -47,7 +48,9 @@ import { Watch } from 'vue-property-decorator';
 import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
 import AuctionModal from 'src/components/modal/AuctionModal.vue';
 import BidBackModal from 'src/components/home-page/user-gallery-overview/BidBackModal.vue';
+import BidBackSimulatorModal from 'src/components/home-page/user-gallery-overview/BidBackSimulatorModal.vue';
 import PirsModal from 'src/components/home-page/user-gallery-overview/PirsModal.vue';
+import { mapGetters } from 'vuex';
 
 @Options({
   components: {
@@ -59,7 +62,7 @@ import PirsModal from 'src/components/home-page/user-gallery-overview/PirsModal.
     AuctionModal,
     BidBackModal,
     PirsModal,
-
+    BidBackSimulatorModal,
   },
   watch: {
     isConnected: ['refreshModal'],
@@ -68,12 +71,24 @@ import PirsModal from 'src/components/home-page/user-gallery-overview/PirsModal.
   computed: {
     isConnected: false,
     networkInfo: false,
+    ...mapGetters(
+      'auctions', [
+        'openBidBackSimulatorModal',
+        'openPirsModal',
+        'openBidBackModal',
+        'openAuctionModal',
+      ]),
   },
+
 })
 export default class MainLayout extends Vue {
   leftDrawerOpen: boolean = false;
   openModal: boolean = false;
   showModal: boolean = false;
+  openBidBackSimulatorModal!: boolean;
+  openPirsModal!: boolean;
+  openBidBackModal!: boolean;
+  openAuctionModal!: boolean;
   showWrongChainDialog: boolean = false;
   isAuctionModalOpen: boolean = false;
   isBidBackModalOpen: boolean = false;
@@ -94,39 +109,9 @@ export default class MainLayout extends Vue {
     localStorage.isConnected = this.isConnected;
   }
 
-  @Watch('openAuctionModal')
-  onOpenAuctionModalChanged() {
-    this.isAuctionModalOpen = this.openAuctionModal;
-  }
-
-  @Watch('openBidBackModal')
-  onOpenBidBackModalChanged() {
-    this.isBidBackModalOpen = this.openBidBackModal;
-  }
-
-  @Watch('openPirsModal')
-  onOpenPirsModalChanged() {
-    this.isPirsModalOpen = this.openPirsModal;
-  }
-
   @Watch('openConnectYourWalletModal')
   onOpenConnectYourWalletModalChanged() {
     this.showModal = this.openConnectYourWalletModal;
-  }
-
-  get openAuctionModal() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['auctions/openAuctionModal'] as boolean;
-  }
-
-  get openBidBackModal() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['auctions/openBidBackModal'] as boolean;
-  }
-
-  get openPirsModal() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['auctions/openPirsModal'] as boolean;
   }
 
   get openConnectYourWalletModal() {

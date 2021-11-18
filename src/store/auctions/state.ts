@@ -12,12 +12,12 @@ function state(): AuctionStateInterface {
     auctionId: undefined,
     openAuctionModal: false,
     openBidBackModal: false,
-    bidBackId: undefined,
-    bidBackIndex: undefined,
     pirsCollectionOwner: undefined,
     pirsItemIndex: undefined,
     pirsAuction: [],
     openPirsModal: false,
+    openBidBackSimulatorModal: false,
+    auctionInfo: undefined,
   };
 }
 

@@ -21,7 +21,7 @@ export default class AlgoPainterRewardsSystemProxy {
       ): ContractSendMethod;
       stakeBidback(
         auctionId: number,
-        amount: number
+        amount: string,
       ): ContractSendMethod;
       unstakeBidback(
         auctionId: number,
@@ -103,7 +103,7 @@ export default class AlgoPainterRewardsSystemProxy {
 
   stakeBidback(
     auctionId: number,
-    amount: number,
+    amount: string,
     from: string,
   ) {
     return this.smartContract.methods.stakeBidback(

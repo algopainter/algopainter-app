@@ -157,13 +157,22 @@
           {{ $t('dashboard.gallery.bidBackTab.bidBack') }}
         </div>
       </div>
-      <algo-button
-        :label="$t('dashboard.gallery.bidBackTab.bidBackBtn')"
-        color="primary"
-        outline
-        class="load-more q-px-xl q-mx-auto"
-        @click="openBidBackModal()"
-      />
+      <div class="row justify-center">
+        <algo-button
+          :label="$t('dashboard.gallery.bidBackTab.bidBackBtn')"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto q-mb-sm"
+          @click="openBidBackModal()"
+        />
+        <algo-button
+          :label="$t('dashboard.gallery.bidBackTab.bidBackSimulatorBtn')"
+          color="primary"
+          outline
+          class="load-more q-px-xl q-mx-auto"
+          @click="openBidBackSimulatorModal()"
+        />
+      </div>
     </div>
     <q-dialog
       v-model="displayingStatus"
@@ -382,8 +391,15 @@ export default class gallerySelect extends Vue.with(Props) {
   openBidBackModal() {
     void this.$store.dispatch({
       type: 'auctions/openBidBackModal',
-      auctionId: this.art._id,
-      auctionIndex: this.art.index,
+      auction: this.art,
+    });
+  }
+
+  openBidBackSimulatorModal() {
+    console.log('openBidBackSimulatorModal - GallerySelect');
+    void this.$store.dispatch({
+      type: 'auctions/openBidBackSimulatorModal',
+      auction: this.art,
     });
   }
 

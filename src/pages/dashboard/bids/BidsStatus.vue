@@ -3,7 +3,7 @@
     class="row justify-center"
   >
     <div
-      v-if="endedAuction === true && isMyBid === true"
+      v-if="auctionClaimed === false && endedAuction === true && isMyBid === true"
       class="text-bold text-center q-my-md"
     >
       <div>
@@ -121,7 +121,7 @@
       </div>
     </div>
     <div
-      v-else-if="endedAuction === true && isMyBid === false"
+      v-else-if="endedAuction === true"
     >
       <div class="row text-h6 text-bold text-center justify-center q-my-md">
         <div>
@@ -250,6 +250,10 @@ export default class BidsStatus extends Vue.with(Props) {
     } else {
       return false;
     }
+  }
+
+  get auctionClaimed() {
+    return this.bidsAuctions.ended;
   }
 
   getHighBid() {

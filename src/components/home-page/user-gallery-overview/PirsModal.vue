@@ -197,7 +197,7 @@ export default class PirsModal extends Vue {
     });
   }
 
-get coinDetails() {
+  get coinDetails() {
     const coin = auctionCoins.find((coin) => {
       return (
         coin.tokenAddress.toLowerCase() ===

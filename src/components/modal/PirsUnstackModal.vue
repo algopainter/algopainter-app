@@ -122,6 +122,7 @@ import { numberToString } from 'src/helpers/format/numberToString';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
 import { IAuctionItem } from 'src/models/IAuctionItem';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 
 enum SettingPirsStatus {
   CheckingAllowance,
@@ -293,12 +294,15 @@ export default class PirsUnstackModal extends Vue.with(Props) {
     this.formattedBalance = UserUtils.formatAccountBalance(this.balance, 2);
   }
 
-  async maxStakeAmount() {
-    try {
-      this.unstakeAmount = await this.rewardsSystem.getTotalPirsStakes(this.art.nft.index);
-    } catch (error) {
-      console.log('error maxStakeAmount');
-    }
+  maxStakeAmount() {
+    this.unstakeAmount = blockchainToCurrency(
+      this.itemPirs.bidbacks[this.account],
+      this.coinDetails.decimalPlaces,
+    );
+
+    return this.$n(this.unstakeAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   validateInput() {

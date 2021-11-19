@@ -142,6 +142,7 @@ import { NetworkInfo } from 'src/store/user/types';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import UserUtils from 'src/helpers/user';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 
 enum PlacingBidBackStatus {
   CheckingAllowance,
@@ -196,6 +197,7 @@ export default class MyPaint extends Vue.with(Props) {
       this.algoPainterContractByNetworkId,
     );
     void this.setAccountBalance();
+    void this.setformattedBalance();
   }
 
   show() {
@@ -232,14 +234,15 @@ export default class MyPaint extends Vue.with(Props) {
     this.formattedBalance = UserUtils.formatAccountBalance(this.balance, 2);
   }
 
-  async maxStakeAmount() {
-    try {
-      this.unstakeAmount = await this.rewardsSystem.getTotalBidBackStakes(
-        this.art.index,
-      );
-    } catch (error) {
-      console.log('error maxStakeAmount');
-    }
+  maxStakeAmount() {
+    this.unstakeAmount = blockchainToCurrency(
+      this.art.bidbacks[this.account],
+      this.coinDetails.decimalPlaces,
+    );
+
+    return this.$n(this.unstakeAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   validateInput() {

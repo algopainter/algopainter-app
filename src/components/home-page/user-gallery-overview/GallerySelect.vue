@@ -514,7 +514,7 @@ export default class gallerySelect extends Vue.with(Props) {
   width: 170px;
   font-size: 16px;
 }
-@media (max-width: 470px) {
+@media (max-width: 360px) {
   .text {
     text-align: center;
     align-items: center;
@@ -540,16 +540,67 @@ export default class gallerySelect extends Vue.with(Props) {
     width: 100%;
   }
   .field-stack {
-    width: 80%;
-    margin-left: 20%;
+    width: 100%;
+    margin-left: 10%;
     margin-top: 10px;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
   }
   .ended-part {
     text-align: center;
     display: flex;
-    margin-left: 30px;
+    justify-content: center;
+    align-items: baseline;
+    justify-items: center;
+  }
+  .load-more {
+    height: 10px;
+    margin-top: 10%;
+  }
+  .text-end {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 460px) {
+  .text {
+    text-align: center;
+    align-items: center;
+  }
+  .bidBack{
+    margin-top: 5px;
+    margin-left: 1px;
+  }
+  .time{
+    justify-content: center;
+  }
+  .text-title {
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+  }
+  .text-last {
+    text-align: center;
+  }
+  .previewImage {
+    width: 100%;
+  }
+  .field-stack {
+    width: 100%;
+    margin-left: 10%;
+    margin-top: 10px;
     justify-content: space-between;
+    align-items: center;
+  }
+  .ended-part {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    justify-items: center;
   }
   .load-more {
     height: 10px;

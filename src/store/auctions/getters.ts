@@ -34,9 +34,6 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getAuctionInfo(state: AuctionStateInterface): IAuctionItem | undefined {
     return state.auctionInfo as IAuctionItem;
   },
-  getAuctionInfo(state: AuctionStateInterface): IAuctionItem | undefined {
-    return state.auctionInfo as IAuctionItem;
-  },
 };
 
 export default getters;

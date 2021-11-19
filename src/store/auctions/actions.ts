@@ -144,10 +144,11 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     this.commit('auctions/SET_BID_BACK_INDEX', value.auctionIndex);
   },
 
-  openPirsModal(type, value: { collectionOwner: string; itemIndex: number }) {
+  openPirsModal(type, value: {auction: IAuctionItem}) {
     this.commit('auctions/SET_OPEN_PIRS_MODAL');
-    this.commit('auctions/SET_PIRS_COLLECTION_OWNER', value.collectionOwner);
-    this.commit('auctions/SET_PIRS_ITEM_INDEX', value.itemIndex);
+    if (value.auction) {
+      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+    }
   },
 };
 

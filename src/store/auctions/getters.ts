@@ -1,6 +1,7 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '..';
 import { AuctionStateInterface } from './types';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 
 const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getAuctions(state: AuctionStateInterface): [] | undefined {
@@ -33,11 +34,8 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   openPirsModal(state: AuctionStateInterface): boolean {
     return state.openPirsModal;
   },
-  getPirsCollectionOwner(state: AuctionStateInterface): string | undefined {
-    return state.pirsCollectionOwner;
-  },
-  getPirsItemIndex(state: AuctionStateInterface): number | undefined {
-    return state.pirsItemIndex;
+  getAuctionInfo(state: AuctionStateInterface): IAuctionItem | undefined {
+    return state.auctionInfo as IAuctionItem;
   },
 };
 

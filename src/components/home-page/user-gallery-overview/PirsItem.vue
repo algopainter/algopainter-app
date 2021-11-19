@@ -440,8 +440,7 @@ export default class PirsItem extends Vue.with(Props) {
   openPirsModal() {
     void this.$store.dispatch({
       type: 'auctions/openPirsModal',
-      collectionOwner: this.art.item.collectionOwner,
-      itemIndex: this.art.item.index,
+      auction: this.art,
     });
   }
 

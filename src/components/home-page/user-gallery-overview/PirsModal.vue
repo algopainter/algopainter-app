@@ -18,7 +18,7 @@
           </p>
           <p class="q-mb-none">
             <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.totalPirsAmount`) }}</span>
-            {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ totalPirsStaked }}
+            {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ setFormatCurrency(totalPirsStaked) }}
           </p>
         </div>
       </div>
@@ -47,6 +47,8 @@ import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
 import { NetworkInfo } from 'src/store/user/types';
 import { IAuctionItem } from 'src/models/IAuctionItem';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import { auctionCoins } from 'src/helpers/auctionCoins';
 
 interface IUserOwner {
   name: string;
@@ -69,8 +71,7 @@ interface IUserOwner {
       ]),
     ...mapGetters(
       'auctions', [
-        'getPirsItemIndex',
-        'getPirsCollectionOwner',
+        'getAuctionInfo',
       ]),
   },
 })
@@ -79,8 +80,7 @@ export default class PirsModal extends Vue {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  getPirsItemIndex!: number;
-  getPirsCollectionOwner!: string;
+  getAuctionInfo!: IAuctionItem;
   isConnected!: boolean;
 
   modal: boolean = false;
@@ -103,7 +103,7 @@ export default class PirsModal extends Vue {
       name: 'stackedAlgop',
       required: true,
       label: 'ALGOP Staked',
-      field: (pastOwnersList: { stackedAlgop: number; }) => pastOwnersList.stackedAlgop,
+      field: (pastOwnersList: { stackedAlgop: number; }) => this.setFormatCurrency(pastOwnersList.stackedAlgop),
       sortable: true,
     },
     {
@@ -129,8 +129,8 @@ export default class PirsModal extends Vue {
   getAuctionPirs() {
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
-      collectionOwner: this.getPirsCollectionOwner,
-      itemIndex: this.getPirsItemIndex,
+      collectionOwner: this.getAuctionInfo.item.collectionOwner,
+      itemIndex: this.getAuctionInfo.item.index,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auction = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
@@ -197,6 +197,25 @@ export default class PirsModal extends Vue {
     });
   }
 
+get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      return (
+        coin.tokenAddress.toLowerCase() ===
+        '0x01a9188076f1231df2215f67b6a63231fe5e293e'
+      );
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
+
+  setFormatCurrency(amount: number) {
+    return blockchainToCurrency(amount, this.coinDetails.decimalPlaces);
+  }
+
   formatAccount(account:string) {
     return account.slice(0, 4) + '...' + account.slice(account.length - 4);
   }
@@ -216,11 +235,11 @@ export default class PirsModal extends Vue {
     }
   }
 
-  @Watch('getPirsCollectionOwner')
-  onAuctionIdChanged() {
+  @Watch('getAuctionInfo')
+  onAuctionInfoChanged() {
     this.pastOwnersList = [];
 
-    if (this.getPirsCollectionOwner !== '') {
+    if (this.getAuctionInfo.item.collectionOwner !== '') {
       void this.getAuctionPirs();
     }
   }
@@ -251,8 +270,6 @@ export default class PirsModal extends Vue {
   openPirsModal() {
     void this.$store.dispatch({
       type: 'auctions/openPirsModal',
-      collectionOwner: '',
-      itemIndex: undefined,
     });
   }
 }

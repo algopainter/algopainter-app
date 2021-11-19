@@ -1,5 +1,6 @@
 import { MutationTree } from 'vuex';
 import { AuctionStateInterface } from './types';
+import { IAuctionItem } from 'src/models/IAuctionItem';
 
 const mutation: MutationTree<AuctionStateInterface> = {
   SET_HOT_BIDS(state: AuctionStateInterface, payload) {
@@ -41,14 +42,11 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_IMAGE_PAST_OWNERS(state: AuctionStateInterface, payload) {
     state.owner = payload as [];
   },
-  SET_PIRS_COLLECTION_OWNER(state: AuctionStateInterface, payload) {
-    state.pirsCollectionOwner = payload as string;
-  },
-  SET_PIRS_ITEM_INDEX(state: AuctionStateInterface, payload) {
-    state.pirsItemIndex = payload as number;
-  },
   SET_OPEN_PIRS_MODAL(state: AuctionStateInterface) {
     state.openPirsModal = !state.openPirsModal;
+  },
+  SET_AUCTION_INFO(state: AuctionStateInterface, payload) {
+    state.auctionInfo = payload as IAuctionItem;
   },
 };
 

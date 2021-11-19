@@ -12,8 +12,6 @@ function state(): AuctionStateInterface {
     auctionId: undefined,
     openAuctionModal: false,
     openBidBackModal: false,
-    pirsCollectionOwner: undefined,
-    pirsItemIndex: undefined,
     pirsAuction: [],
     openPirsModal: false,
     openBidBackSimulatorModal: false,

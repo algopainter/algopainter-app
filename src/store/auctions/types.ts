@@ -10,8 +10,6 @@ export interface AuctionStateInterface {
   auctionId: string | undefined,
   openAuctionModal: boolean,
   openBidBackModal: boolean,
-  pirsCollectionOwner: string | undefined,
-  pirsItemIndex: number | undefined,
   pirsAuction: [],
   openPirsModal: boolean,
   openBidBackSimulatorModal: boolean,

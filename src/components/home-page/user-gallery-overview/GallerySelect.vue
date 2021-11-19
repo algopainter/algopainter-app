@@ -514,7 +514,7 @@ export default class gallerySelect extends Vue.with(Props) {
   width: 170px;
   font-size: 16px;
 }
-@media (max-width: 470px) {
+@media (max-width: 460px) {
   .text {
     text-align: center;
     align-items: center;
@@ -540,16 +540,18 @@ export default class gallerySelect extends Vue.with(Props) {
     width: 100%;
   }
   .field-stack {
-    width: 80%;
-    margin-left: 20%;
+    width: 100%;
+    margin-left: 10%;
     margin-top: 10px;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
   }
   .ended-part {
     text-align: center;
     display: flex;
-    margin-left: 30px;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: baseline;
+    justify-items: center;
   }
   .load-more {
     height: 10px;

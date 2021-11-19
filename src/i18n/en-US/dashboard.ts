@@ -129,6 +129,20 @@ export default {
       yourBalance: 'Your balance: ',
       totalBidBackAmount: 'Total BidBack amount: ',
       algop: '$ALGOP',
+      returnBtn: 'Return',
+    },
+    bidBackModalSimulator: {
+      title: 'Simulator',
+      lastBid: 'Last Bid',
+      lastBidValue: '{highestBid} {auctionCurrency}',
+      returnBtn: 'Cancel',
+      interactionBtn: 'Staking',
+      algop: '$ALGOP',
+      rules: {
+        noMoney: 'You cannot stake more than you have in you wallet.',
+        moreThanZero: 'You must stake an amount bigger than zero.',
+        auctionEnded: 'This auction is over. You can no longer stake.',
+      },
     },
     pirsModal: {
       title: 'PIRS share',
@@ -355,6 +369,7 @@ export default {
       withdrawAmount: 'You can withdraw {amount} ALGOP of BidBack',
       bidBack: 'BidBack',
       bidBackBtn: 'BidBack Share',
+      bidBackSimulatorBtn: 'Simulator',
       symbol: '#',
       earned: 'Prize earned',
     },

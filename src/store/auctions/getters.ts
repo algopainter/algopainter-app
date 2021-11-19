@@ -13,17 +13,14 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   openBidBackModal(state: AuctionStateInterface): boolean {
     return state.openBidBackModal;
   },
+  openBidBackSimulatorModal(state: AuctionStateInterface): boolean {
+    return state.openBidBackSimulatorModal;
+  },
   getBids(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },
   getBidBack(state: AuctionStateInterface): [] | undefined {
     return state.bids;
-  },
-  getBidBackId(state: AuctionStateInterface): string | undefined {
-    return state.bidBackId;
-  },
-  getBidBackIndex(state: AuctionStateInterface): number | undefined {
-    return state.bidBackIndex;
   },
   getPirsAuction(state: AuctionStateInterface): [] | undefined {
     return state.pirsAuction;
@@ -33,6 +30,9 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   },
   openPirsModal(state: AuctionStateInterface): boolean {
     return state.openPirsModal;
+  },
+  getAuctionInfo(state: AuctionStateInterface): IAuctionItem | undefined {
+    return state.auctionInfo as IAuctionItem;
   },
   getAuctionInfo(state: AuctionStateInterface): IAuctionItem | undefined {
     return state.auctionInfo as IAuctionItem;

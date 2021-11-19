@@ -138,10 +138,18 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     this.commit('auctions/SET_OPEN_AUCTION_MODAL');
   },
 
-  openBidBackModal(type, value: { auctionId: string; auctionIndex: number }) {
+  openBidBackModal(type, value: {auction: IAuctionItem}) {
     this.commit('auctions/SET_OPEN_BID_BACK_MODAL');
-    this.commit('auctions/SET_BID_BACK_ID', value.auctionId);
-    this.commit('auctions/SET_BID_BACK_INDEX', value.auctionIndex);
+    if (value.auction) {
+      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+    }
+  },
+
+  openBidBackSimulatorModal(type, value: {auction: IAuctionItem}) {
+    this.commit('auctions/SET_OPEN_BID_BACK_SIMULATOR_MODAL');
+    if (value.auction) {
+      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+    }
   },
 
   openPirsModal(type, value: {auction: IAuctionItem}) {

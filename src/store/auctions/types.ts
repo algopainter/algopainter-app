@@ -10,9 +10,8 @@ export interface AuctionStateInterface {
   auctionId: string | undefined,
   openAuctionModal: boolean,
   openBidBackModal: boolean,
-  bidBackId: string | undefined,
-  bidBackIndex: number | undefined,
   pirsAuction: [],
   openPirsModal: boolean,
+  openBidBackSimulatorModal: boolean,
   auctionInfo: IAuctionItem | undefined,
 }

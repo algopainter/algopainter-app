@@ -37,9 +37,15 @@
                   :hint="`${minimumLabel}: ${minimumValue} ${coinSymbol}`"
                   :error="!!errorMessage"
                   :error-message="errorMessage"
-                  :rules="[val => val < balance || 'Insufficient funds. Check your wallet.',
-                           val => val >= minimunBid || `The Amount field must be ${minimunBid} or more`,
-                           val => val > opponentBid || `Your bid value must be higher than the highest bid $${coinSymbol} ${minimumValue}`,
+                  :rules="[val => val <= balance || $t('dashboard.auctionPage.newBidModal.rules.noFunds'),
+                           val => val >= auctionMinimumBid || $t('dashboard.auctionPage.newBidModal.rules.minimumBid', {
+                             coinSymbol: coinSymbol,
+                             auctionMinimumBid: auctionMinimumBid,
+                           }),
+                           val => val > auctionHighestBid || $t('dashboard.auctionPage.newBidModal.rules.highestBid', {
+                             coinSymbol: coinSymbol,
+                             minimumValue: minimumValue,
+                           }),
                   ]"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
@@ -174,7 +180,7 @@ export default class NewBidDialog extends Vue {
   bidAmount: number = 0;
   balance: number = 0;
   bidHighest: number = 0;
-  bidMinimun: number = 0;
+  minimumBid: number = 0;
   isConnected!: boolean;
 
   placingBid: boolean = false;
@@ -227,13 +233,13 @@ export default class NewBidDialog extends Vue {
   validateBid() {
     const highestBid = this.auction.bids;
     if (highestBid.length === 0) {
-      this.bidMinimun = this.auction.minimumBid.amount;
+      this.minimumBid = this.auction.minimumBid.amount;
     } else {
       this.bidHighest = this.auction.highestBid.netAmount;
     }
   }
 
-  get opponentBid() {
+  get auctionHighestBid() {
     const { decimalPlaces } = this.coinDetails;
     const value = this.bidHighest;
 
@@ -244,9 +250,9 @@ export default class NewBidDialog extends Vue {
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
-  get minimunBid() {
+  get auctionMinimumBid() {
     const { decimalPlaces } = this.coinDetails;
-    const value = this.bidMinimun;
+    const value = this.minimumBid;
     const amount = blockchainToCurrency(value, decimalPlaces);
 
     return this.$n(amount, 'decimal', {

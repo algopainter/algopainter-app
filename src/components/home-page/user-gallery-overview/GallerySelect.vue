@@ -110,6 +110,11 @@
             />
           </div>
         </template>
+        <template v-else-if="showHarvestMsg">
+          <span class="text-bold flex q-my-md">
+            {{ $t('dashboard.gallery.bidBackTab.harvestMsg') }}
+          </span>
+        </template>
         <span class="text-bold">
           {{ $t('dashboard.gallery.bidBackTab.stakedAlgop') }}
         </span>
@@ -252,6 +257,7 @@ export default class gallerySelect extends Vue.with(Props) {
   algopStacked: number = 0;
   teste: number = 0;
   showHarvestBtn: boolean = false;
+  showHarvestMsg: boolean = false;
   lastBid: string = '';
   disableUnstackBtn: boolean = true;
   auctionBidBackRate: number = 0;
@@ -340,8 +346,8 @@ export default class gallerySelect extends Vue.with(Props) {
     }
 
     this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
-    this.showHarvestBtn =
-      this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
+    this.showHarvestBtn = this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
+    this.showHarvestMsg = !this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
   }
 
   async claimBidBack() {

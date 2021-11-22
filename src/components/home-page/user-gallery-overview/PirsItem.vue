@@ -158,6 +158,11 @@
             />
           </div>
         </template>
+        <template v-else-if="showHarvestMsg">
+          <span class="text-bold flex">
+            {{ $t('dashboard.gallery.pirsTab.harvestMsg') }}
+          </span>
+        </template>
         <span class="text-bold">
           {{ $t('dashboard.gallery.pirsTab.stakedAlgop') }}
         </span>
@@ -284,6 +289,7 @@ export default class PirsItem extends Vue.with(Props) {
   openModalUnstack: boolean = false;
   algopStacked: number = 0;
   showHarvestBtn: boolean = false;
+  showHarvestMsg: boolean = false;
   lastBid: string = '';
   disableUnstackBtn: boolean = true;
   imagePirsRate: number = 0;
@@ -381,8 +387,8 @@ export default class PirsItem extends Vue.with(Props) {
     }
 
     this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
-    this.showHarvestBtn =
-      this.algopStacked > 0 && this.art.ended && this.imagePirsRate > 0;
+    this.showHarvestBtn = this.algopStacked > 0 && this.art.ended && this.imagePirsRate > 0;
+    this.showHarvestMsg = this.algopStacked > 0 && !this.art.ended && this.imagePirsRate > 0;
   }
 
   async harvestAlgop() {

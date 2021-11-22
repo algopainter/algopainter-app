@@ -250,6 +250,14 @@ export default {
     auctionRemainingTime: 'Auction ends in',
     deletingAuction: 'Deleting auction',
     returnNft: 'Get your NFT back',
+    cancelAuction: 'Cancel auction',
+    newBidModal: {
+      rules: {
+        noFunds: 'Insufficient funds. Check your wallet.',
+        minimumBid: 'Your bid must be {coinSymbol} {auctionMinimumBid} or more.',
+        highestBid: 'Your bid value must be higher than the highest bid {coinSymbol} {minimumValue}',
+      },
+    },
     statuses: {
       allowance: 'YOU ARE SO FANCY!',
       error: 'ERROR',
@@ -304,7 +312,6 @@ export default {
       returnAuctionError: "We couldn't get your NFT back because you declined the action in your wallet.",
       returnAuctionDeleted: 'NFT successfully retrieved',
     },
-    cancelAuction: 'Cancel auction',
     claimBidBackStatuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',
@@ -364,6 +371,7 @@ export default {
         youLost: 'You lost this time',
         auctionEnded: 'AuctionEnded',
       },
+      harvestMsg: 'Withdrawal of the winnings will only be available when the winner or seller performs the withdrawal.',
       harvest: 'Withdraw',
       stakedAlgop: 'ALGOP stake',
       withdrawAmount: 'You can withdraw {amount} ALGOP of BidBack',
@@ -385,6 +393,7 @@ export default {
         lastText: 'There is no bid so far',
       },
       harvest: 'Withdraw',
+      harvestMsg: 'Withdrawal of the winnings will only be available when the winner or seller performs the withdrawal.',
       stakedAlgop: 'ALGOP stake',
       withdrawAmount: 'You can withdraw {amount} ALGOP of PIRS',
       symbol: '#',

@@ -128,11 +128,6 @@ export default class BidBackModal extends Vue {
     },
   ];
 
-  created() {
-    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-  }
-
   mounted() {
     void this.setAccountBalance();
   }
@@ -244,6 +239,8 @@ export default class BidBackModal extends Vue {
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
+      this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
       void this.setAccountBalance();
     }
   }

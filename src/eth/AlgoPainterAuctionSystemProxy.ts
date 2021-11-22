@@ -48,7 +48,10 @@ export default class AlgoPainterAuctionSystemProxy {
       cancelAuction(auctionId: number): ContractSendMethod;
       endAuction(auctionId: number): ContractSendMethod;
       withdraw(auctionId: number): ContractSendMethod;
-      getAuctionAmountInfo(amount: number): ContractSendMethod;
+      getAuctionAmountInfo(
+        auctionId: number,
+        amount: number
+      ): ContractSendMethod;
       getAuctionFeeRate(): ContractSendMethod;
     };
   };
@@ -147,9 +150,12 @@ export default class AlgoPainterAuctionSystemProxy {
     ).send({ from });
   }
 
-  getAuctionAmountInfo(amount: number, from: string) {
-    return this.smartContract.methods.getAuctionAmountInfo(
+  getAuctionAmountInfo(auctionId: number, amount: number) {
+    const response: unknown = this.smartContract.methods.getAuctionAmountInfo(
+      auctionId,
       amount,
-    ).send({ from });
+    ).call();
+
+    return response as number;
   }
 }

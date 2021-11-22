@@ -127,7 +127,7 @@
               >
                 <div class="row">
                   <div class="ellipsis q-mr-xs">
-                    {{ bidValueHighestBid }}
+                    {{ claimHighestBidAfterFees }}
                   </div>
                   <div>
                     {{ tokenSymbol }}
@@ -137,7 +137,7 @@
                     self="center middle"
                     class="bg-primary"
                   >
-                    {{ bidValueHighestBid + ' ' + tokenSymbol }}
+                    {{ claimHighestBidAfterFees + ' ' + tokenSymbol }}
                   </q-tooltip>
                 </div>
               </div>
@@ -324,6 +324,7 @@ export default class OnsaleItem extends Vue.with(Props) {
     new CollectionArtController();
 
   created() {
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
   }
 
@@ -376,12 +377,14 @@ export default class OnsaleItem extends Vue.with(Props) {
 
     const { label: coin, decimalPlaces } = this.coinDetails;
 
+    console.log('this.auction', this.auction);
+
     const value = blockchainToCurrency(
       highestBid ? highestBid.netAmount : 0,
       decimalPlaces,
-    );
+    ).toFixed(2);
 
-    const amount = this.$n(value, 'decimal', {
+    const amount = this.$n(Number(value), 'decimal', {
       maximumFractionDigits: decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -409,6 +412,24 @@ export default class OnsaleItem extends Vue.with(Props) {
     return this.$n(amount, 'decimal', {
       maximumFractionDigits: this.coinDetailsBid.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
+  get claimHighestBidAfterFees() {
+    console.log('this.index', this.index);
+    console.log('this.highestBidvalue', this.highestBidvalue);
+
+    const highestBidAfterFees = this.auctionSystem.getAuctionAmountInfo(this.index, this.highestBidvalue.toLocaleString('fullwide', { useGrouping: false }););
+
+    console.log('highestBidAfterFees', highestBidAfterFees);
+
+    const prize = blockchainToCurrency(
+      highestBidAfterFees,
+      this.coinDetailsBid.decimalPlaces,
+    );
+
+    console.log('prize', prize);
+
+    return prize;
   }
 
   get bidValueHighestBid() {

@@ -422,6 +422,7 @@ export default class SellYourArt extends Vue {
   pirsSystem!: AlgoPainterBidBackPirsProxy;
   auctionId!: number;
   isCreator: boolean = false;
+  createdPirs!: number | null;
 
   coin: string = '3';
 
@@ -436,9 +437,10 @@ export default class SellYourArt extends Vue {
   auctionFeeRate!: string;
 
   imagePirsRate!: number | null;
-  collectionCreatorPirsRate!: number | null;
+  collectionCreatorPirsRate!: number | null ;
 
   mounted() {
+    void this.getCreatorPirsRate();
     void this.validatePirs();
     void this.getAuctionFeeRate();
   }
@@ -449,9 +451,11 @@ export default class SellYourArt extends Vue {
     }
   }
 
-  getCreatorPirsRate() {
+  async getCreatorPirsRate() {
     if (this.image) {
-      this.collectionCreatorPirsRate = this.image.pirs.creatorRate / 100;
+      this.createdPirs = await this.bidBackSystem.getCreatorPIRSByTokenAddress(this.image.collectionOwner);
+      this.collectionCreatorPirsRate = this.createdPirs / 100;
+      console.log('sucess getPercentagePirsCreated', this.collectionCreatorPirsRate);
     }
   }
 
@@ -543,6 +547,7 @@ export default class SellYourArt extends Vue {
       return this.$router.push('/');
     }
 
+    // void this.getPercentagePirsCreated();
     void this.getCreatorPirsRate();
 
     this.loading = false;

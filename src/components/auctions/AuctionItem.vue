@@ -246,7 +246,6 @@ export default class AuctionItem extends Vue.with(Props) {
       void this.getPirsPercentage();
       void this.loadData();
       void this.lastBid();
-      console.log('networkInfo', this.networkInfo);
     }
 
     created() {

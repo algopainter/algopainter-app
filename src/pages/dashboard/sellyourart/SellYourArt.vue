@@ -352,6 +352,7 @@ import AlgoPainterAuctionSystemProxy, {
 import AlgoPainterItemProxy from 'src/eth/AlgoPainterItemProxy';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
+import { Watch } from 'vue-property-decorator';
 import { NetworkInfo } from 'src/store/user/types';
 
 import AlgoButton from 'components/common/Button.vue';
@@ -404,6 +405,7 @@ enum CreatingAuctionStatus {
     ...mapGetters('user', {
       userAccount: 'account',
       networkInfo: 'networkInfo',
+      isConnected: 'isConnected',
     }),
   },
 })
@@ -414,6 +416,7 @@ export default class SellYourArt extends Vue {
   artTokenContract!: AlgoPainterItemProxy;
   networkInfo!: NetworkInfo;
   userAccount!: string;
+  isConnected!: boolean;
 
   image: IImage | null = null;
   loading: boolean = false;
@@ -440,22 +443,46 @@ export default class SellYourArt extends Vue {
   collectionCreatorPirsRate!: number | null ;
 
   mounted() {
-    void this.getCreatorPirsRate();
     void this.validatePirs();
     void this.getAuctionFeeRate();
+    void this.getCreatorPirsRate();
+  }
+
+  created() {
+    if (!localStorage.isConnected) {
+      return this.$router.push('/');
+    }
+
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    
+    void this.getCreatorPirsRate();
+    void this.loadImage();
+    void this.loadAvailableTokens();
+    // void this.getCreatorPirsRate();
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+      this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    }
+  }
+
+  async getCreatorPirsRate() {
+    const { id } = this.$route.params;
+    this.image = await getImage(id as string);
+    this.createdPirs = await this.bidBackSystem.getCreatorPIRSByTokenAddress(this.image.collectionOwner);
+    this.collectionCreatorPirsRate = this.createdPirs / 100;
+    console.log('sucess getPercentagePirsCreated', this.collectionCreatorPirsRate);
   }
 
   getInvestorPirsRate() {
     if (this.image) {
       this.imagePirsRate = this.image.pirs.investorRate;
-    }
-  }
-
-  async getCreatorPirsRate() {
-    if (this.image) {
-      this.createdPirs = await this.bidBackSystem.getCreatorPIRSByTokenAddress(this.image.collectionOwner);
-      this.collectionCreatorPirsRate = this.createdPirs / 100;
-      console.log('sucess getPercentagePirsCreated', this.collectionCreatorPirsRate);
     }
   }
 
@@ -516,19 +543,6 @@ export default class SellYourArt extends Vue {
 
   get nowFormatted() {
     return moment().format('YYYY/MM/DD');
-  }
-
-  created() {
-    if (!localStorage.isConnected) {
-      return this.$router.push('/');
-    }
-
-    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-    this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-
-    void this.loadImage();
-    void this.loadAvailableTokens();
   }
 
   async loadImage() {

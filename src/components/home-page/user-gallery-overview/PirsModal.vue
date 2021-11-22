@@ -115,11 +115,6 @@ export default class PirsModal extends Vue {
     },
   ];
 
-  created() {
-    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-  }
-
   mounted() {
     void this.setAccountBalance();
   }
@@ -212,6 +207,8 @@ export default class PirsModal extends Vue {
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
+      this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
       void this.setAccountBalance();
     }
   }

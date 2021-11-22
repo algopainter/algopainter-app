@@ -161,6 +161,7 @@
 <script lang="ts">
 import { PropType } from 'vue';
 import { Vue, Options, prop } from 'vue-class-component';
+import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
@@ -196,10 +197,10 @@ class Props {
   },
 })
 export default class AuctionItem extends Vue.with(Props) {
-  bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
   networkInfo!: NetworkInfo;
+  bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
   auctionBidbackRate: number = 0;
-   imagePirsRate: number = 0;
+  imagePirsRate: number = 0;
   collectionArtController: CollectionArtController = new CollectionArtController();
   wasLiked: boolean = false;
   likes!: number;
@@ -231,125 +232,133 @@ export default class AuctionItem extends Vue.with(Props) {
     }
   }
 
-  created() {
-    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    }
   }
 
-  mounted() {
+    mounted() {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    setTimeout(this.showRun, 0);
-    void this.getBidbackPercentage();
-    void this.getPirsPercentage();
-    void this.loadData();
-    void this.lastBid();
-  }
-
-  async getBidbackPercentage() {
-    try {
-      this.auctionBidbackRate = await this.bidBackPirsSystem.getBidBackRate(this.isHot.index);
-    } catch (error) {
-      console.log('Error - getBidbackPercentage - GallerySelect');
+      setTimeout(this.showRun, 0);
+      void this.getBidbackPercentage();
+      void this.getPirsPercentage();
+      void this.loadData();
+      void this.lastBid();
+      console.log('networkInfo', this.networkInfo);
     }
-  }
 
-  async getPirsPercentage() {
-    try {
-      this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.isHot.index);
-    } catch (error) {
-      console.log('Error - getPirsPercentage - PirsItem');
+    created() {
+      this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
     }
-  }
 
-  loadData() {
-    this.wasLiked =
+    async getBidbackPercentage() {
+      try {
+        this.auctionBidbackRate = await this.bidBackPirsSystem.getBidBackRate(this.isHot.index);
+      } catch (error) {
+        console.log('Error - getBidbackPercentage - GallerySelect');
+      }
+    }
+
+    async getPirsPercentage() {
+      try {
+        this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.isHot.index);
+      } catch (error) {
+        console.log('Error - getPirsPercentage - PirsItem');
+      }
+    }
+
+    loadData() {
+      this.wasLiked =
       this.isHot.likers.filter((liker) => liker === this.account)
         .length !== 0;
-    this.likes = this.isHot.likes;
-  }
-
-  showRun() {
-    this.loading = false;
-    this.previewImage = this.isHot.item.previewImage;
-  }
-
-  favoriteClicked(wasLiked: boolean) {
-    this.$emit('favoriteClicked');
-    if (this.isConnected) {
-      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+      this.likes = this.isHot.likes;
     }
-  }
 
-  postFavoriteArt() {
-    this.collectionArtController
-      .favoriteArt(this.isHot.item._id, this.account)
-      .then(
-        (result) => {
-          if (result.isFailure) {
-            this.like(true);
-          }
-        },
-        (error) => {
-          // tratar erro
-          console.log('"like" post error: ', error);
-        },
-      );
-    this.like();
-  }
-
-  deleteFavoriteArt() {
-    this.collectionArtController
-      .deleteFavoriteArt(this.isHot.item._id, this.account)
-      .then(
-        (result) => {
-          if (result.isFailure) {
-            this.like();
-          }
-        },
-        (error) => {
-          // tratar erro
-          console.log('"like" delete error: ', error);
-        },
-      );
-    this.like(true);
-  }
-
-  like(undo: boolean = false) {
-    if (undo) {
-      this.wasLiked = false;
-      this.likes--;
-    } else {
-      this.wasLiked = true;
-      this.likes++;
+    showRun() {
+      this.loading = false;
+      this.previewImage = this.isHot.item.previewImage;
     }
-  }
 
-  lastBid() {
-    const bidLength = this.isHot.bids.length;
-    this.lastValueBid = bidLength - 1;
-  }
+    favoriteClicked(wasLiked: boolean) {
+      this.$emit('favoriteClicked');
+      if (this.isConnected) {
+        wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+      }
+    }
 
-  get coinDetails() {
+    postFavoriteArt() {
+      this.collectionArtController
+        .favoriteArt(this.isHot.item._id, this.account)
+        .then(
+          (result) => {
+            if (result.isFailure) {
+              this.like(true);
+            }
+          },
+          (error) => {
+          // tratar erro
+            console.log('"like" post error: ', error);
+          },
+        );
+      this.like();
+    }
+
+    deleteFavoriteArt() {
+      this.collectionArtController
+        .deleteFavoriteArt(this.isHot.item._id, this.account)
+        .then(
+          (result) => {
+            if (result.isFailure) {
+              this.like();
+            }
+          },
+          (error) => {
+          // tratar erro
+            console.log('"like" delete error: ', error);
+          },
+        );
+      this.like(true);
+    }
+
+    like(undo: boolean = false) {
+      if (undo) {
+        this.wasLiked = false;
+        this.likes--;
+      } else {
+        this.wasLiked = true;
+        this.likes++;
+      }
+    }
+
+    lastBid() {
+      const bidLength = this.isHot.bids.length;
+      this.lastValueBid = bidLength - 1;
+    }
+
+    get coinDetails() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const coin = auctionCoins.find((coin) => {
+      const coin = auctionCoins.find((coin) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return coin.tokenAddress.toLowerCase() === this.isHot.minimumBid.tokenPriceAddress;
-    });
-    if (!coin) {
-      throw new Error('COIN_NOT_FOUND');
+        return coin.tokenAddress.toLowerCase() === this.isHot.minimumBid.tokenPriceAddress;
+      });
+      if (!coin) {
+        throw new Error('COIN_NOT_FOUND');
+      }
+      return coin;
     }
-    return coin;
-  }
 
-  bidValue(bids: number) {
-    const amount = blockchainToCurrency(
-      bids,
-      this.coinDetails.decimalPlaces,
-    );
-    return this.$n(amount, 'decimal', {
+    bidValue(bids: number) {
+      const amount = blockchainToCurrency(
+        bids,
+        this.coinDetails.decimalPlaces,
+      );
+      return this.$n(amount, 'decimal', {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      maximumFractionDigits: this.coinDetails.decimalPlaces,
-    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
-  }
+        maximumFractionDigits: this.coinDetails.decimalPlaces,
+      } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+    }
   // get reductionBidValue() {
   //   const coinReduction = this.valueCoin as unknown as number;
   //   return UserUtils.formatAccountBalance(coinReduction, 2);

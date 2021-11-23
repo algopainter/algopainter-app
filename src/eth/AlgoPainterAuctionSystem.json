@@ -1062,6 +1062,11 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
       }
@@ -1076,6 +1081,11 @@
       {
         "internalType": "uint256",
         "name": "feeAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardsAmount",
         "type": "uint256"
       }
     ],

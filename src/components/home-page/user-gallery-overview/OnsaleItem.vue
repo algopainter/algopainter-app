@@ -127,7 +127,7 @@
               >
                 <div class="row">
                   <div class="ellipsis q-mr-xs">
-                    {{ claimHighestBidAfterFees }}
+                    {{ bidValueHighestBid }}
                   </div>
                   <div>
                     {{ tokenSymbol }}
@@ -137,7 +137,7 @@
                     self="center middle"
                     class="bg-primary"
                   >
-                    {{ claimHighestBidAfterFees + ' ' + tokenSymbol }}
+                    {{ bidValueHighestBid + ' ' + tokenSymbol }}
                   </q-tooltip>
                 </div>
               </div>
@@ -172,7 +172,7 @@
               v-if="auction && auctionEnded"
               class="q-my-md action full-width"
               color="primary"
-              :label="endAuctionBtnLabel"
+              :label="highestBidAfterFees"
               :disable="loadingGoToAuctionId"
               @click="endAuction"
             />
@@ -247,6 +247,7 @@ import AlgoPainterAuctionSystemProxy, {
 } from 'src/eth/AlgoPainterAuctionSystemProxy';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import { now } from 'src/helpers/timer';
+import { numberToString } from 'src/helpers/format/numberToString';
 
 import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
 import ReturnNft from 'components/auctions/auction/ReturnNft.vue';
@@ -319,6 +320,7 @@ export default class OnsaleItem extends Vue.with(Props) {
   tokenPriceAddress: string = '';
   tokenSymbol: string = '';
   index!: number;
+  highestBidAfterFees: null | string = null;
 
   collectionArtController: CollectionArtController =
     new CollectionArtController();
@@ -368,6 +370,23 @@ export default class OnsaleItem extends Vue.with(Props) {
     return coin;
   }
 
+  async claimHighestBidAfterFees() {
+    if (!this.highestBidvalue) {
+      return 0;
+    }
+
+    let highestBidAfterFees = await this.auctionSystem.getAuctionAmountInfo(this.index, numberToString(this.highestBidvalue));
+
+    const coin = this.auction.minimumBid.tokenSymbol;
+
+    highestBidAfterFees = blockchainToCurrency(
+      highestBidAfterFees,
+      this.coinDetailsBid.decimalPlaces,
+    );
+
+    this.highestBidAfterFees = this.$t('dashboard.auctionPage.claimBtn', { amount: highestBidAfterFees, coin: coin });
+  }
+
   get endAuctionBtnLabel() {
     if (!this.auction || !this.coinDetails) {
       return '';
@@ -376,8 +395,6 @@ export default class OnsaleItem extends Vue.with(Props) {
     const { highestBid } = this.auction;
 
     const { label: coin, decimalPlaces } = this.coinDetails;
-
-    console.log('this.auction', this.auction);
 
     const value = blockchainToCurrency(
       highestBid ? highestBid.netAmount : 0,
@@ -414,24 +431,6 @@ export default class OnsaleItem extends Vue.with(Props) {
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
-  get claimHighestBidAfterFees() {
-    console.log('this.index', this.index);
-    console.log('this.highestBidvalue', this.highestBidvalue);
-
-    const highestBidAfterFees = this.auctionSystem.getAuctionAmountInfo(this.index, this.highestBidvalue.toLocaleString('fullwide', { useGrouping: false }););
-
-    console.log('highestBidAfterFees', highestBidAfterFees);
-
-    const prize = blockchainToCurrency(
-      highestBidAfterFees,
-      this.coinDetailsBid.decimalPlaces,
-    );
-
-    console.log('prize', prize);
-
-    return prize;
-  }
-
   get bidValueHighestBid() {
     const amount = blockchainToCurrency(
       this.highestBidvalue,
@@ -465,6 +464,7 @@ export default class OnsaleItem extends Vue.with(Props) {
     this.lastValueBid = this.auction.bids.length;
     this.tokenSymbol = this.auction.minimumBid.tokenSymbol;
     this.highestBidvalue = this.auction.highestBid.netAmount;
+    void this.claimHighestBidAfterFees();
   }
 
   get now() {

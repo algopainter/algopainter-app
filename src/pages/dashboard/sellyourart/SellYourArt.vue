@@ -456,11 +456,9 @@ export default class SellYourArt extends Vue {
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
     this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-    
     void this.getCreatorPirsRate();
     void this.loadImage();
     void this.loadAvailableTokens();
-    // void this.getCreatorPirsRate();
   }
 
   @Watch('isConnected')
@@ -477,7 +475,6 @@ export default class SellYourArt extends Vue {
     this.image = await getImage(id as string);
     this.createdPirs = await this.bidBackSystem.getCreatorPIRSByTokenAddress(this.image.collectionOwner);
     this.collectionCreatorPirsRate = this.createdPirs / 100;
-    console.log('sucess getPercentagePirsCreated', this.collectionCreatorPirsRate);
   }
 
   getInvestorPirsRate() {

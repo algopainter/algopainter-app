@@ -17,6 +17,9 @@ export default class AlgoPainterBidBackPirsProxy {
       getCreatorPirsRate(
         auctionId: number
       ): ContractSendMethod;
+      getCreatorPIRSByTokenAddress(
+        tokenAddress: string,
+      ): ContractSendMethod;
       setBidbackRate(
         auctionId: number,
         bidBackRate: number
@@ -46,6 +49,16 @@ export default class AlgoPainterBidBackPirsProxy {
     ).call();
 
     return response as number;
+  }
+
+  async getCreatorPIRSByTokenAddress(
+    tokenAddress: string,
+  ) {
+    const response = (await this.smartContract.methods.getCreatorPIRSByTokenAddress(
+      tokenAddress,
+    ).call()) as number;
+
+    return response;
   }
 
   async getInvestorPirsRate(

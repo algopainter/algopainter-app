@@ -278,24 +278,34 @@ export default class BidBackModalSimulator extends Vue {
     },
   ];
 
-  created() {
-    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
-  }
-
-  mounted() {
-    void this.setAccountBalance();
-  }
-
-  @Watch('getAuctionInfo')
-  onGetAuctionChanged() {
-    this.userBid = [];
-    if (this.getAuctionInfo) {
-      this.loadingAuctionInfo = false;
-      void this.setTableInfo(false);
+   @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+      this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
+      void this.setAccountBalance();
     }
   }
+
+   //  created() {
+   //    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+   //    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+   //    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
+   //  }
+
+   mounted() {
+     void this.setAccountBalance();
+   }
+
+  @Watch('getAuctionInfo')
+   onGetAuctionChanged() {
+     this.userBid = [];
+     if (this.getAuctionInfo) {
+       this.loadingAuctionInfo = false;
+       void this.setTableInfo(false);
+     }
+   }
 
   get algoPainterContractByNetworkId() {
     return getAlgoPainterContractByNetworkId(this.networkInfo.id) as string;
@@ -511,13 +521,6 @@ export default class BidBackModalSimulator extends Vue {
       ? nameArray[0]
       : nameArray[0].slice(0, 11) + '...';
     return nameArray[0];
-  }
-
-  @Watch('isConnected')
-  onIsConnectedChanged() {
-    if (this.isConnected) {
-      void this.setAccountBalance();
-    }
   }
 
   @Watch('userBalance')

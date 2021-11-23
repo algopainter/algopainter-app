@@ -20,7 +20,9 @@
                 </template>
               </i18n-t>
             </div>
-            <div class="col-12">
+            <div
+              v-if="auction"
+              class="col-12">
               <v-field
                 v-slot="{ field, handleChange, errorMessage }"
                 :label="$t('dashboard.auctionPage.amount')"
@@ -38,17 +40,18 @@
                   :error="!!errorMessage"
                   :error-message="errorMessage"
                   :rules="[val => val <= balance || $t('dashboard.auctionPage.newBidModal.rules.noFunds'),
-                           val => val >= auctionMinimumBid || $t('dashboard.auctionPage.newBidModal.rules.minimumBid', {
+                           val => val >= minimumBid || $t('dashboard.auctionPage.newBidModal.rules.minimumBid', {
                              coinSymbol: coinSymbol,
                              auctionMinimumBid: auctionMinimumBid,
                            }),
-                           val => val > auctionHighestBid || $t('dashboard.auctionPage.newBidModal.rules.highestBid', {
+                           val => val > highestBid || $t('dashboard.auctionPage.newBidModal.rules.highestBid', {
                              coinSymbol: coinSymbol,
                              minimumValue: minimumValue,
                            }),
                   ]"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
+                {{ minimumBid }}
               </v-field>
             </div>
             <div
@@ -179,7 +182,7 @@ export default class NewBidDialog extends Vue {
   bidFee: number = 0;
   bidAmount: number = 0;
   balance: number = 0;
-  bidHighest: number = 0;
+  highestBid: number = 0;
   minimumBid: number = 0;
   isConnected!: boolean;
 
@@ -232,16 +235,18 @@ export default class NewBidDialog extends Vue {
 
   validateBid() {
     const highestBid = this.auction.bids;
+    const { decimalPlaces } = this.coinDetails;
+
     if (highestBid.length === 0) {
-      this.minimumBid = this.auction.minimumBid.amount;
+      this.minimumBid = blockchainToCurrency(this.auction.minimumBid.amount, decimalPlaces);
     } else {
-      this.bidHighest = this.auction.highestBid.netAmount;
+      this.highestBid = blockchainToCurrency(this.auction.highestBid.netAmount, decimalPlaces);
     }
   }
 
   get auctionHighestBid() {
     const { decimalPlaces } = this.coinDetails;
-    const value = this.bidHighest;
+    const value = this.highestBid;
 
     const amount = blockchainToCurrency(value, decimalPlaces);
 

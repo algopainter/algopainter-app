@@ -14,7 +14,7 @@
         </p>
         <p class="q-mb-none">
           <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidBackModal.totalBidBackAmount`) }}</span>
-          {{ $t(`dashboard.auctions.bidBackModal.algop`) }} {{ setFormatCurrency(totalBidBackStaked) }}
+          {{ $t(`dashboard.auctions.bidBackModal.algop`) }} {{ setFormatCurrency(totalBidBackStaked).toFixed(2) }}
         </p>
       </div>
       <div class="q-pa-md">
@@ -109,21 +109,21 @@ export default class BidBackModal extends Vue {
       name: 'highestBid',
       required: true,
       label: 'Bid',
-      field: (userBid: { highestBid: number }) => userBid.highestBid,
+      field: (userBid: { highestBid: number }) => userBid.highestBid.toFixed(2),
       sortable: true,
     },
     {
       name: 'stackedAlgop',
       required: true,
       label: 'ALGOP stacked',
-      field: (userBid: { stackedAlgop: number }) => this.setFormatCurrency(userBid.stackedAlgop),
+      field: (userBid: { stackedAlgop: number }) => this.setFormatCurrency(userBid.stackedAlgop).toFixed(2),
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
       label: 'BidBack %',
-      field: (userBid: { stackedAlgopPercentage: number }) => userBid.stackedAlgopPercentage,
+      field: (userBid: { stackedAlgopPercentage: number }) => userBid.stackedAlgopPercentage.toFixed(2),
       sortable: true,
     },
   ];

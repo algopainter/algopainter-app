@@ -18,7 +18,7 @@
           </p>
           <p class="text-h8 q-mb-none text-bold">
             {{ ' ' + $t('dashboard.auctions.bidBackModalSimulator.lastBidValue', {
-              highestBid: formatHighestBidAmount(),
+              highestBid: formatHighestBidAmount().toFixed(2),
               auctionCurrency: getAuctionInfo.highestBid.tokenSymbol})
             }}
           </p>
@@ -254,21 +254,21 @@ export default class BidBackModalSimulator extends Vue {
       name: 'highestBid',
       required: true,
       label: 'Bid',
-      field: (userBid: { highestBid: number }) => userBid.highestBid,
+      field: (userBid: { highestBid: number }) => userBid.highestBid.toFixed(2),
       sortable: true,
     },
     {
       name: 'stakedAlgop',
       required: true,
       label: 'ALGOP staked',
-      field: (userBid: { stakedAlgop: number }) => userBid.stakedAlgop,
+      field: (userBid: { stakedAlgop: number }) => userBid.stakedAlgop.toFixed(2),
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
       label: 'BidBack (%)',
-      field: (userBid: { stakedAlgopPercentage: number }) => userBid.stakedAlgopPercentage,
+      field: (userBid: { stakedAlgopPercentage: number }) => userBid.stakedAlgopPercentage.toFixed(2),
       sortable: true,
     },
     {
@@ -505,7 +505,7 @@ export default class BidBackModalSimulator extends Vue {
 
       Object.keys(this.getAuctionInfo.bidbacks).forEach(() => {
         this.userBid.forEach((bidder) => {
-          bidder.bidBackPrize = `${((bidder.stakedAlgopPercentage / 100) * auctionBidBackPrize).toFixed(3)} ${this.auctionCurrency}`;
+          bidder.bidBackPrize = `${((bidder.stakedAlgopPercentage / 100) * auctionBidBackPrize).toFixed(2)} ${this.auctionCurrency}`;
         });
       });
     }

@@ -25,7 +25,6 @@
         </div>
       </div>
       <div
-        v-show="loadingTable"
         class="row justify-center"
       >
         <q-input
@@ -440,6 +439,8 @@ export default class BidBackModalSimulator extends Vue {
     const auctionBidsReversed: IBid[] = [];
     const bidderAccounts: string | string[] = [];
 
+    this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfo.index) / 10000;
+
     auctionBids.forEach((bid) => {
       auctionBidsReversed.push(bid);
     });
@@ -462,11 +463,19 @@ export default class BidBackModalSimulator extends Vue {
           highestBid: highestBid,
           auctionCurrency: this.auctionCurrency,
           stakedAlgop: name === 'You' && isASimulation && this.stakeAmount ? this.stakeAmount : 0,
-          stakedAlgopPercentage: 0,
-          bidBackPrize: `0.000 ${this.auctionCurrency}`,
+          stakedAlgopPercentage: auctionBidsReversed.length === 1 && isASimulation ? 100 : 0,
+          bidBackPrize:
+            auctionBidsReversed.length === 1 && isASimulation
+              ? `${(this.formatHighestBidAmount() * this.auctionBidBackRate).toFixed(2)} ${this.auctionCurrency}`
+              : `0.000 ${this.auctionCurrency}`,
         });
       }
     });
+
+    if (auctionBidsReversed.length === 1 && isASimulation) {
+      this.loadingTable = false;
+      return;
+    }
 
     this.totalBidBackStaked = blockchainToCurrency(await this.rewardsSystem.getTotalBidBackStakes(this.getAuctionInfo.index), this.coinDetails.decimalPlaces);
 
@@ -500,7 +509,6 @@ export default class BidBackModalSimulator extends Vue {
         });
       });
 
-      this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfo.index) / 100;
       const auctionBidBackPrize = this.formatHighestBidAmount() * this.auctionBidBackRate;
 
       Object.keys(this.getAuctionInfo.bidbacks).forEach(() => {

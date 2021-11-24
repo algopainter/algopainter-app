@@ -168,14 +168,8 @@
         </span>
         <div class="flex container">
           <span
-            v-if="algopStacked <= 0 || 'undefined'"
             class="input-stack-algop"
-          > {{ algopStacked }}
-          </span>
-          <span
-            v-else
-            class="input-stack-algop"
-          > {{ setFormatCurrency(algopStacked) }}
+          > {{ algopStacked ? setFormatCurrency(algopStacked) : 0 }}
           </span>
           <algo-button
             label="-"

@@ -25,14 +25,15 @@
         </div>
       </div>
       <div
-        v-if="!loadingTable"
+        v-show="loadingTable"
         class="row justify-center"
       >
         <q-input
           v-model="stakeAmount"
+          :disable="loadingTable"
           dense
           color="primary"
-          inputmode="number"
+          type="number"
           :suffix="$t('dashboard.auctions.bidBackModalSimulator.algop')"
           :placeholder="formattedBalance"
           :bind="validateInput()"
@@ -462,7 +463,7 @@ export default class BidBackModalSimulator extends Vue {
           auctionCurrency: this.auctionCurrency,
           stakedAlgop: name === 'You' && isASimulation && this.stakeAmount ? this.stakeAmount : 0,
           stakedAlgopPercentage: 0,
-          bidBackPrize: '0.000 ALGOP',
+          bidBackPrize: `0.000 ${this.auctionCurrency}`,
         });
       }
     });

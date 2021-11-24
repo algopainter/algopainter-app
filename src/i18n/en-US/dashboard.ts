@@ -149,6 +149,7 @@ export default {
       totalPirsAmount: 'Total PIRS amount: ',
       algop: '$ALGOP',
       yourBalance: 'Your balance: ',
+      returnBtn: 'Return',
     },
   },
   sellYourArt: {

@@ -296,7 +296,7 @@ export default class gallerySelect extends Vue.with(Props) {
     try {
       this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(
         this.art.index,
-      );
+      ) / 100;
       if (this.auctionBidBackRate > 0) {
         void this.getCurrentPrizeAmount();
       }

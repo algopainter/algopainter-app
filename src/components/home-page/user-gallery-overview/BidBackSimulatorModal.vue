@@ -499,7 +499,7 @@ export default class BidBackModalSimulator extends Vue {
         });
       });
 
-      this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfo.index) / 100;
+      this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfo.index) / 10000;
       const auctionBidBackPrize = this.formatHighestBidAmount() * this.auctionBidBackRate;
 
       Object.keys(this.getAuctionInfo.bidbacks).forEach(() => {

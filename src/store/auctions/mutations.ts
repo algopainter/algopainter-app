@@ -22,7 +22,6 @@ const mutation: MutationTree<AuctionStateInterface> = {
     state.openAuctionModal = !state.openAuctionModal;
   },
   SET_OPEN_BID_BACK_MODAL(state: AuctionStateInterface) {
-    console.log('SET_OPEN_BID_BACK_MODAL');
     state.openBidBackModal = !state.openBidBackModal;
   },
   SET_BIDS(state: AuctionStateInterface, payload) {

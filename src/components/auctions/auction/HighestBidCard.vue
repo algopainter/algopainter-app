@@ -113,7 +113,7 @@ export default class HighestBidCard extends Vue {
     );
 
     return this.$n(amount, 'decimal', {
-      maximumFractionDigits: this.coinDetails.decimalPlaces,
+      maximumFractionDigits: 2,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 

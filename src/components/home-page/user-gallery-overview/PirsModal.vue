@@ -2,7 +2,6 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
-    @hide="openPirsModal()"
   >
     <q-card class="q-pa-lg">
       <p
@@ -10,17 +9,15 @@
       >
         {{ ' ' + $t('dashboard.auctions.pirsModal.title') }}
       </p>
-      <div v-if="!loadingTable">
-        <div v-if="!loadingTable">
-          <p class="q-mb-none">
-            <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.yourBalance`) }}</span>
-            {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ formattedBalance }}
-          </p>
-          <p class="q-mb-none">
-            <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.totalPirsAmount`) }}</span>
-            {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ setFormatCurrency(totalPirsStaked) }}
-          </p>
-        </div>
+      <div v-show="!loadingTable">
+        <p class="q-mb-none">
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.yourBalance`) }}</span>
+          {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ formattedBalance }}
+        </p>
+        <p class="q-mb-none">
+          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.totalPirsAmount`) }}</span>
+          {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ setFormatCurrency(totalPirsStaked).toFixed(2) }}
+        </p>
       </div>
       <div class="q-pa-md">
         <q-table
@@ -30,6 +27,15 @@
           hide-bottom
           flat
           :loading="loadingTable"
+        />
+      </div>
+      <div class="row justify-center">
+        <algo-button
+          class="q-my-md q-mx-sm action"
+          :label="$t('dashboard.auctions.pirsModal.returnBtn')"
+          color="primary"
+          outline
+          @click="openPirsModal()"
         />
       </div>
     </q-card>
@@ -103,14 +109,14 @@ export default class PirsModal extends Vue {
       name: 'stackedAlgop',
       required: true,
       label: 'ALGOP Staked',
-      field: (pastOwnersList: { stackedAlgop: number; }) => this.setFormatCurrency(pastOwnersList.stackedAlgop),
+      field: (pastOwnersList: { stackedAlgop: number; }) => this.setFormatCurrency(pastOwnersList.stackedAlgop).toFixed(2),
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
       label: 'Pirs %',
-      field: (pastOwnersList: { stackedAlgopPercentage: number; }) => pastOwnersList.stackedAlgopPercentage,
+      field: (pastOwnersList: { stackedAlgopPercentage: number; }) => pastOwnersList.stackedAlgopPercentage.toFixed(2),
       sortable: true,
     },
   ];

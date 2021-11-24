@@ -22,7 +22,8 @@
             </div>
             <div
               v-if="auction"
-              class="col-12">
+              class="col-12"
+            >
               <v-field
                 v-slot="{ field, handleChange, errorMessage }"
                 :label="$t('dashboard.auctionPage.amount')"
@@ -51,7 +52,6 @@
                   ]"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
-                {{ minimumBid }}
               </v-field>
             </div>
             <div

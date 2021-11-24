@@ -356,7 +356,7 @@ export default class PirsItem extends Vue.with(Props) {
         highestBidAmount,
         this.coinDetails.decimalPlaces,
       );
-      this.lastBid = `${bidAmount} ${this.art.minimumBid.tokenSymbol}`;
+      this.lastBid = `${bidAmount.toFixed(2)} ${this.art.minimumBid.tokenSymbol}`;
     } else {
       this.lastBid = 'There is no bid so far';
     }

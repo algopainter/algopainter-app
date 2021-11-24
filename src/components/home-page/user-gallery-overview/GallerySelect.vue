@@ -312,7 +312,7 @@ export default class gallerySelect extends Vue.with(Props) {
       this.coinDetails.decimalPlaces,
     );
 
-    this.lastBid = `${bidAmount} ${this.art.highestBid.tokenSymbol}`;
+    this.lastBid = `${bidAmount.toFixed(2)} ${this.art.highestBid.tokenSymbol}`;
   }
 
   get coinDetails() {

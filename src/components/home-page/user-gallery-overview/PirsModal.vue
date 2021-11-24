@@ -109,14 +109,14 @@ export default class PirsModal extends Vue {
       name: 'stackedAlgop',
       required: true,
       label: 'ALGOP Staked',
-      field: (pastOwnersList: { stackedAlgop: number; }) => this.setFormatCurrency(pastOwnersList.stackedAlgop),
+      field: (pastOwnersList: { stackedAlgop: number; }) => this.setFormatCurrency(pastOwnersList.stackedAlgop).toFixed(2),
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
       label: 'Pirs %',
-      field: (pastOwnersList: { stackedAlgopPercentage: number; }) => pastOwnersList.stackedAlgopPercentage,
+      field: (pastOwnersList: { stackedAlgopPercentage: number; }) => pastOwnersList.stackedAlgopPercentage.toFixed(2),
       sortable: true,
     },
   ];

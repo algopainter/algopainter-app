@@ -119,7 +119,7 @@
           {{ $t('dashboard.auctions.bidBackModalSimulator.rules.noMoney') }}
         </p>
         <p
-          v-else-if="stakeAmount === null || stakeAmount <= 0"
+          v-else-if="stakeAmount === null || stakeAmount < 0 || stakeAmount === 0 && !hasJustStaked"
           class="q-mb-none"
         >
           <q-icon
@@ -236,6 +236,7 @@ export default class BidBackModalSimulator extends Vue {
   isDisabled: boolean = true;
   auctionBidBackRate!: number;
   auctionCurrency!: string;
+  hasJustStaked: boolean = false;
 
   userBid: IUserBid[] = [];
   loadingTable: boolean = true;
@@ -288,14 +289,17 @@ export default class BidBackModalSimulator extends Vue {
     }
   }
 
-   //  created() {
-   //    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-   //    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-   //    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
-   //  }
+   created() {
+     if (this.isConnected) {
+       this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+       this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+       this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
+     }
+   }
 
    mounted() {
      void this.setAccountBalance();
+     this.hasJustStaked = false;
    }
 
   @Watch('getAuctionInfo')
@@ -400,6 +404,7 @@ export default class BidBackModalSimulator extends Vue {
       this.stakeAmount = 0;
       this.isConfirmBtnLoading = false;
       this.isDisabled = true;
+      this.hasJustStaked = true;
     }
   }
 
@@ -457,7 +462,7 @@ export default class BidBackModalSimulator extends Vue {
           auctionCurrency: this.auctionCurrency,
           stakedAlgop: name === 'You' && isASimulation && this.stakeAmount ? this.stakeAmount : 0,
           stakedAlgopPercentage: 0,
-          bidBackPrize: '',
+          bidBackPrize: '0.000 ALGOP',
         });
       }
     });

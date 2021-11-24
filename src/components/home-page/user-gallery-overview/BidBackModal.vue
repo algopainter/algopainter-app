@@ -128,10 +128,6 @@ export default class BidBackModal extends Vue {
     },
   ];
 
-  mounted() {
-    void this.setAccountBalance();
-  }
-
   @Watch('getAuctionInfo')
   onGetAuctionChanged() {
     this.userBid = [];
@@ -236,6 +232,14 @@ export default class BidBackModal extends Vue {
     return nameArray[0];
   }
 
+  created() {
+    if (this.isConnected) {
+      this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+      void this.setAccountBalance();
+    }
+  }
+
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
@@ -263,7 +267,6 @@ export default class BidBackModal extends Vue {
   }
 
   openBidBackModal() {
-    console.log('openBidBackModal');
     void this.$store.dispatch({
       type: 'auctions/openBidBackModal',
     });

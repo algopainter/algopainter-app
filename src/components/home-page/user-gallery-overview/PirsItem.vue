@@ -168,6 +168,12 @@
         </span>
         <div class="flex container">
           <span
+            v-if="algopStacked <= 0 || 'undefined'"
+            class="input-stack-algop"
+          > {{ algopStacked }}
+          </span>
+          <span
+            v-else
             class="input-stack-algop"
           > {{ setFormatCurrency(algopStacked) }}
           </span>
@@ -382,10 +388,7 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   getUserStackedPirs() {
-    if (this.art.pirs) {
-      this.algopStacked = this.art.pirs[this.account];
-    }
-
+    this.algopStacked = this.art.bidbacks[this.account] || 0;
     this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
     this.showHarvestBtn = this.algopStacked > 0 && this.art.ended && this.imagePirsRate > 0;
     this.showHarvestMsg = this.algopStacked > 0 && !this.art.ended && this.imagePirsRate > 0;

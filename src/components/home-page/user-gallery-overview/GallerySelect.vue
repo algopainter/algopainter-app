@@ -341,9 +341,7 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   getUserStackedBidBack() {
-    if (this.art.bidbacks) {
-      this.algopStacked = this.art.bidbacks[this.account];
-    }
+    this.algopStacked = this.art.bidbacks[this.account] || 0;
 
     this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
     this.showHarvestBtn = this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;

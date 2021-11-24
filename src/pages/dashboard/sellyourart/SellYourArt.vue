@@ -691,9 +691,9 @@ export default class SellYourArt extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
 
-      await this.setBidBack(bidBack);
+      await this.setBidBack(bidBack * 100);
       if (this.isCreator) {
-        await this.setInvestorPirs(pirs);
+        await this.setInvestorPirs(pirs * 100);
       }
     } catch {
       this.displayingStatus = false;

@@ -335,7 +335,7 @@ export default class PirsItem extends Vue.with(Props) {
     try {
       this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(
         this.art.index,
-      );
+      ) / 100;
       if (this.imagePirsRate > 0) {
         void this.getCurrentPrizeAmount();
       }

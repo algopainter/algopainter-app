@@ -308,7 +308,7 @@ export default class Auction extends Vue {
       try {
         this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(
           this.auction.index,
-        );
+        ) / 100;
       } catch (error) {
         console.log('Error - getBidBackRate - Auction');
       }
@@ -319,7 +319,7 @@ export default class Auction extends Vue {
     if (this.auction) {
       try {
         this.itemInvestorPirsRate =
-          await this.bidBackPirsSystem.getInvestorPirsRate(this.auction.index);
+          await this.bidBackPirsSystem.getInvestorPirsRate(this.auction.index) / 100;
       } catch (error) {
         console.log('Error - getInvestorPirsRate - Auction');
       }

@@ -254,7 +254,7 @@ export default class AuctionItem extends Vue.with(Props) {
 
     async getBidbackPercentage() {
       try {
-        this.auctionBidbackRate = await this.bidBackPirsSystem.getBidBackRate(this.isHot.index);
+        this.auctionBidbackRate = await this.bidBackPirsSystem.getBidBackRate(this.isHot.index) / 100;
       } catch (error) {
         console.log('Error - getBidbackPercentage - GallerySelect');
       }
@@ -262,7 +262,7 @@ export default class AuctionItem extends Vue.with(Props) {
 
     async getPirsPercentage() {
       try {
-        this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.isHot.index);
+        this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.isHot.index) / 100;
       } catch (error) {
         console.log('Error - getPirsPercentage - PirsItem');
       }

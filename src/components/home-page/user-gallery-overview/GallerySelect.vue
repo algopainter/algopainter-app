@@ -120,14 +120,8 @@
         </span>
         <div class="flex container">
           <span
-            v-if="algopStacked < 0"
             class="input-stack-algop"
-          > {{ algopStacked }}
-          </span>
-          <span
-            v-else
-            class="input-stack-algop"
-          > {{ setFormatCurrency(algopStacked) }}
+          > {{ algopStacked ? setFormatCurrency(algopStacked) : 0 }}
           </span>
           <algo-button
             label="-"
@@ -341,9 +335,7 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   getUserStackedBidBack() {
-    if (this.art.bidbacks) {
-      this.algopStacked = this.art.bidbacks[this.account];
-    }
+    this.algopStacked = this.art.bidbacks[this.account] || 0;
 
     this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
     this.showHarvestBtn = this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;

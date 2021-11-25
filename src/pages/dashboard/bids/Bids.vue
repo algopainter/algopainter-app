@@ -48,6 +48,7 @@ import BidsPage from './BidsPage.vue';
 
 export default class Bids extends Vue {
   auctionsBid: IAuctionItem[] = [];
+  auctionsBidId: string[] = [];
   loading: boolean = true;
   dias: number = 0;
 
@@ -87,7 +88,16 @@ export default class Bids extends Vue {
       account: this.accountAdress,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
+      const auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
+
+      auctionsBid.forEach((auction) => {
+        if (!this.auctionsBidId.includes(auction._id)) {
+          if ((auction.returns && Object.keys(auction.returns).includes(this.accountAdress)) || typeof auction.returns === 'undefined') {
+            this.auctionsBid.push(auction);
+            this.auctionsBidId.push(auction._id);
+          }
+        }
+      });
 
       this.loading = false;
     });

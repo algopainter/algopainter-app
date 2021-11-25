@@ -440,6 +440,7 @@ export default class SellYourArt extends Vue {
   auctionFeeRate!: string;
 
   imagePirsRate!: number | null;
+  pirPercent!: number | null;
   collectionCreatorPirsRate!: number | null ;
 
   mounted() {
@@ -479,7 +480,10 @@ export default class SellYourArt extends Vue {
 
   getInvestorPirsRate() {
     if (this.image) {
-      this.imagePirsRate = this.image.pirs.investorRate;
+      this.pirPercent = this.image.pirs.investorRate;
+      if (this.pirPercent !== null) {
+        this.imagePirsRate = this.pirPercent / 100;
+      }
     }
   }
 

@@ -27,7 +27,7 @@
           {{ $t('dashboard.gallery.bidBackTab.lastBid') }}
         </div>
         <p class="coin text-h6">
-          {{ lastBid }}
+          {{ getLastBid + ' ' + art.highestBid.tokenSymbol }}
         </p>
       </div>
       <div class="text-bold text-h6">
@@ -287,7 +287,6 @@ export default class gallerySelect extends Vue.with(Props) {
 
   mounted() {
     void this.getBidBackPercentage();
-    void this.getLastBid();
     void this.getTime();
     void this.formatTime();
   }
@@ -306,13 +305,15 @@ export default class gallerySelect extends Vue.with(Props) {
     }
   }
 
-  getLastBid() {
+  get getLastBid() {
     const bidAmount = blockchainToCurrency(
       this.art.highestBid.netAmount,
       this.coinDetails.decimalPlaces,
     );
 
-    this.lastBid = `${bidAmount.toFixed(2)} ${this.art.highestBid.tokenSymbol}`;
+    return this.$n(bidAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   get coinDetails() {

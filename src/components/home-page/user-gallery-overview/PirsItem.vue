@@ -47,7 +47,7 @@
               {{ $t('dashboard.gallery.pirsTab.lastBids') }}
             </div>
             <p class="coin text-h6">
-              {{ lastBid }}
+              {{ lastBid + ' ' + art.minimumBid.tokenSymbol }}
             </p>
           </div>
           <div class="text-bold row justify-start text-end">
@@ -356,7 +356,9 @@ export default class PirsItem extends Vue.with(Props) {
         highestBidAmount,
         this.coinDetails.decimalPlaces,
       );
-      this.lastBid = `${bidAmount.toFixed(2)} ${this.art.minimumBid.tokenSymbol}`;
+      this.lastBid = this.$n(bidAmount, 'decimal', {
+        maximumFractionDigits: this.coinDetails.decimalPlaces,
+      } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
     } else {
       this.lastBid = 'There is no bid so far';
     }

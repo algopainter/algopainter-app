@@ -12,7 +12,16 @@
       <div class="col-12 amount">
         {{ `${bidValue} ${bid.tokenSymbol}` }}
       </div>
-      <div class="col-12 user-name">
+      <div
+        v-if="bid.name.slice(0, 2) === '0x'"
+        class="col-12 user-name"
+      >
+        {{ formatedAccount }}
+      </div>
+      <div
+        v-else
+        class="col-12 user-name"
+      >
         {{ bid.name }}
       </div>
       <div
@@ -32,7 +41,7 @@
 
 <script lang="ts">
 import { Vue, Prop } from 'vue-property-decorator';
-
+import UserUtils from 'src/helpers/user';
 import { IBid } from 'src/models/IBid';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
@@ -79,6 +88,10 @@ export default class BidItem extends Vue {
     return this.$n(amount, 'decimal', {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
+  get formatedAccount() {
+    return UserUtils.formatedAccount(this.bid.account);
   }
 }
 </script>

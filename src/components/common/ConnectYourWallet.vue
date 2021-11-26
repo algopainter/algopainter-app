@@ -95,6 +95,7 @@ export default class ConnectYourWallet extends Vue.with(Props) {
       }
 
       this.$emit('connected');
+      window.location.reload(true);
     } catch (error) {
       console.log('error - Connect Your Wallet', error);
     }

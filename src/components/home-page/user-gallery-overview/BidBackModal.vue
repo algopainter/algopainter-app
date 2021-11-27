@@ -3,7 +3,9 @@
     ref="dialog"
     v-model="modal"
   >
-    <q-card class="q-pa-lg">
+    <q-card
+      class="q-pa-lg modal-card-container"
+    >
       <p class="row justify-center text-h5 text-bold text-primary">
         {{ ' ' + $t('dashboard.auctions.bidBackModal.title') }}
       </p>
@@ -58,7 +60,7 @@ interface IUserBid {
   name: string | null;
   account: string | unknown;
   formattedAccount: string | unknown;
-  highestBid: number;
+  highestBid: string;
   tokenSymbol: string;
   stackedAlgop: number | unknown;
   stackedAlgopPercentage: number;
@@ -109,7 +111,7 @@ export default class BidBackModal extends Vue {
       name: 'highestBid',
       required: true,
       label: 'Bid',
-      field: (userBid: { highestBid: number }) => userBid.highestBid.toFixed(2),
+      field: (userBid: { highestBid: string }) => userBid.highestBid,
       sortable: true,
     },
     {
@@ -178,7 +180,15 @@ export default class BidBackModal extends Vue {
         const formattedAccount = this.formatAccount(account);
         const name = this.formatName(bid.name);
         const tokenSymbol = bid.tokenSymbol;
-        const highestBid = bid.netAmount / 1000000000000000000;
+        const amountBid = blockchainToCurrency(
+          bid.netAmount,
+          this.coinDetails.decimalPlaces,
+        );
+        const formatAmount = this.$n(amountBid, 'decimal', {
+          maximumFractionDigits: this.coinDetails.decimalPlaces,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any);
+        const highestBid = formatAmount;
 
         if (!bidderAccounts.includes(account)) {
           bidderAccounts.push(account);
@@ -276,5 +286,9 @@ export default class BidBackModal extends Vue {
 <style style="scss" scoped>
 .close-button-container {
   width: 100%;
+}
+.modal-card-container{
+  max-width: 650px;
+  width: 750px;
 }
 </style>

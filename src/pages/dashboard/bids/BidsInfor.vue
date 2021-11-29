@@ -43,19 +43,13 @@
             {{ $t('dashboard.bid.winBid') }}
           </div>
           <div class=" row justify-center text-bold">
-            <div
-              class="text-amount"
-            >
+            <div class="text-amount">
               {{ bidCorreting(bidsAuctions.highestBid.netAmount) }}
-              <q-tooltip
-                class="bg-primary"
-              >
-                {{ bidsAuctions.highestBid.tokenSymbol }} {{ bidCorreting(bidsAuctions.highestBid.netAmount) }}
+              <q-tooltip class="bg-primary">
+                {{ bidCorreting(bidsAuctions.highestBid.netAmount) }}
               </q-tooltip>
             </div>
-            <div>
-              {{ bidsAuctions.highestBid.tokenSymbol }}
-            </div>
+            <span>{{ bidsAuctions.highestBid.tokenSymbol }}</span>
           </div>
         </div>
 
@@ -227,7 +221,7 @@ onPropertyChanged() {
       if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
         this.formatTime();
         // this.isfinish = true;
-        window.location.reload(true);
+        window.location.reload();
       }
       this.stopCount = true;
     } else {
@@ -329,8 +323,8 @@ bidCorreting(bids: number) {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  text-align: left;
   width: 50px;
+  color: #00B412;
 }
 .img{
   width: 250px;

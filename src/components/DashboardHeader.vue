@@ -50,7 +50,7 @@ export default class DashboardHeader extends Vue.with(Props) {
   windowSize = window.innerWidth;
 
   connectYourWalletClicked() {
-    this.$emit('connectYourWalletClicked');
+    void this.$store.dispatch('user/openConnectYourWalletModal');
   }
 
   get isConnected() {

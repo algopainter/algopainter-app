@@ -44,6 +44,11 @@ interface SideBarItem {
 export default class SideBar extends Vue {
   openModal: boolean = false;
 
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
   get items(): SideBarItem[] {
     return [
       {
@@ -54,9 +59,9 @@ export default class SideBar extends Vue {
       },
       {
         icon: require('../assets/icons/my-gallery.svg'),
-        label: 'My Gallery',
+        label: 'My gallery',
         onClick: () => {
-          if (this.$store.state.user.isConnected) {
+          if (this.isConnected) {
             void this.$router.push('/my-gallery');
           } else {
             this.$emit('galleryClicked');
@@ -69,6 +74,18 @@ export default class SideBar extends Vue {
         label: 'Create collectible',
         onClick: () => {
           this.$emit('openModalArtist');
+        },
+      },
+      {
+        icon: require('../assets/icons/auction.svg'),
+        label: 'Bids',
+        onClick: () => {
+          if (this.isConnected) {
+            void this.$router.push('/bids');
+          } else {
+            void this.$store.dispatch('user/openConnectYourWalletModal');
+            this.$emit('pageOptionClicked', '/bids');
+          }
         },
       },
     ];

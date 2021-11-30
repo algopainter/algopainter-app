@@ -53,8 +53,21 @@
           {{ galleryItem.art.name }}
         </q-tooltip>
       </div>
-      <div class="img-description limit-text">
-        <p>{{ galleryItem.description }}</p>
+      <div v-if="galleryItem.description.trim() === ''">
+        <p class="white-text" />
+      </div>
+      <div
+        v-else
+        class="limit-text"
+      >
+        {{ galleryItem.description }}
+        <q-tooltip
+          anchor="bottom middle"
+          max-width="200px"
+          class="bg-primary"
+        >
+          {{ galleryItem.description }}
+        </q-tooltip>
       </div>
       <div class="row justify-center">
         <algoButton
@@ -136,12 +149,29 @@ export default class GalleryItem extends Vue.with(Props) {
     return this.$store.getters['user/isConnected'];
   }
 
+  /*
+  get openConnectYourWalletModal() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/GET_OPEN_CONNECT_YOUR_WALLET_MODAL'];
+  }
+  */
+
   favoriteClicked(wasLiked: boolean) {
     if (!this.likeClicked) {
       this.likeClicked = true;
-      this.$emit('favoriteClicked');
       if (this.isConnected) {
         wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+      } else {
+        void this.$store.dispatch('user/openConnectYourWalletModal');
+        this.likeClicked = false;
+        /*
+        const checkIfModalIsStillOpen = setInterval(() => {
+          if (!this.openConnectYourWalletModal) {
+            wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+            clearInterval(checkIfModalIsStillOpen);
+          }
+        }, 3000) as unknown as number;
+        */
       }
     }
   }
@@ -200,13 +230,10 @@ export default class GalleryItem extends Vue.with(Props) {
 .container {
   padding: 0 1rem 0 0;
 }
-.limit-text{
-   text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    text-align: left;
-    width: 250px;
+.white-text{
+  height:4px;
 }
+
 .users {
   .q-avatar:not(:first-child) {
     margin-left: -8px;
@@ -239,6 +266,25 @@ export default class GalleryItem extends Vue.with(Props) {
 
   .highest-bid {
     font-size: 1.1rem;
+  }
+
+  .white-text{
+    height:4px;
+  }
+
+  .limit-text {
+    word-break: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 280px;
+  }
+
+  .limit-description{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 280px;
   }
 }
 

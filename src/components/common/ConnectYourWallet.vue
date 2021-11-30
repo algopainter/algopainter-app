@@ -2,7 +2,7 @@
   <q-dialog
     ref="dialog"
     persistent
-    @hide="onDialogHide"
+    @hide="onDialogHide, openAuctionModal"
   >
     <q-card class="q-dialog-plugin q-pa-md">
       <q-card-section class="row q-col-gutter-xl">
@@ -90,7 +90,6 @@ export default class ConnectYourWallet extends Vue.with(Props) {
   async connectToBlockchain(provider: string) {
     try {
       await this.$store.dispatch('user/connectToWallet', provider);
-
       if (this.pageToGoAfterConnected) {
         void this.$router.push(this.pageToGoAfterConnected);
       }

@@ -1,0 +1,17 @@
+export interface IOwnerPirs {
+account: string,
+avatar: string,
+bio: string,
+createdAt: string,
+customProfile: string,
+email: string,
+facebook: null,
+gmail: null,
+instagram: null,
+name: string,
+telegram: null,
+twitter: null,
+type: string,
+updatedAt: string,
+webSite: null,
+}

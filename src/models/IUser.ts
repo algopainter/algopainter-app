@@ -8,4 +8,6 @@ export interface IUser {
   profilePhotoUrl?: string;
   role?: string;
   avatar?: string;
+  customProfile: string;
+  account: string;
 }

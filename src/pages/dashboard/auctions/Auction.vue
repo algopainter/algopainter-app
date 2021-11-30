@@ -1,337 +1,413 @@
 <template>
-  <q-page
-    class="q-page q-gutter-lg q-pb-lg"
-  >
+  <q-page class="q-page q-gutter-lg q-pb-lg">
     <div
-      v-if="loadingAuctionData === false"
-      class="row q-col-gutter-sm"
+      v-if="loading"
+      class="flex flex-center q-pa-xl"
     >
-      <div class="col-12 col-md-6">
-        <div class="row">
-          <div class="col-12 col-md-11">
-            <div class="q-pb-md">
-              <algo-button
-                v-if="isAuctionImageEnabled"
-                :icon="'img:' + distributionSVG"
-                color="primary"
-                outline
-                @click="auctionDistributionBtnClicked()"
-              >
-                <div class="q-pl-sm">
-                  {{ $t('dashboard.auctionPage.auctionDistribution') }}
-                </div>
-              </algo-button>
-              <algo-button
-                v-if="isAuctionDistributionEnabled"
-                color="primary"
-                outline
-                @click="auctionDistributionBtnClicked()"
-              >
-                {{ $t('dashboard.auctionPage.auction') }}
-              </algo-button>
-            </div>
-
-            <q-img
-              v-if="isAuctionImageEnabled"
-              width="100%"
-              class="art-image"
-              :src="auctionData.item.previewImageUrl"
-            />
-
-            <auction-info-chart
-              v-if="isAuctionDistributionEnabled"
-              :values="[44, 100, 13, 33]"
-              width="100%"
-            />
-          </div>
-          <div
-            v-if="isAuctionImageEnabled"
-            class="col-12 col-md-1 q-my-md"
-          >
-            <LikeAnimation
-              :likes="auctionData.item.likes"
-              @favoriteClicked="favoriteClicked"
-            />
-            <div class="icons text-center justify-center">
-              <div class="expand">
-                <q-icon
-                  color="primary"
-                  size="1.7rem"
-                  name="mdi-arrow-expand"
-                />
-              </div>
-            </div>
-          </div>
+      <q-spinner
+        size="80px"
+        color="primary"
+      />
+    </div>
+    <div
+      v-else-if="auction"
+      class="row"
+    >
+      <div class="col-12 col-sm">
+        <q-img
+          :src="auction.item.image"
+          class="img"
+        />
+        <div
+          class="q-mt-sm text-subtitle1 text-justify desktop-only description"
+        >
+          {{ auction.item.description }}
         </div>
       </div>
-      <div
-        class="column justify-between auction q-pl-lg col-12 col-md-5"
-      >
-        <div class="row">
-          <div class="auction-details col-md-8">
-            <div class="name">
-              {{ auctionData.item.title }}
+      <q-separator
+        class="q-mx-lg gt-xs"
+        vertical
+      />
+      <div class="col-12 col-sm-8">
+        <div class="row q-col-gutter-md">
+          <div class="col-12 header title">
+            {{ auction.item.title }}
+            <q-tooltip class="bg-primary">
+              {{ auction.item.title }}
+            </q-tooltip>
+          </div>
+          <div
+            class="col-12 title"
+            color="primary"
+          >
+            {{
+              $t('dashboard.auctionPage.auctionRates', {
+                bidBackRate: auctionBidBackRate,
+                investorPirsRate: itemInvestorPirsRate,
+                creatorPirsRate: collectionCreatorPirsRate,
+              })
+            }}
+          </div>
+          <div class="col-12">
+            <div v-if="auctionEnded">
+              {{
+                $t('dashboard.auctionPage.auctionEnded', {
+                  endDate: endTimeFormatted,
+                })
+              }}
             </div>
             <div
-              class="flex q-gutter-md"
+              v-else
+              class="row"
             >
-              <div
-                v-for="categorie in auctionData.item.tags"
-                :key="categorie"
-                class="keywords "
-              >
-                {{ $t('dashboard.auctionPage.symbol') }}{{ categorie }}
+              <div class="col-auto remaining-time-label on-left">
+                {{ $t('dashboard.auctionPage.auctionRemainingTime') }}
+              </div>
+              <div class="col-auto">
+                <countdown-timer v-bind="remainingTime" />
               </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <q-img
-              width="150px"
-              src="../../../assets/icons/bidback.svg"
-            />
-          </div>
-        </div>
-        <div>
-          <q-tabs
-            v-model="tab"
-            active-color="primary"
-            indicator-color="primary"
-            align="left"
-            :narrow-indicator="true"
-          >
-            <q-tab
-              class="tab"
-              :ripple="false"
+          <div class="col-12">
+            <q-tabs
+              v-model="tab"
+              active-color="primary"
+              align="left"
+              dense
               no-caps
-              name="info"
-              label="Info"
-            />
-            <q-tab
-              class="tab"
-              :ripple="false"
-              no-caps
-              name="bids"
-              label="Bids"
-            />
-            <q-tab
-              class="tab"
-              :ripple="false"
-              no-caps
-              name="history"
-              label="History"
-            />
-          </q-tabs>
-
-          <div class="q-my-md q-mx-sm q-py-xs q-px-md highest-bid">
-            <highest-bid-avatar :bid="auctionData.highestBid" />
-          </div>
-
-          <q-tab-panels
-            v-model="tab"
-          >
-            <q-tab-panel
-              name="info"
-              class="q-pa-sm"
             >
-              <div
-                v-for="(user , i) in auctionData.users"
-                :key="i"
+              <q-tab name="info">
+                {{ $t('dashboard.auctions.info') }}
+              </q-tab>
+              <q-tab name="bids">
+                {{ $t('dashboard.auctions.bids') }}
+              </q-tab>
+              <q-tab name="history">
+                {{ $t('dashboard.auctions.history') }}
+              </q-tab>
+            </q-tabs>
+            <div
+              v-if="auction.highestBid"
+              class="q-mt-md"
+            >
+              <highest-bid-card
+                :bid="auction.highestBid"
+                :token-price-address="auction.minimumBid.tokenPriceAddress"
+              />
+            </div>
+            <q-tab-panels v-model="tab">
+              <q-tab-panel
+                class="q-pa-none q-pt-md"
+                name="info"
               >
-                <div v-if="user.role === 'creator'">
-                  <algo-avatar
-                    class="q-py-md"
-                    :title="user.role"
-                    :image-url="user.avatar"
-                    :sub-title="user.name"
-                  />
-                </div>
-                <div v-if="user.role === 'owner'">
-                  <algo-avatar
-                    class="q-py-md"
-                    :title="user.role"
-                    :image-url="user.avatar"
-                    :sub-title="user.name"
-                    :description="
-                      $t('dashboard.auctionPage.pirsDestination', {
-                        pirs: $n(auctionData.fee.royalties[0].value*10, 'percent'),
-                        role: $t('dashboard.auctionPage.creators').toLowerCase(),
-                      })
-                    "
-                  />
-                </div>
-              </div>
-              <q-separator
-                class="q-pr-xl"
-                spaced="md"
-                color="primary"
-                size="2px"
-              />
-              <algo-avatar
-                class="q-py-md"
-                :title="$t('dashboard.auctionPage.collection')"
-                :image-url="auctionData.item.previewImageUrl"
-                :sub-title="auctionData.item.collectionName"
-                :description="
-                  $t('dashboard.auctionPage.pirsDestination', {
-                    pirs: $n(auctionData.fee.royalties[0].value*10, 'percent'),
-                    role: $t('dashboard.auctionPage.investors').toLowerCase(),
-                  })
-                "
-              />
-            </q-tab-panel>
-
-            <q-tab-panel
-              name="bids"
-              class="q-pa-sm"
-            >
-              <bid-avatar
-                v-for="(bidder,index) in auctionData.bids"
-                :key="index"
-                class="q-py-md"
-                :bid="(bidder)"
-                :fee="auctionData.fee"
-              />
-            </q-tab-panel>
-
-            <q-tab-panel
-              name="history"
-              class="q-pa-sm"
-            >
-              <previous-bid-avatar
-                v-for="(bidder,index) in auctionData.bids"
-                :key="index"
-                class="q-py-md"
-                :bid="bidder"
-              />
-            </q-tab-panel>
-          </q-tab-panels>
-        </div>
-        <div>
-          <q-input
-            v-if="showBidInput"
-            v-model="bidInput"
-            label="Place a Bid"
-          />
-          <div class="q-py-sm">
+                <auction-info :auction="auction" />
+              </q-tab-panel>
+              <q-tab-panel
+                class="q-pa-none q-pt-md"
+                name="bids"
+              >
+                <bids-list :auction="auction" />
+              </q-tab-panel>
+              <q-tab-panel
+                class="q-pa-none q-pt-md"
+                name="history"
+              >
+                <auction-history :auction="auction" />
+              </q-tab-panel>
+            </q-tab-panels>
+          </div>
+          <div class="col-12">
             <algo-button
-              class="text-bold full-width"
-              size="lg"
+              v-if="account === auction.owner"
+              class="full-width q-py-sm q-mt-sm"
               color="primary"
               outline
-              @click="placeBidClicked"
-            >
-              {{ $t('dashboard.auctionPage.placeABid') }}
-            </algo-button>
+              :label="$t('dashboard.auctionPage.cancelAuction')"
+              @click="cancelAuction"
+            />
+            <algo-button
+              v-else
+              class="full-width q-py-sm"
+              color="primary"
+              outline
+              :label="$t('dashboard.auctionPage.placeABid')"
+              @click="placeABidAction"
+            />
           </div>
         </div>
       </div>
     </div>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
+      <delete-auction-status-card
+        :delete-auction-status="deleteAuctionStatus"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
   </q-page>
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-class-component';
-import AuctionInfoChart from 'components/charts/AuctionInfoChart.vue';
-import AlgoAvatar from 'components/common/AlgoAvatar.vue';
-import BidAvatar from 'components/auctions/auction/BidAvatar.vue';
-import HighestBidAvatar from 'components/auctions/auction/HighestBidAvatar.vue';
-import PreviousBidAvatar from 'components/auctions/auction/PreviousBidAvatar.vue';
+import { Vue, Options, Watch } from 'vue-property-decorator';
+import { mapGetters } from 'vuex';
+import moment from 'moment';
+import { Notify } from 'quasar';
+
+import { now } from 'src/helpers/timer';
+import { IAuctionItem } from 'src/models/IAuctionItem';
+import { getAuctionDetails } from 'src/api/auctions';
 import AlgoButton from 'components/common/Button.vue';
-import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
-import { IAuctionItem2 } from 'src/models/IAuctionItem2';
-import { api } from 'src/boot/axios';
+import HighestBidCard from 'components/auctions/auction/HighestBidCard.vue';
+import NewBidDialog from 'components/auctions/auction/NewBidDialog.vue';
+import CountdownTimer from 'components/CountdownTimer.vue';
+
+import AuctionInfo from './tabs/AuctionInfo.vue';
+import BidsList from './tabs/BidsList.vue';
+import AuctionHistory from './tabs/AuctionHistory.vue';
+import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
+
+import { NetworkInfo } from 'src/store/user/types';
+
+import DeleteAuctionStatusCard from 'components/auctions/auction/DeleteAuctionStatusCard.vue';
+
+enum DeletingAuctionStatus {
+  DeleteAuctionAwaitingInput,
+  DeleteAuctionAwaitingConfirmation,
+  DeleteAuctionError,
+  AuctionDeleted,
+}
 
 @Options({
   components: {
-    AuctionInfoChart,
     AlgoButton,
-    BidAvatar,
-    HighestBidAvatar,
-    AlgoAvatar,
-    PreviousBidAvatar,
-    LikeAnimation,
+    HighestBidCard,
+    AuctionInfo,
+    BidsList,
+    AuctionHistory,
+    DeleteAuctionStatusCard,
+    CountdownTimer,
   },
-
+  computed: {
+    ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
+  },
 })
 export default class Auction extends Vue {
-  isAuctionImageEnabled: boolean = true;
-  loadingAuctionData: boolean = true;
-  isAuctionDistributionEnabled: boolean = false;
-  showBidInput: boolean = false;
-  auctionData: IAuctionItem2[] = [];
+  loading: boolean = false;
+  auction: IAuctionItem | null = null;
+  tab: string = 'info';
+  reloadInterval: number | undefined;
+  networkInfo!: NetworkInfo;
+  account!: string;
+  isConnected!: boolean;
+  auctionSystem!: AlgoPainterAuctionSystemProxy;
+  bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
+  displayingStatus: boolean = false;
+  deleteAuctionStatus: DeletingAuctionStatus | null = null;
+  auctionBidBackRate: number = 0;
+  itemInvestorPirsRate: number = 0;
+  collectionCreatorPirsRate: number = 0;
 
-  mounted() {
-    const route = this.$route.params.id;
-    void this.getAuctionData(route);
+  get auctionId(): string {
+    const { id } = this.$route.params;
+
+    return id as string;
   }
 
-  async getAuctionData(route: unknown) {
-    try {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const data = await api.get(`auctions/${route}`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.auctionData = data.data as [];
-      this.loadingAuctionData = false;
-    } catch (e) {
-      console.log('e', e);
+  get expirationDate() {
+    if (!this.auction) {
+      return null;
+    }
+
+    return moment(this.auction.expirationDt);
+  }
+
+  get endTimeFormatted(): string {
+    if (!this.auction || !this.expirationDate) {
+      return '';
+    }
+
+    return this.expirationDate.calendar();
+  }
+
+  get remainingTime() {
+    if (!this.expirationDate) {
+      return {};
+    }
+
+    const timeLeft = moment.duration(this.expirationDate.diff(now.value));
+    const year = timeLeft.years() || 0;
+    const days = timeLeft.days() || 0;
+    const hours = timeLeft.hours() || 0;
+    const minutes = timeLeft.minutes() || 0;
+    const seconds = timeLeft.seconds() || 0;
+
+    return { year, days, hours, minutes, seconds };
+  }
+
+  get auctionEnded(): boolean {
+    if (!this.expirationDate) {
+      return false;
+    }
+
+    return this.expirationDate && this.expirationDate.isBefore(now.value);
+  }
+
+  async cancelAuction() {
+    this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionAwaitingInput;
+    if (this.auction) {
+      if (this.auction.bids.length === 0) {
+        this.displayingStatus = true;
+        await this.auctionSystem
+          .cancelAuction(this.auction.index, this.account)
+          .on('transactionHash', () => {
+            this.deleteAuctionStatus =
+              DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation;
+          })
+          .on('error', () => {
+            this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
+          });
+        this.deleteAuctionStatus = DeletingAuctionStatus.AuctionDeleted;
+      } else {
+        Notify.create({
+          message: "You cannot cancel this auction anymore since there's a bid",
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+      }
     }
   }
 
-  placeBidClicked() {
-    this.showBidInput = !this.showBidInput;
+  created() {
+    void this.getAuctionData();
   }
 
-  auctionDistributionBtnClicked() {
-    this.toggleAuctionDistribution();
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    }
   }
 
-  toggleAuctionDistribution() {
-    this.isAuctionImageEnabled = !this.isAuctionImageEnabled;
-    this.isAuctionDistributionEnabled = !this.isAuctionDistributionEnabled;
+  mounted() {
+    this.reloadInterval = setInterval(() => {
+      void this.loadAuctionDetails();
+    }, 5000) as unknown as number;
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
   }
 
-  favoriteClicked() {
-    this.$emit('favoriteClicked');
+  unmounted() {
+    clearInterval(this.reloadInterval);
   }
 
-  // MOCKING DATA
+  async getBidBackRate() {
+    if (this.auction) {
+      try {
+        this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(
+          this.auction.index,
+        ) / 100;
+      } catch (error) {
+        console.log('Error - getBidBackRate - Auction');
+      }
+    }
+  }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  distributionSVG: string = require('../../../assets/icons/chart-distribution.svg');
+  async getInvestorPirsRate() {
+    if (this.auction) {
+      try {
+        this.itemInvestorPirsRate =
+          await this.bidBackPirsSystem.getInvestorPirsRate(this.auction.index) / 100;
+      } catch (error) {
+        console.log('Error - getInvestorPirsRate - Auction');
+      }
+    }
+  }
 
-  tab: string = 'info';
+  async getCreatorPirsRate() {
+    if (this.auction) {
+      try {
+        this.collectionCreatorPirsRate = await this.bidBackPirsSystem.getCreatorPirsRate(this.auction.index);
+        this.collectionCreatorPirsRate = this.collectionCreatorPirsRate / 100;
+      } catch (error) {
+        console.log('Error - collectionCreatorPirsRate - Auction');
+      }
+    }
+  }
+
+  async loadAuctionDetails() {
+    this.auction = await getAuctionDetails(this.auctionId);
+    void this.getBidBackRate();
+    void this.getInvestorPirsRate();
+    void this.getCreatorPirsRate();
+  }
+
+  async getAuctionData() {
+    try {
+      this.loading = true;
+
+      await this.loadAuctionDetails();
+
+      this.loading = false;
+    } catch {
+      this.loading = false;
+    }
+  }
+
+  placeABidAction() {
+    if (this.isConnected) {
+      this.openPlaceBidDialog();
+    } else {
+      void this.$store.dispatch('user/openConnectYourWalletModal');
+    }
+  }
+
+  openPlaceBidDialog() {
+    this.$q.dialog({
+      component: NewBidDialog,
+      componentProps: {
+        auction: this.auction,
+      },
+    });
+  }
+
+  onCloseStatusDialog() {
+    this.displayingStatus = false;
+
+    if (this.deleteAuctionStatus === DeletingAuctionStatus.AuctionDeleted) {
+      this.$q.notify({
+        type: 'positive',
+        message: this.$t(
+          'dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionDeleted',
+        ),
+      });
+
+      void this.$router.push('/');
+    }
+  }
 }
 </script>
+
 <style lang="scss" scoped>
-.art-image {
-  border-radius: 10px;
+.q-tabs {
+  font-weight: bold;
 }
 
-.auction {
-  border-left: 2px solid $primary;
+.title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  width: 100%;
 }
 
-.auction-details {
-  .name {
-    font-weight: bold;
-    font-size: 2rem;
-  }
-
-  .keywords {
-    font-size: 1.3rem;
-    color: #bdbdbd;
-  }
+.description {
+  word-wrap: break-word;
 }
 
-.highest-bid {
-  background-color: $primary;
-  border-radius: 12px;
-}
-
-.icons {
-  i {
-    cursor: pointer;
-    margin: 10px 12px 8px;
-  }
+.remaining-time-label {
+  align-self: center;
 }
 </style>

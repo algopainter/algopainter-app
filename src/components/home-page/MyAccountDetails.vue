@@ -95,7 +95,7 @@
                 {{ $t('dashboard.homePage.items') }}
               </div>
               <div class="text-h1 text-bold q-py-xl">
-                {{ userItems }}
+                {{ userItems + userOnSale }}
               </div>
             </div>
             <div class="col-12 col-lg-6 text-secondary text-center">
@@ -160,6 +160,7 @@ export default class AccountDetails extends Vue {
   loadingProfile: boolean = true;
 
   userItems = '0';
+  userOnSale: string = '0';
   loadingUserItems: boolean = true;
 
   balance: number = 0;
@@ -183,12 +184,14 @@ export default class AccountDetails extends Vue {
     void this.getProfile();
     void this.getUserItems();
     void this.setAccountBalance();
+    void this.getUserOnSale();
   }
 
   mounted() {
     void this.setAccountBalance();
     this.formattedBalance();
     void this.getProfile();
+    void this.getUserOnSale();
     void this.getUserItems();
   }
 
@@ -223,6 +226,25 @@ export default class AccountDetails extends Vue {
     }
   }
 
+  getUserOnSale() {
+    if (this.isConnected === true) {
+      void this.$store.dispatch({
+        type: 'collections/getUserOnSale',
+        account: this.accountAddress,
+        page: 1,
+        perPage: '9',
+        collectionName: '',
+        currentCollection: '',
+
+      }).then(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        const onSales = this.$store.getters['collections/GET_USER_ON_SALE'];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        this.userOnSale = onSales.count;
+      });
+    }
+  }
+
   async setAccountBalance() {
     if (this.isConnected) {
       this.balance = (
@@ -252,6 +274,7 @@ export default class AccountDetails extends Vue {
 </script>
 
 <style lang="scss" scoped>
+
 .user-info {
   @media (max-width: $breakpoint-xs-max) {
     text-align: center;
@@ -271,8 +294,10 @@ export default class AccountDetails extends Vue {
   }
 }
 .btn-edit{
+  margin-left: 26px;
    @media (max-width: $breakpoint-xs-max){
     width: 100%;
+    margin-left: 1px;
    }
 }
 

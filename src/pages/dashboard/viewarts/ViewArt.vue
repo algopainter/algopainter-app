@@ -106,13 +106,17 @@
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
             </span>
-            <p> {{ image.description }} </p>
+            <p
+              class="text-description"
+            >
+              {{ image.description }}
+            </p>
             <div v-if="image.collectionName === 'Gwei'">
               <p class="text-bold text-primary text-h6">
                 {{ $t('dashboard.viewArt.parameters') }}
               </p>
               <span>{{ $t('dashboard.viewArt.text') }}</span>
-              <span class="text-bold">
+              <span class="text-bold text-description">
                 {{ image.nft.parameters.text }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.randomColor') }}</span>
@@ -139,7 +143,7 @@
               </span><br>
               <span>{{ $t('dashboard.viewArt.created') }}</span>
               <span class="text-bold">
-                {{ image.owner }}
+                {{ image.creator }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.mint') }}</span>
               <span class="text-bold">
@@ -190,6 +194,7 @@ export default class ViewArt extends Vue {
   backgroundChange: boolean = false;
   loadingImage: boolean = true;
   imageUrl: string = '';
+  likeClicked: boolean = false;
 
   mounted() {
     void this.getDetailsData();
@@ -329,9 +334,14 @@ export default class ViewArt extends Vue {
   }
 
   favoriteClicked(wasLiked: boolean) {
-    this.$emit('favoriteClicked');
-    if (this.isConnected) {
-      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    if (!this.likeClicked) {
+      this.likeClicked = true;
+      if (this.isConnected) {
+        wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+      } else {
+        void this.$store.dispatch('user/openConnectYourWalletModal');
+        this.likeClicked = false;
+      }
     }
   }
 
@@ -349,10 +359,13 @@ export default class ViewArt extends Vue {
         (result) => {
           if (result.isFailure) {
             this.like(true);
+            this.likeClicked = false;
           }
+          this.likeClicked = false;
         },
         (error) => {
           console.log('"like" post error: ', error);
+          this.likeClicked = false;
         },
       );
     this.like();
@@ -365,10 +378,13 @@ export default class ViewArt extends Vue {
         (result) => {
           if (result.isFailure) {
             this.like();
+            this.likeClicked = false;
           }
+          this.likeClicked = false;
         },
         (error) => {
           console.log('"like" delete error: ', error);
+          this.likeClicked = false;
         },
       );
     this.like(true);
@@ -418,9 +434,14 @@ export default class ViewArt extends Vue {
     nft: {
       _id: '',
       image: '',
+      index: 1,
       previewImage: '',
       rawImage: '',
       parameters: { name: 'fake' },
+    },
+    pirs: {
+      creatorRate: 0,
+      investorRate: null,
     },
     users: [this.user as IProfile],
     collectionName: '',
@@ -467,6 +488,9 @@ export default class ViewArt extends Vue {
 
 </script>
 <style scoped>
+.text-description{
+  word-wrap: break-word;
+}
 
 .details{
   margin-left: 25px;

@@ -11,6 +11,21 @@ const mutation: MutationTree<CollectionsStateInterface> = {
   SET_COLLECTIONS(state: CollectionsStateInterface, payload) {
     state.collections = payload as [];
   },
+  SET_USER_ON_SALE(state: CollectionsStateInterface, payload) {
+    state.userOnSale = payload as [];
+  },
+  SET_USER_ON_SALE_PUBLIC(state: CollectionsStateInterface, payload) {
+    state.userOnSale = payload as [];
+  },
+  SET_USER_PAST_IMAGES(state: CollectionsStateInterface, payload) {
+    state.userPastImages = payload as [];
+  },
+  SET_USER_PIRS_TAB_IMAGES(state: CollectionsStateInterface, payload) {
+    state.userPirsTabImages = payload as [];
+  },
+  SET_IMAGE_PAST_OWNERS(state: CollectionsStateInterface, payload) {
+    state.imagePastOwners = payload as [];
+  },
 };
 
 export default mutation;

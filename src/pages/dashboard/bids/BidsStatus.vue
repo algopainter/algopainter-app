@@ -47,8 +47,8 @@
           </div>
         </div>
         <div class="col q-gutter-sm">
-          <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
-          <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
+          <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
+          <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
         </div>
       </div>
     </div>

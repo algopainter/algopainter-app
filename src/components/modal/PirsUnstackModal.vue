@@ -262,6 +262,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
             this.$refs.dialog.hide();
             this.$emit('hide');
             this.settingPirsStatus = null;
+            this.unstakeAmount = 0;
           }, 3000);
         });
         this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
@@ -269,13 +270,13 @@ export default class PirsUnstackModal extends Vue.with(Props) {
           this.$refs.dialog.hide();
           this.$emit('hide');
           this.settingPirsStatus = null;
+          this.unstakeAmount = 0;
         }, 3000);
       }
     } catch (e) {
       console.log('error - unstakeAlgop', e);
     } finally {
       this.isCancelDisabled = false;
-      this.unstakeAmount = 0;
       this.isConfirmBtnLoading = false;
       this.isDisabled = true;
     }

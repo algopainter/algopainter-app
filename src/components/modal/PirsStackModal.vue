@@ -303,6 +303,7 @@ export default class PirsStackModal extends Vue.with(Props) {
           this.$refs.dialog.hide();
           this.$emit('hide');
           this.settingPirsStatus = null;
+          this.stakeAmount = 0;
         }, 3000);
       });
       this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
@@ -310,6 +311,7 @@ export default class PirsStackModal extends Vue.with(Props) {
         this.$refs.dialog.hide();
         this.$emit('hide');
         this.settingPirsStatus = null;
+        this.stakeAmount = 0;
       }, 3000);
     } catch (e) {
       console.log('error - stakeAlgop Pirs', e);
@@ -317,7 +319,6 @@ export default class PirsStackModal extends Vue.with(Props) {
       this.isCancelDisabled = false;
       this.isDisabled = true;
       this.isConfirmBtnLoading = false;
-      this.stakeAmount = 0;
     }
   }
 

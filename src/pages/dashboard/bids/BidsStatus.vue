@@ -48,7 +48,7 @@
         </div>
         <div class="col q-gutter-sm">
           <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
-          <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
+          <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
         </div>
       </div>
     </div>
@@ -69,9 +69,8 @@ import { PropType } from 'vue';
 import { Vue, prop, Options } from 'vue-class-component';
 import { mapGetters } from 'vuex';
 import { last } from 'ramda';
-import moment from 'moment';
 
-import { bidStatus, EnumBidStatus, IAuctionItem } from 'src/models/IAuctionItem';
+import { bidStatus, EnumBidStatus, IAuctionItem, isExpired } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
@@ -131,17 +130,7 @@ export default class BidsStatus extends Vue.with(Props) {
   }
 
   get endedAuction() {
-    const dataEndedAuction = this.auctionItem.expirationDt;
-    const momentApi = moment(dataEndedAuction).format('X') as unknown as number;
-    const momentToday = moment().format('X') as unknown as number;
-
-    this.getHighBid();
-
-    if (momentApi <= momentToday) {
-      return true;
-    } else {
-      return false;
-    }
+    return isExpired(this.auctionItem) || this.auctionItem.ended;
   }
 
   get auctionClaimed() {

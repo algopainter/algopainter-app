@@ -446,6 +446,7 @@ export default {
     yourBid: 'Your Bid',
     yourLastBid: 'Your Last Bid',
     bidAgain: 'Bid again',
+    bidWithdraw: 'Withdraw',
     removeBid: 'Remove your bid',
     of: ',',
   },

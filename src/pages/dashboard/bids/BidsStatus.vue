@@ -49,6 +49,30 @@
         <div class="col q-gutter-sm">
           <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
           <div v-if="hasReturn">
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid')" @click="claimBid" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="curBidStatus === EnumBidStatusType.EndedWithdraw">
+      <div class="flex justify-center">
+        <div class="text-negative text-bold q-mr-sm">
+          {{ $t('dashboard.bid.auctionEnd') }}
+        </div>
+        <q-icon class="text-negative" size="xs" name="mdi-timer" />
+      </div>
+      <div class="text-h6 text-bold text-center justify-center q-my-md">
+        <div class="q-my-md">
+          {{ $t('dashboard.bid.yourLastBid') }}
+          <div class="row justify-center">
+            {{ amountToReturn }}
+            <div class="q-ml-sm">
+              {{ auctionItem.highestBid.tokenSymbol }}
+            </div>
+          </div>
+        </div>
+        <div class="col q-gutter-sm">
+          <div v-if="hasReturn">
             <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
           </div>
         </div>
@@ -156,6 +180,10 @@ export default class BidsStatus extends Vue.with(Props) {
 
   get hasReturn() : boolean {
     return this.auctionItem.returns && this.auctionItem.returns[this.userAccount] > 0;
+  }
+
+  get amountToReturn() : string {
+    return this.bidCorreting(this.auctionItem.returns[this.userAccount]);
   }
 
   get coinDetails() {

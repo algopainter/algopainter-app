@@ -447,7 +447,7 @@ export default {
     yourLastBid: 'Your Last Bid',
     bidAgain: 'Bid again',
     bidWithdraw: 'Withdraw my bid',
-    removeBid: 'Remove your bid',
+    removeBid: 'Remove my bid',
     of: ',',
   },
   stackModalAlgop: {

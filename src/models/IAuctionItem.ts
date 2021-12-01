@@ -90,6 +90,7 @@ export const EnumBidStatus = {
   Winning : 1, //The current account is winning the auction
   OutBidded : 2, //The current account has been outbidded and the action still running
   Winner : 3, //The current account won the auction,
+  EndedWithdraw : 4, //The current account won the auction,
 };
 
 export function isExpired(auction: IAuctionItem) {
@@ -109,6 +110,10 @@ export function bidStatus(auction: IAuctionItem, account: string): number {
   if (auction.highestBid.account.toLocaleLowerCase() === account.toLocaleLowerCase() &&
     auction.ended === false && !isExpired(auction)) {
     return EnumBidStatus.Winning;
+  }
+
+  if (auction.returns && auction.returns[account] > 0 && (auction.ended === true || isExpired(auction))) {
+    return EnumBidStatus.EndedWithdraw;
   }
 
   return EnumBidStatus.OutBidded;

@@ -97,7 +97,7 @@ export default {
   },
   auctions: {
     title: 'Auctions',
-    hotBids: 'Auctions 🔥',
+    hotBids: 'Auctions',
     highestBid: 'Highest bid {highestBid}',
     minimumBid: 'Minimum bid {highestBid}',
     currentBalance: 'Your Balance:',

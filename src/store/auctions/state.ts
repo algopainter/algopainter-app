@@ -15,6 +15,7 @@ function state(): AuctionStateInterface {
     pirsAuction: [],
     openPirsModal: false,
     openBidBackSimulatorModal: false,
+    openPirsSimulatorModal: false,
     auctionInfo: undefined,
   };
 }

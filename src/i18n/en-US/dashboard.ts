@@ -134,6 +134,8 @@ export default {
     bidBackModalSimulator: {
       title: 'Simulator',
       lastBid: 'Last Bid',
+      auctionRate: 'BidBack Rate',
+      auctionRatePlaceholder: '0.00%',
       lastBidValue: '{highestBid} {auctionCurrency}',
       returnBtn: 'Cancel',
       interactionBtn: 'Staking',
@@ -150,6 +152,21 @@ export default {
       algop: '$ALGOP',
       yourBalance: 'Your balance: ',
       returnBtn: 'Return',
+    },
+    pirsModalSimulator: {
+      title: 'Simulator',
+      lastBid: 'Last Bid',
+      auctionRate: 'Pirs Rate',
+      auctionRatePlaceholder: '0.00%',
+      lastBidValue: '{highestBid} {auctionCurrency}',
+      returnBtn: 'Cancel',
+      interactionBtn: 'Staking',
+      algop: '$ALGOP',
+      rules: {
+        noMoney: 'You cannot stake more than you have in you wallet.',
+        moreThanZero: 'You must stake an amount bigger than zero.',
+        auctionEnded: 'This auction is over. You can no longer stake.',
+      },
     },
   },
   sellYourArt: {
@@ -397,6 +414,7 @@ export default {
       harvestMsg: 'Withdrawal of the winnings will only be available when the winner or seller performs the withdrawal.',
       stakedAlgop: 'ALGOP stake',
       withdrawAmount: 'You can withdraw {amount} ALGOP of PIRS',
+      pirsSimulatorBtn: 'Simulator',
       symbol: '#',
       earned: 'Prize earned',
       lastText: 'There is no bid so far',

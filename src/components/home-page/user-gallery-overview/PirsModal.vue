@@ -93,6 +93,7 @@ export default class PirsModal extends Vue {
   userBalance: number = 0;
   formattedBalance: string = '';
   totalPirsStaked: number = 0;
+  auction: IAuctionItem | null = null;
 
   pastOwnersList: IUserOwner[] = [];
   loadingTable: boolean = true;
@@ -128,8 +129,6 @@ export default class PirsModal extends Vue {
     }
     void this.setAccountBalance();
   }
-
-  auction: IAuctionItem | null = null;
 
   getAuctionPirs() {
     void this.$store.dispatch({

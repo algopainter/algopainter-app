@@ -44,12 +44,6 @@ export default class Bids extends Vue {
 
   reloadInterval?: ReturnType<typeof setInterval> | number;
 
-  get auctionBidsFiltered() {
-    return this.auctionsBid.filter((auction: IAuctionItem) => {
-      return !auction.ended;
-    });
-  }
-
   @Watch('accountAdress')
   onPropertyChanged() {
     this.getBids();

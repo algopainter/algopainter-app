@@ -48,7 +48,9 @@
         </div>
         <div class="col q-gutter-sm">
           <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
-          <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
+          <div v-if="hasReturn">
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
+          </div>
         </div>
       </div>
     </div>
@@ -117,10 +119,6 @@ export default class BidsStatus extends Vue.with(Props) {
   endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
   removeBidStatus: RemoveBidStatus = RemoveBidStatus.RemoveBidAwaitingInput;
 
-  beforeMount() {
-    void this.myBids;
-  }
-
   get EnumBidStatusType() : typeof EnumBidStatus {
     return EnumBidStatus;
   }
@@ -156,23 +154,8 @@ export default class BidsStatus extends Vue.with(Props) {
     return lastBid as number;
   }
 
-  get myBids() {
-    try {
-      const getBids = this.auctionItem.returns;
-      const account = this.userAccount;
-      const getBidsKeys = Object.keys(getBids);
-      getBidsKeys.forEach((key) => {
-        if (key === account) {
-          const BidsKey = getBids[key as unknown as number] as unknown as number;
-          this.myBidsResult = this.bidCorreting(BidsKey);
-          const coin = this.auctionItem.bids[0].tokenSymbol;
-          this.btnResult = this.$t('Claim: ' + this.myBidsResult + ' ' + coin);
-        }
-      });
-    } catch (error) {
-    }
-
-    return this.btnResult;
+  get hasReturn() : boolean {
+    return this.auctionItem.returns && this.auctionItem.returns[this.userAccount] > 0;
   }
 
   get coinDetails() {

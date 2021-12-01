@@ -220,8 +220,12 @@ onPropertyChanged() {
     if (this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
       if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
         this.formatTime();
-        // this.isfinish = true;
-        window.location.reload();
+        //Reload bids page
+        this.$store.dispatch({
+          type: 'auctions/getBids',
+          account: this.accountAdress,
+          forBids: true,
+        }).catch(console.error);
       }
       this.stopCount = true;
     } else {

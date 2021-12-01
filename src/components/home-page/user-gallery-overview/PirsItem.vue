@@ -175,14 +175,14 @@
             label="-"
             color="primary"
             class="btn-staked"
-            :disable="disableUnstackBtn"
+            :disable="disableUnstackBtn || isEnded"
             @click="unstackCoin()"
           />
           <algo-button
             label="+"
             color="primary"
             class="btn-staked"
-            :disable="art.ended"
+            :disable="isEnded"
             @click="stackCoin()"
           />
           <pirs-stack-modal
@@ -385,7 +385,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   getUserStackedPirs() {
     this.algopStacked = this.art.bidbacks[this.account] || 0;
-    this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
+    this.disableUnstackBtn = this.algopStacked <= 0 || this.isEnded;
     this.showHarvestBtn = this.algopStacked > 0 && this.art.ended && this.imagePirsRate > 0;
     this.showHarvestMsg = this.algopStacked > 0 && !this.art.ended && this.imagePirsRate > 0;
   }

@@ -49,7 +49,7 @@
           :suffix="$t('dashboard.auctions.pirsModalSimulator.algop')"
           :placeholder="formattedBalance"
           :bind="validateInput()"
-          @click="getImagePastOwners()"
+          @blur="getImagePastOwners()"
         />
       </div>
       <div class="q-pa-md">
@@ -143,7 +143,7 @@
           color="primary"
           :disabled="isDisabled"
           :loading="isConfirmBtnLoading"
-          @blur="stakeAlgop()"
+          @click="stakeAlgop()"
         />
       </div>
     </q-card>

@@ -127,14 +127,14 @@
             label="-"
             color="primary"
             class="btn-staked"
-            :disable="disableUnstackBtn"
+            :disable="disableUnstackBtn || isEnded"
             @click="unstackCoin()"
           />
           <algo-button
             label="+"
             color="primary"
             class="btn-staked"
-            :disable="art.ended"
+            :disable="isEnded"
             @click="stackCoin()"
           />
           <stack-modal-algop
@@ -338,7 +338,7 @@ export default class gallerySelect extends Vue.with(Props) {
   getUserStackedBidBack() {
     this.algopStacked = this.art.bidbacks[this.account] || 0;
 
-    this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
+    this.disableUnstackBtn = this.algopStacked <= 0 || this.isEnded;
     this.showHarvestBtn = this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
     this.showHarvestMsg = !this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
   }

@@ -318,6 +318,7 @@ export default class MyPaint extends Vue.with(Props) {
               this.$refs.dialog.hide();
               this.$emit('hide');
               this.placingBidBackStatus = null;
+              this.unstakeAmount = 0;
             }, 3000);
           });
         this.placingBidBackStatus =
@@ -326,13 +327,13 @@ export default class MyPaint extends Vue.with(Props) {
           this.$refs.dialog.hide();
           this.$emit('hide');
           this.placingBidBackStatus = null;
+          this.unstakeAmount = 0;
         }, 3000);
       }
     } catch (e) {
       console.log('error - stakeAlgop unstakeAlgop', e);
     } finally {
       this.isCancelDisabled = false;
-      this.unstakeAmount = 0;
       this.isConfirmBtnLoading = false;
       this.isDisabled = true;
     }

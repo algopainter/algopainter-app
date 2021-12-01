@@ -1,27 +1,12 @@
 <template>
   <div v-if="bidOff === false">
-    <q-card
-      class="row justify-between container-bids"
-      bordered
-    >
-      <div
-        class="col-xs-12 col-sm-12 col-md-7"
-      >
-        <BidsInfor
-          :bids-auctions="bid"
-          :index="index"
-        />
+    <q-card class="row justify-between container-bids" bordered>
+      <div class="col-xs-12 col-sm-12 col-md-7">
+        <BidsInfor :bids-auctions="bid" :index="index" />
       </div>
-      <q-separator
-        vertical
-        inset
-      />
-      <div
-        class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box"
-      >
-        <bids-status
-          :bids-auctions="bid"
-        />
+      <q-separator vertical inset />
+      <div class="col-xs-12 col-sm-12 col-md-4 row items-center justify-center box">
+        <BidsStatus :auction-item="bid" />
       </div>
     </q-card>
   </div>
@@ -86,40 +71,33 @@ export default class BidsPage extends Vue.with(Props) {
           this.haveReturns = false;
         }
       });
-    } catch (error) {
-      this.haveReturns = false;
-    } finally {
+
       if (dateAuction && this.haveReturns === false) {
         this.bidOff = false;
-        // eslint-disable-next-line no-unsafe-finally
         return false;
       } else if (dateAuction && this.haveReturns === true) {
         this.bidOff = false;
-        // eslint-disable-next-line no-unsafe-finally
         return false;
       } else if (dateAuction === false && this.haveReturns === false) {
         if (this.bid.ended === false) {
           if (this.bid.highestBid.account !== this.accountAdress) {
             this.bidOff = true;
-            // eslint-disable-next-line no-unsafe-finally
             return true;
           }
           this.bidOff = false;
-          // eslint-disable-next-line no-unsafe-finally
           return false;
         }
         this.bidOff = true;
-        // eslint-disable-next-line no-unsafe-finally
         return true;
       } else if (dateAuction === false && this.haveReturns === true) {
         this.bidOff = false;
-        // eslint-disable-next-line no-unsafe-finally
         return false;
       } else {
         this.bidOff = true;
-        // eslint-disable-next-line no-unsafe-finally
         return true;
       }
+    } catch (error) {
+      this.haveReturns = false;
     }
   }
 }

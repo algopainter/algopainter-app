@@ -103,18 +103,30 @@ module.exports = {
     'space-before-function-paren': ['warn', 'never'],
     'comma-dangle': ['warn', 'always-multiline'],
     'eol-last': ['warn', 'always'],
-    'max-len': ['warn', { 'code': 160 }],
+    'max-len': ['warn', { 'code': 270 }],
     'no-trailing-spaces': 'warn',
     'quotes': ['warn', 'single', { avoidEscape: true }],
 
+    'spaced-comment': 'off',
+    'key-spacing': 'off',
+
     // Vue
     'vue/component-name-in-template-casing': ['error', 'kebab-case'],
+    'vue/max-attributes-per-line': ["error", {
+      "singleline": {
+        "max": 5
+      },      
+      "multiline": {
+        "max": 5
+      }
+    }],
 
     // TypeScript
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'

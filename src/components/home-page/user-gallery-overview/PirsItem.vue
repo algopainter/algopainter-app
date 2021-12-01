@@ -40,7 +40,7 @@
               {{ $t('dashboard.gallery.pirsTab.lastBids') }}
             </div>
             <p class="coin text-h6">
-              {{ lastBid }}
+              {{ lastBid + ' ' + art.minimumBid.tokenSymbol }}
             </p>
           </div>
           <div class="text-bold row justify-start text-end">
@@ -158,14 +158,14 @@
             label="-"
             color="primary"
             class="btn-staked"
-            :disable="disableUnstackBtn"
+            :disable="disableUnstackBtn || isEnded"
             @click="unstackCoin()"
           />
           <algo-button
             label="+"
             color="primary"
             class="btn-staked"
-            :disable="art.ended"
+            :disable="isEnded"
             @click="stackCoin()"
           />
           <pirs-stack-modal v-model="openModal" :art="art" :item-pirs="art" />
@@ -341,9 +341,9 @@ export default class PirsItem extends Vue.with(Props) {
         highestBidAmount,
         this.coinDetails.decimalPlaces
       );
-      this.lastBid = `${bidAmount.toFixed(2)} ${
-        this.art.minimumBid.tokenSymbol
-      }`;
+      this.lastBid = this.$n(bidAmount, 'decimal', {
+        maximumFractionDigits: this.coinDetails.decimalPlaces,
+      } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
     } else {
       this.lastBid = 'There is no bid so far';
     }

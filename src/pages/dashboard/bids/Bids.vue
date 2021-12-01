@@ -1,23 +1,12 @@
 <template>
-  <div
-    v-if="loading === false"
-  >
-    <div v-if="bidStatus === false">
-      <div
-        v-for="(bid, index) in auctionsBid"
-        :key="index"
-      >
-        <Bids-page
-          :bid="bid"
-          :account-adress="accountAdress"
-          :index="index"
-        />
+  <div v-if="loading === false">
+    <div v-if="auctionsBid.length > 0">
+      <div v-for="(bid, index) in auctionsBid" :key="index">
+        <Bids-page :bid="bid" :account-adress="accountAdress" :index="index" />
       </div>
     </div>
     <div v-else>
-      <div
-        class="text-h5 q-mt-lg text-primary text-center"
-      >
+      <div class="text-h5 q-mt-lg text-primary text-center">
         {{ $t('dashboard.bid.noBids') }}
       </div>
       <div class="text-bold text-h5 text-center">
@@ -39,6 +28,7 @@ import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import BidsPage from './BidsPage.vue';
+import { MutationPayload } from 'vuex';
 
 @Options({
   components: {
@@ -48,58 +38,45 @@ import BidsPage from './BidsPage.vue';
 
 export default class Bids extends Vue {
   auctionsBid: IAuctionItem[] = [];
+  auctionsBidId: string[] = [];
   loading: boolean = true;
   dias: number = 0;
 
-  reloadInterval: number = 0;
-
-  get auctionBidsFiltered() {
-    return this.auctionsBid.filter((auction: IAuctionItem) => {
-      return !auction.ended;
-    });
-  }
+  reloadInterval?: ReturnType<typeof setInterval> | number;
 
   @Watch('accountAdress')
   onPropertyChanged() {
-    void this.getBids();
+    this.getBids();
   }
 
   mounted() {
-    void this.getBids();
+    this.$store.subscribe((mutation: MutationPayload) => {
+      if (mutation.type === 'auctions/SET_BIDS') {
+        this.auctionsBid = mutation.payload as IAuctionItem[];
+        this.loading = false;
+      }
+    });
 
+    this.getBids();
     this.reloadInterval = setInterval(() => {
-      void this.getBids();
-    }, 5000) as unknown as number;
+      this.getBids();
+    }, 5000);
   }
 
   unmounted() {
-    clearInterval(this.reloadInterval);
+    clearInterval(this.reloadInterval as number);
   }
 
   get accountAdress() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.$store.getters['user/account'] as string;
   }
 
   getBids() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/getBids',
       account: this.accountAdress,
-    }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.auctionsBid = this.$store.getters['auctions/getBids'] as IAuctionItem[];
-
-      this.loading = false;
-    });
-  }
-
-  get bidStatus() {
-    for (let index = 0; index < this.auctionsBid.length; index++) {
-      if (this.auctionsBid[index].ended === false) {
-        return false;
-      }
-    }
-    return true;
+      forBids: true,
+    }).catch(console.error);
   }
 }
 </script>

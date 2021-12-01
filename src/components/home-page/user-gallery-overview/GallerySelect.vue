@@ -27,7 +27,7 @@
           {{ $t('dashboard.gallery.bidBackTab.lastBid') }}
         </div>
         <p class="coin text-h6">
-          {{ lastBid }}
+          {{ getLastBid + ' ' + art.highestBid.tokenSymbol }}
         </p>
       </div>
       <div class="text-bold text-h6">
@@ -127,14 +127,14 @@
             label="-"
             color="primary"
             class="btn-staked"
-            :disable="disableUnstackBtn"
+            :disable="disableUnstackBtn || isEnded"
             @click="unstackCoin()"
           />
           <algo-button
             label="+"
             color="primary"
             class="btn-staked"
-            :disable="art.ended"
+            :disable="isEnded"
             @click="stackCoin()"
           />
           <stack-modal-algop
@@ -287,7 +287,6 @@ export default class gallerySelect extends Vue.with(Props) {
 
   mounted() {
     void this.getBidBackPercentage();
-    void this.getLastBid();
     void this.getTime();
     void this.formatTime();
   }
@@ -306,13 +305,15 @@ export default class gallerySelect extends Vue.with(Props) {
     }
   }
 
-  getLastBid() {
+  get getLastBid() {
     const bidAmount = blockchainToCurrency(
       this.art.highestBid.netAmount,
       this.coinDetails.decimalPlaces,
     );
 
-    this.lastBid = `${bidAmount.toFixed(2)} ${this.art.highestBid.tokenSymbol}`;
+    return this.$n(bidAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   get coinDetails() {
@@ -337,7 +338,7 @@ export default class gallerySelect extends Vue.with(Props) {
   getUserStackedBidBack() {
     this.algopStacked = this.art.bidbacks[this.account] || 0;
 
-    this.disableUnstackBtn = this.algopStacked <= 0 || this.art.ended;
+    this.disableUnstackBtn = this.algopStacked <= 0 || this.isEnded;
     this.showHarvestBtn = this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
     this.showHarvestMsg = !this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
   }

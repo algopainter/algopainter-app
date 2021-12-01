@@ -6,7 +6,7 @@
   >
     <q-card
       class="q-pa-lg"
-      style="max-width: 750px;width:650px;"
+      style="max-width: 750px;width:850px;"
     >
       <div class="row justify-between">
         <p class="row text-h5 text-bold">
@@ -210,7 +210,7 @@ interface IUserBid {
   name: string | null;
   account: string | unknown;
   formattedAccount: string | unknown;
-  highestBid: number;
+  highestBid: string;
   auctionCurrency: string;
   stakedAlgop: number | unknown;
   stakedAlgopPercentage: number;
@@ -274,7 +274,7 @@ export default class BidBackModalSimulator extends Vue {
       name: 'highestBid',
       required: true,
       label: 'Bid',
-      field: (userBid: { highestBid: number }) => userBid.highestBid.toFixed(2),
+      field: (userBid: { highestBid: number }) => userBid.highestBid,
       sortable: true,
     },
     {
@@ -448,8 +448,36 @@ export default class BidBackModalSimulator extends Vue {
     return coin;
   }
 
+  get getLastBid() {
+    const bidAmount = blockchainToCurrency(
+      this.getAuctionInfo.highestBid.netAmount,
+      this.coinDetails.decimalPlaces,
+    );
+
+    return this.$n(bidAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
+  bidvalue(bid: number) {
+    const bidAmount = blockchainToCurrency(
+      bid,
+      this.coinDetails.decimalPlaces,
+    );
+
+    return this.$n(bidAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }
+
   formatHighestBidAmount() {
-    return blockchainToCurrency(this.getAuctionInfo.highestBid.netAmount, this.coinDetails.decimalPlaces);
+    const bidBackAmout = blockchainToCurrency(
+      this.getAuctionInfo.highestBid.netAmount,
+      this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
+    return this.$n(bidBackAmout, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
   }
 
   async setTableInfo(isASimulation: boolean = true) {
@@ -472,7 +500,15 @@ export default class BidBackModalSimulator extends Vue {
       const formattedAccount = this.formatAccount(account);
       const name = this.formatName(bid.name, bid.account);
       this.auctionCurrency = bid.tokenSymbol;
-      const highestBid = bid.netAmount / 1000000000000000000;
+      const amountBid = blockchainToCurrency(
+        bid.netAmount,
+        this.coinDetails.decimalPlaces,
+      );
+      const formatAmount = this.$n(amountBid, 'decimal', {
+        maximumFractionDigits: this.coinDetails.decimalPlaces,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
+      const highestBid = formatAmount;
 
       if (!bidderAccounts.includes(account)) {
         bidderAccounts.push(account);
@@ -487,7 +523,7 @@ export default class BidBackModalSimulator extends Vue {
           stakedAlgopPercentage: auctionBidsReversed.length === 1 && isASimulation ? 100 : 0,
           bidBackPrize:
             auctionBidsReversed.length === 1 && isASimulation
-              ? `${(this.formatHighestBidAmount() * this.auctionBidBackRate).toFixed(2)} ${this.auctionCurrency}`
+              ? `${(this.formatHighestBidAmount())} ${this.auctionCurrency}`
               : `0.000 ${this.auctionCurrency}`,
         });
       }
@@ -528,11 +564,18 @@ export default class BidBackModalSimulator extends Vue {
         });
       });
 
-      const auctionBidBackPrize = this.formatHighestBidAmount() * this.auctionBidBackRate;
+      const auctionBidBackPrize = blockchainToCurrency(
+        this.getAuctionInfo.highestBid.netAmount,
+        this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
 
       Object.keys(this.getAuctionInfo.bidbacks).forEach(() => {
         this.userBid.forEach((bidder) => {
-          bidder.bidBackPrize = `${((bidder.stakedAlgopPercentage / 100) * auctionBidBackPrize).toFixed(2)} ${this.auctionCurrency}`;
+          const valuePrize = ((bidder.stakedAlgopPercentage / 100) * auctionBidBackPrize);
+          const formatPrize = this.$n(valuePrize, 'decimal', {
+            maximumFractionDigits: this.coinDetails.decimalPlaces,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } as any);
+          bidder.bidBackPrize = `${formatPrize} ${this.auctionCurrency}`;
         });
       });
     }

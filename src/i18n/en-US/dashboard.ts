@@ -97,7 +97,7 @@ export default {
   },
   auctions: {
     title: 'Auctions',
-    hotBids: 'Auctions 🔥',
+    hotBids: 'Auctions',
     highestBid: 'Highest bid {highestBid}',
     minimumBid: 'Minimum bid {highestBid}',
     currentBalance: 'Your Balance:',
@@ -464,7 +464,8 @@ export default {
     yourBid: 'Your Bid',
     yourLastBid: 'Your Last Bid',
     bidAgain: 'Bid again',
-    removeBid: 'Remove your bid',
+    bidWithdraw: 'Withdraw my bid',
+    removeBid: 'Remove my bid',
     of: ',',
   },
   stackModalAlgop: {

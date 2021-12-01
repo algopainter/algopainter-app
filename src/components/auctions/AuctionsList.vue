@@ -1,8 +1,11 @@
 <template>
   <div class="q-gutter-lg q-pb-lg">
     <div>
-      <div class="header">
-        {{ $t('dashboard.auctions.hotBids') }}
+      <div class="q-mb-sm">
+        <div class="header" style="display: inline;">
+          {{ $t('dashboard.auctions.hotBids') }}
+        </div>
+        <div style="font-size: 1.8rem; display: inline;">🔥</div>
       </div>
       <div v-if="notHaveHot || auctions.length === 0">
         <p class="q-mt-lg text-primary text-bold text-h5">

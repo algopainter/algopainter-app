@@ -1,176 +1,91 @@
 <template>
-  <div
-    class="row justify-center"
-  >
-    <div
-      v-if="auctionClaimed === false && endedAuction === true && isMyBid === true"
-      class="text-bold text-center q-my-md"
-    >
-      <div>
-        {{ $t('dashboard.bid.youWon') }}
-      </div>
+  <div class="row justify-center">
+    <div v-if="curBidStatus === EnumBidStatusType.Winner" class="text-bold text-center q-my-md">
+      {{ $t('dashboard.bid.youWon') }}
       <div class="box q-mb-md">
         {{ $t('dashboard.bid.congratulations') }}
       </div>
       <div class="row justify-center">
-        <algo-button
-          size="lg"
-          color="primary"
-          :label=" $t('dashboard.bid.claim')"
-          @click="endAuction"
-        />
+        <algo-button size="lg" color="primary" :label=" $t('dashboard.bid.claim')" @click="endAuction" />
       </div>
     </div>
-    <div
-      v-else-if="endedAuction === false && isMyBid === true"
-    >
-      <div
-        class="text-bold text-positive flex justify-center"
-      >
+    <div v-if="curBidStatus === EnumBidStatusType.Winning">
+      <div class="text-bold text-positive flex justify-center">
         <div class="q-mr-sm">
           {{ $t('dashboard.bid.win') }}
         </div>
-        <div>
-          <q-icon
-            size="xs"
-            name="mdi-check-circle"
-          />
-        </div>
+        <q-icon size="xs" name="mdi-check-circle" />
       </div>
       <div class="text-h6 text-bold text-center justify-center q-my-md">
-        <div>
-          {{ $t('dashboard.bid.yourBid') }}
-        </div>
+        {{ $t('dashboard.bid.yourBid') }}
         <div class="row justify-center ">
-          <div>
-            {{ bidCorreting(bidsAuctions.highestBid.netAmount) }}
-          </div>
+          {{ bidCorreting(auctionItem.highestBid.netAmount) }}
           <div class="q-ml-sm">
-            {{ bidsAuctions.highestBid.tokenSymbol }}
+            {{ auctionItem.highestBid.tokenSymbol }}
           </div>
         </div>
       </div>
       <div class="row justify-center">
-        <algo-button
-          size="lg"
-          color="primary"
-          :label="$t('dashboard.bid.bidAgain')"
-          :to="`/auctions/${bidsAuctions._id}`"
-        />
+        <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
       </div>
     </div>
-    <div
-      v-else-if="endedAuction === false && isMyBid === false"
-    >
-      <div
-        class="text-negative flex justify-center"
-      >
+    <div v-if="curBidStatus === EnumBidStatusType.OutBidded">
+      <div class="text-negative flex justify-center">
         <div class="text-bold q-mr-sm">
           {{ $t('dashboard.bid.outbid') }}
         </div>
-        <q-icon
-          size="xs"
-          name="mdi-alpha-x-circle"
-        />
+        <q-icon size="xs" name="mdi-alpha-x-circle" />
       </div>
       <div class="text-h6 text-bold text-center justify-center q-my-md">
-        <div
-          v-if="myBidsResult !== undefined"
-          class="q-my-md"
-        >
-          {{ $t('dashboard.bid.yourBid') }}
-          <div class="row justify-center">
-            <div>
-              {{ bidCorreting(MyHighBid) }}
-            </div>
-            <div class="q-ml-sm">
-              {{ bidsAuctions.highestBid.tokenSymbol }}
-            </div>
-          </div>
-        </div>
-        <div v-else>
+        <div class="q-my-md">
           {{ $t('dashboard.bid.yourLastBid') }}
           <div class="row justify-center">
-            <div>
-              {{ bidCorreting(MyHighBid) }}
-            </div>
-            {{ myBidsResult }}
+            {{ bidCorreting(MyHighBid) }}
             <div class="q-ml-sm">
-              {{ bidsAuctions.highestBid.tokenSymbol }}
+              {{ auctionItem.highestBid.tokenSymbol }}
             </div>
           </div>
         </div>
         <div class="col q-gutter-sm">
-          <div>
-            <algo-button
-              size="lg"
-              color="primary"
-              :label="$t('dashboard.bid.bidAgain')"
-              :to="`/auctions/${bidsAuctions._id}`"
-            />
-          </div>
-          <div v-if="myBidsResult !== undefined">
-            <algo-button
-              size="lg"
-              color="primary"
-              :label="myBids"
-              @click="claimBid"
-            />
+          <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
+          <div v-if="hasReturn">
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid')" @click="claimBid" />
           </div>
         </div>
       </div>
     </div>
-    <div
-      v-else-if="endedAuction === true"
-    >
-      <div class="row text-h6 text-bold text-center justify-center q-my-md">
-        <div>
-          {{ $t('dashboard.bid.yourBid') }}
-          <div class="row justify-center q-my-md text-bold">
-            <div>
-              {{ bidCorreting(MyHighBid) }}
-            </div>
-            <div class="q-ml-sm ">
-              {{ bidsAuctions.highestBid.tokenSymbol }}
+    <div v-if="curBidStatus === EnumBidStatusType.EndedWithdraw">
+      <div class="flex justify-center">
+        <div class="text-negative text-bold q-mr-sm">
+          {{ $t('dashboard.bid.auctionEnd') }}
+        </div>
+        <q-icon class="text-negative" size="xs" name="mdi-timer" />
+      </div>
+      <div class="text-h6 text-bold text-center justify-center q-my-md">
+        <div class="q-my-md">
+          {{ $t('dashboard.bid.yourLastBid') }}
+          <div class="row justify-center">
+            {{ amountToReturn }}
+            <div class="q-ml-sm">
+              {{ auctionItem.highestBid.tokenSymbol }}
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        <algo-button
-          size="lg"
-          color="primary"
-          :label="$t('dashboard.bid.removeBid')"
-          @click="withdraw"
-        />
+        <div class="col q-gutter-sm">
+          <div v-if="hasReturn">
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
+          </div>
+        </div>
       </div>
     </div>
-    <q-dialog
-      v-model="displayingStatus"
-      persistent
-    >
-      <get-art-end-auction
-        :end-auction-status="endAuctionStatus"
-        @request-close="onCloseStatusDialog"
-      />
+    <q-dialog v-model="displayingStatus" persistent>
+      <get-art-end-auction :end-auction-status="endAuctionStatus" @request-close="onCloseStatusDialog" />
     </q-dialog>
-    <q-dialog
-      v-model="displayingRemoveBid"
-      persistent
-    >
-      <remove-bid
-        :remove-bid-status="removeBidStatus"
-        @request-close="onCloseStatusDialog"
-      />
+    <q-dialog v-model="displayingRemoveBid" persistent>
+      <remove-bid :remove-bid-status="removeBidStatus" @request-close="onCloseStatusDialog" />
     </q-dialog>
-    <q-dialog
-      v-model="displayingClaimBid"
-      persistent
-    >
-      <claim-bid
-        :remove-bid-status="removeBidStatus"
-        @request-close="onCloseStatusDialog"
-      />
+    <q-dialog v-model="displayingClaimBid" persistent>
+      <claim-bid :remove-bid-status="removeBidStatus" @request-close="onCloseStatusDialog" />
     </q-dialog>
   </div>
 </template>
@@ -180,9 +95,8 @@ import { PropType } from 'vue';
 import { Vue, prop, Options } from 'vue-class-component';
 import { mapGetters } from 'vuex';
 import { last } from 'ramda';
-import moment from 'moment';
 
-import { IAuctionItem } from 'src/models/IAuctionItem';
+import { bidStatus, EnumBidStatus, IAuctionItem, isExpired } from 'src/models/IAuctionItem';
 import AlgoButton from 'components/common/Button.vue';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
@@ -193,7 +107,7 @@ import RemoveBid from 'components/auctions/auction/RemoveBid.vue';
 import ClaimBid from 'components/auctions/auction/ClaimBid.vue';
 
 class Props {
-  bidsAuctions= prop({
+  auctionItem = prop({
     type: Object as PropType<IAuctionItem>,
     required: true,
   })
@@ -229,35 +143,24 @@ export default class BidsStatus extends Vue.with(Props) {
   endAuctionStatus: EndAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
   removeBidStatus: RemoveBidStatus = RemoveBidStatus.RemoveBidAwaitingInput;
 
-  beforeMount() {
-    void this.myBids;
+  get EnumBidStatusType() : typeof EnumBidStatus {
+    return EnumBidStatus;
   }
 
-  get accountAdress() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['user/account'] as string;
+  get curBidStatus() : number {
+    return bidStatus(this.auctionItem, this.userAccount);
   }
 
   get endedAuction() {
-    const dataEndedAuction = this.bidsAuctions.expirationDt;
-    const momentApi = moment(dataEndedAuction).format('X') as unknown as number;
-    const momentToday = moment().format('X') as unknown as number;
-
-    this.getHighBid();
-
-    if (momentApi <= momentToday) {
-      return true;
-    } else {
-      return false;
-    }
+    return isExpired(this.auctionItem) || this.auctionItem.ended;
   }
 
   get auctionClaimed() {
-    return this.bidsAuctions.ended;
+    return this.auctionItem.ended;
   }
 
   getHighBid() {
-    const highBid = this.bidsAuctions.highestBid.account;
+    const highBid = this.auctionItem.highestBid.account;
     if (highBid === this.userAccount) {
       this.isMyBid = true;
     } else {
@@ -266,7 +169,7 @@ export default class BidsStatus extends Vue.with(Props) {
   }
 
   get MyHighBid() {
-    const getBids = this.bidsAuctions.bids;
+    const getBids = this.auctionItem.bids;
     const account = this.userAccount;
     const myBidsFilter = getBids.filter(function(item) {
       return account === item.account;
@@ -275,28 +178,17 @@ export default class BidsStatus extends Vue.with(Props) {
     return lastBid as number;
   }
 
-  get myBids() {
-    try {
-      const getBids = this.bidsAuctions.returns;
-      const account = this.userAccount;
-      const getBidsKeys = Object.keys(getBids);
-      getBidsKeys.forEach((key) => {
-        if (key === account) {
-          const BidsKey = getBids[key as unknown as number] as unknown as number;
-          this.myBidsResult = this.bidCorreting(BidsKey);
-          const coin = this.bidsAuctions.bids[0].tokenSymbol;
-          this.btnResult = this.$t('Claim: ' + this.myBidsResult + ' ' + coin);
-        }
-      });
-    } catch (error) {
-    }
+  get hasReturn() : boolean {
+    return this.auctionItem.returns && this.auctionItem.returns[this.userAccount] > 0;
+  }
 
-    return this.btnResult;
+  get amountToReturn() : string {
+    return this.bidCorreting(this.auctionItem.returns[this.userAccount]);
   }
 
   get coinDetails() {
     const coin = auctionCoins.find((coin) => {
-      return coin.tokenAddress.toLowerCase() === this.bidsAuctions.minimumBid.tokenPriceAddress;
+      return coin.tokenAddress.toLowerCase() === this.auctionItem.minimumBid.tokenPriceAddress;
     });
 
     if (!coin) {
@@ -317,7 +209,7 @@ export default class BidsStatus extends Vue.with(Props) {
   }
 
   async endAuction() {
-    if (!this.bidsAuctions) {
+    if (!this.auctionItem) {
       return;
     }
 
@@ -327,10 +219,15 @@ export default class BidsStatus extends Vue.with(Props) {
     this.endAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
 
     await this.auctionSystem.endAuction(
-      this.bidsAuctions.index,
-      this.accountAdress,
+      this.auctionItem.index,
+      this.userAccount,
     ).on('error', () => {
       this.endAuctionStatus = EndAuctionStatus.EndAuctionError;
+      this.$store.dispatch({
+        type: 'auctions/getBids',
+        account: this.userAccount,
+        forBids: true,
+      }).catch(console.error);
     }).on('transactionHash', () => {
       this.endAuctionStatus =
         EndAuctionStatus.EndAuctionAwaitingConfirmation;
@@ -345,31 +242,20 @@ export default class BidsStatus extends Vue.with(Props) {
     this.displayingClaimBid = false;
   }
 
-  async withdraw() {
-    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.displayingRemoveBid = true;
-    this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingInput;
-    await this.auctionSystem.withdraw(
-      this.bidsAuctions.index,
-      this.accountAdress,
-    ).on('transactionHash', () => {
-      this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingConfirmation;
-    }).on('error', () => {
-      this.removeBidStatus = RemoveBidStatus.RemoveBidError;
-    });
-    this.removeBidStatus = RemoveBidStatus.RemoveBid;
-    // void withdrawBid.withdraw(this.bidsAuctions.index, this.accountAdress);
-  }
-
   async claimBid() {
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.displayingClaimBid = true;
     this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingInput;
     await this.auctionSystem.withdraw(
-      this.bidsAuctions.index,
-      this.accountAdress,
+      this.auctionItem.index,
+      this.userAccount,
     ).on('transactionHash', () => {
       this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingConfirmation;
+      this.$store.dispatch({
+        type: 'auctions/getBids',
+        account: this.userAccount,
+        forBids: true,
+      }).catch(console.error);
     }).on('error', () => {
       this.removeBidStatus = RemoveBidStatus.RemoveBidError;
     });

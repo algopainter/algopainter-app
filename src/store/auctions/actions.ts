@@ -94,7 +94,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     const account = value.account as string;
     const forBids = value.forBids as boolean;
     try {
-      const result = await api.get(`users/${account}/auctions/biding?_t=${(new Date().getTime())}${forBids ? '&forBids=true' : ''}`);
+      const result = await api.get(`users/${account}/auctions/biding${forBids ? '?forBids=true' : ''}`);
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {

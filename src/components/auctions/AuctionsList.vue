@@ -14,12 +14,12 @@
       </div>
       <div
         v-else-if="auctions.length <= 3"
-        class="row justify-start"
+        :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row justify-start']"
       >
         <div
           v-for="(isHot, index) in auctions"
           :key="index"
-          class="row"
+          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row justify-start']"
         >
           <auction-item
             :is-hot="isHot"

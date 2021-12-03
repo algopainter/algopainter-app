@@ -29,7 +29,6 @@ import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import BidsPage from './BidsPage.vue';
 import { MutationPayload } from 'vuex';
-import { resolve } from 'dns';
 
 @Options({
   components: {

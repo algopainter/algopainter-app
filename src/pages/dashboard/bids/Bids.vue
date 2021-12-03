@@ -2,7 +2,7 @@
   <div v-if="loading === false">
     <div v-if="auctionsBid.length > 0">
       <div v-for="(bid, index) in auctionsBid" :key="index">
-        <Bids-page :bid="bid" :account-adress="accountAdress" :index="index" />
+        <Bids-page :bid="bid" :index="index" />
       </div>
     </div>
     <div v-else>
@@ -29,6 +29,7 @@ import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import BidsPage from './BidsPage.vue';
 import { MutationPayload } from 'vuex';
+import { resolve } from 'dns';
 
 @Options({
   components: {
@@ -81,5 +82,4 @@ export default class Bids extends Vue {
 }
 </script>
 <style lang="scss">
-
 </style>

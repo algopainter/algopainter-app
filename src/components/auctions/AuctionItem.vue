@@ -400,6 +400,18 @@ export default class AuctionItem extends Vue.with(Props) {
   border-radius: 5px;
   width: 300px;
   height: 300px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+@media (max-width: 450px) {
+  .art-image {
+  margin-left: -6px;
+  margin-right: 10px;
+}
+.details{
+  margin-left: -6px;
+}
 }
 .bidBack{
   text-align: unset;

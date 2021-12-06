@@ -39,6 +39,7 @@
             <slide
               v-for="(isHot, index) in auctions"
               :key="index"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row justify-start']"
             >
               <auction-item
                 :is-hot="isHot"
@@ -321,7 +322,7 @@ export default class AuctionsList extends Vue {
   breakpoints = {
     0: {
       itemsToShow: 1,
-      snapAlign: 'center',
+      snapAlign: 'start',
     },
     // 700px and up
     800: {
@@ -375,6 +376,15 @@ export default class AuctionsList extends Vue {
   box-sizing: content-box;
   border: 5px solid white;
   margin-left: 20px;
+}
+
+@media (max-width: 480px) {
+  .carousel__prev {
+  margin-left: 10px;
+}
+.carousel__next{
+  margin-right: 25px !important;
+}
 }
 
 .carousel__next {

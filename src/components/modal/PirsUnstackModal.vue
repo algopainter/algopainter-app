@@ -297,7 +297,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
 
   maxStakeAmount() {
     this.unstakeAmount = blockchainToCurrency(
-      this.itemPirs.bidbacks[this.account],
+      this.itemPirs.pirs[this.account],
       this.coinDetails.decimalPlaces,
     );
 

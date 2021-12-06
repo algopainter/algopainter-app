@@ -159,6 +159,13 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       this.commit('auctions/SET_AUCTION_INFO', value.auction);
     }
   },
+
+  openPirsSimulatorModal(type, value: {auction: IAuctionItem}) {
+    this.commit('auctions/SET_OPEN_PIRS_SIMULATOR_MODAL');
+    if (value.auction) {
+      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+    }
+  },
 };
 
 export default actions;

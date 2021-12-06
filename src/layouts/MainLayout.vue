@@ -33,6 +33,7 @@
         <BidBackModal v-model="openBidBackModal" />
         <BidBackSimulatorModal v-model="openBidBackSimulatorModal" />
         <PirsModal v-model="openPirsModal" />
+        <PirsSimulatorModal v-model="openPirsSimulatorModal" />
       </q-page-container>
     </q-layout>
   </div>
@@ -49,6 +50,7 @@ import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
 import AuctionModal from 'src/components/modal/AuctionModal.vue';
 import BidBackModal from 'src/components/home-page/user-gallery-overview/BidBackModal.vue';
 import BidBackSimulatorModal from 'src/components/home-page/user-gallery-overview/BidBackSimulatorModal.vue';
+import PirsSimulatorModal from 'src/components/home-page/user-gallery-overview/PirsSimulatorModal.vue';
 import PirsModal from 'src/components/home-page/user-gallery-overview/PirsModal.vue';
 import { mapGetters } from 'vuex';
 
@@ -63,6 +65,7 @@ import { mapGetters } from 'vuex';
     BidBackModal,
     PirsModal,
     BidBackSimulatorModal,
+    PirsSimulatorModal,
   },
   watch: {
     isConnected: ['refreshModal'],
@@ -73,10 +76,11 @@ import { mapGetters } from 'vuex';
     networkInfo: false,
     ...mapGetters(
       'auctions', [
+        'openAuctionModal',
+        'openBidBackModal',
         'openBidBackSimulatorModal',
         'openPirsModal',
-        'openBidBackModal',
-        'openAuctionModal',
+        'openPirsSimulatorModal',
       ]),
   },
 
@@ -86,6 +90,7 @@ export default class MainLayout extends Vue {
   openModal: boolean = false;
   showModal: boolean = false;
   openBidBackSimulatorModal!: boolean;
+  openPirsSimulatorModal!: boolean;
   openPirsModal!: boolean;
   openBidBackModal!: boolean;
   openAuctionModal!: boolean;

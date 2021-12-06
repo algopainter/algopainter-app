@@ -12,16 +12,37 @@
         <p class="row text-h5 text-bold">
           {{ ' ' + $t('dashboard.auctions.bidBackModalSimulator.title') }}
         </p>
-        <div class="column">
-          <p class="text-h8 q-mb-none text-bold">
-            {{ ' ' + $t('dashboard.auctions.bidBackModalSimulator.lastBid') }}
-          </p>
-          <p class="text-h8 q-mb-none text-bold">
-            {{ ' ' + $t('dashboard.auctions.bidBackModalSimulator.lastBidValue', {
-              highestBid: getLastBid,
-              auctionCurrency: getAuctionInfo.highestBid.tokenSymbol})
-            }}
-          </p>
+        <div class="row">
+          <div class="column q-mr-md">
+            <p class="text-h8 q-mb-none text-bold">
+              {{ ' ' + $t('dashboard.auctions.bidBackModalSimulator.auctionRate') }}
+            </p>
+            <p
+              v-if="auctionBidBackRate"
+              class="text-h8 q-mb-none text-bold"
+            >
+              {{ (auctionBidBackRate * 100).toFixed(2) + "%" }}
+            </p>
+            <p
+              v-else
+              class="text-h8 q-mb-none text-bold"
+            >
+              {{ $t('dashboard.auctions.bidBackModalSimulator.auctionRatePlaceholder') }}
+            </p>
+          </div>
+          <div class="row">
+            <div class="column">
+              <p class="text-h8 q-mb-none text-bold">
+                {{ ' ' + $t('dashboard.auctions.bidBackModalSimulator.lastBid') }}
+              </p>
+              <p class="text-h8 q-mb-none text-bold">
+                {{ ' ' + $t('dashboard.auctions.bidBackModalSimulator.lastBidValue', {
+                  highestBid: formatHighestBidAmount().toFixed(2),
+                  auctionCurrency: getAuctionInfo.highestBid.tokenSymbol})
+                }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
       <div
@@ -515,10 +536,8 @@ export default class BidBackModalSimulator extends Vue {
 
     this.totalBidBackStaked = blockchainToCurrency(await this.rewardsSystem.getTotalBidBackStakes(this.getAuctionInfo.index), this.coinDetails.decimalPlaces);
 
-    if (isASimulation) {
-      if (typeof this.stakeAmount === 'number') {
-        this.totalBidBackStaked = Number(this.totalBidBackStaked) + this.stakeAmount;
-      }
+    if (isASimulation && typeof this.stakeAmount === 'number') {
+      this.totalBidBackStaked = Number(this.totalBidBackStaked) + this.stakeAmount;
     }
 
     let isVariableSet = false;

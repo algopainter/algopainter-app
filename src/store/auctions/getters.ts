@@ -16,6 +16,9 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   openBidBackSimulatorModal(state: AuctionStateInterface): boolean {
     return state.openBidBackSimulatorModal;
   },
+  openPirsSimulatorModal(state: AuctionStateInterface): boolean {
+    return state.openPirsSimulatorModal;
+  },
   getBids(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },

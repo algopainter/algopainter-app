@@ -164,14 +164,14 @@
           :label="$t('dashboard.gallery.bidBackTab.bidBackBtn')"
           color="primary"
           outline
-          class="load-more q-px-xl q-mx-auto q-mb-sm"
+          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-px-xl q-mx-auto' : 'load-more q-px-xl q-mx-auto q-mb-sm']"
           @click="openBidBackModal()"
         />
         <algo-button
           :label="$t('dashboard.gallery.bidBackTab.bidBackSimulatorBtn')"
           color="primary"
           outline
-          class="load-more q-px-xl q-mx-auto"
+          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-mt-sm q-px-xl q-mx-auto' : 'load-more q-px-xl q-mx-auto']"
           @click="openBidBackSimulatorModal()"
         />
       </div>

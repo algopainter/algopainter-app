@@ -369,7 +369,9 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   getUserStakedPirs() {
-    this.algopStaked = this.art.pirs[this.account] || 0;
+    if (this.art.pirs) {
+      this.algopStaked = this.art.pirs[this.account] || 0;
+    }
     this.disableUnstackBtn = this.algopStaked <= 0 || this.art.ended;
     this.showHarvestBtn =
       this.algopStaked > 0 && this.art.ended && this.imagePirsRate > 0;

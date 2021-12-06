@@ -1,11 +1,16 @@
 <template>
-  <q-dialog v-if="!loadingAuctionInfo" ref="dialog" v-model="modal">
-    <q-card class="q-pa-lg" style="max-width: 750px; width: 650px">
-      <div class="row justify-between">
-        <p class="row text-h5 text-bold">
+  <q-dialog
+    v-if="!loadingAuctionInfo"
+    ref="dialog"
+    v-model="modal"
+    class="report-and-simulator"
+  >
+    <q-card class="q-pa-lg modal-card-container">
+      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'column items-center q-pb-sm' : 'row justify-between q-px-md q-pb-md']">
+        <p class="row text-h5 text-bold title">
           {{ ' ' + $t('dashboard.auctions.pirsModalSimulator.title') }}
         </p>
-        <div class="row">
+        <div class="row header-right">
           <div class="column q-mr-md">
             <p class="text-h8 q-mb-none text-bold">
               {{ ' ' + $t('dashboard.auctions.pirsModalSimulator.auctionRate') }}
@@ -30,39 +35,36 @@
             <p class="text-h8 q-mb-none text-bold">
               {{
                 ' ' +
-                $t('dashboard.auctions.pirsModalSimulator.lastBidValue', {
-                  highestBid: formatHighestBidAmount().toFixed(2),
-                  auctionCurrency: getAuctionInfo.minimumBid.tokenSymbol,
-                })
+                  $t('dashboard.auctions.pirsModalSimulator.lastBidValue', {
+                    highestBid: formatHighestBidAmount().toFixed(2),
+                    auctionCurrency: getAuctionInfoPirs.minimumBid.tokenSymbol,
+                  })
               }}
             </p>
           </div>
         </div>
       </div>
-      <div class="row justify-center">
+      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center q-pb-md smaller-placeholder q-px-md' : 'row justify-center q-pb-md']">
         <q-input
           v-model="stakeAmount"
           :disable="loadingTable"
           dense
           color="primary"
           type="number"
+          debounce="700"
           :suffix="$t('dashboard.auctions.pirsModalSimulator.algop')"
           :placeholder="formattedBalance"
-          :bind="validateInput()"
-          @blur="getImagePastOwners()"
         />
       </div>
-      <div class="q-pa-md">
-        <q-table
-          :rows="pastOwnersList"
-          :columns="columns"
-          row-key="name"
-          hide-bottom
-          flat
-          :loading="loadingTable"
-        />
-      </div>
-      <div class="row justify-center">
+      <q-table
+        :rows="pastOwnersList"
+        :columns="columns"
+        row-key="name"
+        hide-bottom
+        flat
+        :loading="loadingTable"
+      />
+      <div class="row justify-center q-mt-md">
         <p
           v-if="placingBidBackStatus === PlacingBidBackStatus.CheckingAllowance"
           class="q-mb-none"
@@ -73,7 +75,7 @@
         <p
           v-else-if="
             placingBidBackStatus ===
-            PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation
+              PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation
           "
           class="q-mb-none"
         >
@@ -92,7 +94,7 @@
         <p
           v-else-if="
             placingBidBackStatus ===
-            PlacingBidBackStatus.IncreateAllowanceCompleted
+              PlacingBidBackStatus.IncreateAllowanceCompleted
           "
           class="q-mb-none"
         >
@@ -101,7 +103,7 @@
         </p>
       </div>
       <div class="row justify-center">
-        <p v-if="getAuctionInfo.ended" class="q-mb-none">
+        <p v-if="getAuctionInfoPirs.ended" class="q-mb-none">
           <q-icon name="mdi-alert-circle" color="yellow" size="md" />
           {{
             $t('dashboard.auctions.pirsModalSimulator.rules.auctionEnded')
@@ -115,11 +117,7 @@
           {{ $t('dashboard.auctions.pirsModalSimulator.rules.noMoney') }}
         </p>
         <p
-          v-else-if="
-            stakeAmount === null ||
-            stakeAmount < 0 ||
-            (stakeAmount === 0 && !hasJustStaked)
-          "
+          v-else-if="stakeAmount === null || stakeAmount < 0 || (stakeAmount === 0 && !hasJustStaked)"
           class="q-mb-none"
         >
           <q-icon name="mdi-alert-circle" color="red" size="md" />
@@ -128,9 +126,15 @@
           }}
         </p>
       </div>
+      <q-checkbox
+        v-model="isUserAwareThatAmountWillBeSummed"
+        :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'smaller-checkbox-text' : '']"
+        color="green"
+        :label="$t('dashboard.auctions.bidBackModalSimulator.stakeCheckbox', { amount: stakeAmount })"
+      />
       <div class="row justify-center">
         <algo-button
-          class="q-my-md q-mx-sm action"
+          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'smaller-algo-button q-mt-md q-mx-sm' : 'q-mt-md q-mx-sm']"
           :label="$t('dashboard.auctions.pirsModalSimulator.returnBtn')"
           color="primary"
           outline
@@ -138,10 +142,10 @@
           @click="openPirsSimulatorModal()"
         />
         <algo-button
-          class="q-my-md q-mx-sm action"
+          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'smaller-algo-button q-mt-md q-mx-sm' : 'q-mt-md q-mx-sm']"
           :label="$t('dashboard.auctions.pirsModalSimulator.interactionBtn')"
           color="primary"
-          :disabled="isDisabled"
+          :disabled="isDisabled || !isUserAwareThatAmountWillBeSummed"
           :loading="isConfirmBtnLoading"
           @click="stakeAlgop()"
         />
@@ -199,7 +203,7 @@ interface IUserOwner {
   },
   computed: {
     ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
-    ...mapGetters('auctions', ['getAuctionInfo']),
+    ...mapGetters('auctions', ['getAuctionInfoPirs']),
   },
 })
 export default class PirsModalSimulator extends Vue {
@@ -207,7 +211,7 @@ export default class PirsModalSimulator extends Vue {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  getAuctionInfo!: IAuctionItem;
+  getAuctionInfoPirs!: IAuctionItem;
   isConnected!: boolean;
 
   modal: boolean = false;
@@ -223,12 +227,12 @@ export default class PirsModalSimulator extends Vue {
   PlacingBidBackStatus = PlacingBidBackStatus;
   auctionCoinTokenProxy!: ERC20TokenProxy;
   isDisabled: boolean = true;
-  auctionBidBackRate!: number;
   auctionPirsRate!: number;
   auctionCurrency!: string;
   hasJustStaked: boolean = false;
 
   totalPirsStaked: number = 0;
+  isUserAwareThatAmountWillBeSummed: boolean = false;
 
   loadingTable: boolean = true;
   columns = [
@@ -240,20 +244,23 @@ export default class PirsModalSimulator extends Vue {
       field: (pastOwnersList: { name: string; formattedAccount: string }) =>
         pastOwnersList.name ? pastOwnersList.name : pastOwnersList.formattedAccount,
       sortable: true,
+      style: (userBid: { name: string}) => userBid.name === 'You' ? 'font-weight: bold' : 'font-weight: normal',
     },
     {
       name: 'stakedAlgop',
       required: true,
       label: 'ALGOP staked',
-      field: (pastOwnersList: { stakedAlgop: number }) => pastOwnersList.stakedAlgop.toFixed(2),
+      field: (pastOwnersList: { stakedAlgop: number }) => pastOwnersList.stakedAlgop,
       sortable: true,
+      style: (userBid: { name: string}) => userBid.name === 'You' ? 'font-weight: bold' : 'font-weight: normal',
     },
     {
       name: 'participation',
       required: true,
       label: 'Pirs (%)',
-      field: (pastOwnersList: { stakedAlgopPercentage: number }) => pastOwnersList.stakedAlgopPercentage.toFixed(2),
+      field: (pastOwnersList: { stakedAlgopPercentage: number }) => pastOwnersList.stakedAlgopPercentage,
       sortable: true,
+      style: (userBid: { name: string}) => userBid.name === 'You' ? 'font-weight: bold' : 'font-weight: normal',
     },
     {
       name: 'prizeAmount',
@@ -261,6 +268,7 @@ export default class PirsModalSimulator extends Vue {
       label: 'Pirs',
       field: (pastOwnersList: { pirsPrize: string }) => pastOwnersList.pirsPrize,
       sortable: true,
+      style: (userBid: { name: string}) => userBid.name === 'You' ? 'font-weight: bold' : 'font-weight: normal',
     },
   ];
 
@@ -268,11 +276,11 @@ export default class PirsModalSimulator extends Vue {
   onIsConnectedChanged() {
     if (this.isConnected) {
       this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(
-        this.networkInfo
+        this.networkInfo,
       );
       this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
       this.auctionCoinTokenProxy = new ERC20TokenProxy(
-        this.algoPainterContractByNetworkId
+        this.algoPainterContractByNetworkId,
       );
       void this.setAccountBalance();
     }
@@ -295,10 +303,10 @@ export default class PirsModalSimulator extends Vue {
     this.hasJustStaked = false;
   }
 
-  @Watch('getAuctionInfo')
+  @Watch('getAuctionInfoPirs')
   onGetAuctionChanged() {
     this.pastOwnersList = [];
-    if (this.getAuctionInfo) {
+    if (this.getAuctionInfoPirs) {
       this.loadingAuctionInfo = false;
       void this.getImagePastOwners(false);
     }
@@ -348,17 +356,16 @@ export default class PirsModalSimulator extends Vue {
     }
   }
 
-  validateInput() {
-    this.stakeAmount = Number(this.stakeAmount);
-    if (
-      this.stakeAmount <= 0 ||
-      this.stakeAmount === null ||
-      this.stakeAmount > this.userBalance ||
-      this.getAuctionInfo.ended
-    ) {
-      this.isDisabled = true;
-    } else {
-      this.isDisabled = false;
+  @Watch('stakeAmount')
+  onStakeAmountChanged() {
+    if (this.getAuctionInfoPirs) {
+      const stakeAmount = Number(this.stakeAmount);
+      if (stakeAmount <= 0 || stakeAmount === null || stakeAmount > this.userBalance || this.getAuctionInfoPirs.ended) {
+        this.isDisabled = true;
+      } else {
+        this.isDisabled = false;
+      }
+      void this.getImagePastOwners();
     }
   }
 
@@ -370,7 +377,7 @@ export default class PirsModalSimulator extends Vue {
 
     const stakeAmount = currencyToBlockchain(
       Number(this.stakeAmount),
-      decimalPlaces
+      decimalPlaces,
     );
 
     await this.approveContractTransfer(stakeAmount);
@@ -378,7 +385,7 @@ export default class PirsModalSimulator extends Vue {
     try {
       await this.rewardsSystem
         .stakePirs(
-          this.getAuctionInfo.index,
+          this.getAuctionInfoPirs.index,
           numberToString(stakeAmount),
           this.account,
         )
@@ -406,7 +413,6 @@ export default class PirsModalSimulator extends Vue {
       console.log('error - stakeAlgop BidBackSimulatorModal', e);
     } finally {
       this.isCancelDisabled = false;
-      this.stakeAmount = 0;
       this.isConfirmBtnLoading = false;
       this.isDisabled = true;
       this.hasJustStaked = true;
@@ -421,7 +427,7 @@ export default class PirsModalSimulator extends Vue {
     const coin = auctionCoins.find((coin) => {
       return (
         coin.tokenAddress.toLowerCase() ===
-        this.getAuctionInfo.minimumBid.tokenPriceAddress
+        this.getAuctionInfoPirs.minimumBid.tokenPriceAddress
       );
     });
 
@@ -438,8 +444,8 @@ export default class PirsModalSimulator extends Vue {
 
   formatHighestBidAmount() {
     return blockchainToCurrency(
-      this.getAuctionInfo.highestBid
-        ? this.getAuctionInfo.highestBid.netAmount
+      this.getAuctionInfoPirs.highestBid
+        ? this.getAuctionInfoPirs.highestBid.netAmount
         : 0,
       this.coinDetails.decimalPlaces,
     );
@@ -448,20 +454,21 @@ export default class PirsModalSimulator extends Vue {
   auction: IAuctionItem | null = null;
   pastOwnersList: IUserOwner[] = [];
 
-  async getImagePastOwners (isASimulation: boolean = true) {
+  async getImagePastOwners(isASimulation: boolean = true) {
     this.loadingTable = true;
     this.pastOwnersList = [];
 
-    this.auctionBidBackRate = (await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfo.index)) / 10000;
-    this.auctionPirsRate = (await this.bidBackPirsSystem.getInvestorPirsRate(this.getAuctionInfo.index)) / 10000;
-    this.totalPirsStaked = this.setFormatCurrency(await this.rewardsSystem.getTotalPirsStakes(this.getAuctionInfo.index));
+    const stakeAmount = (isASimulation) ? Number(this.stakeAmount) : this.stakeAmount;
 
-    this.auctionCurrency = this.getAuctionInfo.minimumBid.tokenSymbol;
+    this.auctionPirsRate = (await this.bidBackPirsSystem.getInvestorPirsRate(this.getAuctionInfoPirs.index)) / 10000;
+    this.totalPirsStaked = this.setFormatCurrency(await this.rewardsSystem.getTotalPirsStakes(this.getAuctionInfoPirs.index));
+
+    this.auctionCurrency = this.getAuctionInfoPirs.minimumBid.tokenSymbol;
 
     void this.$store
       .dispatch({
         type: 'auctions/getImagePastOwners',
-        imgId: this.getAuctionInfo.item._id,
+        imgId: this.getAuctionInfoPirs.item._id,
       })
       .then(() => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -486,8 +493,8 @@ export default class PirsModalSimulator extends Vue {
             formattedAccount: formattedAccount,
             auctionCurrency: this.auctionCurrency,
             stakedAlgop:
-              name === 'You' && isASimulation && this.stakeAmount
-                ? this.stakeAmount
+              name === 'You' && isASimulation && stakeAmount
+                ? stakeAmount
                 : 0,
             stakedAlgopPercentage:
               pastOwners.length === 1 && isASimulation ? 100 : 0,
@@ -500,30 +507,32 @@ export default class PirsModalSimulator extends Vue {
           });
         });
 
-        // Checkar algo relacionado a nao ter nenhum bid
-
         if (pastOwners.length === 1 && isASimulation) {
           this.loadingTable = false;
           return;
         }
 
-        if (isASimulation && typeof this.stakeAmount === 'number') {
-          this.totalPirsStaked = Number(this.totalPirsStaked) + this.stakeAmount;
+        if (isASimulation && typeof stakeAmount === 'number') {
+          this.totalPirsStaked = Number(this.totalPirsStaked) + stakeAmount;
+          if (this.getAuctionInfoPirs.pirshare) {
+            if (this.getAuctionInfoPirs.pirshare[this.account]) {
+              this.totalPirsStaked = Number(this.totalPirsStaked) - blockchainToCurrency(this.getAuctionInfoPirs.pirshare[this.account], this.coinDetails.decimalPlaces);
+            }
+          }
         }
 
         let isVariableSet = false;
 
-        if (this.getAuctionInfo.pirs) {
-          Object.keys(this.getAuctionInfo.pirs).forEach((account) => {
+        if (this.getAuctionInfoPirs.pirshare) {
+          Object.keys(this.getAuctionInfoPirs.pirshare).forEach((account) => {
             this.pastOwnersList.forEach((pastOwner) => {
               if (account === pastOwner.account) {
                 if (account === this.account && isASimulation) {
-                  this.totalPirsStaked =
-                    Number(this.totalPirsStaked) - this.setFormatCurrency(this.getAuctionInfo.pirs[account]);
+                  isVariableSet = true;
                 } else {
-                  pastOwner.stakedAlgop = this.setFormatCurrency(this.getAuctionInfo.pirs[account]);
+                  pastOwner.stakedAlgop = this.setFormatCurrency(this.getAuctionInfoPirs.pirshare[account]);
+                  isVariableSet = true;
                 }
-                isVariableSet = true;
               } else if (!isVariableSet && pastOwner.name !== 'You') {
                 pastOwner.stakedAlgop = 0;
               }
@@ -531,9 +540,7 @@ export default class PirsModalSimulator extends Vue {
                 pastOwner.stakedAlgopPercentage = parseFloat(((pastOwner.stakedAlgop > 0)
                   ? (pastOwner.stakedAlgop / this.totalPirsStaked) * 100
                   : 0).toFixed(2));
-                pastOwner.stakedAlgopPercentage = parseFloat(
-                  pastOwner.stakedAlgopPercentage.toFixed(2),
-                );
+                pastOwner.stakedAlgopPercentage = parseFloat(pastOwner.stakedAlgopPercentage.toFixed(2));
               }
             });
           });
@@ -541,11 +548,22 @@ export default class PirsModalSimulator extends Vue {
 
         const auctionPirsPrize = this.formatHighestBidAmount() * this.auctionPirsRate;
 
-        if (this.getAuctionInfo.pirs) {
-          Object.keys(this.getAuctionInfo.pirs).forEach(() => {
+        if (this.getAuctionInfoPirs.pirshare) {
+          Object.keys(this.getAuctionInfoPirs.pirshare).forEach(() => {
             this.pastOwnersList.forEach((account) => {
               account.pirsPrize = `${((account.stakedAlgopPercentage / 100) * auctionPirsPrize).toFixed(2)} ${this.auctionCurrency}`;
             });
+          });
+        }
+
+        if (!this.getAuctionInfoPirs.pirshare) {
+          this.pastOwnersList.forEach((pastOwner) => {
+            if (pastOwner.account === this.account && isASimulation) {
+              pastOwner.stakedAlgop = stakeAmount;
+              pastOwner.stakedAlgopPercentage = 100.00;
+              pastOwner.stakedAlgopPercentage = 100.00;
+              pastOwner.pirsPrize = `${((pastOwner.stakedAlgopPercentage / 100) * auctionPirsPrize).toFixed(2)} ${this.auctionCurrency}`;
+            }
           });
         }
 
@@ -580,7 +598,7 @@ export default class PirsModalSimulator extends Vue {
   async setAccountBalance() {
     this.userBalance = await UserUtils.fetchAccountBalance(
       this.networkInfo,
-      this.account
+      this.account,
     );
     this.stakeAmount = this.userBalance;
     void this.setformattedBalance();
@@ -600,5 +618,12 @@ export default class PirsModalSimulator extends Vue {
 <style style="scss" scoped>
 .close-button-container {
   width: 100%;
+}
+.modal-card-container{
+  max-width: 800px !important;
+  border-radius: 20px;
+}
+.header-right p, title {
+  margin-bottom: 0px;
 }
 </style>

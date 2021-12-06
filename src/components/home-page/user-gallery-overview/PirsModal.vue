@@ -2,36 +2,58 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
+    class="report-and-simulator"
   >
-    <q-card class="q-pa-lg">
-      <p
-        class="row justify-center text-h5 text-bold text-primary"
-      >
-        {{ ' ' + $t('dashboard.auctions.pirsModal.title') }}
-      </p>
-      <div v-show="!loadingTable">
-        <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.yourBalance`) }}</span>
-          {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ formattedBalance }}
+    <q-card class="q-pa-lg modal-card-container">
+      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'column items-center q-pb-sm' : 'row justify-between q-px-md q-pb-md']">
+        <p class="row text-h5 text-bold title">
+          {{ ' ' + $t('dashboard.auctions.pirsModal.title') }}
         </p>
-        <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.pirsModal.totalPirsAmount`) }}</span>
-          {{ $t(`dashboard.auctions.pirsModal.algop`) }} {{ setFormatCurrency(totalPirsStaked).toFixed(2) }}
-        </p>
+        <div class="row header-right">
+          <div class="column q-mr-md">
+            <p class="text-h8 text-bold">
+              {{ ' ' + $t('dashboard.auctions.pirsModal.auctionRate') }}
+            </p>
+            <p
+              v-if="auctionPirsRate"
+              class="text-h8 text-bold"
+            >
+              {{ (auctionPirsRate * 100).toFixed(2) + "%" }}
+            </p>
+            <p
+              v-else
+              class="text-h8 text-bold"
+            >
+              {{ $t('dashboard.auctions.pirsModal.auctionRatePlaceholder') }}
+            </p>
+          </div>
+          <div class="column">
+            <p class="text-h8 text-bold">
+              {{ ' ' + $t('dashboard.auctions.pirsModal.lastBid') }}
+            </p>
+            <p class="text-h8 text-bold">
+              {{
+                ' ' +
+                  $t('dashboard.auctions.pirsModal.lastBidValue', {
+                    highestBid: formatHighestBidAmount().toFixed(2),
+                    auctionCurrency: getAuctionInfoPirs.minimumBid.tokenSymbol,
+                  })
+              }}
+            </p>
+          </div>
+        </div>
       </div>
-      <div class="q-pa-md">
-        <q-table
-          :rows="pastOwnersList"
-          :columns="columns"
-          row-key="name"
-          hide-bottom
-          flat
-          :loading="loadingTable"
-        />
-      </div>
+      <q-table
+        :rows="pastOwnersList"
+        :columns="columns"
+        row-key="name"
+        hide-bottom
+        flat
+        :loading="loadingTable"
+      />
       <div class="row justify-center">
         <algo-button
-          class="q-my-md q-mx-sm action"
+          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'smaller-algo-button q-mt-md' : 'q-mt-md']"
           :label="$t('dashboard.auctions.pirsModal.returnBtn')"
           color="primary"
           outline
@@ -45,7 +67,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'src/components/common/Button.vue';
-import UserUtils from 'src/helpers/user';
 import { Watch } from 'vue-property-decorator';
 import { IOwnerPirs } from 'src/models/IOwnerPirs';
 import { mapGetters } from 'vuex';
@@ -58,10 +79,11 @@ import { auctionCoins } from 'src/helpers/auctionCoins';
 
 interface IUserOwner {
   name: string;
-  account: string
+  account: string;
   formattedAccount: string | unknown;
-  stackedAlgop: number;
-  stackedAlgopPercentage: number;
+  stakedAlgop: number;
+  stakedAlgopPercentage: number;
+  pirsPrize: string;
 }
 
 @Options({
@@ -77,7 +99,7 @@ interface IUserOwner {
       ]),
     ...mapGetters(
       'auctions', [
-        'getAuctionInfo',
+        'getAuctionInfoPirs',
       ]),
   },
 })
@@ -86,14 +108,14 @@ export default class PirsModal extends Vue {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  getAuctionInfo!: IAuctionItem;
+  getAuctionInfoPirs!: IAuctionItem;
   isConnected!: boolean;
+  auctionPirsRate!: number;
 
   modal: boolean = false;
-  userBalance: number = 0;
-  formattedBalance: string = '';
   totalPirsStaked: number = 0;
   auction: IAuctionItem | null = null;
+  auctionCurrency!: string;
 
   pastOwnersList: IUserOwner[] = [];
   loadingTable: boolean = true;
@@ -107,34 +129,54 @@ export default class PirsModal extends Vue {
       sortable: true,
     },
     {
-      name: 'stackedAlgop',
+      name: 'stakedAlgop',
       required: true,
       label: 'ALGOP Staked',
-      field: (pastOwnersList: { stackedAlgop: number; }) => this.setFormatCurrency(pastOwnersList.stackedAlgop).toFixed(2),
+      field: (pastOwnersList: { stakedAlgop: number; }) => this.setFormatCurrency(pastOwnersList.stakedAlgop).toFixed(2),
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
       label: 'Pirs %',
-      field: (pastOwnersList: { stackedAlgopPercentage: number; }) => pastOwnersList.stackedAlgopPercentage.toFixed(2),
+      field: (pastOwnersList: { stakedAlgopPercentage: number; }) => pastOwnersList.stakedAlgopPercentage.toFixed(2),
+      sortable: true,
+    },
+    {
+      name: 'prizeAmount',
+      required: true,
+      label: 'Pirs',
+      field: (pastOwnersList: { pirsPrize: string }) => pastOwnersList.pirsPrize,
       sortable: true,
     },
   ];
 
-  mounted() {
+  created() {
     if (this.isConnected) {
       this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
       this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
     }
-    void this.setAccountBalance();
+  }
+
+  async getAuctionPirsRate() {
+    this.auctionPirsRate = (await this.bidBackPirsSystem.getInvestorPirsRate(this.getAuctionInfoPirs.index)) / 10000;
+  }
+
+  formatHighestBidAmount() {
+    return blockchainToCurrency(
+      this.getAuctionInfoPirs.highestBid
+        ? this.getAuctionInfoPirs.highestBid.netAmount
+        : 0,
+      this.coinDetails.decimalPlaces,
+    );
   }
 
   getAuctionPirs() {
+    void this.getAuctionPirsRate();
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
-      collectionOwner: this.getAuctionInfo.item.collectionOwner,
-      itemIndex: this.getAuctionInfo.item.index,
+      collectionOwner: this.getAuctionInfoPirs.item.collectionOwner,
+      itemIndex: this.getAuctionInfoPirs.item.index,
     }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auction = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
@@ -143,6 +185,8 @@ export default class PirsModal extends Vue {
 
   getImagePastOwners() {
     this.loadingTable = true;
+
+    this.auctionCurrency = this.getAuctionInfoPirs.minimumBid.tokenSymbol;
 
     void this.$store.dispatch({
       type: 'auctions/getImagePastOwners',
@@ -165,8 +209,9 @@ export default class PirsModal extends Vue {
           name: name,
           account: account,
           formattedAccount: formattedAccount,
-          stackedAlgop: 0,
-          stackedAlgopPercentage: 0,
+          stakedAlgop: 0,
+          stakedAlgopPercentage: 0,
+          pirsPrize: `0.000 ${this.auctionCurrency}`,
         });
       });
 
@@ -184,15 +229,25 @@ export default class PirsModal extends Vue {
           this.pastOwnersList.forEach((pastOwner) => {
             if (account === pastOwner.account) {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              pastOwner.stackedAlgop = pirsUserList[account];
+              pastOwner.stakedAlgop = pirsUserList[account];
               isVariableSet = true;
             } else if (!isVariableSet) {
-              pastOwner.stackedAlgop = 0;
+              pastOwner.stakedAlgop = 0;
             }
-            if (typeof pastOwner.stackedAlgop === 'number') {
-              pastOwner.stackedAlgopPercentage = (pastOwner.stackedAlgop > 0) ? (pastOwner.stackedAlgop / this.totalPirsStaked) * 100 : 0;
-              pastOwner.stackedAlgopPercentage = parseFloat(pastOwner.stackedAlgopPercentage.toFixed(2));
+            if (typeof pastOwner.stakedAlgop === 'number') {
+              pastOwner.stakedAlgopPercentage = (pastOwner.stakedAlgop > 0) ? (pastOwner.stakedAlgop / this.totalPirsStaked) * 100 : 0;
+              pastOwner.stakedAlgopPercentage = parseFloat(pastOwner.stakedAlgopPercentage.toFixed(2));
             }
+          });
+        });
+      }
+
+      const auctionPirsPrize = this.formatHighestBidAmount() * this.auctionPirsRate;
+
+      if (this.getAuctionInfoPirs.pirshare) {
+        Object.keys(this.getAuctionInfoPirs.pirshare).forEach(() => {
+          this.pastOwnersList.forEach((account) => {
+            account.pirsPrize = `${((account.stakedAlgopPercentage / 100) * auctionPirsPrize).toFixed(2)} ${this.auctionCurrency}`;
           });
         });
       }
@@ -237,15 +292,14 @@ export default class PirsModal extends Vue {
     if (this.isConnected) {
       this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
       this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-      void this.setAccountBalance();
+      void this.getAuctionPirsRate();
     }
   }
 
-  @Watch('getAuctionInfo')
+  @Watch('getAuctionInfoPirs')
   onAuctionInfoChanged() {
     this.pastOwnersList = [];
-
-    if (this.getAuctionInfo.item.collectionOwner !== '') {
+    if (this.getAuctionInfoPirs.item.collectionOwner !== '') {
       void this.getAuctionPirs();
     }
   }
@@ -253,24 +307,6 @@ export default class PirsModal extends Vue {
   @Watch('auction')
   onAuctionChanged() {
     void this.getImagePastOwners();
-  }
-
-  @Watch('userBalance')
-  onUserBalanceChanged() {
-    if (this.isConnected) {
-      void this.setAccountBalance();
-    }
-  }
-
-  async setAccountBalance() {
-    this.userBalance = (
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
-    void this.setformattedBalance();
-  }
-
-  setformattedBalance() {
-    this.formattedBalance = UserUtils.formatAccountBalance(this.userBalance, 2);
   }
 
   openPirsModal() {
@@ -284,4 +320,11 @@ export default class PirsModal extends Vue {
   .close-button-container {
     width: 100%;
   }
+  .modal-card-container{
+  max-width: 800px !important;
+  border-radius: 20px;
+  }
+  .header-right p, title {
+  margin-bottom: 0px;
+}
 </style>

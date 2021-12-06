@@ -45,8 +45,11 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_OPEN_PIRS_SIMULATOR_MODAL(state: AuctionStateInterface) {
     state.openPirsSimulatorModal = !state.openPirsSimulatorModal;
   },
-  SET_AUCTION_INFO(state: AuctionStateInterface, payload) {
-    state.auctionInfo = payload as IAuctionItem;
+  SET_AUCTION_INFO_BIDBACK(state: AuctionStateInterface, payload) {
+    state.auctionInfoBidBack = payload as IAuctionItem;
+  },
+  SET_AUCTION_INFO_PIRS(state: AuctionStateInterface, payload) {
+    state.auctionInfoPirs = payload as IAuctionItem;
   },
 };
 

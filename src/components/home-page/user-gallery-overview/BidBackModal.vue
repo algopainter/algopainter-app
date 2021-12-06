@@ -2,36 +2,62 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
+    class="report-and-simulator"
   >
     <q-card
       class="q-pa-lg modal-card-container"
     >
-      <p class="row justify-center text-h5 text-bold text-primary">
-        {{ ' ' + $t('dashboard.auctions.bidBackModal.title') }}
-      </p>
-      <div v-if="!loadingTable">
-        <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidBackModal.yourBalance`) }}</span>
-          {{ $t(`dashboard.auctions.bidBackModal.algop`) }} {{ formattedBalance }}
+      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'column items-center q-pb-sm' : 'row justify-between q-px-md q-pb-md']">
+        <p class="row text-h5 text-bold title">
+          {{ ' ' + $t('dashboard.auctions.bidBackModal.title') }}
         </p>
-        <p class="q-mb-none">
-          <span class="text-bold text-secondary">{{ $t(`dashboard.auctions.bidBackModal.totalBidBackAmount`) }}</span>
-          {{ $t(`dashboard.auctions.bidBackModal.algop`) }} {{ setFormatCurrency(totalBidBackStaked).toFixed(2) }}
-        </p>
+        <div class="row header-right">
+          <div class="column q-mr-md">
+            <p class="text-h8 text-bold">
+              {{ ' ' + $t('dashboard.auctions.bidBackModal.auctionRate') }}
+            </p>
+            <p
+              v-if="auctionBidBackRate"
+              class="text-h8 text-bold"
+            >
+              {{ (auctionBidBackRate * 100).toFixed(2) + "%" }}
+            </p>
+            <p
+              v-else
+              class="text-h8 text-bold"
+            >
+              {{ $t('dashboard.auctions.bidBackModal.auctionRatePlaceholder') }}
+            </p>
+          </div>
+          <div class="row">
+            <div class="column">
+              <p class="text-h8 text-bold">
+                {{ ' ' + $t('dashboard.auctions.bidBackModal.lastBid') }}
+              </p>
+              <p
+                v-if="auctionBidBackRate"
+                class="text-h8 text-bold"
+              >
+                {{ ' ' + $t('dashboard.auctions.bidBackModal.lastBidValue', {
+                  highestBid: formatHighestBidAmount(),
+                  auctionCurrency: getAuctionInfoBidBack.highestBid.tokenSymbol})
+                }}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="q-pa-md">
-        <q-table
-          :rows="userBid"
-          :columns="columns"
-          row-key="name"
-          hide-bottom
-          flat
-          :loading="loadingTable"
-        />
-      </div>
+      <q-table
+        :rows="userBid"
+        :columns="columns"
+        row-key="name"
+        hide-bottom
+        flat
+        :loading="loadingTable"
+      />
       <div class="row justify-center">
         <algo-button
-          class="q-my-md q-mx-sm action"
+          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'smaller-algo-button q-mt-md' : 'q-mt-md']"
           :label="$t('dashboard.auctions.bidBackModal.returnBtn')"
           color="primary"
           outline
@@ -45,7 +71,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'src/components/common/Button.vue';
-import UserUtils from 'src/helpers/user';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
 import { IBid } from 'src/models/IBid';
@@ -62,8 +87,9 @@ interface IUserBid {
   formattedAccount: string | unknown;
   highestBid: string;
   tokenSymbol: string;
-  stackedAlgop: number | unknown;
-  stackedAlgopPercentage: number;
+  stakedAlgop: number | unknown;
+  stakedAlgopPercentage: number;
+  bidBackPrize: string;
 }
 
 @Options({
@@ -79,7 +105,7 @@ interface IUserBid {
       ]),
     ...mapGetters(
       'auctions', [
-        'getAuctionInfo',
+        'getAuctionInfoBidBack',
       ]),
   },
 })
@@ -88,12 +114,12 @@ export default class BidBackModal extends Vue {
   rewardsSystem!: AlgoPainterRewardsSystemProxy;
   networkInfo!: NetworkInfo;
   account!: string;
-  getAuctionInfo!: IAuctionItem;
+  getAuctionInfoBidBack!: IAuctionItem;
   isConnected!: boolean;
+  auctionBidBackRate!: number;
+  auctionCurrency!: string;
 
   modal: boolean = false;
-  userBalance: number = 0;
-  formattedBalance: string = '';
   totalBidBackStaked: number = 0;
 
   userBid: IUserBid[] = [];
@@ -115,25 +141,43 @@ export default class BidBackModal extends Vue {
       sortable: true,
     },
     {
-      name: 'stackedAlgop',
+      name: 'stakedAlgop',
       required: true,
-      label: 'ALGOP stacked',
-      field: (userBid: { stackedAlgop: number }) => this.setFormatCurrency(userBid.stackedAlgop).toFixed(2),
+      label: 'ALGOP staked',
+      field: (userBid: { stakedAlgop: number }) => this.setFormatCurrency(userBid.stakedAlgop).toFixed(2),
       sortable: true,
     },
     {
       name: 'participation',
       required: true,
       label: 'BidBack %',
-      field: (userBid: { stackedAlgopPercentage: number }) => userBid.stackedAlgopPercentage.toFixed(2),
+      field: (userBid: { stakedAlgopPercentage: number }) => userBid.stakedAlgopPercentage.toFixed(2),
+      sortable: true,
+    },
+    {
+      name: 'prizeAmount',
+      required: true,
+      label: 'BidBack',
+      field: (userBid: { bidBackPrize: string }) => userBid.bidBackPrize,
       sortable: true,
     },
   ];
 
-  @Watch('getAuctionInfo')
+  formatHighestBidAmount() {
+    const bidBackAmount = blockchainToCurrency(
+      this.getAuctionInfoBidBack.highestBid.netAmount,
+      this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
+
+    return this.$n(bidBackAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
+  }
+
+  @Watch('getAuctionInfoBidBack')
   onGetAuctionChanged() {
     this.userBid = [];
-    if (this.getAuctionInfo) {
+    if (this.getAuctionInfoBidBack) {
       void this.getAuctions();
     }
   }
@@ -160,9 +204,11 @@ export default class BidBackModal extends Vue {
   getAuctions() {
     this.loadingTable = true;
 
+    void this.getAuctionBidBackRate();
+
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
-      account: this.getAuctionInfo._id,
+      account: this.getAuctionInfoBidBack._id,
     }).then(async() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;
@@ -179,7 +225,7 @@ export default class BidBackModal extends Vue {
         const account = bid.account;
         const formattedAccount = this.formatAccount(account);
         const name = this.formatName(bid.name);
-        const tokenSymbol = bid.tokenSymbol;
+        this.auctionCurrency = bid.tokenSymbol;
         const amountBid = blockchainToCurrency(
           bid.netAmount,
           this.coinDetails.decimalPlaces,
@@ -198,30 +244,46 @@ export default class BidBackModal extends Vue {
             account: account,
             formattedAccount: formattedAccount,
             highestBid: highestBid,
-            tokenSymbol: tokenSymbol,
-            stackedAlgop: 0,
-            stackedAlgopPercentage: 0,
+            tokenSymbol: this.auctionCurrency,
+            stakedAlgop: 0,
+            stakedAlgopPercentage: 0,
+            bidBackPrize: `0.000 ${this.auctionCurrency}`,
           });
         }
       });
 
-      this.totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(this.getAuctionInfo.index);
+      this.totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(this.getAuctionInfoBidBack.index);
       let isVariableSet = false;
 
       if (auction.bidbacks) {
         Object.keys(auction.bidbacks).forEach((account) => {
           this.userBid.forEach((bidder) => {
             if (account === bidder.account) {
-              bidder.stackedAlgop = auction.bidbacks[account];
+              bidder.stakedAlgop = auction.bidbacks[account];
               isVariableSet = true;
             } else if (!isVariableSet) {
-              bidder.stackedAlgop = 0;
+              bidder.stakedAlgop = 0;
             }
-            if (typeof bidder.stackedAlgop === 'number') {
-              bidder.stackedAlgopPercentage = parseFloat(((bidder.stackedAlgop > 0)
-                ? (bidder.stackedAlgop / this.totalBidBackStaked) * 100
+            if (typeof bidder.stakedAlgop === 'number') {
+              bidder.stakedAlgopPercentage = parseFloat(((bidder.stakedAlgop > 0)
+                ? (bidder.stakedAlgop / this.totalBidBackStaked) * 100
                 : 0).toFixed(2));
             }
+          });
+        });
+
+        const auctionBidBackPrize = blockchainToCurrency(
+          this.getAuctionInfoBidBack.highestBid.netAmount,
+          this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
+
+        Object.keys(this.getAuctionInfoBidBack.bidbackshare).forEach(() => {
+          this.userBid.forEach((bidder) => {
+            const valuePrize = ((bidder.stakedAlgopPercentage / 100) * auctionBidBackPrize);
+            const formatPrize = this.$n(valuePrize, 'decimal', {
+              maximumFractionDigits: this.coinDetails.decimalPlaces,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
+            bidder.bidBackPrize = `${formatPrize} ${this.auctionCurrency}`;
           });
         });
       }
@@ -246,8 +308,11 @@ export default class BidBackModal extends Vue {
     if (this.isConnected) {
       this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
       this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-      void this.setAccountBalance();
     }
+  }
+
+  async getAuctionBidBackRate() {
+    this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfoBidBack.index) / 10000;
   }
 
   @Watch('isConnected')
@@ -255,25 +320,8 @@ export default class BidBackModal extends Vue {
     if (this.isConnected) {
       this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
       this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
-      void this.setAccountBalance();
+      void this.getAuctionBidBackRate();
     }
-  }
-
-  @Watch('userBalance')
-  onUserBalanceChanged() {
-    if (this.isConnected) {
-      void this.setAccountBalance();
-    }
-  }
-
-  async setAccountBalance() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    this.userBalance = await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']);
-    void this.setformattedBalance();
-  }
-
-  setformattedBalance() {
-    this.formattedBalance = UserUtils.formatAccountBalance(this.userBalance, 2);
   }
 
   openBidBackModal() {
@@ -288,7 +336,55 @@ export default class BidBackModal extends Vue {
   width: 100%;
 }
 .modal-card-container{
-  max-width: 650px;
-  width: 750px;
+  max-width: 800px !important;
+  border-radius: 20px;
+}
+.header-right p, title {
+  margin-bottom: 0px;
+}
+</style>
+
+<style lang="scss">
+.report-and-simulator{
+  .q-table thead, .q-table tr, .q-table th, .q-table td {
+      border-color: $primary;
+      border-bottom-width: 1.5px !important;
+  }
+
+  .q-table thead th {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .q-field__control-container {
+    justify-content: center;
+    input, div {
+      color: $primary;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    input {
+      text-align: left;
+    }
+  }
+
+  .smaller-placeholder {
+    .q-field__control-container {
+      input, div {
+        font-size: 16px;
+      }
+      }
+  }
+
+  .smaller-checkbox-text {
+    .q-checkbox__label {
+      font-size: 10px;
+    }
+  }
+
+  .smaller-algo-button {
+    min-width: 0px;
+    width: 100px;
+  }
 }
 </style>

@@ -142,28 +142,28 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   openBidBackModal(type, value: {auction: IAuctionItem}) {
     this.commit('auctions/SET_OPEN_BID_BACK_MODAL');
     if (value.auction) {
-      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+      this.commit('auctions/SET_AUCTION_INFO_BIDBACK', value.auction);
     }
   },
 
-  openBidBackSimulatorModal(type, value: {auction: IAuctionItem}) {
+  openBidBackSimulatorModal(type, value: { auction: IAuctionItem }) {
     this.commit('auctions/SET_OPEN_BID_BACK_SIMULATOR_MODAL');
     if (value.auction) {
-      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+      this.commit('auctions/SET_AUCTION_INFO_BIDBACK', value.auction);
     }
   },
 
   openPirsModal(type, value: {auction: IAuctionItem}) {
     this.commit('auctions/SET_OPEN_PIRS_MODAL');
     if (value.auction) {
-      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+      this.commit('auctions/SET_AUCTION_INFO_PIRS', value.auction);
     }
   },
 
   openPirsSimulatorModal(type, value: {auction: IAuctionItem}) {
     this.commit('auctions/SET_OPEN_PIRS_SIMULATOR_MODAL');
     if (value.auction) {
-      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+      this.commit('auctions/SET_AUCTION_INFO_PIRS', value.auction);
     }
   },
 };

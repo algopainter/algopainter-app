@@ -4,7 +4,9 @@ import moment from 'moment';
 export interface IAuctionItem {
   address?: string;
   bidbacks: { [key: string]: number };
+  bidbackshare: { [key: string]: number };
   pirs: { [key: string]: number };
+  pirshare: { [key: string]: number };
   _id: string;
   index: number;
   bids: IBid[];

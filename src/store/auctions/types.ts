@@ -14,5 +14,6 @@ export interface AuctionStateInterface {
   openPirsModal: boolean,
   openBidBackSimulatorModal: boolean,
   openPirsSimulatorModal: boolean,
-  auctionInfo: IAuctionItem | undefined,
+  auctionInfoBidBack: IAuctionItem | undefined,
+  auctionInfoPirs: IAuctionItem | undefined,
 }

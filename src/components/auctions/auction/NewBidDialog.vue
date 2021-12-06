@@ -1,9 +1,5 @@
 <template>
-  <q-dialog
-    ref="dialogRef"
-    :persistent="placingBid"
-    @hide="onDialogHide"
-  >
+  <q-dialog ref="dialogRef" :persistent="placingBid" @hide="onDialogHide">
     <q-card class="place-bid-card">
       <q-card-section class="header">
         {{ $t('dashboard.auctionPage.placeABid') }}
@@ -20,10 +16,7 @@
                 </template>
               </i18n-t>
             </div>
-            <div
-              v-if="auction"
-              class="col-12"
-            >
+            <div v-if="auction" class="col-12">
               <v-field
                 v-slot="{ field, handleChange, errorMessage }"
                 :label="$t('dashboard.auctionPage.amount')"
@@ -40,15 +33,22 @@
                   :hint="`${minimumLabel}: ${minimumValue} ${coinSymbol}`"
                   :error="!!errorMessage"
                   :error-message="errorMessage"
-                  :rules="[val => val <= balance || $t('dashboard.auctionPage.newBidModal.rules.noFunds'),
-                           val => val >= minimumBid || $t('dashboard.auctionPage.newBidModal.rules.minimumBid', {
-                             coinSymbol: coinSymbol,
-                             auctionMinimumBid: auctionMinimumBid,
-                           }),
-                           val => val > highestBid || $t('dashboard.auctionPage.newBidModal.rules.highestBid', {
-                             coinSymbol: coinSymbol,
-                             minimumValue: minimumValue,
-                           }),
+                  :rules="[
+                    (val) =>
+                      val <= balance ||
+                      $t('dashboard.auctionPage.newBidModal.rules.noFunds'),
+                    (val) =>
+                      val >= minimumBid ||
+                      $t('dashboard.auctionPage.newBidModal.rules.minimumBid', {
+                        coinSymbol: coinSymbol,
+                        auctionMinimumBid: minimumValue,
+                      }),
+                    (val) =>
+                      val > highestBid ||
+                      $t('dashboard.auctionPage.newBidModal.rules.highestBid', {
+                        coinSymbol: coinSymbol,
+                        minimumValue: minimumValue,
+                      }),
                   ]"
                   @update:modelValue="updateAmount(handleChange, $event)"
                 />
@@ -58,15 +58,9 @@
               v-if="loadingBlockchainData"
               class="col-12 flex flex-center q-pa-lg"
             >
-              <q-spinner
-                size="80px"
-                color="primary"
-              />
+              <q-spinner size="80px" color="primary" />
             </div>
-            <div
-              v-else
-              class="col-12 info-list"
-            >
+            <div v-else class="col-12 info-list">
               <div class="info-item">
                 <div class="label">
                   {{ $t('dashboard.auctionPage.yourBalance') }}
@@ -107,10 +101,7 @@
         </q-form>
       </v-form>
     </q-card>
-    <q-dialog
-      v-model="displayingStatus"
-      persistent
-    >
+    <q-dialog v-model="displayingStatus" persistent>
       <new-bid-status-card
         :bid-status="placingBidStatus"
         @request-close="onCloseStatusDialog"
@@ -204,9 +195,12 @@ export default class NewBidDialog extends Vue {
 
   async setAccountBalance() {
     if (this.isConnected) {
-      this.balance = (
+      this.balance =
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
+        await UserUtils.fetchAccountBalance(
+          this.$store.getters['user/networkInfo'],
+          this.$store.getters['user/account'],
+        );
       void this.setformattedBalance();
     }
   }
@@ -238,9 +232,15 @@ export default class NewBidDialog extends Vue {
     const { decimalPlaces } = this.coinDetails;
 
     if (highestBid.length === 0) {
-      this.minimumBid = blockchainToCurrency(this.auction.minimumBid.amount, decimalPlaces);
+      this.minimumBid = blockchainToCurrency(
+        this.auction.minimumBid.amount,
+        decimalPlaces,
+      );
     } else {
-      this.highestBid = blockchainToCurrency(this.auction.highestBid.netAmount, decimalPlaces);
+      this.highestBid = blockchainToCurrency(
+        this.auction.highestBid.netAmount,
+        decimalPlaces,
+      );
     }
   }
 
@@ -248,16 +248,6 @@ export default class NewBidDialog extends Vue {
     const { decimalPlaces } = this.coinDetails;
     const value = this.highestBid;
 
-    const amount = blockchainToCurrency(value, decimalPlaces);
-
-    return this.$n(amount, 'decimal', {
-      maximumFractionDigits: decimalPlaces,
-    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
-  }
-
-  get auctionMinimumBid() {
-    const { decimalPlaces } = this.coinDetails;
-    const value = this.minimumBid;
     const amount = blockchainToCurrency(value, decimalPlaces);
 
     return this.$n(amount, 'decimal', {
@@ -284,7 +274,7 @@ export default class NewBidDialog extends Vue {
   }
 
   get netAmount() {
-    return this.formatValue(this.bidAmount + (this.bidAmount * this.bidFee));
+    return this.formatValue(this.bidAmount + this.bidAmount * this.bidFee);
   }
 
   get minimumValue() {
@@ -302,8 +292,12 @@ export default class NewBidDialog extends Vue {
 
   mounted() {
     this.show();
-    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.auctionCoinTokenProxy = new ERC20TokenProxy(this.auction.minimumBid.tokenPriceAddress);
+    this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(
+      this.networkInfo,
+    );
+    this.auctionCoinTokenProxy = new ERC20TokenProxy(
+      this.auction.minimumBid.tokenPriceAddress
+    );
     void this.loadBlockchainData();
     void this.setAccountBalance();
     void this.validateBid();
@@ -355,8 +349,10 @@ export default class NewBidDialog extends Vue {
   async approveContractTransfer(amount: number) {
     this.placingBidStatus = PlacingBidStatus.CheckingAllowance;
 
-    const allowance = await this.auctionCoinTokenProxy
-      .allowance(this.userAccount, this.auctionSystemContractAddress);
+    const allowance = await this.auctionCoinTokenProxy.allowance(
+      this.userAccount,
+      this.auctionSystemContractAddress,
+    );
 
     if (allowance < amount) {
       this.placingBidStatus = PlacingBidStatus.IncreateAllowanceAwaitingInput;
@@ -368,16 +364,19 @@ export default class NewBidDialog extends Vue {
         decimalPlaces,
       );
 
-      await this.auctionCoinTokenProxy.approve(
-        this.auctionSystemContractAddress,
-        numberToString(allowanceAmount),
-        this.userAccount,
-      ).on('error', () => {
-        this.placingBidStatus = PlacingBidStatus.IncreateAllowanceError;
-      }).on('transactionHash', () => {
-        this.placingBidStatus =
-          PlacingBidStatus.IncreateAllowanceAwaitingConfirmation;
-      });
+      await this.auctionCoinTokenProxy
+        .approve(
+          this.auctionSystemContractAddress,
+          numberToString(allowanceAmount),
+          this.userAccount,
+        )
+        .on('error', () => {
+          this.placingBidStatus = PlacingBidStatus.IncreateAllowanceError;
+        })
+        .on('transactionHash', () => {
+          this.placingBidStatus =
+            PlacingBidStatus.IncreateAllowanceAwaitingConfirmation;
+        });
     }
   }
 
@@ -388,24 +387,20 @@ export default class NewBidDialog extends Vue {
 
       const { decimalPlaces } = this.coinDetails;
 
-      const bidAmount = currencyToBlockchain(
-        Number(amount),
-        decimalPlaces,
-      );
+      const bidAmount = currencyToBlockchain(Number(amount), decimalPlaces);
 
       await this.approveContractTransfer(bidAmount);
 
       this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingInput;
 
-      await this.auctionSystemProxy.bid(
-        this.auction.index,
-        numberToString(bidAmount),
-        this.userAccount,
-      ).on('error', () => {
-        this.placingBidStatus = PlacingBidStatus.PlaceBidError;
-      }).on('transactionHash', () => {
-        this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingConfirmation;
-      });
+      await this.auctionSystemProxy
+        .bid(this.auction.index, numberToString(bidAmount), this.userAccount)
+        .on('error', () => {
+          this.placingBidStatus = PlacingBidStatus.PlaceBidError;
+        })
+        .on('transactionHash', () => {
+          this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingConfirmation;
+        });
 
       this.placingBidStatus = PlacingBidStatus.BidCreated;
 
@@ -434,7 +429,7 @@ export default class NewBidDialog extends Vue {
   .header {
     background: $primary;
     font-size: 1.4rem;
-    color: #FFF;
+    color: #fff;
   }
 
   .art-title {

@@ -11,11 +11,13 @@ function state(): AuctionStateInterface {
     owner: [],
     auctionId: undefined,
     openAuctionModal: false,
-    openBidBackModal: false,
     pirsAuction: [],
-    openPirsModal: false,
+    auctionInfoBidBack: undefined,
+    openBidBackModal: false,
     openBidBackSimulatorModal: false,
-    auctionInfo: undefined,
+    auctionInfoPirs: undefined,
+    openPirsSimulatorModal: false,
+    openPirsModal: false,
   };
 }
 

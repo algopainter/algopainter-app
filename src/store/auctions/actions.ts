@@ -94,7 +94,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     const account = value.account as string;
     const forBids = value.forBids as boolean;
     try {
-      const result = await api.get(`users/${account}/auctions/biding?_t=${(new Date().getTime())}${forBids ? '&forBids=true' : ''}`);
+      const result = await api.get(`users/${account}/auctions/biding${forBids ? '?forBids=true' : ''}`);
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {
@@ -142,21 +142,28 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   openBidBackModal(type, value: {auction: IAuctionItem}) {
     this.commit('auctions/SET_OPEN_BID_BACK_MODAL');
     if (value.auction) {
-      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+      this.commit('auctions/SET_AUCTION_INFO_BIDBACK', value.auction);
     }
   },
 
-  openBidBackSimulatorModal(type, value: {auction: IAuctionItem}) {
+  openBidBackSimulatorModal(type, value: { auction: IAuctionItem }) {
     this.commit('auctions/SET_OPEN_BID_BACK_SIMULATOR_MODAL');
     if (value.auction) {
-      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+      this.commit('auctions/SET_AUCTION_INFO_BIDBACK', value.auction);
     }
   },
 
   openPirsModal(type, value: {auction: IAuctionItem}) {
     this.commit('auctions/SET_OPEN_PIRS_MODAL');
     if (value.auction) {
-      this.commit('auctions/SET_AUCTION_INFO', value.auction);
+      this.commit('auctions/SET_AUCTION_INFO_PIRS', value.auction);
+    }
+  },
+
+  openPirsSimulatorModal(type, value: {auction: IAuctionItem}) {
+    this.commit('auctions/SET_OPEN_PIRS_SIMULATOR_MODAL');
+    if (value.auction) {
+      this.commit('auctions/SET_AUCTION_INFO_PIRS', value.auction);
     }
   },
 };

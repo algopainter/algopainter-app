@@ -2,7 +2,7 @@
   <div v-if="loading === false">
     <div v-if="auctionsBid.length > 0">
       <div v-for="(bid, index) in auctionsBid" :key="index">
-        <Bids-page :bid="bid" :account-adress="accountAdress" :index="index" />
+        <Bids-page :bid="bid" :index="index" />
       </div>
     </div>
     <div v-else>
@@ -81,5 +81,4 @@ export default class Bids extends Vue {
 }
 </script>
 <style lang="scss">
-
 </style>

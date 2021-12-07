@@ -308,13 +308,23 @@ export default class PirsStackModal extends Vue.with(Props) {
       });
       this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
       setTimeout(() => {
-        this.$refs.dialog.hide();
-        this.$emit('hide');
-        this.settingPirsStatus = null;
-        this.stakeAmount = 0;
+        try {
+          void this.$store.dispatch({
+            type: 'auctions/updatePirsStakedAlgop',
+            collectionOwner: this.itemPirs.item.collectionOwner,
+            itemIndex: this.itemPirs.item.index,
+          });
+        } catch (e) {
+          console.log('Error - updatePirsStakedAlgop - PirsStackModal');
+        } finally {
+          this.$refs.dialog.hide();
+          this.$emit('hide');
+          this.settingPirsStatus = null;
+          this.stakeAmount = 0;
+        }
       }, 3000);
     } catch (e) {
-      console.log('error - stakeAlgop Pirs', e);
+      console.log('Error - stakeAlgop - PirsStackModal', e);
     } finally {
       this.isCancelDisabled = false;
       this.isDisabled = true;

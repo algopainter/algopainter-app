@@ -331,7 +331,7 @@ export default class MyPaint extends Vue.with(Props) {
               itemIndex: this.art.item.index,
             });
           } catch (e) {
-            console.log('updateBidBackStakedAlgop error UntackModalAlgop');
+            console.log('Error - updateBidBackStakedAlgop - UntackModalAlgop');
           } finally {
             this.$refs.dialog.hide();
             this.$emit('hide');
@@ -341,7 +341,7 @@ export default class MyPaint extends Vue.with(Props) {
         }, 3000);
       }
     } catch (e) {
-      console.log('error - stakeAlgop unstakeAlgop', e);
+      console.log('Error - stakeAlgop- unstakeModalAlgop');
     } finally {
       this.isCancelDisabled = false;
       this.isConfirmBtnLoading = false;

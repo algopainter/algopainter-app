@@ -25,6 +25,9 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getBidsUpdated(state: AuctionStateInterface): [] | undefined {
     return state.bidsUpdated;
   },
+  getPirsUpdated(state: AuctionStateInterface): [] | undefined {
+    return state.pirsUpdated;
+  },
   getBidBack(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },
@@ -46,7 +49,7 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   updateBidBackStakedAlgop(state: AuctionStateInterface): {collectionOwner: string, itemIndex: number} | undefined {
     return state.updateBidBackStakedAlgop;
   },
-  updatePirsStakedAlgop(state: AuctionStateInterface): boolean {
+  updatePirsStakedAlgop(state: AuctionStateInterface): {collectionOwner: string, itemIndex: number} | undefined {
     return state.updatePirsStakedAlgop;
   },
 };

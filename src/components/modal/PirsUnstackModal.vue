@@ -267,14 +267,24 @@ export default class PirsUnstackModal extends Vue.with(Props) {
         });
         this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
         setTimeout(() => {
-          this.$refs.dialog.hide();
-          this.$emit('hide');
-          this.settingPirsStatus = null;
-          this.unstakeAmount = 0;
+          try {
+            void this.$store.dispatch({
+              type: 'auctions/updatePirsStakedAlgop',
+              collectionOwner: this.itemPirs.item.collectionOwner,
+              itemIndex: this.itemPirs.item.index,
+            });
+          } catch (e) {
+            console.log('updatePirsStakedAlgop error PirsUnstackModal');
+          } finally {
+            this.$refs.dialog.hide();
+            this.$emit('hide');
+            this.settingPirsStatus = null;
+            this.unstakeAmount = 0;
+          }
         }, 3000);
       }
     } catch (e) {
-      console.log('error - unstakeAlgop', e);
+      console.log('error - unstakeAlgop PirsUnstackModal', e);
     } finally {
       this.isCancelDisabled = false;
       this.isConfirmBtnLoading = false;

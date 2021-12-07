@@ -326,7 +326,7 @@ export default class MyPaint extends Vue.with(Props) {
             itemIndex: this.art.item.index,
           });
         } catch (e) {
-          console.log('updateBidBackStakedAlgop error StackModalAlgop');
+          console.log('Error - updateBidBackStakedAlgop - StackModalAlgop');
         } finally {
           this.$refs.dialog.hide();
           this.$emit('hide');
@@ -335,7 +335,7 @@ export default class MyPaint extends Vue.with(Props) {
         }
       }, 3000);
     } catch (e) {
-      console.log('error - stakeAlgop BidBack', e);
+      console.log('Error - stakeAlgop - StackModalAlgop');
     } finally {
       this.isCancelDisabled = false;
       this.isConfirmBtnLoading = false;

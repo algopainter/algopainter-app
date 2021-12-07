@@ -397,20 +397,28 @@ export default class PirsModalSimulator extends Vue {
           this.placingBidBackStatus =
             PlacingBidBackStatus.IncreateAllowanceError;
           setTimeout(() => {
-            this.$refs.dialog.hide();
-            this.$emit('hide');
+            this.openPirsSimulatorModal();
             this.placingBidBackStatus = null;
           }, 3000);
         });
       this.placingBidBackStatus =
         PlacingBidBackStatus.IncreateAllowanceCompleted;
       setTimeout(() => {
-        this.$refs.dialog.hide();
-        this.$emit('hide');
-        this.placingBidBackStatus = null;
+        try {
+          void this.$store.dispatch({
+            type: 'auctions/updatePirsStakedAlgop',
+            collectionOwner: this.getAuctionInfoPirs.item.collectionOwner,
+            itemIndex: this.getAuctionInfoPirs.item.index,
+          });
+        } catch (e) {
+          console.log('updatePirsStakedAlgop error PirsSimulatorModal');
+        } finally {
+          this.openPirsSimulatorModal();
+          this.placingBidBackStatus = null;
+        }
       }, 3000);
     } catch (e) {
-      console.log('error - stakeAlgop BidBackSimulatorModal', e);
+      console.log('error - stakeAlgop PirsSimulatorModal', e);
     } finally {
       this.isCancelDisabled = false;
       this.isConfirmBtnLoading = false;

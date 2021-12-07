@@ -209,7 +209,7 @@ import { now } from 'src/helpers/timer';
 import 'moment-duration-format';
 import { Watch } from 'vue-property-decorator';
 import { IAxios } from 'src/models/IAxios';
-import { debounce } from 'quasar'
+import { debounce } from 'quasar';
 
 class Props {
   art = prop({
@@ -296,7 +296,6 @@ export default class gallerySelect extends Vue.with(Props) {
     void this.getBidBackPercentage();
     void this.getTime();
     void this.formatTime();
-    console.log('this.art', this.art);
   }
 
   async getBidBackPercentage() {
@@ -370,7 +369,7 @@ export default class gallerySelect extends Vue.with(Props) {
       this.disableUnstackBtn = true;
       this.withdrawBidBackStatus = WithdrawBidBackStatus.BidBackWithdrawn;
     } catch (e) {
-      console.log('error claimBidBack bidBack', e);
+      console.log('Error - claimBidBack - GallerySelect');
     }
   }
 
@@ -479,9 +478,7 @@ export default class gallerySelect extends Vue.with(Props) {
 
   @Watch('updateBidBackStakedAlgop')
   onBidBackStakedAlgopChanged() {
-    console.log('updateBidBackStakedAlgop');
     if (this.art.item.collectionOwner === this.updateBidBackStakedAlgop?.collectionOwner && this.art.item.index === this.updateBidBackStakedAlgop.itemIndex) {
-      console.log('here');
       this.isStakedAlgopInputLoading = true;
       // eslint-disable-next-line @typescript-eslint/unbound-method
       this.bidBackStakedUpdate = debounce(this.bidBackStakedUpdate, 5000);
@@ -490,7 +487,6 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   bidBackStakedUpdate() {
-    console.log('updateBidBackStakedAlgop');
     try {
       void this.$store.dispatch({
         type: 'auctions/getBidBackUpdated',
@@ -500,14 +496,11 @@ export default class gallerySelect extends Vue.with(Props) {
       }).then(() => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const response = this.$store.getters['auctions/getBidsUpdated'] as IAxios;
-        console.log('response', response);
         const updatedAuction = response.data as IAuctionItem[];
-        console.log('updatedAuction', updatedAuction);
         this.algopStaked = (updatedAuction[0].bidbacks && updatedAuction[0].bidbacks[this.account]) ? updatedAuction[0].bidbacks[this.account] : 0;
-        console.log('this.algopStaked', this.algopStaked);
       });
     } catch (e) {
-      console.log('getAuctions updateBidBackStakedAlgop error Gallery Select');
+      console.log('Error - updateBidBackStakedAlgop - GallerySelect');
     } finally {
       this.isStakedAlgopInputLoading = false;
     }

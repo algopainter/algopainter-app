@@ -22,13 +22,20 @@ export const auctionCoins = [
   },
   {
     value: '4',
+    label: 'DAI',
+    tokenAddress: '0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867',
+    decimalPlaces: 18,
+    img: '/images/DAI.svg',
+  },
+  {
+    value: '5',
     label: 'ETH',
     tokenAddress: '',
     decimalPlaces: 8,
     img: '/images/ETH.svg',
   },
   {
-    value: '5',
+    value: '6',
     label: 'DASH',
     tokenAddress: '',
     decimalPlaces: 18,

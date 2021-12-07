@@ -19,7 +19,7 @@
           @openModalArtist="openModalArtist"
         />
       </q-drawer>
-      <q-page-container class="q-px-lg">
+      <q-page-container class="q-pl-md">
         <router-view
           @favoriteClicked="refreshModal"
         />

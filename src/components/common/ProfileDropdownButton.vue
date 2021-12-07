@@ -25,7 +25,9 @@
           </div>
         </q-chip>
       </div>
-      <q-menu>
+      <q-menu
+        :offset="[50, 10]"
+      >
         <div class="q-pa-md">
           <div class="text-bold q-mb-md">
             {{ formatedAccount(4, -4) }}
@@ -192,5 +194,8 @@ export default class ProfileDropdownButton extends Vue {
   border: 3px solid #fff;
   border-radius: 34px !important;
   background: #fff;
+}
+.teste{
+  background: red;
 }
 </style>

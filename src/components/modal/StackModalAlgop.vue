@@ -201,16 +201,6 @@ export default class MyPaint extends Vue.with(Props) {
     this.$refs.dialog.show();
   }
 
-  // hide() {
-  //   this.$refs.dialog.hide();
-  //   console.log('hide');
-  // }
-
-  // onDialogHide() {
-  //   this.$emit('hide');
-  //   console.log('onDialogHide');
-  // }
-
   closeModal() {
     this.modal = false;
   }
@@ -329,10 +319,20 @@ export default class MyPaint extends Vue.with(Props) {
       this.placingBidBackStatus =
           PlacingBidBackStatus.IncreateAllowanceCompleted;
       setTimeout(() => {
-        this.$refs.dialog.hide();
-        this.$emit('hide');
-        this.placingBidBackStatus = null;
-        this.stakeAmount = 0;
+        try {
+          void this.$store.dispatch({
+            type: 'auctions/updateBidBackStakedAlgop',
+            collectionOwner: this.art.item.collectionOwner,
+            itemIndex: this.art.item.index,
+          });
+        } catch (e) {
+          console.log('updateBidBackStakedAlgop error StackModalAlgop');
+        } finally {
+          this.$refs.dialog.hide();
+          this.$emit('hide');
+          this.placingBidBackStatus = null;
+          this.stakeAmount = 0;
+        }
       }, 3000);
     } catch (e) {
       console.log('error - stakeAlgop BidBack', e);

@@ -406,17 +406,25 @@ export default class BidBackModalSimulator extends Vue {
         .on('error', () => {
           this.placingBidBackStatus = PlacingBidBackStatus.IncreateAllowanceError;
           setTimeout(() => {
-            this.$refs.dialog.hide();
-            this.$emit('hide');
+            this.openBidBackSimulatorModal();
             this.placingBidBackStatus = null;
           }, 3000);
         });
       this.placingBidBackStatus =
         PlacingBidBackStatus.IncreateAllowanceCompleted;
       setTimeout(() => {
-        this.$refs.dialog.hide();
-        this.$emit('hide');
-        this.placingBidBackStatus = null;
+        try {
+          void this.$store.dispatch({
+            type: 'auctions/updateBidBackStakedAlgop',
+            collectionOwner: this.getAuctionInfoBidBack.item.collectionOwner,
+            itemIndex: this.getAuctionInfoBidBack.item.index,
+          });
+        } catch (e) {
+          console.log('updateBidBackStakedAlgop error UntackModalAlgop');
+        } finally {
+          this.openBidBackSimulatorModal();
+          this.placingBidBackStatus = null;
+        }
       }, 3000);
     } catch (e) {
       console.log('error - stakeAlgop BidBackSimulatorModal', e);

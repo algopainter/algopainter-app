@@ -7,6 +7,7 @@ function state(): AuctionStateInterface {
     topBuyers: [],
     auctions: [],
     bids: [],
+    bidsUpdated: [],
     bidBack: [],
     owner: [],
     auctionId: undefined,
@@ -18,6 +19,8 @@ function state(): AuctionStateInterface {
     auctionInfoPirs: undefined,
     openPirsSimulatorModal: false,
     openPirsModal: false,
+    updateBidBackStakedAlgop: undefined,
+    updatePirsStakedAlgop: false,
   };
 }
 

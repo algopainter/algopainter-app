@@ -45,6 +45,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
   },
 
   async getAuctions(type, value: Record<string, unknown>) {
+    console.log('value', value);
     const account = (value.account as string) || '';
     const collectionOwner = value.collectionOwner as string;
     const itemIndex = value.itemIndex as number;
@@ -53,10 +54,9 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
 
     try {
       const res =
-
         await api.get(
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}&address=${algopainterAuctionSystemCurrentAddress}`,
+          `auctions/?owner=${account}&item.index=${itemIndex}&item.collectionOwner=${collectionOwner}&address=${algopainterAuctionSystemCurrentAddress}`,
         );
       const auctions = res.data as [];
       const auctionsLength = auctions.length;
@@ -71,9 +71,9 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
         this.commit('auctions/SET_AUCTIONS', auctions);
       }
     } catch (e) {
-      console.log('error msg');
+      console.log('error auctions getAuctions');
     } finally {
-      console.log('success msg');
+      console.log('success auctions getAuctions');
     }
   },
 
@@ -121,6 +121,23 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     }
   },
 
+  async getBidBackUpdated(type, value: Record<string, unknown>) {
+    const account = value.account as string;
+    const collectionOwner = value.collectionOwner as string;
+    const itemIndex = value.itemIndex as number;
+    try {
+      const bids = await api.get(
+        `users/${account}/auctions/biding?forBidbacks=true&order.expirationDt=1&item.index=${itemIndex}&item.collectionOwner=${collectionOwner}`,
+      );
+      console.log('getBidBackUpdated', bids);
+      this.commit('auctions/SET_BIDS_UPDATED', bids);
+    } catch (e) {
+      console.log('error getBidBackUpdated msg');
+    } finally {
+      console.log('success getBidBackUpdated msg');
+    }
+  },
+
   async getOnSale(type, value: { itemId: string }) {
     const itemId = value.itemId;
     try {
@@ -165,6 +182,14 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     if (value.auction) {
       this.commit('auctions/SET_AUCTION_INFO_PIRS', value.auction);
     }
+  },
+
+  updateBidBackStakedAlgop(type, value) {
+    this.commit('auctions/UPDATE_BIDBACK_STAKED_ALGOP', value);
+  },
+
+  updatePirsStakedAlgop(type) {
+    this.commit('auctions/UPDATE_PIRS_STAKED_ALGOP');
   },
 };
 

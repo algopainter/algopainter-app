@@ -30,6 +30,9 @@ const mutation: MutationTree<AuctionStateInterface> = {
   SET_BIDBACK(state: AuctionStateInterface, payload) {
     state.bids = payload as [];
   },
+  SET_BIDS_UPDATED(state: AuctionStateInterface, payload) {
+    state.bidsUpdated = payload as [];
+  },
   SET_PIRS_AUCTION(state: AuctionStateInterface, payload) {
     state.pirsAuction = payload as [];
   },
@@ -50,6 +53,12 @@ const mutation: MutationTree<AuctionStateInterface> = {
   },
   SET_AUCTION_INFO_PIRS(state: AuctionStateInterface, payload) {
     state.auctionInfoPirs = payload as IAuctionItem;
+  },
+  UPDATE_BIDBACK_STAKED_ALGOP(state: AuctionStateInterface, payload) {
+    state.updateBidBackStakedAlgop = payload as {collectionOwner: string, itemIndex: number};
+  },
+  UPDATE_PIRS_STAKED_ALGOP(state: AuctionStateInterface) {
+    state.updatePirsStakedAlgop = !state.updatePirsStakedAlgop;
   },
 };
 

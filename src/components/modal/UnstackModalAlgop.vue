@@ -324,10 +324,20 @@ export default class MyPaint extends Vue.with(Props) {
         this.placingBidBackStatus =
           PlacingBidBackStatus.IncreateAllowanceCompleted;
         setTimeout(() => {
-          this.$refs.dialog.hide();
-          this.$emit('hide');
-          this.placingBidBackStatus = null;
-          this.unstakeAmount = 0;
+          try {
+            void this.$store.dispatch({
+              type: 'auctions/updateBidBackStakedAlgop',
+              collectionOwner: this.art.item.collectionOwner,
+              itemIndex: this.art.item.index,
+            });
+          } catch (e) {
+            console.log('updateBidBackStakedAlgop error UntackModalAlgop');
+          } finally {
+            this.$refs.dialog.hide();
+            this.$emit('hide');
+            this.placingBidBackStatus = null;
+            this.unstakeAmount = 0;
+          }
         }, 3000);
       }
     } catch (e) {

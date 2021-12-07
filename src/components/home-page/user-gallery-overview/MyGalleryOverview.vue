@@ -782,7 +782,7 @@ export default class MyGalleryOverview extends Vue {
 
   async loadMore(
     collection: string = this.currentCollection,
-    filter: boolean = false
+    filter: boolean = false,
   ) {
     if (filter) {
       this.galleryTabs[0].loadingData = true;

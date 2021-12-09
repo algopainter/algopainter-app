@@ -166,7 +166,7 @@
           :label="$t('dashboard.gallery.bidBackTab.bidBackBtn')"
           color="primary"
           outline
-          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-px-xl q-mx-auto' : 'load-more q-px-xl q-mx-auto q-mb-sm']"
+          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-px-xl q-mx-auto' : 'load-more q-px-lg q-mx-auto q-mb-sm']"
           @click="openBidBackModal()"
         />
         <algo-button

@@ -120,9 +120,11 @@
         </span>
         <div class="flex container">
           <span
+            v-if="!isStakedAlgopInputLoading"
             class="input-stack-algop"
-          > {{ algopStacked ? setFormatCurrency(algopStacked) : 0 }}
+          > {{ algopStaked ? setFormatCurrency(algopStaked) : 0 }}
           </span>
+          <q-spinner-dots v-else class="input-stack-algop-loading" color="primary" />
           <algo-button
             label="-"
             color="primary"
@@ -206,6 +208,8 @@ import moment from 'moment';
 import { now } from 'src/helpers/timer';
 import 'moment-duration-format';
 import { Watch } from 'vue-property-decorator';
+import { IAxios } from 'src/models/IAxios';
+import { debounce } from 'quasar';
 
 class Props {
   art = prop({
@@ -237,6 +241,7 @@ enum WithdrawBidBackStatus {
   },
   computed: {
     ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
+    ...mapGetters('auctions', ['updateBidBackStakedAlgop']),
   },
 })
 export default class gallerySelect extends Vue.with(Props) {
@@ -245,10 +250,11 @@ export default class gallerySelect extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
+  updateBidBackStakedAlgop!: {collectionOwner: string, itemIndex: number} | undefined;
 
   openModal: boolean = false;
   openModalUnstack: boolean = false;
-  algopStacked: number = 0;
+  algopStaked: number = 0;
   teste: number = 0;
   showHarvestBtn: boolean = false;
   showHarvestMsg: boolean = false;
@@ -257,6 +263,7 @@ export default class gallerySelect extends Vue.with(Props) {
   auctionBidBackRate: number = 0;
   userCurrentPrizeAmount: number = 0;
   isCoinHarvestDisabled: boolean = false;
+  isStakedAlgopInputLoading: boolean = false;
 
   displayingStatus: boolean = false;
   withdrawBidBackStatus: WithdrawBidBackStatus | null = null;
@@ -286,9 +293,9 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   mounted() {
-    void this.getBidBackPercentage();
-    void this.getTime();
-    void this.formatTime();
+    this.getBidBackPercentage().catch(console.error);
+    this.getTime();
+    this.formatTime();
   }
 
   async getBidBackPercentage() {
@@ -297,9 +304,9 @@ export default class gallerySelect extends Vue.with(Props) {
         this.art.index,
       ) / 100;
       if (this.auctionBidBackRate > 0) {
-        void this.getCurrentPrizeAmount();
+        this.getCurrentPrizeAmount().catch(console.error);
       }
-      void this.getUserStackedBidBack();
+      this.getUserStackedBidBack();
     } catch (error) {
       console.log('Error - getBidBackPercentage - GallerySelect');
     }
@@ -336,11 +343,11 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   getUserStackedBidBack() {
-    this.algopStacked = this.art.bidbacks[this.account] || 0;
+    this.algopStaked = this.art.bidbacks[this.account] || 0;
 
-    this.disableUnstackBtn = this.algopStacked <= 0 || this.isEnded;
-    this.showHarvestBtn = this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
-    this.showHarvestMsg = !this.art.ended && this.algopStacked > 0 && this.auctionBidBackRate > 0;
+    this.disableUnstackBtn = this.algopStaked <= 0 || this.isEnded;
+    this.showHarvestBtn = this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;
+    this.showHarvestMsg = !this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;
   }
 
   async claimBidBack() {
@@ -362,7 +369,7 @@ export default class gallerySelect extends Vue.with(Props) {
       this.disableUnstackBtn = true;
       this.withdrawBidBackStatus = WithdrawBidBackStatus.BidBackWithdrawn;
     } catch (e) {
-      console.log('error claimBidBack bidBack', e);
+      console.log('Error - claimBidBack - GallerySelect');
     }
   }
 
@@ -378,7 +385,7 @@ export default class gallerySelect extends Vue.with(Props) {
     const totalBidBackPrize = auctionBidBackRate * auctionHighestBid;
 
     const userBidBackShare =
-      totalBidBackStaked > 0 ? this.algopStacked / totalBidBackStaked : 0;
+      totalBidBackStaked > 0 ? this.algopStaked / totalBidBackStaked : 0;
 
     this.userCurrentPrizeAmount = userBidBackShare * totalBidBackPrize;
   }
@@ -392,17 +399,17 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   openBidBackModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openBidBackModal',
       auction: this.art,
-    });
+    }).catch(console.error);
   }
 
   openBidBackSimulatorModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openBidBackSimulatorModal',
       auction: this.art,
-    });
+    }).catch(console.error);
   }
 
   onCloseStatusDialog() {
@@ -416,7 +423,7 @@ export default class gallerySelect extends Vue.with(Props) {
     }
   }
 
-  formatTime(): void {
+  formatTime() {
     this.monthExpirations = moment(this.art.expirationDt).format('MMM');
     this.dayExpirations = moment(this.art.expirationDt).format('DD');
     this.yearExpirations = moment(this.art.expirationDt).format('YYYY');
@@ -468,6 +475,36 @@ export default class gallerySelect extends Vue.with(Props) {
     this.lastCountMinutes = this.countMinutes;
     this.lastCountSeconds = this.countSeconds;
   }
+
+  @Watch('updateBidBackStakedAlgop')
+  onBidBackStakedAlgopChanged() {
+    if (this.art.item.collectionOwner === this.updateBidBackStakedAlgop?.collectionOwner && this.art.item.index === this.updateBidBackStakedAlgop.itemIndex) {
+      this.isStakedAlgopInputLoading = true;
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      this.bidBackStakedUpdate = debounce(this.bidBackStakedUpdate, 5000);
+      this.bidBackStakedUpdate();
+    }
+  }
+
+  bidBackStakedUpdate() {
+    try {
+      this.$store.dispatch({
+        type: 'auctions/getBidBackUpdated',
+        account: this.account.toLowerCase(),
+        collectionOwner: this.art.item.collectionOwner,
+        itemIndex: this.art.item.index,
+      }).then(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const response = this.$store.getters['auctions/getBidsUpdated'] as IAxios;
+        const updatedAuction = response.data as IAuctionItem[];
+        this.algopStaked = (updatedAuction[0].bidbacks && updatedAuction[0].bidbacks[this.account]) ? updatedAuction[0].bidbacks[this.account] : 0;
+      }).catch(console.error);
+    } catch (e) {
+      console.log('Error - updateBidBackStakedAlgop - GallerySelect');
+    } finally {
+      this.isStakedAlgopInputLoading = false;
+    }
+  }
 }
 </script>
 
@@ -505,6 +542,11 @@ export default class gallerySelect extends Vue.with(Props) {
   margin-top: 25px;
   border-bottom: dashed;
   border-bottom-width: 1px;
+}
+.input-stack-algop-loading {
+  width: 170px;
+  margin-right: 10px;
+  margin-top: 25px;
 }
 .container {
   width: 300px;

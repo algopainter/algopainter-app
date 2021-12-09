@@ -315,7 +315,7 @@ export default class BidBackModalSimulator extends Vue {
       this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
       this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
       this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
-      void this.setAccountBalance();
+      this.setAccountBalance().catch(console.error);
     }
   }
 
@@ -328,7 +328,7 @@ export default class BidBackModalSimulator extends Vue {
    }
 
    mounted() {
-     void this.setAccountBalance();
+     this.setAccountBalance().catch(console.error);
      this.hasJustStaked = false;
    }
 
@@ -337,7 +337,7 @@ export default class BidBackModalSimulator extends Vue {
      this.userBid = [];
      if (this.getAuctionInfoBidBack) {
        this.loadingAuctionInfo = false;
-       void this.setTableInfo(false);
+       this.setTableInfo(false).catch(console.error);
      }
    }
 
@@ -406,20 +406,28 @@ export default class BidBackModalSimulator extends Vue {
         .on('error', () => {
           this.placingBidBackStatus = PlacingBidBackStatus.IncreateAllowanceError;
           setTimeout(() => {
-            this.$refs.dialog.hide();
-            this.$emit('hide');
+            this.openBidBackSimulatorModal();
             this.placingBidBackStatus = null;
           }, 3000);
         });
       this.placingBidBackStatus =
         PlacingBidBackStatus.IncreateAllowanceCompleted;
       setTimeout(() => {
-        this.$refs.dialog.hide();
-        this.$emit('hide');
-        this.placingBidBackStatus = null;
+        try {
+          this.$store.dispatch({
+            type: 'auctions/updateBidBackStakedAlgop',
+            collectionOwner: this.getAuctionInfoBidBack.item.collectionOwner,
+            itemIndex: this.getAuctionInfoBidBack.item.index,
+          }).catch(console.error);
+        } catch (e) {
+          console.log('Error - updateBidBackStakedAlgop - BidBackSimulatorModal');
+        } finally {
+          this.openBidBackSimulatorModal();
+          this.placingBidBackStatus = null;
+        }
       }, 3000);
     } catch (e) {
-      console.log('error - stakeAlgop BidBackSimulatorModal', e);
+      console.log('Error - stakeAlgop - BidBackSimulatorModal');
     } finally {
       this.isCancelDisabled = false;
       this.isConfirmBtnLoading = false;
@@ -607,7 +615,7 @@ export default class BidBackModalSimulator extends Vue {
   @Watch('userBalance')
   onUserBalanceChanged() {
     if (this.isConnected) {
-      void this.setAccountBalance();
+      this.setAccountBalance().catch(console.error);
     }
   }
 
@@ -620,14 +628,14 @@ export default class BidBackModalSimulator extends Vue {
       } else {
         this.isDisabled = false;
       }
-      void this.setTableInfo();
+      this.setTableInfo().catch(console.error);
     }
   }
 
   async setAccountBalance() {
     this.userBalance = await UserUtils.fetchAccountBalance(this.networkInfo, this.account);
     this.stakeAmount = this.userBalance;
-    void this.setformattedBalance();
+    this.setformattedBalance();
   }
 
   setformattedBalance() {
@@ -635,9 +643,9 @@ export default class BidBackModalSimulator extends Vue {
   }
 
   openBidBackSimulatorModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openBidBackSimulatorModal',
-    });
+    }).catch(console.error);
   }
 }
 </script>

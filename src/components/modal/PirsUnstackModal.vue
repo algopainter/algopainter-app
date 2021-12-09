@@ -183,7 +183,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
     this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
     this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.auctionCoinTokenProxy = new ERC20TokenProxy(this.algoPainterContractByNetworkId);
-    void this.setAccountBalance();
+    this.setAccountBalance().catch(console.error);
   }
 
   get auctionRewardsContractAddress() {
@@ -267,14 +267,24 @@ export default class PirsUnstackModal extends Vue.with(Props) {
         });
         this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceCompleted;
         setTimeout(() => {
-          this.$refs.dialog.hide();
-          this.$emit('hide');
-          this.settingPirsStatus = null;
-          this.unstakeAmount = 0;
+          try {
+            this.$store.dispatch({
+              type: 'auctions/updatePirsStakedAlgop',
+              collectionOwner: this.itemPirs.item.collectionOwner,
+              itemIndex: this.itemPirs.item.index,
+            }).catch(console.error);
+          } catch (e) {
+            console.log('updatePirsStakedAlgop error PirsUnstackModal');
+          } finally {
+            this.$refs.dialog.hide();
+            this.$emit('hide');
+            this.settingPirsStatus = null;
+            this.unstakeAmount = 0;
+          }
         }, 3000);
       }
     } catch (e) {
-      console.log('error - unstakeAlgop', e);
+      console.log('error - unstakeAlgop PirsUnstackModal', e);
     } finally {
       this.isCancelDisabled = false;
       this.isConfirmBtnLoading = false;
@@ -287,7 +297,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
       this.balance = (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account']));
-      void this.setformattedBalance();
+      this.setformattedBalance();
     }
   }
 
@@ -318,7 +328,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
   @Watch('balance')
   onBalanceChanged() {
     if (this.isConnected) {
-      void this.setAccountBalance();
+      this.setAccountBalance().catch(console.error);
     }
   }
 

@@ -151,9 +151,10 @@
           {{ $t('dashboard.gallery.pirsTab.stakedAlgop') }}
         </span>
         <div class="flex container">
-          <span class="input-stack-algop">
+          <span v-if="!isStakedAlgopInputLoading" class="input-stack-algop">
             {{ algopStaked ? setFormatCurrency(algopStaked) : 0 }}
           </span>
+          <q-spinner-dots v-else class="input-stack-algop-loading" color="primary" />
           <algo-button
             label="-"
             color="primary"
@@ -230,6 +231,8 @@ import { now } from 'src/helpers/timer';
 import 'moment-duration-format';
 import { Watch } from 'vue-property-decorator';
 import { IAuctionItem } from 'src/models/IAuctionItem';
+import { IAxios } from 'src/models/IAxios';
+import { debounce } from 'quasar';
 
 class Props {
   art = prop({
@@ -261,6 +264,7 @@ enum WithdrawPirsStatus {
   },
   computed: {
     ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
+    ...mapGetters('auctions', ['updatePirsStakedAlgop']),
   },
 })
 export default class PirsItem extends Vue.with(Props) {
@@ -269,6 +273,7 @@ export default class PirsItem extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
+  updatePirsStakedAlgop!: {collectionOwner: string, itemIndex: number} | undefined;
 
   openModal: boolean = false;
   openModalUnstack: boolean = false;
@@ -280,6 +285,7 @@ export default class PirsItem extends Vue.with(Props) {
   imagePirsRate: number = 0;
   userCurrentPrizeAmount: number = 0;
   isCoinHarvestDisabled: boolean = false;
+  isStakedAlgopInputLoading: boolean = false;
 
   displayingStatus: boolean = false;
   withdrawPirsStatus: WithdrawPirsStatus | null = null;
@@ -310,10 +316,10 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   mounted() {
-    void this.getPirsPercentage();
-    void this.getLastBid();
-    void this.getTime();
-    void this.formatTime();
+    this.getPirsPercentage().catch(console.error);
+    this.getLastBid();
+    this.getTime();
+    this.formatTime();
   }
 
   async getPirsPercentage() {
@@ -325,9 +331,9 @@ export default class PirsItem extends Vue.with(Props) {
       console.log('Error - getInvestorPirsRate - PirsItem');
     }
     if (this.imagePirsRate > 0) {
-      void this.getCurrentPrizeAmount();
+      this.getCurrentPrizeAmount().catch(console.error);
     }
-    void this.getUserStakedPirs();
+    this.getUserStakedPirs();
   }
 
   getLastBid() {
@@ -400,7 +406,7 @@ export default class PirsItem extends Vue.with(Props) {
       this.disableUnstackBtn = true;
       this.withdrawPirsStatus = WithdrawPirsStatus.PirsWithdrawn;
     } catch (e) {
-      console.log('error harvestAlgop pirs', e);
+      console.log('Error - harvestAlgop - PirsItem', e);
     }
   }
 
@@ -434,17 +440,17 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   openPirsModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openPirsModal',
       auction: this.art,
-    });
+    }).catch(console.error);
   }
 
   openPirsSimulatorModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openPirsSimulatorModal',
       auction: this.art,
-    });
+    }).catch(console.error);
   }
 
   onCloseStatusDialog() {
@@ -458,7 +464,7 @@ export default class PirsItem extends Vue.with(Props) {
     }
   }
 
-  formatTime(): void {
+  formatTime() {
     this.monthExpirations = moment(this.art.expirationDt).format('MMM');
     this.dayExpirations = moment(this.art.expirationDt).format('DD');
     this.yearExpirations = moment(this.art.expirationDt).format('YYYY');
@@ -511,6 +517,36 @@ export default class PirsItem extends Vue.with(Props) {
     this.lastCountMinutes = this.countMinutes;
     this.lastCountSeconds = this.countSeconds;
   }
+
+  @Watch('updatePirsStakedAlgop')
+  onPirsStakedAlgopChanged() {
+    if (this.art.item.collectionOwner === this.updatePirsStakedAlgop?.collectionOwner && this.art.item.index === this.updatePirsStakedAlgop.itemIndex) {
+      this.isStakedAlgopInputLoading = true;
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      this.pirsStakedUpdated = debounce(this.pirsStakedUpdated, 5000);
+      this.pirsStakedUpdated();
+    }
+  }
+
+  pirsStakedUpdated() {
+    try {
+      this.$store.dispatch({
+        type: 'auctions/getPirsUpdated',
+        account: this.account.toLowerCase(),
+        collectionOwner: this.art.item.collectionOwner,
+        itemIndex: this.art.item.index,
+      }).then(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const response = this.$store.getters['auctions/getPirsUpdated'] as IAxios;
+        const updatedAuction = response.data as IAuctionItem[];
+        this.algopStaked = (updatedAuction[0].pirs && updatedAuction[0].pirs[this.account]) ? updatedAuction[0].pirs[this.account] : 0;
+      }).catch(console.error);
+    } catch (e) {
+      console.log('Error - getPirsUpdated updatePirsStakedUpdate - PirsItem');
+    } finally {
+      this.isStakedAlgopInputLoading = false;
+    }
+  }
 }
 </script>
 
@@ -557,6 +593,11 @@ export default class PirsItem extends Vue.with(Props) {
   margin-top: 25px;
   border-bottom: dashed;
   border-bottom-width: 1px;
+}
+.input-stack-algop-loading {
+  width: 170px;
+  margin-right: 10px;
+  margin-top: 25px;
 }
 .container {
   width: 300px;

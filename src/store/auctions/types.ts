@@ -5,6 +5,8 @@ export interface AuctionStateInterface {
   topBuyers: [],
   auctions: [],
   bids: [],
+  bidsUpdated: [],
+  pirsUpdated: [],
   bidBack: [],
   owner: [],
   auctionId: string | undefined,
@@ -16,4 +18,6 @@ export interface AuctionStateInterface {
   openPirsSimulatorModal: boolean,
   auctionInfoBidBack: IAuctionItem | undefined,
   auctionInfoPirs: IAuctionItem | undefined,
+  updateBidBackStakedAlgop: {collectionOwner: string, itemIndex: number} | undefined,
+  updatePirsStakedAlgop: {collectionOwner: string, itemIndex: number} | undefined,
 }

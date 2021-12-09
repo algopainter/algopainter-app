@@ -16,9 +16,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const hotBids = res.data as [];
       this.commit('auctions/SET_HOT_BIDS', hotBids);
     } catch (e) {
-      console.log('error msg');
-    } finally {
-      console.log('success msg');
+      console.log('Error - getHotBids - auctions actions');
     }
   },
   async getTopSellers() {
@@ -27,9 +25,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const topSellers = res.data as [];
       this.commit('auctions/SET_TOP_SELLERS', topSellers);
     } catch (e) {
-      console.log('error msg');
-    } finally {
-      console.log('success msg');
+      console.log('Error - getTopSellers - auctions actions');
     }
   },
   async getTopBuyers() {
@@ -38,9 +34,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const TopBuyers = res.data as [];
       this.commit('auctions/SET_TOP_BUYERS', TopBuyers);
     } catch (e) {
-      console.log('error msg');
-    } finally {
-      console.log('success msg');
+      console.log('Error - getTopBuyers - auctions actions');
     }
   },
 
@@ -53,10 +47,9 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
 
     try {
       const res =
-
         await api.get(
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `auctions/${account}?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}&address=${algopainterAuctionSystemCurrentAddress}`,
+          `auctions/?owner=${account}&item.index=${itemIndex}&item.collectionOwner=${collectionOwner}&address=${algopainterAuctionSystemCurrentAddress}`,
         );
       const auctions = res.data as [];
       const auctionsLength = auctions.length;
@@ -71,9 +64,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
         this.commit('auctions/SET_AUCTIONS', auctions);
       }
     } catch (e) {
-      console.log('error msg');
-    } finally {
-      console.log('success msg');
+      console.log('Error - getAuctions - auctions actions');
     }
   },
 
@@ -84,9 +75,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const owners = result.data as [];
       this.commit('auctions/SET_IMAGE_PAST_OWNERS', owners);
     } catch (err) {
-      console.log('error getImagePastOwners');
-    } finally {
-      console.log('sucess msg getImagePastOwners');
+      console.log('Error - getImagePastOwners- auctions actions');
     }
   },
 
@@ -98,9 +87,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {
-      console.log('error getAuction msg');
-    } finally {
-      console.log('success msg');
+      console.log('Error - getBids - auctions actions');
     }
   },
 
@@ -115,9 +102,33 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
       const bids = result.data as [];
       this.commit('auctions/SET_BIDS', bids);
     } catch (e) {
-      console.log('error getBidBack msg');
-    } finally {
-      console.log('success msg');
+      console.log('Error - getBidBack - auctions actions');
+    }
+  },
+
+  async getBidBackUpdated(type, value: Record<string, unknown>) {
+    const account = value.account as string;
+    const collectionOwner = value.collectionOwner as string;
+    const itemIndex = value.itemIndex as number;
+    try {
+      const bids = await api.get(
+        `users/${account}/auctions/biding?forBidbacks=true&item.index=${itemIndex}&item.collectionOwner=${collectionOwner}`,
+      );
+      this.commit('auctions/SET_BIDS_UPDATED', bids);
+    } catch (e) {
+      console.log('Error - getBidBackUpdated - auctions actions');
+    }
+  },
+
+  async getPirsUpdated(type, value) {
+    const account = value.account as string;
+    const collectionOwner = value.collectionOwner as string;
+    const itemIndex = value.itemIndex as number;
+    try {
+      const res = await api.get(`users/${account}/auctions/pirsing?item.index=${itemIndex}&item.collectionOwner=${collectionOwner}`);
+      this.commit('auctions/SET_PIRS_UPDATED', res);
+    } catch (e) {
+      console.log('Error - getPirsUpdated - auctions actions');
     }
   },
 
@@ -131,7 +142,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
         this.commit('auctions/SET_AUCTION_ID', auction._id);
       }
     } catch (e) {
-      console.log('Error in getOnSale');
+      console.log('Error - getOnSale - auctions actions');
     }
   },
 
@@ -165,6 +176,14 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
     if (value.auction) {
       this.commit('auctions/SET_AUCTION_INFO_PIRS', value.auction);
     }
+  },
+
+  updateBidBackStakedAlgop(type, value) {
+    this.commit('auctions/UPDATE_BIDBACK_STAKED_ALGOP', value);
+  },
+
+  updatePirsStakedAlgop(type, value) {
+    this.commit('auctions/UPDATE_PIRS_STAKED_ALGOP', value);
   },
 };
 

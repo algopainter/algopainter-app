@@ -194,22 +194,12 @@ export default class MyPaint extends Vue.with(Props) {
     this.auctionCoinTokenProxy = new ERC20TokenProxy(
       this.algoPainterContractByNetworkId,
     );
-    void this.setAccountBalance();
+    this.setAccountBalance().catch(console.error);
   }
 
   show() {
     this.$refs.dialog.show();
   }
-
-  // hide() {
-  //   this.$refs.dialog.hide();
-  //   console.log('hide');
-  // }
-
-  // onDialogHide() {
-  //   this.$emit('hide');
-  //   console.log('onDialogHide');
-  // }
 
   closeModal() {
     this.modal = false;
@@ -225,7 +215,7 @@ export default class MyPaint extends Vue.with(Props) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'],
         );
-      void this.setformattedBalance();
+      this.setformattedBalance();
     }
   }
 
@@ -249,7 +239,7 @@ export default class MyPaint extends Vue.with(Props) {
   @Watch('balance')
   onBalanceChanged() {
     if (this.isConnected) {
-      void this.setAccountBalance();
+      this.setAccountBalance().catch(console.error);
     }
   }
 
@@ -329,13 +319,23 @@ export default class MyPaint extends Vue.with(Props) {
       this.placingBidBackStatus =
           PlacingBidBackStatus.IncreateAllowanceCompleted;
       setTimeout(() => {
-        this.$refs.dialog.hide();
-        this.$emit('hide');
-        this.placingBidBackStatus = null;
-        this.stakeAmount = 0;
+        try {
+          this.$store.dispatch({
+            type: 'auctions/updateBidBackStakedAlgop',
+            collectionOwner: this.art.item.collectionOwner,
+            itemIndex: this.art.item.index,
+          }).catch(console.error);
+        } catch (e) {
+          console.log('Error - updateBidBackStakedAlgop - StackModalAlgop');
+        } finally {
+          this.$refs.dialog.hide();
+          this.$emit('hide');
+          this.placingBidBackStatus = null;
+          this.stakeAmount = 0;
+        }
       }, 3000);
     } catch (e) {
-      console.log('error - stakeAlgop BidBack', e);
+      console.log('Error - stakeAlgop - StackModalAlgop');
     } finally {
       this.isCancelDisabled = false;
       this.isConfirmBtnLoading = false;

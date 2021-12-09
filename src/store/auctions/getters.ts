@@ -22,6 +22,12 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getBids(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },
+  getBidsUpdated(state: AuctionStateInterface): [] | undefined {
+    return state.bidsUpdated;
+  },
+  getPirsUpdated(state: AuctionStateInterface): [] | undefined {
+    return state.pirsUpdated;
+  },
   getBidBack(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },
@@ -39,6 +45,12 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   },
   getAuctionInfoPirs(state: AuctionStateInterface): IAuctionItem | undefined {
     return state.auctionInfoPirs as IAuctionItem;
+  },
+  updateBidBackStakedAlgop(state: AuctionStateInterface): {collectionOwner: string, itemIndex: number} | undefined {
+    return state.updateBidBackStakedAlgop;
+  },
+  updatePirsStakedAlgop(state: AuctionStateInterface): {collectionOwner: string, itemIndex: number} | undefined {
+    return state.updatePirsStakedAlgop;
   },
 };
 

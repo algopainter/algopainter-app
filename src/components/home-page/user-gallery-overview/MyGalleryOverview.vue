@@ -66,7 +66,7 @@
         class="q-mx-auto q-mb-md"
       >
         <q-btn
-          v-for="(btn, index) in galleryTabs[0].maxPages"
+          v-for="index in galleryTabs[0].maxPages"
           :key="index"
           :color="
             galleryTabs[0].currentPage === index + 1 ? 'primary' : 'grey-4'
@@ -135,7 +135,7 @@
         class="q-mx-auto q-mb-md"
       >
         <q-btn
-          v-for="(btn, index) in galleryTabs[1].maxPages"
+          v-for="index in galleryTabs[1].maxPages"
           :key="index"
           :color="
             galleryTabs[1].currentPage === index + 1 ? 'primary' : 'grey-4'
@@ -194,7 +194,7 @@
         class="q-mx-auto q-mb-md"
       >
         <q-btn
-          v-for="(btn, index) in galleryTabs[2].maxPages"
+          v-for="index in galleryTabs[2].maxPages"
           :key="index"
           :color="
             galleryTabs[2].currentPage === index + 1 ? 'primary' : 'grey-4'
@@ -247,7 +247,7 @@
         class="row flex justify-center q-mt-md q-mb-md q-mb-md"
       >
         <q-btn
-          v-for="(btn, index) in galleryTabs[3].maxPages"
+          v-for="index in galleryTabs[3].maxPages"
           :key="index"
           :color="
             galleryTabs[3].currentPage === index + 1 ? 'primary' : 'grey-4'
@@ -300,7 +300,7 @@
         class="row flex justify-center q-mt-md q-mb-md q-mb-md"
       >
         <q-btn
-          v-for="(btn, index) in galleryTabs[4].maxPages"
+          v-for="index in galleryTabs[4].maxPages"
           :key="index"
           :color="
             galleryTabs[4].currentPage === index + 1 ? 'primary' : 'grey-4'
@@ -337,7 +337,7 @@
 import { Vue, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import AlgoButton from 'components/common/Button.vue';
-import { IMyGallery } from 'src/models/IMyGallery';
+import IGalleryTab from 'src/models/IGalleryTab';
 import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import { ICollection } from 'src/models/ICollection';
 import GalleryItem from './GalleryItem.vue';
@@ -370,18 +370,16 @@ enum GalleryTabsEnum {
   },
   computed: {
     ...mapGetters('collections', ['pirsTabImages']),
+    ...mapGetters('user', {
+      userAccount: 'account',
+      networkInfo: 'networkInfo',
+      isConnected: 'isConnected',
+    }),
   },
 })
 export default class MyGalleryOverview extends Vue {
-  /*
-  galleryBid = [];
-  loadingGalleryBid: boolean = true;
-  galleryBidClosed = [];
-  galleryBidShow = [];
-  nullGalleryBidShow: boolean = false;
-  loadingLatestBidsItem: boolean = true;
-  btnBidsClicked: boolean = false;
-  */
+  isConnected?: boolean;
+  userAccount?: string;
 
   galleryTabsEnum: GalleryTabsEnum = GalleryTabsEnum.GalleryTab;
   currentBtnClicked: number = 1;
@@ -397,75 +395,73 @@ export default class MyGalleryOverview extends Vue {
   noMoreImages: boolean = false;
   maxItemsPerPage: number = 9;
 
-  currentCollection: string = 'All Collections';
+  currentCollection: {label: string} = { label: 'All Collections' };
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
   getCollectionsLoading: boolean = true;
 
-  galleryTabs = [
+  galleryTabs: IGalleryTab[] = [
     {
-      label: 'gallery' as string,
-      cont: 0 as number,
-      contLabel: '' as string,
-      btnIndex: 1 as number,
-      maxPages: 0 as number,
-      currentPage: 0 as number,
-      loadingData: true as boolean,
-      loadingButtons: true as boolean,
-      data: [] as IMyGallery[],
-      noData: false as boolean,
-      reloadInterval: 0 as ReturnType<typeof setInterval> | number,
+      label: 'gallery',
+      cont: 0,
+      contLabel: '',
+      btnIndex: 1,
+      maxPages: 0,
+      currentPage: 0,
+      loadingData: true,
+      loadingButtons: true,
+      data: [],
+      noData: false,
+      reloadInterval: 0,
     },
     {
-      label: 'onSale' as string,
-      cont: 0 as number,
-      contLabel: '' as string,
-      btnIndex: 2 as number,
-      maxPages: 0 as number,
-      currentPage: 0 as number,
-      loadingData: true as boolean,
-      data: [] as IMyGallery[],
-      noData: false as boolean,
-      reloadInterval: 0 as ReturnType<typeof setInterval> | number,
+      label: 'onSale',
+      cont: 0,
+      contLabel: '',
+      btnIndex: 2,
+      maxPages: 0,
+      currentPage: 0,
+      loadingData: true,
+      data: [],
+      noData: false,
+      reloadInterval: 0,
     },
     {
-      label: 'like' as string,
-      cont: 0 as number,
-      contLabel: '' as string,
-      btnIndex: 3 as number,
-      maxPages: 0 as number,
-      currentPage: 0 as number,
-      loadingData: true as boolean,
-      data: [] as IMyGallery[],
-      noData: false as boolean,
-      reloadInterval: 0 as ReturnType<typeof setInterval> | number,
+      label: 'like',
+      cont: 0,
+      contLabel: '',
+      btnIndex: 3,
+      maxPages: 0,
+      currentPage: 0,
+      loadingData: true,
+      data: [],
+      noData: false,
+      reloadInterval: 0,
     },
     {
-      label: 'pirs' as string,
-      cont: 0 as number,
-      contLabel: '' as string,
-      btnIndex: 4 as number,
-      maxPages: 0 as number,
-      currentPage: 0 as number,
-      loadingData: true as boolean,
-      data: [] as IMyGallery[],
-      noData: false as boolean,
-      reloadInterval: 0 as ReturnType<typeof setInterval> | number,
+      label: 'pirs',
+      cont: 0,
+      contLabel: '',
+      btnIndex: 4,
+      maxPages: 0,
+      currentPage: 0,
+      loadingData: true,
+      data: [],
+      noData: false,
+      reloadInterval: 0,
     },
     {
-      label: 'bid' as string,
-      cont: 0 as number,
-      contLabel: '' as string,
-      btnIndex: 5 as number,
-      maxPages: 0 as number,
-      currentPage: 0 as number,
-      loadingData: true as boolean,
-      data: [] as IMyGallery[],
-      noData: false as boolean,
-      reloadInterval: 0 as ReturnType<typeof setInterval> | number,
+      label: 'bid',
+      cont: 0,
+      contLabel: '',
+      btnIndex: 5,
+      maxPages: 0,
+      currentPage: 0,
+      loadingData: true,
+      data: [],
+      noData: false,
+      reloadInterval: 0,
     },
   ];
-
-  // Check mobile after
 
   @Watch('galleryTabsEnum')
   onGalleryTabsEnumChanged() {
@@ -475,17 +471,17 @@ export default class MyGalleryOverview extends Vue {
     switch (this.galleryTabsEnum) {
       case GalleryTabsEnum.GalleryTab:
         this.galleryTabs[0].reloadInterval = setInterval(() => {
-          this.getGalleryArts(1, this.currentCollection, false, true).catch(console.error);
+          this.getGalleryArts(1, this.currentCollection.label, false, true).catch(console.error);
         }, 5000);
         break;
       case GalleryTabsEnum.OnSaleTab:
         this.galleryTabs[1].reloadInterval = setInterval(() => {
-          this.getOnSale(1, this.currentCollection, false, true).catch(console.error);
+          this.getOnSale(1, this.currentCollection.label, false, true).catch(console.error);
         }, 5000);
         break;
       case GalleryTabsEnum.LikedTab:
         this.galleryTabs[2].reloadInterval = setInterval(() => {
-          this.getLikes(1, this.currentCollection, false, true).catch(console.error);
+          this.getLikes(1, this.currentCollection.label, false, true).catch(console.error);
         }, 5000);
         break;
       case GalleryTabsEnum.PirsTab:
@@ -508,13 +504,12 @@ export default class MyGalleryOverview extends Vue {
     this.getBidBack(1);
     this.getGalleryArts(1, 'All Collections').catch(console.error);
     this.galleryTabs[0].reloadInterval = setInterval(() => {
-      this.getGalleryArts(1, this.currentCollection, false, true).catch(console.error);
+      this.getGalleryArts(1, this.currentCollection.label, false, true).catch(console.error);
     }, 5000);
   }
 
-  @Watch('accountAddress')
+  @Watch('userAccount')
   onAccountChanged() {
-    // this.getGalleryBidders().catch(console.error);
     this.getGalleryArts(1, 'All Collections').catch(console.error);
     this.getLikes(1, 'All Collections').catch(console.error);
     this.getOnSale(1, 'All Collections').catch(console.error);
@@ -525,24 +520,14 @@ export default class MyGalleryOverview extends Vue {
   @Watch('currentCollection')
   onCollectionChanged() {
     if (this.currentBtnClicked !== 1) {
-      this.getGalleryArts(1, this.currentCollection, true).catch(console.error);
+      this.getGalleryArts(1, this.currentCollection.label, true).catch(console.error);
     }
     if (this.currentBtnClicked !== 2) {
-      this.getOnSale(1, this.currentCollection, true).catch(console.error);
+      this.getOnSale(1, this.currentCollection.label, true).catch(console.error);
     }
     if (this.currentBtnClicked !== 3) {
-      this.getLikes(1, this.currentCollection, true).catch(console.error);
+      this.getLikes(1, this.currentCollection.label, true).catch(console.error);
     }
-  }
-
-  get isConnected() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['user/isConnected'] as boolean;
-  }
-
-  get accountAddress() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return this.$store.getters['user/account'] as string;
   }
 
   btnClickHandler(index: number) {
@@ -575,7 +560,7 @@ export default class MyGalleryOverview extends Vue {
     page: number = 1,
     currentCollection: string = 'All Collections',
   ) {
-    this.currentCollection = currentCollection;
+    this.currentCollection.label = currentCollection;
     const device = window.innerWidth <= 768 ? 'mobile' : 'desktop';
     if (device === 'desktop') {
       if (this.currentBtnClicked === this.galleryTabs[0].btnIndex) {
@@ -608,7 +593,7 @@ export default class MyGalleryOverview extends Vue {
 
   async getGalleryArts(
     page: number = 1,
-    collection: string = this.currentCollection,
+    collection: string = this.currentCollection.label,
     watcher: boolean = false,
     isRefresh: boolean = false,
   ) {
@@ -623,7 +608,7 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'collections/getUserItems',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: page,
         perPage: '9',
         collectionName: collection,
@@ -647,7 +632,7 @@ export default class MyGalleryOverview extends Vue {
 
   async getOnSale(
     page: number = 1,
-    collection: string = this.currentCollection,
+    collection: string = this.currentCollection.label,
     watcher: boolean = false,
     isRefresh: boolean = false,
   ) {
@@ -662,7 +647,7 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'collections/getUserOnSale',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: page,
         perPage: '9',
         collectionName: collection,
@@ -683,10 +668,9 @@ export default class MyGalleryOverview extends Vue {
       });
   }
 
-  // Gets all items liked by the user on desktop -> pagination method
   async getLikes(
     page: number = 1,
-    collection: string = this.currentCollection,
+    collection: string = this.currentCollection.label,
     watcher: boolean = false,
     isRefresh: boolean = false,
   ) {
@@ -701,7 +685,7 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'user/getUserLikes',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: page,
         perPage: '9',
         collectionName: collection,
@@ -734,7 +718,7 @@ export default class MyGalleryOverview extends Vue {
     this.$store
       .dispatch({
         type: 'collections/getUserPirsTabImages',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: page,
         perPage: '9',
       })
@@ -762,7 +746,7 @@ export default class MyGalleryOverview extends Vue {
     this.$store
       .dispatch({
         type: 'auctions/getBidBack',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: page,
         perPage: '9',
       })
@@ -783,7 +767,7 @@ export default class MyGalleryOverview extends Vue {
   }
 
   async loadMore(
-    collection: string = this.currentCollection,
+    collection: string = this.currentCollection.label,
     filter: boolean = false,
   ) {
     if (filter) {
@@ -795,7 +779,7 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'collections/getUserItems',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: this.loadMoreCounter,
         perPage: '9',
         collectionName: collection,
@@ -823,7 +807,7 @@ export default class MyGalleryOverview extends Vue {
   }
 
   async loadMoreOnSale(
-    collection: string = this.currentCollection,
+    collection: string = this.currentCollection.label,
     filter: boolean = false,
   ) {
     if (filter) {
@@ -835,7 +819,7 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'collections/getUserOnSale',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: this.loadMoreCounterOnSale,
         perPage: '9',
         collectionName: collection,
@@ -863,7 +847,7 @@ export default class MyGalleryOverview extends Vue {
   }
 
   async loadMoreLike(
-    collection: string = this.currentCollection,
+    collection: string = this.currentCollection.label,
     filter: boolean = false,
   ) {
     if (filter) {
@@ -875,7 +859,7 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'user/getUserLikes',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: this.loadMoreCounterLike,
         perPage: '9',
         collectionName: collection,
@@ -909,7 +893,7 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'collections/getUserPirsTabImages',
-        account: this.accountAddress,
+        account: this.userAccount,
         page: this.loadMoreCounterPirs,
         perPage: '9',
       })
@@ -938,7 +922,7 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'auctions/getBidBack',
-        account: this.accountAddress, // '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a',
+        account: this.userAccount, // '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a',
         page: this.loadMoreCounterBidBack,
         perPage: '9',
       })
@@ -967,44 +951,6 @@ export default class MyGalleryOverview extends Vue {
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
-
-  /*
-  async getGalleryBidders() {
-    this.loadingGalleryBid = true;
-    try {
-      if (this.isConnected) {
-        const response = await api.get(`bids?bidder=${this.accountAddress}`);
-        this.galleryBid = response.data as [];
-        if (this.galleryBid.length !== 0) {
-          this.galleryBidClosed = [
-            this.galleryBid[0],
-            this.galleryBid[1],
-            this.galleryBid[2],
-          ];
-          this.nullGalleryBidShow = false;
-        } else {
-          this.nullGalleryBidShow = true;
-        }
-        this.galleryBidShow = this.galleryBidClosed;
-      }
-    } catch (e) {
-      console.log('error', e);
-    } finally {
-      this.loadingGalleryBid = false;
-      this.loadingLatestBidsItem = false;
-    }
-  }
-  */
-  /*
-  Allbids() {
-    this.btnBidsClicked = !this.btnBidsClicked;
-    if (this.btnBidsClicked === false) {
-      this.galleryBidShow = this.galleryBidClosed;
-    } else {
-      this.galleryBidShow = this.galleryBid;
-    }
-  }
-  */
 }
 </script>
 

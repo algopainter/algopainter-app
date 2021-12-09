@@ -25,7 +25,9 @@
           </div>
         </q-chip>
       </div>
-      <q-menu>
+      <q-menu
+        :offset="[50, 10]"
+      >
         <div class="q-pa-md">
           <div class="text-bold q-mb-md">
             {{ formatedAccount(4, -4) }}

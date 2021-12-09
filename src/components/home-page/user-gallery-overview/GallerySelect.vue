@@ -293,9 +293,9 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   mounted() {
-    void this.getBidBackPercentage();
-    void this.getTime();
-    void this.formatTime();
+    this.getBidBackPercentage().catch(console.error);
+    this.getTime();
+    this.formatTime();
   }
 
   async getBidBackPercentage() {
@@ -304,9 +304,9 @@ export default class gallerySelect extends Vue.with(Props) {
         this.art.index,
       ) / 100;
       if (this.auctionBidBackRate > 0) {
-        void this.getCurrentPrizeAmount();
+        this.getCurrentPrizeAmount().catch(console.error);
       }
-      void this.getUserStackedBidBack();
+      this.getUserStackedBidBack();
     } catch (error) {
       console.log('Error - getBidBackPercentage - GallerySelect');
     }
@@ -399,17 +399,17 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   openBidBackModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openBidBackModal',
       auction: this.art,
-    });
+    }).catch(console.error);
   }
 
   openBidBackSimulatorModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openBidBackSimulatorModal',
       auction: this.art,
-    });
+    }).catch(console.error);
   }
 
   onCloseStatusDialog() {
@@ -423,7 +423,7 @@ export default class gallerySelect extends Vue.with(Props) {
     }
   }
 
-  formatTime(): void {
+  formatTime() {
     this.monthExpirations = moment(this.art.expirationDt).format('MMM');
     this.dayExpirations = moment(this.art.expirationDt).format('DD');
     this.yearExpirations = moment(this.art.expirationDt).format('YYYY');
@@ -488,7 +488,7 @@ export default class gallerySelect extends Vue.with(Props) {
 
   bidBackStakedUpdate() {
     try {
-      void this.$store.dispatch({
+      this.$store.dispatch({
         type: 'auctions/getBidBackUpdated',
         account: this.account.toLowerCase(),
         collectionOwner: this.art.item.collectionOwner,
@@ -498,7 +498,7 @@ export default class gallerySelect extends Vue.with(Props) {
         const response = this.$store.getters['auctions/getBidsUpdated'] as IAxios;
         const updatedAuction = response.data as IAuctionItem[];
         this.algopStaked = (updatedAuction[0].bidbacks && updatedAuction[0].bidbacks[this.account]) ? updatedAuction[0].bidbacks[this.account] : 0;
-      });
+      }).catch(console.error);
     } catch (e) {
       console.log('Error - updateBidBackStakedAlgop - GallerySelect');
     } finally {

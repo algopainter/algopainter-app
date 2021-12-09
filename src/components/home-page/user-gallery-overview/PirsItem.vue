@@ -316,10 +316,10 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   mounted() {
-    void this.getPirsPercentage();
-    void this.getLastBid();
-    void this.getTime();
-    void this.formatTime();
+    this.getPirsPercentage().catch(console.error);
+    this.getLastBid();
+    this.getTime();
+    this.formatTime();
   }
 
   async getPirsPercentage() {
@@ -331,9 +331,9 @@ export default class PirsItem extends Vue.with(Props) {
       console.log('Error - getInvestorPirsRate - PirsItem');
     }
     if (this.imagePirsRate > 0) {
-      void this.getCurrentPrizeAmount();
+      this.getCurrentPrizeAmount().catch(console.error);
     }
-    void this.getUserStakedPirs();
+    this.getUserStakedPirs();
   }
 
   getLastBid() {
@@ -440,17 +440,17 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   openPirsModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openPirsModal',
       auction: this.art,
-    });
+    }).catch(console.error);
   }
 
   openPirsSimulatorModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openPirsSimulatorModal',
       auction: this.art,
-    });
+    }).catch(console.error);
   }
 
   onCloseStatusDialog() {
@@ -464,7 +464,7 @@ export default class PirsItem extends Vue.with(Props) {
     }
   }
 
-  formatTime(): void {
+  formatTime() {
     this.monthExpirations = moment(this.art.expirationDt).format('MMM');
     this.dayExpirations = moment(this.art.expirationDt).format('DD');
     this.yearExpirations = moment(this.art.expirationDt).format('YYYY');
@@ -530,7 +530,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   pirsStakedUpdated() {
     try {
-      void this.$store.dispatch({
+      this.$store.dispatch({
         type: 'auctions/getPirsUpdated',
         account: this.account.toLowerCase(),
         collectionOwner: this.art.item.collectionOwner,
@@ -540,7 +540,7 @@ export default class PirsItem extends Vue.with(Props) {
         const response = this.$store.getters['auctions/getPirsUpdated'] as IAxios;
         const updatedAuction = response.data as IAuctionItem[];
         this.algopStaked = (updatedAuction[0].pirs && updatedAuction[0].pirs[this.account]) ? updatedAuction[0].pirs[this.account] : 0;
-      });
+      }).catch(console.error);
     } catch (e) {
       console.log('Error - getPirsUpdated updatePirsStakedUpdate - PirsItem');
     } finally {

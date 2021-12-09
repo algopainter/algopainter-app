@@ -165,12 +165,6 @@ class Props {
     required: true,
   });
 
-  user = prop({
-    type: Boolean,
-    required: false,
-    default: false,
-  });
-
   btnName = prop({
     type: String,
     required: false,

@@ -282,7 +282,7 @@ export default class PirsModalSimulator extends Vue {
       this.auctionCoinTokenProxy = new ERC20TokenProxy(
         this.algoPainterContractByNetworkId,
       );
-      void this.setAccountBalance();
+      this.setAccountBalance().catch(console.error);
     }
   }
 
@@ -299,7 +299,7 @@ export default class PirsModalSimulator extends Vue {
   }
 
   mounted() {
-    void this.setAccountBalance();
+    this.setAccountBalance().catch(console.error);
     this.hasJustStaked = false;
   }
 
@@ -308,7 +308,7 @@ export default class PirsModalSimulator extends Vue {
     this.pastOwnersList = [];
     if (this.getAuctionInfoPirs) {
       this.loadingAuctionInfo = false;
-      void this.getImagePastOwners(false);
+      this.getImagePastOwners(false).catch(console.error);
     }
   }
 
@@ -365,7 +365,7 @@ export default class PirsModalSimulator extends Vue {
       } else {
         this.isDisabled = false;
       }
-      void this.getImagePastOwners();
+      this.getImagePastOwners().catch(console.error);
     }
   }
 
@@ -405,11 +405,11 @@ export default class PirsModalSimulator extends Vue {
         PlacingBidBackStatus.IncreateAllowanceCompleted;
       setTimeout(() => {
         try {
-          void this.$store.dispatch({
+          this.$store.dispatch({
             type: 'auctions/updatePirsStakedAlgop',
             collectionOwner: this.getAuctionInfoPirs.item.collectionOwner,
             itemIndex: this.getAuctionInfoPirs.item.index,
-          });
+          }).catch(console.error);
         } catch (e) {
           console.log('updatePirsStakedAlgop error PirsSimulatorModal');
         } finally {
@@ -473,7 +473,7 @@ export default class PirsModalSimulator extends Vue {
 
     this.auctionCurrency = this.getAuctionInfoPirs.minimumBid.tokenSymbol;
 
-    void this.$store
+    this.$store
       .dispatch({
         type: 'auctions/getImagePastOwners',
         imgId: this.getAuctionInfoPirs.item._id,
@@ -576,7 +576,7 @@ export default class PirsModalSimulator extends Vue {
         }
 
         this.loadingTable = false;
-      });
+      }).catch(console.error);
   }
 
   formatAccount(account: string) {
@@ -599,7 +599,7 @@ export default class PirsModalSimulator extends Vue {
   @Watch('userBalance')
   onUserBalanceChanged() {
     if (this.isConnected) {
-      void this.setAccountBalance();
+      this.setAccountBalance().catch(console.error);
     }
   }
 
@@ -609,7 +609,7 @@ export default class PirsModalSimulator extends Vue {
       this.account,
     );
     this.stakeAmount = this.userBalance;
-    void this.setformattedBalance();
+    this.setformattedBalance();
   }
 
   setformattedBalance() {
@@ -617,9 +617,9 @@ export default class PirsModalSimulator extends Vue {
   }
 
   openPirsSimulatorModal() {
-    void this.$store.dispatch({
+    this.$store.dispatch({
       type: 'auctions/openPirsSimulatorModal',
-    });
+    }).catch(console.error);
   }
 }
 </script>

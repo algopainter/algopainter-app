@@ -196,8 +196,8 @@ export default class MyPaint extends Vue.with(Props) {
     this.auctionCoinTokenProxy = new ERC20TokenProxy(
       this.algoPainterContractByNetworkId,
     );
-    void this.setAccountBalance();
-    void this.setformattedBalance();
+    this.setAccountBalance().catch(console.error);
+    this.setformattedBalance();
   }
 
   show() {
@@ -226,7 +226,7 @@ export default class MyPaint extends Vue.with(Props) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         await UserUtils.fetchAccountBalance(this.$store.getters['user/networkInfo'], this.$store.getters['user/account'],
         );
-      void this.setformattedBalance();
+      this.setformattedBalance();
     }
   }
 
@@ -257,7 +257,7 @@ export default class MyPaint extends Vue.with(Props) {
   @Watch('balance')
   onBalanceChanged() {
     if (this.isConnected) {
-      void this.setAccountBalance();
+      this.setAccountBalance().catch(console.error);
     }
   }
 
@@ -325,11 +325,11 @@ export default class MyPaint extends Vue.with(Props) {
           PlacingBidBackStatus.IncreateAllowanceCompleted;
         setTimeout(() => {
           try {
-            void this.$store.dispatch({
+            this.$store.dispatch({
               type: 'auctions/updateBidBackStakedAlgop',
               collectionOwner: this.art.item.collectionOwner,
               itemIndex: this.art.item.index,
-            });
+            }).catch(console.error);
           } catch (e) {
             console.log('Error - updateBidBackStakedAlgop - UntackModalAlgop');
           } finally {

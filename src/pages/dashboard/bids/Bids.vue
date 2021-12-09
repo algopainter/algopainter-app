@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading === false">
+  <div v-if="loading === false" class="container-bid">
     <div v-if="auctionsBid.length > 0">
       <div v-for="(bid, index) in auctionsBid" :key="index">
         <Bids-page :bid="bid" :index="index" />
@@ -81,4 +81,7 @@ export default class Bids extends Vue {
 }
 </script>
 <style lang="scss">
+.container-bid{
+  margin-right: 16px;
+}
 </style>

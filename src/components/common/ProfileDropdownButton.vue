@@ -195,7 +195,4 @@ export default class ProfileDropdownButton extends Vue {
   border-radius: 34px !important;
   background: #fff;
 }
-.teste{
-  background: red;
-}
 </style>

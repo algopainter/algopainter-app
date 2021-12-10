@@ -499,4 +499,7 @@ export default {
     confirmWallet: 'Awaiting for the blockchain confirmation',
     stakeSucess: 'The unstake was done successfully.',
   },
+  creationCollection: {
+    title: 'Creation Collection',
+  },
 };

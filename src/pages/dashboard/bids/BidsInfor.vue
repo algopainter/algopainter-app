@@ -1,7 +1,7 @@
 
 <template>
   <div
-    class="row q-gutter-md"
+    class="row q-gutter-md justify-center"
   >
     <q-img
       class="img"
@@ -389,6 +389,11 @@ bidCorreting(bids: number) {
   white-space: nowrap;
   text-align: left;
   width: 250px;
+  }
+  @media(max-width:450px){
+    .title {
+    text-align: center;
+    }
   }
 }
 </style>

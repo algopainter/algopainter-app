@@ -161,13 +161,13 @@
           class="col"
         >
           <algoButton
-            v-if="btnName === 'dashboard.auctions.stackAlgop'"
+            v-if="btnName === 'dashboard.gallery.btnName.stakeAlgop'"
             class="q-my-md action full-width"
             color="primary"
             :label="$t(btnName)"
             @click="openAuctionModal"
           />
-          <div v-else-if="btnName === 'dashboard.homePage.goToAuction'">
+          <div v-else-if="btnName === 'dashboard.gallery.btnName.goToAuction'">
             <algoButton
               v-if="auction && auctionEnded"
               class="q-my-md action full-width"
@@ -463,7 +463,7 @@ export default class OnsaleItem extends Vue.with(Props) {
     this.minimumBidvalue = this.auction.minimumBid.amount;
     this.lastValueBid = this.auction.bids.length;
     this.tokenSymbol = this.auction.minimumBid.tokenSymbol;
-    this.highestBidvalue = this.auction.highestBid.netAmount;
+    this.highestBidvalue = this.auction.highestBid?.netAmount;
     void this.claimHighestBidAfterFees();
   }
 

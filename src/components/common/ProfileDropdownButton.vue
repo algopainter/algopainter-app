@@ -155,11 +155,11 @@ export default class ProfileDropdownButton extends Vue {
 
   async loadUserProfile() {
     const result = await this.userController.getUserProfile(
-      this.accountAddress as string,
+      this.accountAddress?.toLowerCase() as string,
     );
     if (result.isFailure) {
       this.userProfile = {};
-      console.log('error - loadUserProfile ');
+      console.log('User has not created a profile');
     } else if ((result.getValue() as IProfile)._id) {
       this.userProfile = result.getValue() as IProfile;
     } else {

@@ -4,11 +4,7 @@
       {{ $t('createCollectible.title.sub') }}
     </div>
     <div class="row q-gutter-md">
-      <div
-        v-for="imgBtn in imageButtons"
-        :key="imgBtn.id"
-        class="col"
-      >
+      <div v-for="imgBtn in imageButtons" :key="imgBtn.id" class="col">
         <image-button
           :id="imgBtn.id"
           :img-src="imgBtn.imgSrc"
@@ -21,10 +17,7 @@
         </image-button>
       </div>
     </div>
-    <div
-      v-if="activeFormId === 'importFile'"
-      class="col q-mt-md"
-    >
+    <div v-if="activeFormId === 'importFile'" class="col q-mt-md">
       <div class="col">
         <create-upload
           title-maxlength="255"
@@ -34,10 +27,8 @@
         />
       </div>
     </div>
-    <div
-      v-if="activeFormId === 'createWithArtist'"
-      class="col q-mt-md"
-    >
+    <div v-if="activeFormId === 'createWithArtist'" class="col q-mt-md">
+      <!--
       <div>
         <p class="text-bold text-subtitle2">
           {{ $t('createCollectible.selectAi.title') }}
@@ -66,25 +57,22 @@
         </p>
       </div>
     </div>
-  </div>
-  <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-    <div
-      v-if="activeFormId === 'importFile'"
-      class="col q-preview"
-    >
-      <preview :image-preview="imageData" />
-    </div>
-    <div
-      v-if="activeFormId === 'createWithArtist'"
-      class="col q-preview"
-    >
-      <example
-        :example-img="currentArtist.exampleImg"
-        :batch-prince="currentArtist.batchPrince"
-        :remaining="currentArtist.remaining"
-        :minted="currentArtist.minted"
-        :btn-link="currentArtist.btnLink"
-      />
+    --></div>
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+      <div v-if="activeFormId === 'importFile'" class="col q-preview">
+        <preview :image-preview="imageData" />
+      </div>
+      <div v-if="activeFormId === 'createWithArtist'" class="col q-preview">
+        <!--
+        <example
+          :example-img="currentArtist.exampleImg"
+          :batch-prince="currentArtist.batchPrince"
+          :remaining="currentArtist.remaining"
+          :minted="currentArtist.minted"
+          :btn-link="currentArtist.btnLink"
+        />
+        -->
+      </div>
     </div>
   </div>
 </template>
@@ -97,6 +85,7 @@ import { IImageButton } from '../../models/IImageButton';
 import IaArtist from './IaArtist.vue';
 import Preview from './Preview.vue';
 import Example from './Example.vue';
+import { mapGetters } from 'vuex';
 
 interface IAiArtist {
   id: number;
@@ -120,9 +109,13 @@ interface IAiArtist {
     IaArtist,
     Preview,
     Example,
-
   },
   emits: ['createWithArtistClick', 'eventPreview', 'eventClose'],
+  computed: {
+    ...mapGetters('collections', {
+      isNewPaintingModalOpen: 'GET_IS_NEW_PAINTING_MODAL_OPEN',
+    }),
+  },
 })
 export default class Create extends Vue {
   imageData: string | null = null;
@@ -160,12 +153,11 @@ export default class Create extends Vue {
   };
 
   setCurrentArtist(id: number) {
-    this.currentArtist = this.arts.filter((art) => (art.id === id))[0];
+    this.currentArtist = this.arts.filter((art) => art.id === id)[0];
     this.$emit('artistSettled');
   }
 
   arts: IAiArtist[] = [
-
     {
       id: 1,
       img: '/images/Hashly.svg',
@@ -211,11 +203,17 @@ export default class Create extends Vue {
   ];
 
   activeFormId: string | null = null;
+  isNewPaintingModalOpen!: boolean;
 
   detalImg: string | null = null;
 
   clickedButton(id: string): void {
     this.activeFormId = id;
+
+    if (id === 'createWithArtist') {
+      this.openNewPaintingModal();
+    }
+
     this.imageButtons = this.imageButtons.map((item) => {
       if (item.id !== id) {
         item.isDisabled = true;
@@ -224,6 +222,14 @@ export default class Create extends Vue {
       }
       return item;
     });
+  }
+
+  openNewPaintingModal() {
+    this.$store
+      .dispatch({
+        type: 'collections/openNewPaintingModal',
+      })
+      .catch(console.error);
   }
 
   clickImg(name: string): void {
@@ -238,12 +244,12 @@ export default class Create extends Vue {
     });
   }
 
-  eventPreview(play: string|null) {
+  eventPreview(play: string | null) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.imageData = play;
   }
 
-  eventClose(play: string|null) {
+  eventClose(play: string | null) {
     this.imageData = play;
   }
 }
@@ -260,5 +266,4 @@ export default class Create extends Vue {
 .q-preview {
   margin: 0 2vw;
 }
-
 </style>

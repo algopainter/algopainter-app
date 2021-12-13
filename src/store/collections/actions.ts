@@ -11,10 +11,16 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const page = value.page as string;
     const perPage = value.perPage as string;
     const collectionName = value.collectionName as string;
-    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    const currentCollection =
+      collectionName === undefined ||
+      collectionName.toLowerCase() === 'all collections'
+        ? ''
+        : collectionName;
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=false`);
+      const res = await api.get(
+        `users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=false`
+      );
       const userItems: string = res.data.count;
       const images: [] = res.data;
       this.commit('collections/SET_USER_ITEMS', userItems);
@@ -36,9 +42,15 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const page = value.page as string;
     const perPage = value.perPage as string;
     const collectionName = value.collectionName as string;
-    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    const currentCollection =
+      collectionName === undefined ||
+      collectionName.toLowerCase() === 'all collections'
+        ? ''
+        : collectionName;
     try {
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=true&includeExpired=true`);
+      const res = await api.get(
+        `users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=true&includeExpired=true`
+      );
       const images: [] = res.data;
       this.commit('collections/SET_USER_ON_SALE', images);
     } catch (e) {
@@ -50,9 +62,15 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const page = value.page as string;
     const perPage = value.perPage as string;
     const collectionName = value.collectionName as string;
-    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    const currentCollection =
+      collectionName === undefined ||
+      collectionName.toLowerCase() === 'all collections'
+        ? ''
+        : collectionName;
     try {
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=true&includeExpired=false`);
+      const res = await api.get(
+        `users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=true&includeExpired=false`
+      );
       const images: [] = res.data;
       this.commit('collections/SET_USER_ON_SALE_PUBLIC', images);
     } catch (e) {
@@ -64,7 +82,9 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const page = value.page as string;
     const perPage = value.perPage as string;
     try {
-      const res = await api.get(`histories/owners/${account}/images?page=${page}&perPage=${perPage}&order.onSale=-1`);
+      const res = await api.get(
+        `histories/owners/${account}/images?page=${page}&perPage=${perPage}&order.onSale=-1`
+      );
       const history: [] = res.data;
       this.commit('collections/SET_USER_PAST_IMAGES', history);
     } catch (e) {
@@ -76,7 +96,9 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const page = value.page as string;
     const perPage = value.perPage as string;
     try {
-      const res = await api.get(`users/${account}/auctions/pirsing?page=${page}&perPage=${perPage}&order.onSale=-1`);
+      const res = await api.get(
+        `users/${account}/auctions/pirsing?page=${page}&perPage=${perPage}&order.onSale=-1`
+      );
       const images: [] = res.data;
       this.commit('collections/SET_USER_PIRS_TAB_IMAGES', images);
     } catch (e) {
@@ -92,6 +114,9 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     } catch (e) {
       console.log('error message - getUserPastImages');
     }
+  },
+  openNewPaintingModal() {
+    this.commit('collections/SET_OPEN_NEW_PAINTING_MODAL');
   },
 };
 

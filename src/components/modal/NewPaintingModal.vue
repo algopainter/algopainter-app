@@ -1,5 +1,5 @@
 <template>
-  <q-dialog ref="dialog" v-model="modal" @hide="onDialogHide">
+  <q-dialog ref="dialog" @hide="onDialogHide">
     <q-card class="q-pa-md">
       <p class="row justify-center text-h5">
         {{ $t('dashboard.selectAlgoP') }}
@@ -43,31 +43,10 @@ class Props {
   components: {},
 })
 export default class NewPaintingModal extends Vue.with(Props) {
-  modal: boolean = false;
-
-  show() {
-    this.$refs.dialog.show();
-  }
-
-  hide() {
-    void this.$store.dispatch({
-      type: 'collections/openNewPaintingModal',
-    });
-    this.$refs.dialog.hide();
-  }
-
   onDialogHide() {
     void this.$store.dispatch({
       type: 'collections/openNewPaintingModal',
     });
-    this.$emit('hide');
-  }
-
-  closeModal() {
-    void this.$store.dispatch({
-      type: 'collections/openNewPaintingModal',
-    });
-    this.modal = false;
   }
 
   declare $refs: {

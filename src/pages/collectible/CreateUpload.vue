@@ -96,7 +96,7 @@
     <div class="row justify-between">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <q-input
-          v-model="formData.creatorRoyalty"
+          v-model="creatorRoyaltyValue"
           bottom-slots
           mask="#"
           fill-mask="0"
@@ -152,7 +152,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   OpenModal: boolean = false;
   isDisabled: boolean = true;
   statusData : string = '';
-  card: number = 0;
+  creatorRoyaltyValue: number = 0;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async previewImage(e: Event) {
     const newLocal = (<HTMLInputElement>e.target).files;
@@ -204,7 +204,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     this.statusData = 'aproved';
     try {
       this.OpenModal = true;
-      this.formData.creatorRoyalty = this.formData.creatorRoyalty * 100;
+      this.formData.creatorRoyalty = this.creatorRoyaltyValue * 100;
       this.formData.mintedBy = this.$store.getters['user/account'] as string;
       const data = {
         ...this.formData,

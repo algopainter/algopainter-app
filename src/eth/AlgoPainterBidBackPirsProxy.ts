@@ -14,10 +14,10 @@ export default class AlgoPainterBidBackPirsProxy {
       getInvestorPirsRate(
         auctionId: number
       ): ContractSendMethod;
-      getCreatorPirsRate(
+      getCreatorRoyaltiesRate(
         auctionId: number
       ): ContractSendMethod;
-      getCreatorPIRSByTokenAddress(
+      getCreatorRoyaltiesByTokenAddress(
         tokenAddress: string,
       ): ContractSendMethod;
       setBidbackRate(
@@ -51,10 +51,10 @@ export default class AlgoPainterBidBackPirsProxy {
     return response as number;
   }
 
-  async getCreatorPIRSByTokenAddress(
+  async getCreatorRoyaltiesByTokenAddress(
     tokenAddress: string,
   ) {
-    const response = (await this.smartContract.methods.getCreatorPIRSByTokenAddress(
+    const response = (await this.smartContract.methods.getCreatorRoyaltiesByTokenAddress(
       tokenAddress,
     ).call()) as number;
 
@@ -71,10 +71,10 @@ export default class AlgoPainterBidBackPirsProxy {
     return response as number;
   }
 
-  async getCreatorPirsRate(
+  async getCreatorRoyaltiesRate(
     auctionId: number,
   ) {
-    const response: unknown = await this.smartContract.methods.getCreatorPirsRate(
+    const response: unknown = await this.smartContract.methods.getCreatorRoyaltiesRate(
       auctionId,
     ).call();
 

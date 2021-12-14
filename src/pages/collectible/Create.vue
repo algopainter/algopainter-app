@@ -25,7 +25,7 @@
       v-if="activeFormId === 'importFile'"
       class="col q-mt-md"
     >
-      <div class="row ">
+      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'col']">
         <create-upload
           title-maxlength="255"
           description-maxlength="255"

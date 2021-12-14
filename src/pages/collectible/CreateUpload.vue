@@ -276,6 +276,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   .preview{
     position: fixed;
     left: 75%;
+    bottom: 10px;
 }
   .preview-mobile{
     display: none;
@@ -291,6 +292,8 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   margin-top: 2px;
   margin-bottom: 10px;
   align-items: center;
+  display: flex;
+  justify-content: center;
 
 }
 

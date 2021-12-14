@@ -68,12 +68,12 @@
     </div>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-    <div
+    <!-- <div
       v-if="activeFormId === 'importFile'"
       class="col q-preview"
     >
       <preview :image-preview="imageData" />
-    </div>
+    </div> -->
     <div
       v-if="activeFormId === 'createWithArtist'"
       class="col q-preview"

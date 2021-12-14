@@ -117,6 +117,13 @@ const routes: RouteRecordRaw[] = [
           title: i18n.global.t('dashboard.gallery.title'),
         },
       },
+      {
+        path: 'create-collection',
+        component: () => import('src/pages/collectible/Index.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.creationCollection.title'),
+        },
+      },
     ],
   },
 

@@ -1,6 +1,6 @@
 <template>
   <div class="col preview-size">
-    <div :hidden="$q.screen.lt.md">
+    <div>
       <div class="text-h6">
         {{ $t('createCollectible.create.preview') }}
       </div>

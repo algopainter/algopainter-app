@@ -25,7 +25,7 @@
       v-if="activeFormId === 'importFile'"
       class="col q-mt-md"
     >
-      <div class="col">
+      <div class="row ">
         <create-upload
           title-maxlength="255"
           description-maxlength="255"

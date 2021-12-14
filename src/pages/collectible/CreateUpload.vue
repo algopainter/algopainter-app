@@ -1,7 +1,7 @@
 <template>
   <q-form @submit="saveMintData">
     <div class="row">
-      <div class="preview">
+      <div :hidden="$q.screen.lt.md" class="preview">
         <preview
           :image-preview="formData.image"
           @close="close"
@@ -106,6 +106,21 @@
             (val) => val >= 1 || $t('dashboard.sellYourArt.minimumBidBackRate'),
             (val) => val <= 30 || $t('dashboard.sellYourArt.maximumBidBackRate'),
           ]"
+        />
+      </div>
+    </div>
+    <div class="preview-mobile">
+      <div class="btn-mint">
+        <algo-button
+          type="submit"
+          color="primary"
+          :disabled="isDisabled"
+          :label="$t('createCollectible.create.btnCreate')"
+        />
+        <mint-modal
+          v-model="OpenModal"
+          :open-modal="OpenModal"
+          :status="statusData"
         />
       </div>
     </div>
@@ -248,17 +263,37 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
 }
 .preview{
   position: absolute;
- left: 870px;
 }
 .btn-mint{
   margin-top: 300px;
 }
 
-@media (min-width: 1405px){
+.preview-mobile{
+    margin: 0;
+  }
+
+@media (min-width: 1024px){
   .preview{
-    position: absolute;
-    left: 880px;
+    position: fixed;
+    left: 75%;
 }
+  .preview-mobile{
+    display: none;
+  }
+}
+@media (max-width: 640px){
+  .preview{
+    left: 20%;
+    margin-top: 100%;
+    position: absolute;
+}
+.btn-mint{
+  margin-top: 2px;
+  margin-bottom: 10px;
+  align-items: center;
+
+}
+
 }
 
 .q-uploader-component-size {

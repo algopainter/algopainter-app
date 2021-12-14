@@ -152,6 +152,7 @@ interface FormData {
   mintedBy: string;
   image: string;
   salt: string;
+  fileName: string;
 }
 
 @Options({
@@ -174,6 +175,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const newLocala = newLocal!;
     const file = newLocala[0];
+    this.formData.fileName = file.name;
     const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -213,6 +215,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     mintedBy: '',
     salt: '',
     creatorRoyalty: 0,
+    fileName: '',
   };
 
   async saveMintData() {
@@ -245,7 +248,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         type: 'positive',
         message: 'ok!',
       });
-      console.log('aqui', request.data);
+      console.log('request.data', request);
       this.statusData = 'confirme';
     } catch (e) {
       this.$q.notify({

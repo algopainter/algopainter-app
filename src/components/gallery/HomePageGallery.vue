@@ -6,7 +6,9 @@
           v-for="(collection, i) in collections"
           :key="i"
           :label="collection.title"
-          :loading="currentCollection._id == collection._id ? loadingCollection : false "
+          :loading="
+            currentCollection._id == collection._id ? loadingCollection : false
+          "
           class="q-mr-xs"
           :class="[
             currentCollection._id == collection._id
@@ -26,9 +28,11 @@
       </div>
       <div class="footer">
         <algo-button
-          :label="$t('dashboard.homePage.loadMore', {
-            msg: btnLoadMoreMsg
-          })"
+          :label="
+            $t('dashboard.homePage.loadMore', {
+              msg: btnLoadMoreMsg,
+            })
+          "
           color="primary"
           outline
           class="load-more q-px-xl q-mx-auto"
@@ -40,9 +44,7 @@
       </div>
     </q-page>
   </div>
-  <div
-    v-else
-  >
+  <div v-else>
     <HomePageGallerySkeleton />
   </div>
 </template>
@@ -87,14 +89,17 @@ export default class HomePageGallery extends Vue {
   async loadMore() {
     this.loadMoreCounter++;
     this.loadingBtn = true;
-    const images = await new CollectionController().getCollectionsImages(this.currentCollection._id, this.loadMoreCounter);
+    const images = await new CollectionController().getCollectionsImages(
+      this.currentCollection._id,
+      this.loadMoreCounter
+    );
     if (images.length === 0) {
       this.noMoreImages = true;
       this.btnLoadMoreMsg = 'Nothing else to show';
       this.loadingBtn = false;
     } else {
       const tempCollectionGallery = images.map((image) =>
-        this.mapImageToGalleryItem(image),
+        this.mapImageToGalleryItem(image)
       );
       const tempImgIdArray: string[] = [];
 
@@ -119,9 +124,11 @@ export default class HomePageGallery extends Vue {
     this.btnLoadMoreMsg = 'Load More';
     this.noMoreImages = false;
     this.currentCollection = collection;
-    const images = await new CollectionController().getCollectionsImages(collection._id);
+    const images = await new CollectionController().getCollectionsImages(
+      collection._id
+    );
     this.currentCollectionGallery = images.map((image) =>
-      this.mapImageToGalleryItem(image),
+      this.mapImageToGalleryItem(image)
     );
     this.currentCollectionGallery.forEach((item) => {
       this.imgIdArray.push(item.id);
@@ -134,13 +141,22 @@ export default class HomePageGallery extends Vue {
   }
 
   async getCollections() {
-    const collections = await new CollectionController().getCollections();
+    const resp = await new CollectionController().getCollections();
+    const collections: ICollection[] = [];
+
+    resp?.forEach((collection: ICollection) => {
+      if (collection.title.toLowerCase() !== 'personal item') {
+        collections.push(collection);
+      }
+    });
     if (collections) {
-      this.collections = collections.slice(0, 3); // Simulation of three items received from api, only
+      this.collections = collections;
       this.currentCollection = collections[0];
-      const images = await new CollectionController().getCollectionsImages(collections[0]._id);
+      const images = await new CollectionController().getCollectionsImages(
+        collections[0]._id
+      );
       this.currentCollectionGallery = images.map((image) =>
-        this.mapImageToGalleryItem(image),
+        this.mapImageToGalleryItem(image)
       );
     }
     this.currentCollectionGallery.forEach((item) => {

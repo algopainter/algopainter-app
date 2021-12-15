@@ -1,9 +1,5 @@
 <template>
-  <q-dialog
-    ref="dialog"
-    v-model="modal"
-    @hide="onDialogHide"
-  >
+  <q-dialog ref="dialog" @hide="onDialogHide">
     <q-card class="q-pa-md">
       <p class="row justify-center text-h5">
         {{ $t('dashboard.selectAlgoP') }}
@@ -15,15 +11,8 @@
           href="https://app.algopainter.art/paintings/new"
           target="_blank"
         >
-          <q-avatar
-            size="250px"
-            class="avatar"
-          >
-            <img
-              width="150px"
-              class="img"
-              src="/images/gwei.png"
-            >
+          <q-avatar size="250px" class="avatar">
+            <img width="150px" class="img" src="/images/gwei.png" />
           </q-avatar>
         </q-btn>
         <q-btn
@@ -32,13 +21,8 @@
           href="https://app.algopainter.art/collections/1/new"
           target="_blank"
         >
-          <q-avatar
-            size="250px"
-            class="avatar"
-          >
-            <img
-              src="/images/manwithnoname.png"
-            >
+          <q-avatar size="250px" class="avatar">
+            <img src="/images/manwithnoname.png" />
           </q-avatar>
         </q-btn>
       </div>
@@ -53,29 +37,16 @@ class Props {
   OpenModal = prop({
     type: Boolean,
     required: true,
-  })
+  });
 }
 @Options({
-  components: {
-  },
+  components: {},
 })
 export default class NewPaintingModal extends Vue.with(Props) {
-  modal: boolean = false;
-
-  show() {
-    this.$refs.dialog.show();
-  }
-
-  hide() {
-    this.$refs.dialog.hide();
-  }
-
   onDialogHide() {
-    this.$emit('hide');
-  }
-
-  closeModal() {
-    this.modal = false;
+    void this.$store.dispatch({
+      type: 'collections/openNewPaintingModal',
+    });
   }
 
   declare $refs: {
@@ -89,7 +60,7 @@ export default class NewPaintingModal extends Vue.with(Props) {
 }
 
 @media (max-width: 450px) {
-  .avatar{
+  .avatar {
     width: 140px;
     height: 140px;
   }

@@ -13,6 +13,7 @@ function state(): CollectionsStateInterface {
     userPastImages: [],
     imagePastOwners: [],
     userPirsTabImages: [],
+    isNewPaintingModalOpen: false,
   };
 }
 

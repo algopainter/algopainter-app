@@ -70,7 +70,7 @@ OpenModal: boolean = false;
   width: 300px;
   position: absolute;
   height: 450px;
-  margin-top: -200px !important;
+  margin-top: -35rem !important;
   margin-left: -50px;
 }
 

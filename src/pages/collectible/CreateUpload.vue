@@ -1,28 +1,15 @@
 <template>
   <q-form @submit="saveMintData">
-    <div class="row">
+    <div class="row justify-center">
       <div :hidden="$q.screen.lt.md" class="preview">
         <preview
           :image-preview="formData.image"
           @close="close"
           @preview-evento="previewImage"
         />
-        <div class="btn-mint">
-          <algo-button
-            type="submit"
-            color="primary"
-            :disabled="isDisabled"
-            :label="$t('createCollectible.create.btnCreate')"
-          />
-          <mint-modal
-            v-model="OpenModal"
-            :open-modal="OpenModal"
-            :status="statusData"
-          />
-        </div>
       </div>
 
-      <div class="col">
+      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'col']">
         <div class="q-upload-wrapper">
           <div class="q-upload-label">
             {{ $t('createCollectible.create.fields.uploadLabel') }}
@@ -65,7 +52,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row justify-center">
       <div class="col">
         <q-input
           v-model="formData.name"
@@ -109,6 +96,27 @@
         />
       </div>
     </div>
+    <div class="row justify-center q-pb-md">
+      <q-field
+        ref="toggle"
+        :value="isresponsibility"
+        :rules="[
+          (val) => isresponsibility === true || $t('createCollectible.create.requiredField'),
+        ]"
+        borderless
+        dense
+        hide-bottom-space
+      >
+        <template #control>
+          <q-checkbox
+            v-model="isresponsibility"
+            color="green"
+            :label="
+              $t('createCollectible.create.fields.responsibility')"
+          />
+        </template>
+      </q-field>
+    </div>
     <div class="preview-mobile">
       <div class="btn-mint">
         <algo-button
@@ -133,6 +141,7 @@ import Preview from './Preview.vue';
 import AlgoButton from 'components/common/Button.vue';
 import MintModal from './MintModal.vue';
 import { isError, resizeImage } from 'src/helpers/utils';
+import { Form as VForm, Field as VField } from 'vee-validate';
 import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
@@ -161,6 +170,8 @@ interface FormData {
     Preview,
     AlgoButton,
     MintModal,
+    VForm,
+    VField,
   },
 })
 export default class CreateUpload extends Vue.with(PropsTypes) {
@@ -169,6 +180,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   isDisabled: boolean = true;
   statusData : string = '';
   creatorRoyaltyValue: number = 0;
+  isresponsibility: boolean = false;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async previewImage(e: Event) {
     const newLocal = (<HTMLInputElement>e.target).files;
@@ -268,7 +280,10 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   position: absolute;
 }
 .btn-mint{
-  margin-top: 300px;
+  padding-bottom: 10px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
 .preview-mobile{
@@ -281,9 +296,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     left: 75%;
     bottom: 10px;
 }
-  .preview-mobile{
-    display: none;
-  }
 }
 @media (max-width: 640px){
   .preview{

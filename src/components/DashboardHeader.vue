@@ -76,7 +76,7 @@ export default class DashboardHeader extends Vue.with(Props) {
   }
 }
 .nav-bar {
-  display: flex;
+  display: inline-block;
 
   .item {
     padding: 0 24px;

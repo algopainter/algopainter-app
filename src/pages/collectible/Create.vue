@@ -1,5 +1,5 @@
 <template>
-  <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+  <div class="col-xs-12 col-sm-12 full-width col-lg-7">
     <div class="text-subtitle2 sub-title">
       {{ $t('createCollectible.title.sub') }}
     </div>
@@ -265,5 +265,11 @@ export default class Create extends Vue {
 }
 .q-preview {
   margin: 0 2vw;
+}
+</style>
+
+<style lang="scss">
+.q-page-container {
+  padding-left: 0px;
 }
 </style>

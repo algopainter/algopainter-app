@@ -16,6 +16,12 @@ export default {
   commingSoon: 'For now, there are no auctions available. Stay tuned they will soon show up here!',
   sellerSoon: 'Nothing around here yet, but we will see the top sellers here soon!',
   buyerSoon: 'Nothing around here yet, but we will see the top buyers here soon!',
+  header: {
+    auctionNotificator: {
+      pirsBtn: '({pirsCounter}) PIRS',
+      bidBackBtn: '({bidBackCounter}) BidBack',
+    },
+  },
   homePage: {
     title: 'Gallery',
     publicTitle: 'Public profile',

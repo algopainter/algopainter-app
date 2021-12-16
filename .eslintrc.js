@@ -17,11 +17,11 @@ module.exports = {
     project: resolve(__dirname, './tsconfig.json'),
     tsconfigRootDir: __dirname,
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
-    sourceType: 'module' // Allows for the use of imports
+    sourceType: 'module', // Allows for the use of imports
   },
 
   env: {
-    browser: true
+    browser: true,
   },
 
   // Rules order is important, please avoid shuffling them
@@ -77,7 +77,7 @@ module.exports = {
     __QUASAR_SSR_PWA__: 'readonly',
     process: 'readonly',
     Capacitor: 'readonly',
-    chrome: 'readonly'
+    chrome: 'readonly',
   },
 
   // add your custom rules here
@@ -98,28 +98,31 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'prefer-promise-reject-errors': 'off',
 
-    'semi': ['warn', 'always'],
+    semi: ['warn', 'always'],
     'semi-style': 'warn',
     'space-before-function-paren': ['warn', 'never'],
     'comma-dangle': ['warn', 'always-multiline'],
     'eol-last': ['warn', 'always'],
-    'max-len': ['warn', { 'code': 270 }],
+    'max-len': 'off',
     'no-trailing-spaces': 'warn',
-    'quotes': ['warn', 'single', { avoidEscape: true }],
+    quotes: ['warn', 'single', { avoidEscape: true }],
 
     'spaced-comment': 'off',
     'key-spacing': 'off',
 
     // Vue
     'vue/component-name-in-template-casing': ['error', 'kebab-case'],
-    'vue/max-attributes-per-line': ["error", {
-      "singleline": {
-        "max": 5
-      },      
-      "multiline": {
-        "max": 5
-      }
-    }],
+    'vue/max-attributes-per-line': [
+      'error',
+      {
+        singleline: {
+          max: 5,
+        },
+        multiline: {
+          max: 5,
+        },
+      },
+    ],
 
     // TypeScript
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -129,6 +132,6 @@ module.exports = {
     '@typescript-eslint/no-unsafe-member-access': 'off',
 
     // allow debugger during development only
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
-  }
-}
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+  },
+};

@@ -250,7 +250,7 @@
                     reverse-fill-mask
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.creatorRoyalties')"
-                    :model-value="collectionCreatorPirsRate ? collectionCreatorPirsRate : 0"
+                    :model-value="collectionCreatorRoyaltiesRate ? collectionCreatorRoyaltiesRate : 0"
                     readonly
                     @update:modelValue="handleChange"
                   >
@@ -441,12 +441,12 @@ export default class SellYourArt extends Vue {
 
   imagePirsRate!: number | null;
   pirPercent!: number | null;
-  collectionCreatorPirsRate!: number | null ;
+  collectionCreatorRoyaltiesRate!: number | null ;
 
   mounted() {
     void this.validatePirs();
     void this.getAuctionFeeRate();
-    void this.getCreatorPirsRate();
+    void this.getCreatorRoyaltiesRate();
   }
 
   created() {
@@ -457,7 +457,7 @@ export default class SellYourArt extends Vue {
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
     this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-    void this.getCreatorPirsRate();
+    void this.getCreatorRoyaltiesRate();
     void this.loadImage();
     void this.loadAvailableTokens();
   }
@@ -471,11 +471,11 @@ export default class SellYourArt extends Vue {
     }
   }
 
-  async getCreatorPirsRate() {
+  async getCreatorRoyaltiesRate() {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
-    this.createdPirs = await this.bidBackSystem.getCreatorPIRSByTokenAddress(this.image.collectionOwner);
-    this.collectionCreatorPirsRate = this.createdPirs / 100;
+    this.createdPirs = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
+    this.collectionCreatorRoyaltiesRate = this.createdPirs / 100;
   }
 
   getInvestorPirsRate() {
@@ -562,8 +562,7 @@ export default class SellYourArt extends Vue {
       return this.$router.push('/');
     }
 
-    // void this.getPercentagePirsCreated();
-    void this.getCreatorPirsRate();
+    void this.getCreatorRoyaltiesRate();
 
     this.loading = false;
   }

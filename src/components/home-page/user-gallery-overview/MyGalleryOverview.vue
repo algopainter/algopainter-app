@@ -553,15 +553,14 @@ export default class MyGalleryOverview extends Vue {
         this.getPirs(1);
         break;
       case 'BidBack':
-        console.log('BidBack');
         this.getBidBack(1);
         break;
       default:
-      this.galleryTabs[0].reloadInterval = setInterval(() => {
-      this.getGalleryArts(1, this.currentCollection.label, false, true).catch(
-        console.error
-      );
-      }, 5000);
+        this.galleryTabs[0].reloadInterval = setInterval(() => {
+          this.getGalleryArts(1, this.currentCollection.label, false, true).catch(
+            console.error
+          );
+        }, 5000);
     }
   }
 

@@ -23,9 +23,9 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
+        "internalType": "bytes32",
         "name": "_tokenAddress",
-        "type": "address"
+        "type": "bytes32"
       },
       {
         "indexed": false,
@@ -42,9 +42,9 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
+        "internalType": "bytes32",
         "name": "_tokenAddress",
-        "type": "address"
+        "type": "bytes32"
       },
       {
         "indexed": false,
@@ -306,11 +306,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "_maxCreatorPirsRate",
         "type": "uint256"
@@ -368,9 +363,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "bytes32",
         "name": "_tokenAddress",
-        "type": "address"
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -391,9 +386,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_hashAddress",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -409,9 +404,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_hashAddress",
+        "type": "bytes32"
       }
     ],
     "name": "getCreatorPIRSByTokenAddress",
@@ -466,9 +461,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "bytes32",
         "name": "_tokenAddress",
-        "type": "address"
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -507,14 +502,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "getMaxCreatorPirsRate",
+    "inputs": [],
+    "name": "getMaxCreatorRoyaltiesRate",
     "outputs": [
       {
         "internalType": "uint256",

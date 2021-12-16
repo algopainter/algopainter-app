@@ -341,7 +341,7 @@ export default class Auction extends Vue {
     this.auction = await getAuctionDetails(this.auctionId);
     void this.getBidBackRate();
     void this.getInvestorPirsRate();
-    void this.getRoyaltiesPirsRate();
+    void this.getCreatorRoyaltiesRate();
   }
 
   async getAuctionData() {

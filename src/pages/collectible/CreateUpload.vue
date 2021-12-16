@@ -1,52 +1,53 @@
 <template>
   <q-form @submit="saveMintData">
     <div class="row justify-center">
-      <div :hidden="$q.screen.lt.md" class="preview">
-        <preview
-          :image-preview="formData.image"
-          @close="close"
-          @preview-evento="previewImage"
-        />
-      </div>
-
       <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'col']">
         <div class="q-upload-wrapper">
           <div class="q-upload-label">
             {{ $t('createCollectible.create.fields.uploadLabel') }}
           </div>
-          <div class="col q-upload-box">
-            <p
-              v-if="formData.image === '' "
-              class="text-bold text-center align-center"
-            >
-              {{ $t('createCollectible.create.descriFile') }}
-            </p>
-            <div
-              v-else
-              class="row items-center justify-center q-mb-md"
-            >
-              <img
-                :src="formData.image"
-                class="img "
+          <div class="row justify-beetewen">
+            <div class="col q-upload-box">
+              <p
+                v-if="formData.image === '' "
+                class="text-bold text-center align-center"
               >
-              <q-btn
-                icon="highlight_off"
-                class="btn"
-                @click="close"
-              />
+                {{ $t('createCollectible.create.descriFile') }}
+              </p>
+              <div
+                v-else
+                class="row items-center justify-center q-mb-md"
+              >
+                <img
+                  :src="formData.image"
+                  class="img "
+                >
+                <q-btn
+                  icon="highlight_off"
+                  class="btn"
+                  @click="close"
+                />
+              </div>
+              <div class="row justify-center">
+                <label
+                  for="imagem"
+                  class="labelFile"
+                >
+                  {{ $t('createCollectible.create.import') }}</label>
+                <input
+                  id="imagem"
+                  type="file"
+                  name="imagem"
+                  @change="previewImage"
+                >
+              </div>
             </div>
-            <div class="row justify-center">
-              <label
-                for="imagem"
-                class="labelFile"
-              >
-                {{ $t('createCollectible.create.import') }}</label>
-              <input
-                id="imagem"
-                type="file"
-                name="imagem"
-                @change="previewImage"
-              >
+            <div :hidden="$q.screen.lt.md" class="preview">
+              <preview
+                :image-preview="formData.image"
+                @close="close"
+                @preview-evento="previewImage"
+              />
             </div>
           </div>
         </div>
@@ -293,8 +294,15 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
 @media (min-width: 1024px){
   .preview{
     position: fixed;
-    left: 75%;
-    bottom: 10px;
+    left: 70%;
+    bottom: -30rem;
+}
+}
+@media (min-width: 1024px){
+  .preview{
+    position: fixed;
+    left: 70%;
+    bottom: -30rem;
 }
 }
 @media (max-width: 640px){

@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-evenly q-pa-lg">
+  <div class="row justify-start q-pa-lg">
     <create class="q-ma-sm" />
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="col-xs-12 col-sm-12 full-width col-lg-7">
+  <div class="col-xs-12 col-sm-12 col-lg-7 col-md-7">
     <div class="text-subtitle2 sub-title">
       {{ $t('createCollectible.title.sub') }}
     </div>
@@ -19,9 +19,9 @@
     </div>
     <div
       v-if="activeFormId === 'importFile'"
-      class="col q-mt-md"
+      class="row q-mt-md"
     >
-      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'col']">
+      <div>
         <create-upload
           title-maxlength="255"
           description-maxlength="255"
@@ -63,9 +63,6 @@
     -->
     </div>
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-      <div v-if="activeFormId === 'importFile'" class="col q-preview">
-        <preview :image-preview="imageData" />
-      </div>
       <div v-if="activeFormId === 'createWithArtist'" class="col q-preview">
         <!--
         <example

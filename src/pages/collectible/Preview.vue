@@ -70,8 +70,17 @@ OpenModal: boolean = false;
   width: 300px;
   position: absolute;
   height: 450px;
-  margin-top: -35rem !important;
+  margin-top: -65rem;
   margin-left: -50px;
+}
+@media (min-width:1800px){
+.preview-size {
+  width: 300px;
+  position: absolute;
+  height: 450px;
+  margin-top: -100rem;
+  margin-left: -100px;
+}
 }
 
 </style>

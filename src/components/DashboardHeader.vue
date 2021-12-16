@@ -102,7 +102,7 @@ export default class DashboardHeader extends Vue.with(Props) {
       display: none;
     }
     .nav-bar{
-      width: 48%;
+      width: 75%;
     }
   }
 }

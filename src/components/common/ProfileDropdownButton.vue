@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="profile-dropdown-button-container">
     <q-button>
       <div class="q-gutter-xs row">
         <q-chip
@@ -194,5 +194,9 @@ export default class ProfileDropdownButton extends Vue {
   border: 3px solid #fff;
   border-radius: 34px !important;
   background: #fff;
+}
+.profile-dropdown-button-container {
+  display: flex;
+  align-items: center;
 }
 </style>

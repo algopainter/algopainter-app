@@ -551,11 +551,6 @@ export default class MyGalleryOverview extends Vue {
     }
   }
 
-  @Watch('$route.params.btn')
-  onRouteParamsChanged() {
-    this.setCurrentBtnClicked();
-  }
-
   @Watch('userAccount')
   onAccountChanged() {
     this.getGalleryArts(1, 'All Collections').catch(console.error);

@@ -22,7 +22,7 @@
         <algo-button
           v-for="(btn, index) in galleryTabs"
           :key="index"
-          :label="$t(`dashboard.homePage.${btn.label}`) + btn.contLabel"
+          :label="$t(`dashboard.gallery.navigator.${btn.label}`) + btn.contLabel"
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === btn.btnIndex ? 'primary' : 'grey-5'"
@@ -76,7 +76,7 @@
         />
         <algo-button
           v-if="!galleryTabs[0].noData"
-          :label="$t('dashboard.homePage.loadMore', {
+          :label="$t('dashboard.gallery.loadMore', {
             msg: btnLoadMoreMsg
           })"
           color="primary"
@@ -112,7 +112,7 @@
             <div>
               <onsale-item
                 :art="item"
-                :btn-name="'dashboard.homePage.goToAuction'"
+                :btn-name="'dashboard.gallery.btnName.goToAuction'"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -152,7 +152,7 @@
         />
         <algo-button
           v-if="!galleryTabs[1].noData"
-          :label="$t('dashboard.homePage.loadMore', {
+          :label="$t('dashboard.gallery.loadMore', {
             msg: btnLoadMoreMsg
           })"
           color="primary"
@@ -214,7 +214,7 @@
         />
         <algo-button
           v-if="!galleryTabs[2].noData"
-          :label="$t('dashboard.homePage.loadMore', {
+          :label="$t('dashboard.gallery.loadMore', {
             msg: btnLoadMoreMsg
           })"
           color="primary"
@@ -226,54 +226,6 @@
         />
       </div>
     </div>
-  <!--
-    <div class="col-11 col-md-3 col-lg-3 q-pt-md q-mt-lg column items-center border q-pl-none latest-bids">
-      <div class="text-h5 text-bold text-primary q-pb-md">
-        {{ $t('dashboard.homePage.latestBids') }}
-      </div>
-      <div>
-        <p class="q-mt-lg text-primary text-bold text-h5">
-          {{ $t('dashboard.auctions.coming') }}
-        </p>
-      </div>
-      <div v-if="loadingGalleryBid === false">
-        <div
-          v-for="(bid, i) in galleryBidShow"
-          :key="i"
-          class="column q-col-gutter-md"
-        >
-          <div v-if="bid != undefined">
-            <LatestBidsItem :bid="bid" />
-          </div>
-        </div>
-        <div v-if="nullGalleryBidShow === true">
-          <div class="flex q-mb-md">
-            {{ $t('dashboard.homePage.publicNoBids') }}
-          </div>
-        </div>
-        <div class="q-pt-md row justify-center">
-          <algo-button
-            v-if="btnBidsClicked"
-            color="primary"
-            @click="Allbids()"
-          >
-            {{ $t('dashboard.homePage.seeLess') }}
-          </algo-button>
-          <algo-button
-            v-else
-            color="primary"
-            @click="Allbids()"
-          >
-            {{ $t('dashboard.homePage.seeAllBids') }}
-          </algo-button>
-        </div>
-      </div>
-      <div v-else>
-        <LatestBidsItemSkeleton />
-      </div>
-
-    </div>
-  -->
   </div>
 </template>
 
@@ -301,17 +253,6 @@ import OnsaleItem from './OnsaleItem.vue';
   },
 })
 export default class UserGalleryOverview extends Vue {
-  /*
-  galleryBid = [];
-  loadingGalleryBid: boolean = true;
-  galleryBidClosed = [];
-  galleryBidShow = [];
-  nullGalleryBidShow: boolean = false;
-  loadingLatestBidsItem: boolean = true;
-  btnBidsClicked: boolean = false;
-
-  */
-
   loadMoreBtn: boolean = false;
   maxItemsPerPage: number = 9;
   btnLoadMoreMsg: string = 'Load More';
@@ -329,7 +270,7 @@ export default class UserGalleryOverview extends Vue {
 
   galleryTabs = [
     {
-      label: 'gallery' as string,
+      label: 'galleryBtn' as string,
       cont: 0 as number,
       contLabel: '' as string,
       btnIndex: 1 as number,
@@ -341,7 +282,7 @@ export default class UserGalleryOverview extends Vue {
       noData: false as boolean,
     },
     {
-      label: 'onSale' as string,
+      label: 'onSaleBtn' as string,
       cont: 0 as number,
       contLabel: '' as string,
       btnIndex: 2 as number,
@@ -352,7 +293,7 @@ export default class UserGalleryOverview extends Vue {
       noData: false as boolean,
     },
     {
-      label: 'like' as string,
+      label: 'likedBtn' as string,
       cont: 0 as number,
       contLabel: '' as string,
       btnIndex: 3 as number,
@@ -618,40 +559,6 @@ export default class UserGalleryOverview extends Vue {
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
-
-  /*
-  Allbids() {
-    this.btnBidsClicked = !this.btnBidsClicked;
-    if (this.btnBidsClicked === false) {
-      this.galleryBidShow = this.galleryBidClosed;
-    } else {
-      this.galleryBidShow = this.galleryBid;
-    }
-  }
-  */
-
-  /*
-  async getGalleryBidders() {
-    try {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const response = await api.get(`bids?bidder=${this.$route.params.account}`);
-      this.galleryBid = response.data as [];
-      if (this.galleryBid.length !== 0) {
-        this.galleryBidClosed = [
-          this.galleryBid[0],
-          this.galleryBid[1],
-          this.galleryBid[2],
-        ];
-      } else {
-        this.nullGalleryBidShow = true;
-      }
-      this.galleryBidShow = this.galleryBidClosed;
-      this.loadingGalleryBid = false;
-    } catch (e) {
-      console.log('error', e);
-    }
-  }
-  */
 }
 </script>
 

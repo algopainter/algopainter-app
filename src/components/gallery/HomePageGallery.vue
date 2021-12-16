@@ -26,9 +26,11 @@
       </div>
       <div class="footer">
         <algo-button
-          :label="$t('dashboard.homePage.loadMore', {
-            msg: btnLoadMoreMsg
-          })"
+          :label="
+            $t('dashboard.gallery.loadMore', {
+              msg: btnLoadMoreMsg,
+            })
+          "
           color="primary"
           outline
           class="load-more q-px-xl q-mx-auto"

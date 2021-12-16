@@ -1,5 +1,5 @@
 <template>
-  <div class="col-xs-12 col-sm-12 col-lg-7 col-md-7">
+  <div class="col-xs-12 col-sm-12 col-lg-7 col-md-6 full-width">
     <div class="text-subtitle2 sub-title">
       {{ $t('createCollectible.title.sub') }}
     </div>
@@ -19,7 +19,7 @@
     </div>
     <div
       v-if="activeFormId === 'importFile'"
-      class="row q-mt-md"
+      class="col q-mt-md"
     >
       <div>
         <create-upload

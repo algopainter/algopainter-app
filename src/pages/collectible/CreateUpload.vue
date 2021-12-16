@@ -42,13 +42,13 @@
                 >
               </div>
             </div>
-            <div :hidden="$q.screen.lt.md" class="preview">
+            <!-- <div :hidden="$q.screen.lt.md" class="preview">
               <preview
                 :image-preview="formData.image"
                 @close="close"
                 @preview-evento="previewImage"
               />
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

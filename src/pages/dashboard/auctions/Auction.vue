@@ -44,7 +44,7 @@
               $t('dashboard.auctionPage.auctionRates', {
                 bidBackRate: auctionBidBackRate,
                 investorPirsRate: itemInvestorPirsRate,
-                creatorPirsRate: collectionCreatorPirsRate,
+                creatorRoyaltiesRate: collectionCreatorRoyaltiesRate,
               })
             }}
           </div>
@@ -208,7 +208,7 @@ export default class Auction extends Vue {
   deleteAuctionStatus: DeletingAuctionStatus | null = null;
   auctionBidBackRate: number = 0;
   itemInvestorPirsRate: number = 0;
-  collectionCreatorPirsRate: number = 0;
+  collectionCreatorRoyaltiesRate: number = 0;
 
   get auctionId(): string {
     const { id } = this.$route.params;
@@ -326,13 +326,13 @@ export default class Auction extends Vue {
     }
   }
 
-  async getCreatorPirsRate() {
+  async getCreatorRoyaltiesRate() {
     if (this.auction) {
       try {
-        this.collectionCreatorPirsRate = await this.bidBackPirsSystem.getCreatorPirsRate(this.auction.index);
-        this.collectionCreatorPirsRate = this.collectionCreatorPirsRate / 100;
+        this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesRate(this.auction.index);
+        this.collectionCreatorRoyaltiesRate = this.collectionCreatorRoyaltiesRate / 100;
       } catch (error) {
-        console.log('Error - collectionCreatorPirsRate - Auction');
+        console.log('Error - collectionCreatorRoyaltiesRate - Auction');
       }
     }
   }

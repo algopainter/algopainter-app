@@ -30,11 +30,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_creatorPirsRate",
+        "name": "_creatorRoyaltiesRate",
         "type": "uint256"
       }
     ],
-    "name": "CreatorPirsUpdated",
+    "name": "CreatorRoyaltiesUpdated",
     "type": "event"
   },
   {
@@ -307,11 +307,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_maxCreatorPirsRate",
+        "name": "_maxCreatorRoyaltiesRate",
         "type": "uint256"
       }
     ],
-    "name": "setMaxCreatorPirsRate",
+    "name": "setMaxCreatorRoyaltiesRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -392,11 +392,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "_creatorPirsRate",
+        "name": "_creatorRoyaltiesRate",
         "type": "uint256"
       }
     ],
-    "name": "setCreatorPirsRate",
+    "name": "setCreatorRoyaltiesRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -409,7 +409,7 @@
         "type": "bytes32"
       }
     ],
-    "name": "getCreatorPIRSByTokenAddress",
+    "name": "getCreatorRoyaltiesByTokenAddress",
     "outputs": [
       {
         "internalType": "uint256",
@@ -490,7 +490,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getCreatorPirsRate",
+    "name": "getCreatorRoyaltiesRate",
     "outputs": [
       {
         "internalType": "uint256",

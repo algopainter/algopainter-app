@@ -394,6 +394,7 @@ export default {
     btnName: {
       goToAuction: 'Go to auction',
       stakeAlgop: 'Stake ALGOP',
+      btnView: 'View Art',
     },
     loadMore: '{msg}',
     gwei: 'Gwei',

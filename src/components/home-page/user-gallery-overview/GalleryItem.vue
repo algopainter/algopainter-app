@@ -52,7 +52,7 @@
             :label="$t(btnName)"
             @click="openAuctionModal"
           />
-          <div v-else-if="btnName === 'dashboard.homePage.goToAuction'">
+          <div v-else-if="btnName === 'dashboard.gallery.btnName.goToAuction'">
             <algoButton
               v-if="auction && auctionEnded"
               class="q-my-md action full-width"

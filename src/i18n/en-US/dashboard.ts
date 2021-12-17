@@ -79,6 +79,8 @@ export default {
     inspirations: 'inspirations',
     exhibition: 'Exhibition (you can change it later)',
     technique: 'Technique',
+    creatorRoyalties: 'Creator Royalties',
+    infoBtn: 'Learn More',
   },
   myPaint: {
     title: 'My Amazing Paint',
@@ -233,7 +235,7 @@ export default {
     auctionDistribution: 'Auction Distribution',
     saleNumber: 'Sale {saleNumber} of {totalSales}',
     highestBidBy: 'Highest bid by {highestBidBy}',
-    auctionRates: 'Rates: {bidBackRate}% BidBack / {investorPirsRate}% Investor PIRS / {creatorPirsRate}% Creator Royalties',
+    auctionRates: 'Rates: {bidBackRate}% BidBack / {investorPirsRate}% Investor PIRS / {creatorRoyaltiesRate}% Creator Royalties',
     pirsDestination: '{pirs} of sales will go to {role}',
     previousBid: 'Offered {bidPrice} for {bidAtInDays} days ago',
     previousBidBy: 'by {name}',

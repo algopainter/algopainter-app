@@ -126,8 +126,7 @@
               @click="cancelAuction"
             />
             <algo-button
-              v-else
-              class="full-width q-py-sm"
+              class="full-width q-py-sm q-mt-md"
               color="primary"
               outline
               :label="$t('dashboard.auctionPage.placeABid')"
@@ -329,8 +328,8 @@ export default class Auction extends Vue {
   async getCreatorRoyaltiesRate() {
     if (this.auction) {
       try {
-        this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesRate(this.auction.index);
-        this.collectionCreatorRoyaltiesRate = this.collectionCreatorRoyaltiesRate / 100;
+        this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesRate(this.auction.index) / 100;
+        console.log('this.collectionCreatorRoyaltiesRate', this.collectionCreatorRoyaltiesRate);
       } catch (error) {
         console.log('Error - collectionCreatorRoyaltiesRate - Auction');
       }

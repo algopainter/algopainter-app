@@ -3,17 +3,8 @@
     id="new-painting"
     class="row q-pb-lg"
   >
-    <div class="col-12 col-sm-6 q-pa-lg flex flex-center">
-      <q-img
-        src="../../../assets/images/hashly-gwei.svg"
-        class="img"
-      />
-    </div>
     <div class="col-12 col-sm-6 column justify-center">
       <div>
-        <div class="header q-py-md">
-          {{ $t('dashboard.newPainting.create') }}
-        </div>
         <div class="q-col-gutter-md">
           <div>
             <q-input
@@ -85,7 +76,11 @@
               :options="techniqueValue"
             />
           </div>
-          <div class="row justify-center">
+          <div class="info">
+            <p>{{ $t('dashboard.newPainting.creatorRoyalties') }}</p>
+            <p>{{ $t('dashboard.newPainting.infoBtn') }}</p>
+          </div>
+          <div class="row justify-center btn-container">
             <algo-button
               class="btn justify-center q-py-md"
               type="submit"
@@ -97,6 +92,12 @@
           <my-paint v-model="isModalOpen" />
         </div>
       </div>
+    </div>
+    <div class="col-12 col-sm-6 q-pa-lg flex flex-center img-container">
+      <q-img
+        src="../../../assets/images/hashly-gwei.svg"
+        class="img"
+      />
     </div>
   </div>
 </template>
@@ -265,18 +266,27 @@ export default class NewPainting extends Vue {
 
 <style lang="scss" scoped>
 #new-painting {
-  .img {
-    height: 429px;
-    width: 230px;
-    border: none;
+  padding: 40px;
+  color: $primary;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='15' ry='15' stroke='DeepPink' stroke-width='5' stroke-dasharray='6%2c 14' stroke-dashoffset='21' stroke-linecap='round'/%3e%3c/svg%3e");
+  border-radius: 15px;
+  .img-container {
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='15' ry='15' stroke='DeepPink' stroke-width='5' stroke-dasharray='6%2c 14' stroke-dashoffset='21' stroke-linecap='round'/%3e%3c/svg%3e");
+    .img {
+      padding: 40px;
+      height: 429px;
+      width: 230px;
+      border: none;
+    }
   }
-
   .span-label {
     display: flex;
     align-items: center;
   }
-  .btn {
-    width: 50%;
+  .btn-container {
+    .btn {
+      width: 100%;
+    }
   }
 }
 </style>

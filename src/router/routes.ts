@@ -62,6 +62,14 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'newPainting',
+        path: 'create-collectible/new-painting/gwei',
+        component: () => import('pages/dashboard/newpaint/NewPainting.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.newPainting.title'),
+        },
+      },
+      {
         name: 'auction',
         path: 'auctions/:id',
         component: () => import('pages/dashboard/auctions/Auction.vue'),
@@ -75,14 +83,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/dashboard/viewarts/ViewArt.vue'),
         meta: {
           title: i18n.global.t('dashboard.viewArt.title'),
-        },
-      },
-      {
-        name: 'newPainting',
-        path: 'new-painting',
-        component: () => import('pages/dashboard/newpaint/NewPainting.vue'),
-        meta: {
-          title: i18n.global.t('dashboard.newPainting.title'),
         },
       },
       {

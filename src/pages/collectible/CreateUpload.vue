@@ -118,13 +118,36 @@
         </template>
       </q-field>
     </div>
+    <div class="row justify-start q-pb-md">
+      <q-field
+        ref="toggle"
+        :value="isAgreeValue"
+        :rules="[
+          (val) => isAgreeValue === true || $t('createCollectible.create.requiredField'),
+        ]"
+        borderless
+        dense
+        hide-bottom-space
+      >
+        <template #control>
+          <q-checkbox
+            v-model="isAgreeValue"
+            color="green"
+            :label="
+              $t('createCollectible.create.fields.agreeValue')"
+          />
+        </template>
+      </q-field>
+    </div>
     <div class="preview-mobile">
       <div class="btn-mint">
         <algo-button
           type="submit"
           color="primary"
           :disabled="isDisabled"
-          :label="$t('createCollectible.create.btnCreate')"
+          :label="$t('createCollectible.create.btnCreate',{
+            CurrentAmount: mintValue,
+          })"
         />
         <mint-modal
           v-model="OpenModal"
@@ -146,6 +169,13 @@ import { Form as VForm, Field as VField } from 'vee-validate';
 import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
+import AlgoPainterPersonalItemProxy from 'src/eth/AlgoPainterPersonalItemProxy';
+import { getPersonalItemContractByNetworkId } from 'src/eth/Config';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
+import { numberToString } from 'src/helpers/format/numberToString';
+import { IMint } from 'src/models/IMint';
 
 class PropsTypes {
   uploadLabel: string | undefined;
@@ -153,6 +183,18 @@ class PropsTypes {
   titleMaxlength: number | undefined;
   descriptionLabel: string | undefined;
   descriptionMaxlength: number | undefined;
+}
+
+enum PainterPersonalItemStatus {
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  IncreateAllowanceCompleted,
+  PersonalItemAwaitingInput,
+  PersonalItemAwaitingConfirmation,
+  PersonalItemError,
+  PersonalItemCreated,
 }
 
 interface FormData {
@@ -174,6 +216,12 @@ interface FormData {
     VForm,
     VField,
   },
+  computed: {
+    ...mapGetters('user', {
+      networkInfo: 'networkInfo',
+      account: 'account',
+    }),
+  },
 })
 export default class CreateUpload extends Vue.with(PropsTypes) {
   imageData: string | null = null;
@@ -182,6 +230,28 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   statusData : string = '';
   creatorRoyaltyValue: number = 0;
   isresponsibility: boolean = false;
+  isAgreeValue: boolean = false;
+  currentAmount: number = 0;
+  personalItem!: AlgoPainterPersonalItemProxy;
+  mintPersonalItem!: AlgoPainterPersonalItemProxy;
+  painterPersonalItemStatus!: PainterPersonalItemStatus;
+  auctionCoinTokenProxy!: ERC20TokenProxy;
+  networkInfo!: NetworkInfo;
+  mintValue: number = 100;
+  account!: string;
+  dataMint: string = ''
+  responseMint!: IMint;
+  creatorRoyaltytest!: number;
+
+  created() {
+    this.personalItem = new AlgoPainterPersonalItemProxy(this.networkInfo);
+    this.mintPersonalItem = new AlgoPainterPersonalItemProxy(this.networkInfo);
+  }
+
+  mounted() {
+    // void this.getCurrent();
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async previewImage(e: Event) {
     const newLocal = (<HTMLInputElement>e.target).files;
@@ -219,6 +289,49 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   close() {
     this.formData.image = '';
     this.$emit('close', this.imageData);
+  }
+
+  get auctionRewardsContractAddress() {
+    return getPersonalItemContractByNetworkId(this.networkInfo.id);
+  }
+
+  async approveContractTransfer(amount: number) {
+    this.painterPersonalItemStatus = PainterPersonalItemStatus.CheckingAllowance;
+
+    const allowance = await this.auctionCoinTokenProxy.allowance(
+      this.account,
+      this.auctionRewardsContractAddress,
+    );
+
+    if (allowance < amount) {
+      this.painterPersonalItemStatus =
+        PainterPersonalItemStatus.IncreateAllowanceAwaitingInput;
+
+      await this.auctionCoinTokenProxy
+        .approve(
+          this.auctionRewardsContractAddress,
+          numberToString(amount),
+          this.account,
+        )
+        .on('error', () => {
+          this.painterPersonalItemStatus =
+            PainterPersonalItemStatus.IncreateAllowanceError;
+        })
+        .on('transactionHash', () => {
+          this.painterPersonalItemStatus =
+            PainterPersonalItemStatus.IncreateAllowanceAwaitingConfirmation;
+        });
+    }
+  }
+
+  async getCurrent() {
+    try {
+      this.currentAmount = await this.personalItem.getCurrentAmount(2, 0);
+      console.log(this.currentAmount);
+    } catch (error) {
+      console.log('Error - getCurrentAmount - create Upload ', error);
+      console.log(this.currentAmount);
+    }
   }
 
   formData: FormData = {
@@ -261,14 +374,45 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         type: 'positive',
         message: 'ok!',
       });
-      console.log('request.data', request);
+      this.responseMint = await api.post('images/mint', request);
+      // const dado = this.responseMint.data.name as unknown as IApiResponse<string>;
+      // const dado = this.responseMint.tokenURI as unknown as IApiResponse<string>;
+      // const datas = this.responseMint.data.rawImageHash as unknown as IApiResponse<string>;
+      // this.dataMint = dado as unknown as string;
+      console.log('foiii', this.responseMint.data.tokenURI);
       this.statusData = 'confirme';
+      await this.mint();
     } catch (e) {
       this.$q.notify({
         type: 'negative',
         message: 'error',
       });
       this.statusData = 'error';
+    }
+  }
+
+  async mint() {
+    const name = this.responseMint.data.data.name;
+    this.creatorRoyaltytest = this.responseMint.data.data.creatorRoyalty;
+    const rawImageHash = this.responseMint.data.data.rawImageHash;
+    const tokenURI = this.responseMint.data.tokenURI;
+    try {
+      this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
+      await this.mintPersonalItem.mint(
+        name,
+        rawImageHash,
+        this.creatorRoyaltytest,
+        tokenURI,
+        this.account,
+      ).on('transactionHash', () => {
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
+      }).on('error', () => {
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceError;
+      });
+      this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
+      await this.approveContractTransfer(this.mintValue);
+    } catch (e) {
+      console.log('error mint');
     }
   }
 }

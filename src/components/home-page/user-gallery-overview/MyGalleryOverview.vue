@@ -47,7 +47,7 @@
             <div>
               <gallery-item
                 :art="item"
-                :btn-name="'dashboard.gallery.btnName.goToAuction'"
+                :btn-name="'dashboard.gallery.btnName.bntSell'"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -124,10 +124,10 @@
         </div>
         <div v-else class="col-12 q-mt-lg">
           <div class="text-h6 text-primary text-center q-pb-md">
-            {{ $t('dashboard.homePage.gallery.noItemsPersonal.onSaleMsg1') }}
+            {{ $t('dashboard.gallery.noItemsPersonal.onSaleMsg1') }}
           </div>
           <div class="text-h9 text-primary text-center q-pb-md">
-            {{ $t('dashboard.homePage.gallery.noItemsPersonal.onSaleMsg2') }}
+            {{ $t('dashboard.gallery.noItemsPersonal.onSaleMsg2') }}
           </div>
         </div>
       </div>

@@ -32,8 +32,7 @@
           <div class="text-bold">
             {{ monthExpirations }}
             <span class="text-bold">
-              {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span
-            >
+              {{ dayExpirations }} {{ $t('dashboard.bid.of') }}</span>
             {{ yearExpirations }}
           </div>
           <p>{{ hoursExpirations }}</p>

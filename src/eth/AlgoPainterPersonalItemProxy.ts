@@ -1,8 +1,10 @@
 import { AbiItem } from 'web3-utils';
-import { ContractSendMethod } from 'web3-eth-contract';
+import { ContractMethod } from './Web3Impl';
 import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterPersonalItem from './AlgoPainterPersonalItem.json';
 import { getPersonalItemContractByNetworkId } from './Config';
+import { PromiEvent } from 'web3-core';
+import { Contract } from 'web3-eth-contract';
 
 export default class AlgoPainterPersonalItemProxy {
   declare smartContract: {
@@ -12,11 +14,11 @@ export default class AlgoPainterPersonalItemProxy {
           imageHash: string,
           creatorPercentage: number,
           tokenURI: string,
-        ): ContractSendMethod;
+        ): ContractMethod;
         getCurrentAmount(
           algoPainterId: number,
           supply: number,
-        ): ContractSendMethod;
+        ): ContractMethod;
       };
   };
 
@@ -29,29 +31,29 @@ export default class AlgoPainterPersonalItemProxy {
     );
   }
 
-  mint(
-    name: string,
-    imageHash: string,
-    creatorPercentage: number,
-    tokenURI: string,
-    from: string,
-  ) {
+  mint(name: string, imageHash: string, creatorPercentage: number, tokenURI: string, account: string) : PromiEvent<Contract> {
     return this.smartContract.methods.mint(
       name,
       imageHash,
       creatorPercentage,
       tokenURI,
-    ).send({ from });
+    ).send({ from: account });
   }
 
-  async getCurrentAmount(
-    algoPainterId: number,
-    supply: number,
-  ) {
-    const response: unknown = await this.smartContract.methods.getCurrentAmount(
-      algoPainterId,
-      supply,
-    ).call();
-    return response as number;
+  async getMintPrice() : Promise<number> {
+    return await this.smartContract.methods.getCurrentAmount(2, 0).call<number>();
   }
+}
+
+export enum PainterPersonalItemStatus {
+  None,
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  IncreateAllowanceCompleted,
+  PersonalItemAwaitingInput,
+  PersonalItemAwaitingConfirmation,
+  PersonalItemError,
+  PersonalItemCreated,
 }

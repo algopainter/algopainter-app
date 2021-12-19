@@ -164,18 +164,18 @@ import UploadBox from '../../components/common/UploadBox.vue';
 import Preview from './Preview.vue';
 import AlgoButton from 'components/common/Button.vue';
 import MintModal from './MintModal.vue';
-import { isError, resizeImage } from 'src/helpers/utils';
+import { isError } from 'src/helpers/utils';
 import { Form as VForm, Field as VField } from 'vee-validate';
 import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
-import AlgoPainterPersonalItemProxy from 'src/eth/AlgoPainterPersonalItemProxy';
+import AlgoPainterPersonalItemProxy, { PainterPersonalItemStatus } from 'src/eth/AlgoPainterPersonalItemProxy';
 import { getPersonalItemContractByNetworkId } from 'src/eth/Config';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import { numberToString } from 'src/helpers/format/numberToString';
-import { IMint } from 'src/models/IMint';
+import { IMintData } from 'src/models/IMint';
 
 class PropsTypes {
   uploadLabel: string | undefined;
@@ -183,18 +183,6 @@ class PropsTypes {
   titleMaxlength: number | undefined;
   descriptionLabel: string | undefined;
   descriptionMaxlength: number | undefined;
-}
-
-enum PainterPersonalItemStatus {
-  CheckingAllowance,
-  IncreateAllowanceAwaitingInput,
-  IncreateAllowanceAwaitingConfirmation,
-  IncreateAllowanceError,
-  IncreateAllowanceCompleted,
-  PersonalItemAwaitingInput,
-  PersonalItemAwaitingConfirmation,
-  PersonalItemError,
-  PersonalItemCreated,
 }
 
 interface FormData {
@@ -224,6 +212,8 @@ interface FormData {
   },
 })
 export default class CreateUpload extends Vue.with(PropsTypes) {
+  static FILE_SIZE_LIMIT = 31457280;
+
   imageData: string | null = null;
   OpenModal: boolean = false;
   isDisabled: boolean = true;
@@ -231,63 +221,76 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   creatorRoyaltyValue: number = 0;
   isresponsibility: boolean = false;
   isAgreeValue: boolean = false;
-  currentAmount: number = 0;
-  personalItem!: AlgoPainterPersonalItemProxy;
-  mintPersonalItem!: AlgoPainterPersonalItemProxy;
-  painterPersonalItemStatus!: PainterPersonalItemStatus;
+  personalItemContract = <AlgoPainterPersonalItemProxy>{};
+  painterPersonalItemStatus: PainterPersonalItemStatus = PainterPersonalItemStatus.None;
   auctionCoinTokenProxy!: ERC20TokenProxy;
   networkInfo!: NetworkInfo;
-  mintValue: number = 100;
+  mintValue: number = 0;
   account!: string;
   dataMint: string = ''
-  responseMint!: IMint;
-  creatorRoyaltytest!: number;
+  responseMint?: IMintData;
+
+  formData: FormData = {
+    name: '',
+    description: '',
+    image: '',
+    mintedBy: '',
+    salt: '',
+    creatorRoyalty: 0,
+    fileName: '',
+  };
 
   created() {
-    this.personalItem = new AlgoPainterPersonalItemProxy(this.networkInfo);
-    this.mintPersonalItem = new AlgoPainterPersonalItemProxy(this.networkInfo);
+    this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
   }
 
   mounted() {
-    // void this.getCurrent();
+    this.personalItemContract.getMintPrice().then(_mintValue => this.mintValue = _mintValue).catch(console.error);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async previewImage(e: Event) {
     const newLocal = (<HTMLInputElement>e.target).files;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const newLocala = newLocal!;
-    const file = newLocala[0];
-    this.formData.fileName = file.name;
-    const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve((reader.result || '').toString());
-      reader.onerror = error => reject(error);
-    });
-    const base64 = await toBase64(file);
-    const resized = await resizeImage(base64, 500, 500) as string;
-    if (file) {
-      if (file.size < 31457280) {
-        this.formData.image = resized;
-        this.isDisabled = false;
+    if (newLocal) {
+      const file = newLocal[0];
+      this.formData.fileName = file.name;
+
+      if (file) {
+        if (file.size < CreateUpload.FILE_SIZE_LIMIT) {
+          const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve((reader.result || '').toString());
+            reader.onerror = error => reject(error);
+          });
+          const base64 = await toBase64(file);
+          this.formData.image = base64;
+          this.isDisabled = false;
+        } else {
+          this.$q.notify({
+            type: 'negative',
+            message: this.$t('create-collectible.create.errorFile'),
+          });
+          this.formData.image = '';
+          this.isDisabled = true;
+        }
       } else {
-        this.$q.notify({
-          type: 'negative',
-          message: this.$t('create-collectible.create.errorFile'),
-        });
         this.formData.image = '';
         this.isDisabled = true;
       }
-    } else {
-      this.formData.image = '';
-      this.isDisabled = true;
+      this.$emit('preview-evento', this.imageData);
     }
-    this.$emit('preview-evento', this.imageData);
   }
 
   close() {
-    this.formData.image = '';
+    this.formData = {
+      name: '',
+      description: '',
+      image: '',
+      mintedBy: '',
+      salt: '',
+      creatorRoyalty: 0,
+      fileName: '',
+    };
     this.$emit('close', this.imageData);
   }
 
@@ -304,8 +307,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     );
 
     if (allowance < amount) {
-      this.painterPersonalItemStatus =
-        PainterPersonalItemStatus.IncreateAllowanceAwaitingInput;
+      this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceAwaitingInput;
 
       await this.auctionCoinTokenProxy
         .approve(
@@ -324,26 +326,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     }
   }
 
-  async getCurrent() {
-    try {
-      this.currentAmount = await this.personalItem.getCurrentAmount(2, 0);
-      console.log(this.currentAmount);
-    } catch (error) {
-      console.log('Error - getCurrentAmount - create Upload ', error);
-      console.log(this.currentAmount);
-    }
-  }
-
-  formData: FormData = {
-    name: '',
-    description: '',
-    image: '',
-    mintedBy: '',
-    salt: '',
-    creatorRoyalty: 0,
-    fileName: '',
-  };
-
   async saveMintData() {
     this.statusData = 'aproved';
     try {
@@ -355,9 +337,9 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         salt: nanoid(),
       };
       const web3helper = new Web3Helper();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const userAccount = this.$store.getters['user/account'] as string;
       const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
+
       if (isError(signatureOrError as Error)) {
         return;
       }
@@ -374,12 +356,12 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         type: 'positive',
         message: 'ok!',
       });
-      this.responseMint = await api.post('images/mint', request);
-      // const dado = this.responseMint.data.name as unknown as IApiResponse<string>;
-      // const dado = this.responseMint.tokenURI as unknown as IApiResponse<string>;
-      // const datas = this.responseMint.data.rawImageHash as unknown as IApiResponse<string>;
-      // this.dataMint = dado as unknown as string;
-      console.log('foiii', this.responseMint.data.tokenURI);
+      const ipfsUploadResult = await api.post('images/mint', request);
+      if (ipfsUploadResult.status === 200) {
+        this.responseMint = ipfsUploadResult.data as IMintData;
+      } else {
+        throw new Error('An error occured when uploading to IPFS ' + ipfsUploadResult.statusText);
+      }
       this.statusData = 'confirme';
       await this.mint();
     } catch (e) {
@@ -392,31 +374,34 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   }
 
   async mint() {
-    const name = this.responseMint.data.data.name;
-    this.creatorRoyaltytest = this.responseMint.data.data.creatorRoyalty;
-    const rawImageHash = this.responseMint.data.data.rawImageHash;
-    const tokenURI = this.responseMint.data.tokenURI;
     try {
-      this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
-      await this.mintPersonalItem.mint(
-        name,
-        rawImageHash,
-        this.creatorRoyaltytest,
-        tokenURI,
-        this.account,
-      ).on('transactionHash', () => {
-        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
-      }).on('error', () => {
-        this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceError;
-      });
-      this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
-      await this.approveContractTransfer(this.mintValue);
+      if (this.responseMint) {
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
+        await this.approveContractTransfer(this.mintValue);
+        await this.personalItemContract.mint(
+          this.responseMint.data.name,
+          this.responseMint.data.rawImageHash,
+          this.responseMint.data.creatorRoyalty,
+          this.responseMint.tokenURI,
+          this.account,
+        ).on('transactionHash', () => {
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
+        }).on('error', () => {
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceError;
+        }).catch(e => {
+          console.error(e);
+        });
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
+      } else {
+        throw new Error('NFT Mint information is missing.');
+      }
     } catch (e) {
-      console.log('error mint');
+      console.log('error mint', e);
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .q-upload-wrapper {
   position: relative;

@@ -172,7 +172,7 @@ import { api } from 'src/boot/axios';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterPersonalItemProxy, { PainterPersonalItemStatus } from 'src/eth/AlgoPainterPersonalItemProxy';
-import { getPersonalItemContractByNetworkId } from 'src/eth/Config';
+import getAlgoPainterContractByNetworkId, { getPersonalItemContractByNetworkId } from 'src/eth/Config';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import { numberToString } from 'src/helpers/format/numberToString';
 import { IMintData } from 'src/models/IMint';
@@ -223,7 +223,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   isAgreeValue: boolean = false;
   personalItemContract = <AlgoPainterPersonalItemProxy>{};
   painterPersonalItemStatus: PainterPersonalItemStatus = PainterPersonalItemStatus.None;
-  auctionCoinTokenProxy!: ERC20TokenProxy;
+  algopTokenContract!: ERC20TokenProxy;
   networkInfo!: NetworkInfo;
   mintValue: number = 0;
   account!: string;
@@ -242,6 +242,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
 
   created() {
     this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
+    this.algopTokenContract = new ERC20TokenProxy(getAlgoPainterContractByNetworkId(this.networkInfo.id));
   }
 
   mounted() {
@@ -294,32 +295,27 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     this.$emit('close', this.imageData);
   }
 
-  get auctionRewardsContractAddress() {
+  get personalItemContractAddress() {
     return getPersonalItemContractByNetworkId(this.networkInfo.id);
   }
 
   async approveContractTransfer(amount: number) {
     this.painterPersonalItemStatus = PainterPersonalItemStatus.CheckingAllowance;
 
-    const allowance = await this.auctionCoinTokenProxy.allowance(
-      this.account,
-      this.auctionRewardsContractAddress,
-    );
+    const allowance = await this.algopTokenContract.allowance(this.account, this.personalItemContractAddress);
 
     if (allowance < amount) {
       this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceAwaitingInput;
 
-      await this.auctionCoinTokenProxy
+      await this.algopTokenContract
         .approve(
-          this.auctionRewardsContractAddress,
+          this.personalItemContractAddress,
           numberToString(amount),
           this.account,
-        )
-        .on('error', () => {
+        ).on('error', () => {
           this.painterPersonalItemStatus =
             PainterPersonalItemStatus.IncreateAllowanceError;
-        })
-        .on('transactionHash', () => {
+        }).on('transactionHash', () => {
           this.painterPersonalItemStatus =
             PainterPersonalItemStatus.IncreateAllowanceAwaitingConfirmation;
         });

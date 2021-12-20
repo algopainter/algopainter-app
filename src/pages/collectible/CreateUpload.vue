@@ -118,13 +118,36 @@
         </template>
       </q-field>
     </div>
+    <div class="row justify-start q-pb-md">
+      <q-field
+        ref="toggle"
+        :value="isAgreeValue"
+        :rules="[
+          (val) => isAgreeValue === true || $t('createCollectible.create.requiredField'),
+        ]"
+        borderless
+        dense
+        hide-bottom-space
+      >
+        <template #control>
+          <q-checkbox
+            v-model="isAgreeValue"
+            color="green"
+            :label="
+              $t('createCollectible.create.fields.agreeValue')"
+          />
+        </template>
+      </q-field>
+    </div>
     <div class="preview-mobile">
       <div class="btn-mint">
         <algo-button
           type="submit"
           color="primary"
           :disabled="isDisabled"
-          :label="$t('createCollectible.create.btnCreate')"
+          :label="$t('createCollectible.create.btnCreate',{
+            CurrentAmount: mintValue,
+          })"
         />
         <mint-modal
           v-model="OpenModal"
@@ -141,11 +164,18 @@ import UploadBox from '../../components/common/UploadBox.vue';
 import Preview from './Preview.vue';
 import AlgoButton from 'components/common/Button.vue';
 import MintModal from './MintModal.vue';
-import { isError, resizeImage } from 'src/helpers/utils';
+import { isError } from 'src/helpers/utils';
 import { Form as VForm, Field as VField } from 'vee-validate';
 import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { api } from 'src/boot/axios';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
+import AlgoPainterPersonalItemProxy, { PainterPersonalItemStatus } from 'src/eth/AlgoPainterPersonalItemProxy';
+import getAlgoPainterContractByNetworkId, { getPersonalItemContractByNetworkId } from 'src/eth/Config';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
+import { numberToString } from 'src/helpers/format/numberToString';
+import { IMintData } from 'src/models/IMint';
 
 class PropsTypes {
   uploadLabel: string | undefined;
@@ -174,52 +204,31 @@ interface FormData {
     VForm,
     VField,
   },
+  computed: {
+    ...mapGetters('user', {
+      networkInfo: 'networkInfo',
+      account: 'account',
+    }),
+  },
 })
 export default class CreateUpload extends Vue.with(PropsTypes) {
+  static FILE_SIZE_LIMIT = 31457280;
+
   imageData: string | null = null;
   OpenModal: boolean = false;
   isDisabled: boolean = true;
   statusData : string = '';
   creatorRoyaltyValue: number = 0;
   isresponsibility: boolean = false;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async previewImage(e: Event) {
-    const newLocal = (<HTMLInputElement>e.target).files;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const newLocala = newLocal!;
-    const file = newLocala[0];
-    this.formData.fileName = file.name;
-    const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve((reader.result || '').toString());
-      reader.onerror = error => reject(error);
-    });
-    const base64 = await toBase64(file);
-    const resized = await resizeImage(base64, 500, 500) as string;
-    if (file) {
-      if (file.size < 31457280) {
-        this.formData.image = resized;
-        this.isDisabled = false;
-      } else {
-        this.$q.notify({
-          type: 'negative',
-          message: this.$t('create-collectible.create.errorFile'),
-        });
-        this.formData.image = '';
-        this.isDisabled = true;
-      }
-    } else {
-      this.formData.image = '';
-      this.isDisabled = true;
-    }
-    this.$emit('preview-evento', this.imageData);
-  }
-
-  close() {
-    this.formData.image = '';
-    this.$emit('close', this.imageData);
-  }
+  isAgreeValue: boolean = false;
+  personalItemContract = <AlgoPainterPersonalItemProxy>{};
+  painterPersonalItemStatus: PainterPersonalItemStatus = PainterPersonalItemStatus.None;
+  algopTokenContract!: ERC20TokenProxy;
+  networkInfo!: NetworkInfo;
+  mintValue: number = 0;
+  account!: string;
+  dataMint: string = ''
+  responseMint?: IMintData;
 
   formData: FormData = {
     name: '',
@@ -230,6 +239,88 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     creatorRoyalty: 0,
     fileName: '',
   };
+
+  created() {
+    this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
+    this.algopTokenContract = new ERC20TokenProxy(getAlgoPainterContractByNetworkId(this.networkInfo.id));
+  }
+
+  mounted() {
+    this.personalItemContract.getMintPrice().then(_mintValue => this.mintValue = _mintValue).catch(console.error);
+  }
+
+  async previewImage(e: Event) {
+    const newLocal = (<HTMLInputElement>e.target).files;
+    if (newLocal) {
+      const file = newLocal[0];
+      this.formData.fileName = file.name;
+
+      if (file) {
+        if (file.size < CreateUpload.FILE_SIZE_LIMIT) {
+          const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve((reader.result || '').toString());
+            reader.onerror = error => reject(error);
+          });
+          const base64 = await toBase64(file);
+          this.formData.image = base64;
+          this.isDisabled = false;
+        } else {
+          this.$q.notify({
+            type: 'negative',
+            message: this.$t('create-collectible.create.errorFile'),
+          });
+          this.formData.image = '';
+          this.isDisabled = true;
+        }
+      } else {
+        this.formData.image = '';
+        this.isDisabled = true;
+      }
+      this.$emit('preview-evento', this.imageData);
+    }
+  }
+
+  close() {
+    this.formData = {
+      name: '',
+      description: '',
+      image: '',
+      mintedBy: '',
+      salt: '',
+      creatorRoyalty: 0,
+      fileName: '',
+    };
+    this.$emit('close', this.imageData);
+  }
+
+  get personalItemContractAddress() {
+    return getPersonalItemContractByNetworkId(this.networkInfo.id);
+  }
+
+  async approveContractTransfer(amount: number) {
+    this.painterPersonalItemStatus = PainterPersonalItemStatus.CheckingAllowance;
+
+    const allowance = await this.algopTokenContract.allowance(this.account, this.personalItemContractAddress);
+
+    if (allowance < amount) {
+      this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceAwaitingInput;
+
+      await this.algopTokenContract
+        .approve(
+          this.personalItemContractAddress,
+          numberToString(amount),
+          this.account,
+        ).on('error', () => {
+          this.painterPersonalItemStatus =
+            PainterPersonalItemStatus.IncreateAllowanceError;
+        }).on('transactionHash', () => {
+          this.painterPersonalItemStatus =
+            PainterPersonalItemStatus.IncreateAllowanceAwaitingConfirmation;
+        });
+    }
+  }
 
   async saveMintData() {
     this.statusData = 'aproved';
@@ -242,9 +333,9 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         salt: nanoid(),
       };
       const web3helper = new Web3Helper();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const userAccount = this.$store.getters['user/account'] as string;
       const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
+
       if (isError(signatureOrError as Error)) {
         return;
       }
@@ -261,8 +352,14 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         type: 'positive',
         message: 'ok!',
       });
-      console.log('request.data', request);
+      const ipfsUploadResult = await api.post('images/mint', request);
+      if (ipfsUploadResult.status === 200) {
+        this.responseMint = ipfsUploadResult.data as IMintData;
+      } else {
+        throw new Error('An error occured when uploading to IPFS ' + ipfsUploadResult.statusText);
+      }
       this.statusData = 'confirme';
+      await this.mint();
     } catch (e) {
       this.$q.notify({
         type: 'negative',
@@ -271,8 +368,36 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
       this.statusData = 'error';
     }
   }
+
+  async mint() {
+    try {
+      if (this.responseMint) {
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
+        await this.approveContractTransfer(this.mintValue);
+        await this.personalItemContract.mint(
+          this.responseMint.data.name,
+          this.responseMint.data.rawImageHash,
+          this.responseMint.data.creatorRoyalty,
+          this.responseMint.tokenURI,
+          this.account,
+        ).on('transactionHash', () => {
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
+        }).on('error', () => {
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceError;
+        }).catch(e => {
+          console.error(e);
+        });
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
+      } else {
+        throw new Error('NFT Mint information is missing.');
+      }
+    } catch (e) {
+      console.log('error mint', e);
+    }
+  }
 }
 </script>
+
 <style lang="scss" scoped>
 .q-upload-wrapper {
   position: relative;

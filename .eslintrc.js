@@ -131,6 +131,14 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/no-unsafe-assignment': "off",
+    '@typescript-eslint/no-extra-semi': 'off',
+    'eol-last': 'off',
+    'no-return-assign': 'off',
+    'comma-dangle': 'off',
+    'vue/singleline-html-element-content-newline': 'off',
+    'vue/html-self-closing': 'off',
+    '@intlify/vue-i18n/no-raw-text': 'off',
+    'semi': 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',

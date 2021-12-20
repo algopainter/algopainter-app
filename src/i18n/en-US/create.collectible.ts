@@ -22,6 +22,7 @@ export default {
       putOnSaleLabel: 'Put on sale',
       createRoyalty: 'Create Royalty',
       responsibility: 'By clicking on the checkbox, I agree that I am responsible for the submitted image and that it does not contain any pornographic attributes and does not violate any type of guideline, whether political, religious, or from any community, race, person, and country.',
+      agreeValue: 'I understand and agree with the 100{CurrentAmount} $ALGOP amount that will be discounted to mint this artwork',
     },
     exampleText: 'Sample art by the artist',
     batchPrince: 'BATCH PRICE',

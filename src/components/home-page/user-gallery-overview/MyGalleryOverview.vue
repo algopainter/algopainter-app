@@ -32,10 +32,7 @@
   </div>
   <div class="row justify-center">
     <div
-      v-if="
-        !galleryTabs[0].loadingButtons &&
-        currentBtnClicked === galleryTabs[0].btnIndex
-      "
+      v-if="!galleryTabs[0].loadingButtons && currentBtnClicked === galleryTabs[0].btnIndex"
       class="col-12 flex q-col-gutter-md justify-center"
     >
       <div v-if="!galleryTabs[0].loadingData">

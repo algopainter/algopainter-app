@@ -152,7 +152,10 @@
         <mint-modal
           v-model="OpenModal"
           :open-modal="OpenModal"
-          :status="statusData"
+          :status-data="statusData"
+          :painter-personal-item-status="painterPersonalItemStatus"
+          :ok-btn-disabled="okBtnDisabled"
+          @request-close="onCloseMyGallery"
         />
       </div>
     </div>
@@ -229,6 +232,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   account!: string;
   dataMint: string = ''
   responseMint?: IMintData;
+  okBtnDisabled: boolean = true;
 
   formData: FormData = {
     name: '',
@@ -269,7 +273,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         } else {
           this.$q.notify({
             type: 'negative',
-            message: this.$t('create-collectible.create.errorFile'),
+            message: this.$t('createCollectible.create.errorFile'),
           });
           this.formData.image = '';
           this.isDisabled = true;
@@ -348,10 +352,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
       };
 
       await api.post('images/mint', request);
-      this.$q.notify({
-        type: 'positive',
-        message: 'ok!',
-      });
       const ipfsUploadResult = await api.post('images/mint', request);
       if (ipfsUploadResult.status === 200) {
         this.responseMint = ipfsUploadResult.data as IMintData;
@@ -363,7 +363,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     } catch (e) {
       this.$q.notify({
         type: 'negative',
-        message: 'error',
+        message: 'error mint image',
       });
       this.statusData = 'error';
     }
@@ -384,16 +384,26 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
         }).on('error', () => {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceError;
+          setTimeout(() => {
+            this.okBtnDisabled = false;
+          }, 1000);
         }).catch(e => {
           console.error(e);
         });
         this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
+        setTimeout(() => {
+          this.okBtnDisabled = false;
+        }, 1000);
       } else {
         throw new Error('NFT Mint information is missing.');
       }
     } catch (e) {
       console.log('error mint', e);
     }
+  }
+
+  onCloseMyGallery() {
+    void this.$router.push('/my-gallery');
   }
 }
 </script>

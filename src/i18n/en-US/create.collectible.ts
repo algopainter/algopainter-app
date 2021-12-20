@@ -47,5 +47,22 @@ export default {
     title: 'Mint',
     description: 'Send transaction to create your NFT',
     btnCancel: 'Cancel',
+    approveStatus:{
+      approveIfpsTitle: 'Upload',
+      approveIfpsAproved: 'Waiting for confirmation to save data.',
+      approveIfpsError: 'Error while lying image.',
+      approveIfpsComplet: 'Upload all media assets and metadata to ifps.',
+      approveContractTitle: 'Approve Contract',
+      approveContractApproved: 'Verifying if the contract is already approved.',
+      approveContractInput: 'Interact with your wallet to approve the auction smart contract.',
+      approveContractError: 'An error occurred while trying to approve the auction smart contract',
+      approveContractConfirmation: 'Awaiting for the blockchain confirmation',
+      approveContractAvailable: 'Smart contract approved',
+      mintImageTitle: 'Mint',
+      mintImageInput: 'Interact with your wallet to approve the mint image. ',
+      mintImageConfirmation: 'Awaiting for the blockchain confirmation',
+      mintImageError: 'An error occurred while trying to approve the mint image.',
+      mintImageAvailable: 'send transaction to create your NFT',
+    }
   },
 };

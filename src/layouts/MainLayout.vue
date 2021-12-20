@@ -15,7 +15,7 @@
           @openNewPaintingModal="openNewPaintingModal"
         />
       </q-drawer>
-      <q-page-container class="q-pl-md">
+      <q-page-container class="q-px-md">
         <router-view @favoriteClicked="refreshModal" />
         <connect-your-wallet
           v-if="showConnectYourWalletModal"

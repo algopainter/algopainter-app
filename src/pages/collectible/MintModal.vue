@@ -2,13 +2,12 @@
   <q-dialog
     ref="dialog"
     v-model="modal"
+    persistent
     @hide="onDialogHide"
   >
-    <q-card class="row q-pa-md">
+    <q-card class="row full-width ">
       <q-card-section class="header">
-        <p class="text-center text-bold q-mt-md text-h6">
-          {{ $t('createCollectible.mintModal.title') }}
-        </p>
+        {{ $t('createCollectible.mintModal.title') }}
       </q-card-section>
       <q-card-section>
         <div class="steps row q-col-gutter-md">
@@ -40,7 +39,7 @@
             </div>
             <div class="label">
               <div class="title">
-                {{ $t('dashboard.sellYourArt.statuses.contractApprove') }}
+                {{ $t('createCollectible.mintModal.approveStatus.approveIfpsTitle') }}
               </div>
               <div>
                 {{ firstStepLabel }}
@@ -50,7 +49,7 @@
           <div class="col-12 step">
             <div class="avatar">
               <q-avatar
-
+                v-if="painterPersonalItemStatus < PainterPersonalItemStatus.IncreateAllowanceAwaitingInput"
                 size="60px"
                 color="grey"
                 text-color="white"
@@ -58,7 +57,7 @@
                 <q-icon name="mdi-cancel" />
               </q-avatar>
               <q-avatar
-
+                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.IncreateAllowanceAwaitingInput"
                 size="60px"
                 color="warning"
                 text-color="white"
@@ -66,7 +65,7 @@
                 <q-icon name="mdi-alert" />
               </q-avatar>
               <q-avatar
-
+                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.IncreateAllowanceAwaitingConfirmation"
                 size="60px"
                 color="primary"
                 text-color="white"
@@ -74,7 +73,7 @@
                 <q-spinner color="white" />
               </q-avatar>
               <q-avatar
-
+                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.IncreateAllowanceError"
                 size="60px"
                 color="negative"
                 text-color="white"
@@ -82,7 +81,7 @@
                 <q-icon name="mdi-alert-circle" />
               </q-avatar>
               <q-avatar
-
+                v-else
                 size="60px"
                 color="positive"
                 text-color="white"
@@ -92,19 +91,73 @@
             </div>
             <div class="label">
               <div class="title">
-                {{ $t('dashboard.sellYourArt.createAuction') }}
+                {{ $t('createCollectible.mintModal.approveStatus.approveContractTitle') }}
               </div>
-            <!-- <div>
-              {{ secondStepLabel }}
-            </div> -->
+              <div>
+                {{ secondStepLabel }}
+              </div>
+            </div>
+          </div>
+          <div class="col-12 step">
+            <div class="avatar">
+              <q-avatar
+                v-if="painterPersonalItemStatus < PainterPersonalItemStatus.PersonalItemAwaitingInput"
+                size="60px"
+                color="grey"
+                text-color="white"
+              >
+                <q-icon name="mdi-cancel" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.PersonalItemAwaitingInput"
+                size="60px"
+                color="warning"
+                text-color="white"
+              >
+                <q-icon name="mdi-alert" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.PersonalItemAwaitingConfirmation"
+                size="60px"
+                color="primary"
+                text-color="white"
+              >
+                <q-spinner color="white" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.PersonalItemError"
+                size="60px"
+                color="negative"
+                text-color="white"
+              >
+                <q-icon name="mdi-alert-circle" />
+              </q-avatar>
+              <q-avatar
+                v-else
+                size="60px"
+                color="positive"
+                text-color="white"
+              >
+                <q-icon name="mdi-check" />
+              </q-avatar>
+            </div>
+            <div class="label">
+              <div class="title">
+                {{ $t('createCollectible.mintModal.approveStatus.mintImageTitle') }}
+              </div>
+              <div>
+                {{ thirdStepLabel }}
+              </div>
             </div>
           </div>
         </div>
       </q-card-section>
       <q-card-section class="flex justify-end">
         <algo-button
+          v-close-popup
           :label="$t('dashboard.auctionPage.okButton')"
           color="primary"
+          :disable="okBtnDisabled"
           @click="$emit('requestClose')"
         />
       </q-card-section>
@@ -113,10 +166,30 @@
 </template>
 <script lang="ts">
 import { Vue, Options, prop } from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
 import AlgoButton from 'components/common/Button.vue';
 import { QDialog } from 'quasar';
+
+enum PainterPersonalItemStatus {
+  None,
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  IncreateAllowanceCompleted,
+  PersonalItemAwaitingInput,
+  PersonalItemAwaitingConfirmation,
+  PersonalItemError,
+  PersonalItemCreated,
+}
+
 class Props {
   OpenModal = prop({
+    type: Boolean,
+    required: true,
+  })
+
+  okBtnDisabled = prop({
     type: Boolean,
     required: true,
   })
@@ -132,7 +205,10 @@ class Props {
   },
 })
 export default class MyPaint extends Vue.with(Props) {
+  @Prop({ required: true }) painterPersonalItemStatus!: PainterPersonalItemStatus;
   modal: boolean = false;
+  PainterPersonalItemStatus = PainterPersonalItemStatus;
+
   show() {
     this.$refs.dialog.show();
   }
@@ -157,13 +233,13 @@ export default class MyPaint extends Vue.with(Props) {
     switch (this.statusData) {
       case 'aproved':
         return this.$t(
-          'dashboard.sellYourArt.statuses.checkingContractApproved',
+          'createCollectible.mintModal.approveStatus.approveIfpsAproved',
         );
       case 'confirme':
-        return this.$t('dashboard.sellYourArt.statuses.approveContractInput');
+        return this.$t('createCollectible.mintModal.approveStatus.approveIfpsComplet');
       case 'error':
         return this.$t(
-          'dashboard.sellYourArt.statuses.approveContractConfirmation',
+          'createCollectible.mintModal.approveStatus.approveIfpsError',
         );
       default:
         return this.$t(
@@ -171,9 +247,69 @@ export default class MyPaint extends Vue.with(Props) {
         );
     }
   }
+
+  get secondStepLabel() {
+    switch (this.painterPersonalItemStatus) {
+      case PainterPersonalItemStatus.CheckingAllowance:
+        return this.$t('createCollectible.mintModal.approveStatus.approveContractApproved',
+        );
+      case PainterPersonalItemStatus.IncreateAllowanceAwaitingInput:
+        return this.$t('createCollectible.mintModal.approveStatus.approveContractInput',
+        );
+      case PainterPersonalItemStatus.IncreateAllowanceError:
+        return this.$t('createCollectible.mintModal.approveStatus.approveContractError',
+        );
+      case PainterPersonalItemStatus.IncreateAllowanceAwaitingConfirmation:
+        return this.$t('createCollectible.mintModal.approveStatus.approveContractConfirmation',
+        );
+      default:
+        return this.$t('createCollectible.mintModal.approveStatus.approveContractAvailable',
+        );
+    }
+  }
+
+  get thirdStepLabel() {
+    switch (this.painterPersonalItemStatus) {
+      case PainterPersonalItemStatus.PersonalItemAwaitingInput:
+        return this.$t('createCollectible.mintModal.approveStatus.mintImageInput',
+        );
+      case PainterPersonalItemStatus.PersonalItemAwaitingConfirmation:
+        return this.$t('createCollectible.mintModal.approveStatus.mintImageConfirmation',
+        );
+      case PainterPersonalItemStatus.PersonalItemError:
+        return this.$t('createCollectible.mintModal.approveStatus.mintImageError',
+        );
+      default:
+        return this.$t('createCollectible.mintModal.approveStatus.mintImageAvailable',
+        );
+    }
+  }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
+
+.header {
+  background: $primary;
+  font-size: 1.4rem;
+  color: #fff;
+  width: 100%;
+}
+.steps {
+  .step {
+    flex-wrap: nowrap;
+    display: flex;
+    align-items: center;
+  }
+
+  .label {
+    margin-left: 12px;
+
+    .title {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  }
+}
 .margin{
   margin: 0px auto;
 }

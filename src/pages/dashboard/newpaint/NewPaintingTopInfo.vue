@@ -4,35 +4,145 @@
     class="row q-pb-lg"
   >
     <div class="batch-price">
-      <p class="title">BATCH PRICE ($ALGOP)</p>
-      <p class="amount">600</p>
+      <p class="title">{{ $t('dashboard.newPainting.batchPrice', { coin: coinDetails.label }).toUpperCase() }}</p>
+      <p v-if="!loading" class="amount">{{ currentAmount }}</p>
+      <q-spinner v-else size="80px" color="primary" />
     </div>
     <div class="remaining">
-      <p class="title">REMAINING</p>
-      <p class="amount">576</p>
+      <p class="title">{{ $t('dashboard.newPainting.remaining').toUpperCase() }}</p>
+      <p v-if="!loading" class="amount">{{ remainingImages }}</p>
+      <q-spinner v-else size="80px" color="primary" />
     </div>
     <div class="minted">
-      <p class="title">MINTED</p>
-      <p class="amount">424</p>
+      <p class="title">{{ $t('dashboard.newPainting.minted').toUpperCase() }}</p>
+      <p v-if="!loading" class="amount">{{ mintedImages }}</p>
+      <q-spinner v-else size="80px" color="primary" />
     </div>
-    <div class="tokens-to-burn">
-      <p class="title">TOKENS TO BURN ($ALGOP)</p>
-      <p class="amount">82,050</p>
+    <div v-if="collection === 'gwei'" class="tokens-to-burn">
+      <p class="title">{{ $t('dashboard.newPainting.tokensToBurn', { coin: coinDetails.label }).toUpperCase() }}</p>
+      <p v-if="!loading" class="amount">{{ tokensToBurn }}</p>
+      <q-spinner v-else size="80px" color="primary" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Options, Vue, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
+import AlgoPainterExpressionsProxy from 'src/eth/AlgoPainterExpressionsProxy';
+import AlgoPainterGweiProxy from 'src/eth/AlgoPainterGweiProxy';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
+import { Watch } from 'vue-property-decorator';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import { auctionCoins } from 'src/helpers/auctionCoins';
 
+class Props {
+  collection = prop({
+    type: String,
+    required: true,
+  });
+}
 @Options({
   components: {
     AlgoButton, 
   },
+  computed: {
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
+  }
 })
-export default class NewPaintingTopInfo extends Vue {
+export default class NewPaintingTopInfo extends Vue.with(Props) {
+  gweiSystem!: AlgoPainterGweiProxy;
+  collectionSystem!: AlgoPainterGweiProxy | AlgoPainterExpressionsProxy;
 
+  isConnected!: boolean;
+  networkInfo!: NetworkInfo;
+  account!: string;
+
+  currentAmount?: string;
+  mintedImages!: number; 
+  remainingImages!: number; 
+  collectionToken?: string;
+  tokensToBurn: number = 0;
+
+  loading: boolean = true;
+
+  created() {
+    this.collectionToken = (this.collection === 'gwei') ? 'ALGOP' : 'BNB'; 
+    if (this.isConnected) {
+      this.collectionSystem = (this.collection === 'gwei') 
+        ? new AlgoPainterGweiProxy(this.networkInfo)
+        : new AlgoPainterExpressionsProxy(this.networkInfo);
+    }
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.collectionSystem = (this.collection === 'gwei') 
+        ? new AlgoPainterGweiProxy(this.networkInfo)
+        : new AlgoPainterExpressionsProxy(this.networkInfo);
+    }
+  }
+
+  mounted() {
+    this.getTotalSupply().catch(console.error);
+  }
+
+  async getTotalSupply() {
+    this.loading = true;
+    this.mintedImages = await this.collectionSystem.totalSupply();
+    this.remainingImages = (this.isGwei(this.collectionSystem)) ? 1000 - this.mintedImages : 750 - this.mintedImages;
+    this.getCurrentAmount().catch(console.error);
+  }
+
+  async getCurrentAmount() {
+    let currentAmount = await this.collectionSystem.getCurrentAmount(this.mintedImages);
+
+    currentAmount = blockchainToCurrency(
+      currentAmount,
+      this.coinDetails.decimalPlaces,
+    );
+
+    this.currentAmount = this.$n(currentAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    if (this.isGwei(this.collectionSystem)) {
+      this.loading = false;
+    } else {
+      this.getTokensToBurn().catch(console.error);
+    }
+  }
+
+  isGwei(instance: any) : instance is AlgoPainterGweiProxy {
+    return instance instanceof AlgoPainterGweiProxy;
+  }
+
+  async getTokensToBurn() {
+    try {
+      this.tokensToBurn = await this.gweiSystem.getAmountToBurn();
+    } catch (e) {
+      console.log('Error - NewPaintingTopInfo - getTokensToBurn')
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      return coin.label === this.collectionToken;
+    });
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+    return coin;
+  }
 }
 </script>
 

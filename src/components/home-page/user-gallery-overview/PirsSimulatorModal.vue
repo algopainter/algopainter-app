@@ -313,7 +313,7 @@ export default class PirsModalSimulator extends Vue {
   }
 
   get algoPainterContractByNetworkId() {
-    return getAlgoPainterContractByNetworkId(this.networkInfo.id) as string;
+    return getAlgoPainterContractByNetworkId(this.networkInfo.id);
   }
 
   get auctionRewardsContractAddress() {

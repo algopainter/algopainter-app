@@ -86,6 +86,10 @@ export default {
     expressions: {
       title: 'New Painting - Expressions',
     },
+    batchPrice: 'Batch price ({coin})',
+    remaining: 'Remaining',
+    minted: 'Minted',
+    tokensToBurn: 'Tokens to burn ({coin})',
     parameters: 'Parameters',
     fieldLabel: '{label}',
     artName: 'Give a name for your artwork',

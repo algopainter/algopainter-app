@@ -1,5 +1,5 @@
 <template>
-  <new-painting-top-info></new-painting-top-info>
+  <new-painting-top-info :collection="'gwei'"></new-painting-top-info>
   <div
     id="new-painting-gwei"
     class="row q-pb-lg"
@@ -23,21 +23,6 @@
               counter
             />
           </div>
-          <!--
-            <label>{{ $t('dashboard.newPainting.gwei.paintOnWall') }}</label>
-            <div class="row q-col-gutter-md">
-              <q-radio
-                v-model="painting.paintOnWall"
-                :val="true"
-                :label="$t('dashboard.newPainting.gwei.yesLabel')"
-              />
-              <q-radio
-                v-model="painting.paintOnWall"
-                :val="false"
-                :label="$t('dashboard.newPainting.gwei.noLabel')"
-              />
-            </div>
-            -->
           <div>
             <label>{{ $t('dashboard.newPainting.gwei.randomColors') }}</label>
             <div class="row q-col-gutter-md">

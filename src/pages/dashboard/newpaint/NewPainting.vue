@@ -1,5 +1,5 @@
 <template>
-  <new-painting-top-info></new-painting-top-info>
+  <new-painting-top-info :collection="'expressions'"></new-painting-top-info>
   <div
     id="new-painting"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? '' : 'row']"

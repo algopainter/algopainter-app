@@ -42,7 +42,7 @@ import AlgoButton from 'components/common/Button.vue';
 export default class NewPaintingRightInfo extends Vue {
   isAwareOfFee = false;
   feeAmount = '0.1025';
-  feePercentage =  2.5;
+  feePercentage = 2.5;
 }
 </script>
 

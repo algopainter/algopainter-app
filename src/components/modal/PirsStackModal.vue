@@ -193,7 +193,7 @@ export default class PirsStackModal extends Vue.with(Props) {
   }
 
   get algoPainterContractByNetworkId() {
-    return getAlgoPainterContractByNetworkId(this.networkInfo.id) as string;
+    return getAlgoPainterContractByNetworkId(this.networkInfo.id);
   }
 
   get coinDetails() {

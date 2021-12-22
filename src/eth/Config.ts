@@ -61,6 +61,7 @@ export function getBidBackPirsContractByNetworkId(id: number): string {
       return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT as string;
   }
 }
+
 export function getPersonalItemContractByNetworkId(id: number): string {
   switch (id) {
     case 56:
@@ -69,5 +70,27 @@ export function getPersonalItemContractByNetworkId(id: number): string {
       return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_97 as string;
     default:
       return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_ as string;
+  }
+}
+
+export function getGweiItemContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_56 as string;
+    case 97:
+      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_97 as string;
+    default:
+      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_ as string;
+  }
+}
+
+export function getExpressionItemContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_56 as string;
+    case 97:
+      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_97 as string;
+    default:
+      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_ as string;
   }
 }

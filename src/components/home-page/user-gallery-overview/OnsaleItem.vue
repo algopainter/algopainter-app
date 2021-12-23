@@ -45,10 +45,7 @@
         @favoriteClicked="favoriteClicked"
       />
     </div>
-    <q-img
-      class="art-image"
-      :src="art.nft.previewImage"
-    >
+    <q-card :class="[isGwei ? 'item-container' : 'item-container-personal']">
       <div class="row justify-end pirs-bidback">
         <div
           class="bidBack text-white column justify-center content-center q-mb-xl"
@@ -71,7 +68,12 @@
           </div>
         </div>
       </div>
-    </q-img>
+      <q-img
+        :class="[isGwei ? 'art-image-gwei ' : 'art-image']"
+        :src="art.nft.previewImage"
+      >
+      </q-img>
+    </q-card>
     <div class="details q-pa-sm">
       <div class="name">
         {{ $t('dashboard.homePage.symbol') }}{{ art.nft.index }} {{ art.title }}
@@ -321,6 +323,7 @@ export default class OnsaleItem extends Vue.with(Props) {
   tokenSymbol: string = '';
   index!: number;
   highestBidAfterFees: null | string = null;
+  isGwei: string = '';
 
   collectionArtController: CollectionArtController =
     new CollectionArtController();
@@ -336,6 +339,13 @@ export default class OnsaleItem extends Vue.with(Props) {
     }
     this.likes = this.art.likes;
     void this.loadAuctionData();
+    void this.collection();
+  }
+
+  collection() {
+    if (this.art.collectionName === 'Gwei' || this.art.collectionName === 'Expressions') {
+      this.isGwei = this.art.collectionName;
+    }
   }
 
   get auctionEnded() {
@@ -621,10 +631,12 @@ export default class OnsaleItem extends Vue.with(Props) {
 }
 
 .pirs-bidback{
-  margin-top: -13px;
-  margin-right: 0px;
+  margin-top: -20rem;
+  margin-right: 30px;
   background: none;
   width: 100%;
+  position: absolute;
+  z-index: 1;
 }
 
 .ellipsis{
@@ -643,8 +655,32 @@ export default class OnsaleItem extends Vue.with(Props) {
 
 .art-image {
   border-radius: 5px;
+  object-fit: contain;
+  max-width: 250px;
+}
+
+.art-image-gwei{
+  border-radius: 5px;
   width: 300px;
   height: 300px;
+}
+
+.item-container-personal {
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+.item-container{
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
 }
 
 .price {

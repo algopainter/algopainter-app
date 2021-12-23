@@ -1,7 +1,9 @@
 <template>
   <div class="row justify-between q-mb-md">
     <div class="col-12 col-md-3 col-lg-3 col-xl-3 col-xl-2 col-sm-6 col-xs-12">
-      <q-img class="previewImage" :src="art.item.previewImage" alt="img art" />
+      <q-card :class="[isGwei ? 'item-container' : 'item-container-personal']">
+        <q-img :class="[isGwei ? 'art-image-gwei ' : 'art-image']" :src="art.item.previewImage" alt="img art" />
+      </q-card>
     </div>
     <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
@@ -264,6 +266,7 @@ export default class gallerySelect extends Vue.with(Props) {
   userCurrentPrizeAmount: number = 0;
   isCoinHarvestDisabled: boolean = false;
   isStakedAlgopInputLoading: boolean = false;
+  isGwei: string = '';
 
   displayingStatus: boolean = false;
   withdrawBidBackStatus: WithdrawBidBackStatus | null = null;
@@ -296,6 +299,13 @@ export default class gallerySelect extends Vue.with(Props) {
     this.getBidBackPercentage().catch(console.error);
     this.getTime();
     this.formatTime();
+    this.collection();
+  }
+
+  collection() {
+    if (this.art.item.collectionName === 'Gwei' || this.art.item.collectionName === 'Expressions') {
+      this.isGwei = this.art.item.collectionName;
+    }
   }
 
   async getBidBackPercentage() {
@@ -536,6 +546,40 @@ export default class gallerySelect extends Vue.with(Props) {
   width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+  .art-image {
+  border-radius: 5px;
+  object-fit: contain;
+  max-width: 250px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.art-image-gwei{
+  border-radius: 5px;
+  width: 300px;
+  height: 300px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.item-container-personal {
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+.item-container{
+    width: 300px;
+    height: 300px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
 }
 .won-bid {
   color: $positive;

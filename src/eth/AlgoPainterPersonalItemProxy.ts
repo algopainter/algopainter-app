@@ -9,17 +9,17 @@ import { Contract } from 'web3-eth-contract';
 export default class AlgoPainterPersonalItemProxy {
   declare smartContract: {
     methods: {
-        mint(
-          name: string,
-          imageHash: string,
-          creatorPercentage: number,
-          tokenURI: string,
-        ): ContractMethod;
-        getCurrentAmount(
-          algoPainterId: number,
-          supply: number,
-        ): ContractMethod;
-      };
+      mint(
+        name: string,
+        imageHash: string,
+        creatorPercentage: number,
+        tokenURI: string,
+      ): ContractMethod;
+      getCurrentAmount(
+        algoPainterId: number,
+        supply: number,
+      ): ContractMethod;
+    };
   };
 
   constructor(networkInfo: NetworkInfo) {

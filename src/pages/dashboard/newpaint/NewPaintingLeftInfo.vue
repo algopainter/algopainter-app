@@ -127,6 +127,7 @@ export default class NewPaintingLeftInfo extends Vue {
     labelL: 'Use Shadow',
     labelM: 'Flip',
   }
+
   NewArtFields = {
     fieldA: 'Bitcoin',
     fieldB: 'Female',

@@ -8,9 +8,11 @@ import {
 import { UserStateInterface } from './user/types';
 import { AuctionStateInterface } from './auctions/types';
 import { CollectionsStateInterface } from './collections/types';
+import MintStateInterface from './mint/types';
 import user from './user';
 import auctions from './auctions';
 import collections from './collections';
+import mint from './mint';
 
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
@@ -33,6 +35,7 @@ export interface StateInterface {
   user: UserStateInterface;
   auctions: AuctionStateInterface;
   collections: CollectionsStateInterface;
+  mint: MintStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -55,6 +58,7 @@ export default store(function(/* { ssrContext } */) {
       user,
       auctions,
       collections,
+      mint,
     },
 
     // enable strict mode (adds overhead!)

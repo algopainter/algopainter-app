@@ -5,7 +5,7 @@
   >
     <div class="batch-price">
       <p class="title">{{ $t('dashboard.newPainting.batchPrice', { coin: coinDetails.label }).toUpperCase() }}</p>
-      <p v-if="!loading" class="amount">{{ currentAmount }}</p>
+      <p v-if="!loading" class="amount">{{ batchPrice }}</p>
       <q-spinner v-else size="80px" color="primary" />
     </div>
     <div class="remaining">
@@ -15,10 +15,10 @@
     </div>
     <div class="minted">
       <p class="title">{{ $t('dashboard.newPainting.minted').toUpperCase() }}</p>
-      <p v-if="!loading" class="amount">{{ mintedImages }}</p>
+      <p v-if="!loading" class="amount">{{ mintedImagesAmount }}</p>
       <q-spinner v-else size="80px" color="primary" />
     </div>
-    <div v-if="collection === 'gwei'" class="tokens-to-burn">
+    <div v-if="collectionName === 'gwei'" class="tokens-to-burn">
       <p class="title">{{ $t('dashboard.newPainting.tokensToBurn', { coin: coinDetails.label }).toUpperCase() }}</p>
       <p v-if="!loading" class="amount">{{ tokensToBurn }}</p>
       <q-spinner v-else size="80px" color="primary" />
@@ -30,7 +30,7 @@
 import { Options, Vue, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import AlgoPainterExpressionsProxy from 'src/eth/AlgoPainterExpressionsProxy';
-import AlgoPainterGweiProxy from 'src/eth/AlgoPainterGweiProxy';
+import AlgoPainterGweiItemProxy from 'src/eth/AlgoPainterGweiItemProxy';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
 import { Watch } from 'vue-property-decorator';
@@ -38,7 +38,12 @@ import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 
 class Props {
-  collection = prop({
+  collectionName = prop({
+    type: String,
+    required: true,
+  });
+
+  collectionToken = prop({
     type: String,
     required: true,
   });
@@ -57,26 +62,27 @@ class Props {
   }
 })
 export default class NewPaintingTopInfo extends Vue.with(Props) {
-  gweiSystem!: AlgoPainterGweiProxy;
-  collectionSystem!: AlgoPainterGweiProxy | AlgoPainterExpressionsProxy;
+  gweiSystem!: AlgoPainterGweiItemProxy;
+  collectionSystem!: AlgoPainterGweiItemProxy | AlgoPainterExpressionsProxy;
 
   isConnected!: boolean;
   networkInfo!: NetworkInfo;
   account!: string;
 
-  currentAmount?: string;
-  mintedImages!: number; 
+  batchPrice?: string;
+  mintedImagesAmount!: number; 
   remainingImages!: number; 
-  collectionToken?: string;
-  tokensToBurn: number = 0;
+  tokensToBurn!: string;
+
+  currentAmount?: number;
 
   loading: boolean = true;
 
   created() {
-    this.collectionToken = (this.collection === 'gwei') ? 'ALGOP' : 'BNB'; 
     if (this.isConnected) {
-      this.collectionSystem = (this.collection === 'gwei') 
-        ? new AlgoPainterGweiProxy(this.networkInfo)
+      this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
+      this.collectionSystem = (this.collectionName === 'gwei') 
+        ? new AlgoPainterGweiItemProxy(this.networkInfo)
         : new AlgoPainterExpressionsProxy(this.networkInfo);
     }
   }
@@ -84,8 +90,9 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
-      this.collectionSystem = (this.collection === 'gwei') 
-        ? new AlgoPainterGweiProxy(this.networkInfo)
+      this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
+      this.collectionSystem = (this.collectionName === 'gwei') 
+        ? new AlgoPainterGweiItemProxy(this.networkInfo)
         : new AlgoPainterExpressionsProxy(this.networkInfo);
     }
   }
@@ -96,42 +103,60 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
 
   async getTotalSupply() {
     this.loading = true;
-    this.mintedImages = await this.collectionSystem.totalSupply();
-    this.remainingImages = (this.isGwei(this.collectionSystem)) ? 1000 - this.mintedImages : 750 - this.mintedImages;
+    this.mintedImagesAmount = await this.collectionSystem.totalSupply();
+    this.remainingImages = (this.isGwei(this.collectionSystem)) ? 1000 - this.mintedImagesAmount : 750 - this.mintedImagesAmount;
     this.getCurrentAmount().catch(console.error);
   }
 
   async getCurrentAmount() {
-    let currentAmount = await this.collectionSystem.getCurrentAmount(this.mintedImages);
+    this.currentAmount = await this.collectionSystem.getCurrentAmount(this.mintedImagesAmount);
 
-    currentAmount = blockchainToCurrency(
-      currentAmount,
+    const batchPrice = blockchainToCurrency(
+      this.currentAmount,
       this.coinDetails.decimalPlaces,
     );
 
-    this.currentAmount = this.$n(currentAmount, 'decimal', {
+    this.batchPrice = this.$n(batchPrice, 'decimal', {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     if (this.isGwei(this.collectionSystem)) {
-      this.loading = false;
-    } else {
       this.getTokensToBurn().catch(console.error);
+    } else {
+      this.setCollectionInfo().catch(console.error);
     }
   }
 
-  isGwei(instance: any) : instance is AlgoPainterGweiProxy {
-    return instance instanceof AlgoPainterGweiProxy;
+  isGwei(instance: any) : instance is AlgoPainterGweiItemProxy {
+    return instance instanceof AlgoPainterGweiItemProxy;
   }
 
   async getTokensToBurn() {
-    try {
-      this.tokensToBurn = await this.gweiSystem.getAmountToBurn();
-    } catch (e) {
-      console.log('Error - NewPaintingTopInfo - getTokensToBurn')
-    } finally {
-      this.loading = false;
+    const tokensToBurn = await this.gweiSystem.getAmountToBurn();
+    this.tokensToBurn = tokensToBurn.toFixed(2);
+    this.setCollectionInfo(tokensToBurn).catch(console.error);
+  }
+
+  async setCollectionInfo(tokensToBurn: number | undefined = undefined) {
+    const collectionInfo = {
+      collectionName: this.collectionName,
+      batchPriceBlockchain: this.currentAmount,
+      batchPriceCurrency: this.batchPrice,
+      collectionToken: this.collectionToken,
+      remaining: this.remainingImages,
+      minted: this.mintedImagesAmount,
+      tokensToBurn: tokensToBurn,
     }
+
+    await this.$store
+      .dispatch({
+        type: 'mint/collectionInfo',
+        collectionInfo: collectionInfo,
+        collectionName: this.collectionName,
+      })
+      .then(() => {
+        this.loading = false;
+      });
   }
 
   get coinDetails() {
@@ -155,7 +180,8 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
     margin: 0px;
   }
   > div {
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='15' ry='15' stroke='DeepPink' stroke-width='5' stroke-dasharray='6%2c 14' stroke-dashoffset='21' stroke-linecap='round'/%3e%3c/svg%3e");
+    border: 1px solid $primary;
+    border-radius: 5px;
     padding: 12px 24px;
     min-width: 300px;
     text-align: center;
@@ -166,7 +192,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
     }
     .amount {
       color: $secondary;
-      font-size: 60px;
+      font-size: 45px;
     }
   }
   .batch-price,
@@ -200,7 +226,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
       font-size: 10px;
     }
     .amount {
-      font-size: 40px;
+      font-size: 30px;
     }
   }
     .batch-price,
@@ -251,7 +277,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
     > div {
       width: 160px;
       .amount {
-        font-size: 35px;
+        font-size: 27px;
       }
     }
   }
@@ -262,7 +288,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
     justify-content: center;
     > div {
       .amount {
-        font-size: 30px;
+        font-size: 23px;
       }
     }
     .remaining {

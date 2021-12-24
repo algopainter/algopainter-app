@@ -1,3 +1,4 @@
+<!--
 <template>
   <new-painting-top-info :collection="'gwei'"></new-painting-top-info>
   <div
@@ -71,8 +72,8 @@
             />
           </div>
           <div class="info">
-            <p>{{ $t('dashboard.newPainting.gwei.creatorRoyalties') }}</p>
-            <p>{{ $t('dashboard.newPainting.gwei.infoBtn') }}</p>
+            <p class="cursor-pointer">{{ $t('dashboard.newPainting.gwei.creatorRoyalties') }}</p>
+            <p class="cursor-pointer">{{ $t('dashboard.newPainting.gwei.infoBtn') }}</p>
           </div>
           <div class="row justify-center btn-container">
             <algo-button
@@ -92,21 +93,16 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-
 import AlgoButton from 'components/common/Button.vue';
-
 import MyPaint from './MyPaint.vue';
 import NewPaintingTopInfo from './NewPaintingTopInfo.vue';
-
-interface IPainting {
-  text: string;
-  paintOnWall: boolean;
-  applyRandomColors: boolean;
-  inversionProbability: number;
-  inspiration: string;
-  exhibition: string;
-  technique: string;
-}
+import { mapGetters } from 'vuex';
+import { IGweiFields, IGweiParameters } from 'src/models/INewPaintingGwei';
+import AlgoPainterGweiProxy from 'src/eth/AlgoPainterGweiItemProxy';
+import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
+import { NetworkInfo } from 'src/store/user/types';
+import { Watch } from 'vue-property-decorator';
+import { getGweiItemContractByNetworkId } from 'src/eth/Config';
 
 @Options({
   components: {
@@ -114,10 +110,88 @@ interface IPainting {
     MyPaint,
     NewPaintingTopInfo,
   },
+  computed: {
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
+  }
 })
 export default class NewPaintingGwei extends Vue {
+  gweiSystem!: AlgoPainterGweiProxy;
+  algoPainterTokenProxy!: AlgoPainterTokenProxy;
+  isConnected!: boolean;
+  networkInfo!: NetworkInfo;
+  account!: string;
+
   isModalOpen: boolean = false;
-  painting: IPainting = {
+
+  parameters: IGweiParameters = {
+    isUploadingToIPFS: false,
+    creating: false,
+    dialog: false,
+    showUpdate: false,
+    parsedText: '',
+    parsedInspiration: '-1',
+    parsedUseRandom: 'false',
+    parsedOverlay: 0,
+    parsedProbability: 1,
+    parsedWallType: '1',
+  }
+
+  hasAllowance: boolean = false;
+  mintedImagesAmount!: number; 
+  minAmount: number = 0;
+  totalSupply: number = 0;
+  tokensToBurn: number = 0;
+
+  created() {
+    if (this.isConnected) {
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo)
+      this.gweiSystem = new AlgoPainterGweiProxy(this.networkInfo)
+    }
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo)
+      this.gweiSystem = new AlgoPainterGweiProxy(this.networkInfo)
+    }
+  }
+
+  get gweiContractAddress() {
+    return getGweiItemContractByNetworkId(this.networkInfo.id);
+  }
+
+  mounted() {
+    this.clearParameters();
+    this.updateInfo().catch(console.error);
+  }
+
+  clearParameters() {
+    this.parameters.isUploadingToIPFS = false;
+    this.parameters.creating = false;
+    this.parameters.dialog = false;
+    this.parameters.showUpdate = false;
+    this.parameters.parsedText = '';
+    this.parameters.parsedInspiration = '-1';
+    this.parameters.parsedUseRandom = 'false';
+    this.parameters.parsedOverlay = 0;
+    this.parameters.parsedProbability = 1;
+    this.parameters.parsedWallType = '1';  
+  }
+
+  async updateInfo() {
+    this.hasAllowance = await this.algoPainterTokenProxy.allowance(this.account, this.gweiContractAddress);
+    this.mintedImagesAmount = await this.gweiSystem.totalSupply();
+    this.minAmount = await this.gweiSystem.getCurrentAmount(this.mintedImagesAmount);
+    this.tokensToBurn = await this.gweiSystem.getAmountToBurn();
+  }
+
+  painting: IGweiFields = {
     text: '',
     paintOnWall: false,
     applyRandomColors: false,
@@ -127,33 +201,33 @@ export default class NewPaintingGwei extends Vue {
     technique: '',
   }
 
-  inspirationValue =[
+  inspirationValue = [
     {
-      value: 'Random',
+      value: '0',
       label: 'Random',
     },
     {
-      value: 'Calm',
+      value: '1',
       label: 'Calm',
     },
     {
-      value: 'Colorful blocks',
+      value: '2',
       label: 'Colorful blocks',
     },
     {
-      value: 'Colorful paths',
+      value: '3',
       label: 'Colorful paths',
     },
     {
-      value: 'Hot flows',
+      value: '4',
       label: 'Hot flows',
     },
     {
-      value: 'Galaxy',
+      value: '5',
       label: 'Galaxy',
     },
     {
-      value: 'Madness',
+      value: '6',
       label: 'Madness',
     },
 
@@ -161,67 +235,66 @@ export default class NewPaintingGwei extends Vue {
 
   exhibitionValue = [
     {
-      value: 'None',
+      value: '0',
       label: 'None',
     },
     {
-      value: 'Wall',
+      value: '1',
       label: 'Wall',
     },
     {
-      value: 'Big Wall',
+      value: '2',
       label: 'Big Wall',
     },
     {
-      value: 'Room',
+      value: '3',
       label: 'Room',
     },
     {
-      value: 'Bedroom',
+      value: '4',
       label: 'Bedroom',
     },
     {
-      value: 'Open Gallery',
+      value: '5',
       label: 'Open Gallery',
     },
     {
-      value: 'High-Tech Gallery',
+      value: '6',
       label: 'High-Tech Gallery',
     },
     {
-      value: 'PsyVerse',
+      value: '7',
       label: 'PsyVerse',
     },
   ]
 
   techniqueValue = [
     {
-      value: 'Regular',
+      value: '0',
       label: 'Regular',
     },
     {
-      value: 'Splatters and Drips',
+      value: '1',
       label: 'Splatters and Drips',
     },
     {
-      value: 'Dripping Paint',
+      value: '2',
       label: 'Dripping Paint',
     },
     {
-      value: 'Acrylic',
+      value: '3',
       label: 'Acrylic',
     },
     {
-      value: 'Freedom',
+      value: '4',
       label: 'Freedom',
     },
     {
-      value: 'Heavy Brush',
+      value: '5',
       label: 'Heavy Brush',
     },
   ]
 
-  private : string = 'line';
   get inspirationOptions() {
     return [
       {
@@ -291,3 +364,4 @@ export default class NewPaintingGwei extends Vue {
   }
 }
 </style>
+-->

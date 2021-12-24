@@ -15,6 +15,7 @@ export default class AlgoPainterExpressionsProxy {
         supply: number,
       ): ContractMethod;
       totalSupply(): ContractMethod;
+      getServiceFee(): ContractMethod;
     };
   };
 
@@ -33,5 +34,9 @@ export default class AlgoPainterExpressionsProxy {
 
   async totalSupply() : Promise<number> {
     return await this.smartContract.methods.totalSupply().call<number>();
+  }
+
+  async getServiceFee() : Promise<number> {
+    return await this.smartContract.methods.getServiceFee().call<number>();
   }
 }

@@ -192,7 +192,6 @@ export default class ViewArt extends Vue {
   options: string = 'None';
   chooseBackground: string = '';
   backgroundChange: boolean = false;
-  loadingImage: boolean = true;
   imageUrl: string = '';
   likeClicked: boolean = false;
 
@@ -265,7 +264,8 @@ export default class ViewArt extends Vue {
     const arrayKeys = Object.keys(parameters);
     const arrayValues: (string | number)[] = Object.values(parameters) as (string | number)[];
     const arrayLength = arrayKeys.length;
-    let URL = 'https://gwei.algopainter.art/?';
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    let URL = `${process.env.VUE_APP_GWEI_ENDPOINT}?`;
     let counter = 0;
     arrayKeys.forEach(parameter => {
       counter++;

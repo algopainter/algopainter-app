@@ -4,6 +4,7 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import AlgoPainterToken from './AlgoPainterToken.json';
 import { NetworkInfo } from 'src/store/user/types';
 import getAlgoPainterContractByNetworkId from './Config';
+import BigNumber from "bignumber.js";
 
 declare global {
   interface Window {
@@ -39,13 +40,15 @@ export default class AlgoPainterTokenProxy {
     return response as boolean;
   }
 
-  async allowance(owner: string, spender: string): Promise<number> {
+  async allowance(owner: string, spender: string): Promise<boolean> {
     const response: unknown = await this.algoPainter.methods.allowance(
       owner,
       spender,
     ).call();
 
-    return Number(response);
+    const bn = new BigNumber(Number(response));
+
+    return bn.gt(0);
   }
 
   approve(

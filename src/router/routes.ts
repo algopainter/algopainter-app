@@ -62,19 +62,11 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        name: 'newPaintingGwei',
-        path: 'create-collectible/new-painting/gwei',
-        component: () => import('src/pages/dashboard/newpaint/NewPaintingGwei.vue'),
-        meta: {
-          title: i18n.global.t('dashboard.newPainting.gwei.title'),
-        },
-      },
-      {
-        name: 'newPaintingExpressions',
-        path: 'create-collectible/new-painting/expressions',
+        name: 'newPainting',
+        path: 'create-collectible/new-painting/:collection',
         component: () => import('src/pages/dashboard/newpaint/NewPainting.vue'),
         meta: {
-          title: i18n.global.t('dashboard.newPainting.expressions.title'),
+          title: i18n.global.t('dashboard.newPainting.gwei.title'),
         },
       },
       {

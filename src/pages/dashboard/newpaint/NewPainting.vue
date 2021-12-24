@@ -1,5 +1,5 @@
 <template>
-  <new-painting-top-info :collection="'expressions'"></new-painting-top-info>
+  <new-painting-top-info :collection-name="collectionName" :collection-token="collectionToken"></new-painting-top-info>
   <div
     id="new-painting"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? '' : 'row']"
@@ -7,12 +7,12 @@
     <div 
       :class="'col-7 new-painting-left-info'"
     >
-      <new-painting-left-info></new-painting-left-info>
+      <component :is="collectionComponent" :collection-name="collectionName"/>
     </div>
     <div 
       :class="'col-5 new-painting-right-info'"
     >
-      <new-painting-right-info></new-painting-right-info>
+      <new-painting-right-info :collection-name="collectionName" />
     </div>
   </div>
 </template>
@@ -20,18 +20,35 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import NewPaintingTopInfo from './NewPaintingTopInfo.vue';
-import NewPaintingLeftInfo from './NewPaintingLeftInfo.vue';
+import NewPaintingLeftInfoExpressions from './NewPaintingLeftInfoExpressions.vue';
+import NewPaintingLeftInfoGwei from './NewPaintingLeftInfoGwei.vue';
 import NewPaintingRightInfo from './NewPaintingRightInfo.vue';
 
 @Options({
   components: {
     NewPaintingTopInfo,
-    NewPaintingLeftInfo,
+    NewPaintingLeftInfoExpressions,
     NewPaintingRightInfo,
+    NewPaintingLeftInfoGwei,
   },
 })
 export default class NewPainting extends Vue {
+  collectionName !: string | string[];
+  collectionToken?: string;
+  collectionComponent!: string;
 
+  created() {
+    this.getCollectionName();
+  }
+
+  getCollectionName() {
+    const { collection } = this.$route.params;
+    this.collectionName = collection;
+
+    this.collectionToken = (this.collectionName === 'gwei') ? 'ALGOP' : 'BNB'; 
+
+    this.collectionComponent = (collection === 'gwei') ? 'new-painting-left-info-gwei' : 'new-painting-left-info-expressions';
+  }
 }
 </script>
 
@@ -39,7 +56,6 @@ export default class NewPainting extends Vue {
 #new-painting {
   padding: 40px;
   color: $primary;
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='15' ry='15' stroke='DeepPink' stroke-width='5' stroke-dasharray='6%2c 14' stroke-dashoffset='21' stroke-linecap='round'/%3e%3c/svg%3e");
   border-radius: 15px;
   .new-painting-left-info {
     padding-right: 20px;

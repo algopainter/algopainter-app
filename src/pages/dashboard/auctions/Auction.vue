@@ -49,7 +49,10 @@
             }}
           </div>
           <div class="col-12">
-            <div v-if="auctionEnded">
+            <div
+              v-if="auctionEnded"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row ']"
+            >
               {{
                 $t('dashboard.auctionPage.auctionEnded', {
                   endDate: endTimeFormatted,
@@ -58,7 +61,7 @@
             </div>
             <div
               v-else
-              class="row"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row ']"
             >
               <div class="col-auto remaining-time-label on-left">
                 {{ $t('dashboard.auctionPage.auctionRemainingTime') }}
@@ -116,17 +119,17 @@
               </q-tab-panel>
             </q-tab-panels>
           </div>
-          <div class="col-12">
+          <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'col-12']">
             <algo-button
               v-if="account === auction.owner"
-              class="full-width q-py-sm q-mt-sm"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-py-sm q-mt-sm' : 'full-width q-py-sm q-mt-sm ']"
               color="primary"
               outline
               :label="$t('dashboard.auctionPage.cancelAuction')"
               @click="cancelAuction"
             />
             <algo-button
-              class="full-width q-py-sm q-mt-md"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-py-sm q-mt-md' : 'full-width q-py-sm q-mt-md']"
               color="primary"
               outline
               :label="$t('dashboard.auctionPage.placeABid')"

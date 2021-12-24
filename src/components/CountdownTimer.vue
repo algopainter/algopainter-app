@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="year === 0"
-    class="row q-col-gutter-md"
+    :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center q-col-gutter-md' : 'row q-col-gutter-md']"
   >
     <div class="col-2 item">
       <div class="value">
@@ -38,7 +38,7 @@
   </div>
   <div
     v-else
-    class="row q-col-gutter-md"
+    :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center q-col-gutter-md' : 'row q-col-gutter-md']"
   >
     <div class="col-1 item-year">
       <div class="value">

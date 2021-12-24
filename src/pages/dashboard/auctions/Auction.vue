@@ -167,6 +167,7 @@ import BidsList from './tabs/BidsList.vue';
 import AuctionHistory from './tabs/AuctionHistory.vue';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
+import AlgoPainterPersonalItemProxy from 'src/eth/AlgoPainterPersonalItemProxy';
 
 import { NetworkInfo } from 'src/store/user/types';
 
@@ -203,11 +204,13 @@ export default class Auction extends Vue {
   isConnected!: boolean;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
   bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
+  personalItemContract = <AlgoPainterPersonalItemProxy>{};
   displayingStatus: boolean = false;
   deleteAuctionStatus: DeletingAuctionStatus | null = null;
   auctionBidBackRate: number = 0;
   itemInvestorPirsRate: number = 0;
   collectionCreatorRoyaltiesRate: number = 0;
+  hashPersonalItem!: string;
 
   get auctionId(): string {
     const { id } = this.$route.params;
@@ -296,6 +299,7 @@ export default class Auction extends Vue {
     }, 5000) as unknown as number;
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
   }
 
   unmounted() {
@@ -328,8 +332,12 @@ export default class Auction extends Vue {
   async getCreatorRoyaltiesRate() {
     if (this.auction) {
       try {
-        this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesRate(this.auction.index) / 100;
-        console.log('this.collectionCreatorRoyaltiesRate', this.collectionCreatorRoyaltiesRate);
+        if (this.auction.item.collectionName === 'PersonalItem') {
+          this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.auction.index) as string;
+          this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem) / 100;
+        } else {
+          this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesRate(this.auction.index) / 100;
+        }
       } catch (error) {
         console.log('Error - collectionCreatorRoyaltiesRate - Auction');
       }

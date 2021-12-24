@@ -19,6 +19,9 @@ export default class AlgoPainterPersonalItemProxy {
         algoPainterId: number,
         supply: number,
       ): ContractMethod;
+      getTokenHashForAuction(
+        tokenId: number,
+      ): ContractMethod;
     };
   };
 
@@ -42,6 +45,12 @@ export default class AlgoPainterPersonalItemProxy {
 
   async getMintPrice() : Promise<number> {
     return await this.smartContract.methods.getCurrentAmount(2, 0).call<number>();
+  }
+
+  async getTokenHashForAuction(tokenId: number) {
+    return await this.smartContract.methods.getTokenHashForAuction(
+      tokenId
+    ).call()
   }
 }
 

@@ -1,7 +1,7 @@
 
 <template>
   <div
-    class="row q-gutter-md justify-center"
+    :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row justify-start q-gutter-xs q-mr-sm']"
   >
     <q-img
       class="img"
@@ -14,7 +14,7 @@
       <p class="title">
         {{ bidsAuctions.item.description }}
       </p>
-      <div class="row">
+      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row ']">
         <div
           v-for="(user, i) in bidsAuctions.users"
           :key="i"

@@ -41,10 +41,7 @@
         -->
       </div>
     </div>
-    <q-img
-      class="art-image"
-      :src="isHot.item.previewImage"
-    >
+    <q-card :class="[isGwei ? 'item-container' : 'item-container-personal']">
       <div
         v-if="isConnected"
         class="row justify-end pirs-bidback"
@@ -70,7 +67,12 @@
           </div>
         </div>
       </div>
-    </q-img>
+      <q-img
+        :class="[isGwei ? 'art-image-gwei ' : 'art-image']"
+        :src="isHot.item.previewImage"
+      >
+      </q-img>
+    </q-card>
     <div class="details flex q-pa-sm">
       <div>
         <div
@@ -213,6 +215,7 @@ export default class AuctionItem extends Vue.with(Props) {
   lastBidLength: number = 0;
   lastValueBid: number = 0;
   valueCoin!: string;
+  isGwei: string = '';
   // usersOwner: unknown;
   // isHotUnkown: unknown;
   get isConnected() {
@@ -257,6 +260,13 @@ export default class AuctionItem extends Vue.with(Props) {
         void this.lastBid();
         void this.getBidbackPercentage();
         void this.getPirsPercentage();
+        void this.collection();
+      }
+
+      collection() {
+        if (this.isHot.item.collectionName === 'Gwei' || this.isHot.item.collectionName === 'Expressions') {
+          this.isGwei = this.isHot.item.collectionName;
+        }
       }
 
       async getBidbackPercentage() {
@@ -396,7 +406,16 @@ export default class AuctionItem extends Vue.with(Props) {
 .actions {
   cursor: pointer;
 }
+
 .art-image {
+  border-radius: 5px;
+  object-fit: contain;
+  max-width: 250px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.art-image-gwei{
   border-radius: 5px;
   width: 300px;
   height: 300px;
@@ -404,11 +423,25 @@ export default class AuctionItem extends Vue.with(Props) {
   margin-right: 2px;
 }
 
-@media (max-width: 450px) {
-  .art-image {
-  margin-left: -6px;
-  margin-right: 10px;
+.item-container-personal {
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
 }
+
+.item-container{
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+@media (max-width: 450px) {
 .details{
   margin-left: -6px;
 }
@@ -433,10 +466,12 @@ export default class AuctionItem extends Vue.with(Props) {
   margin-right: -10px
 }
 .pirs-bidback{
-  margin-top: -13px;
-  margin-right: 0px;
+  margin-top: -20rem;
+  margin-right: 30px;
   background: none;
   width: 100%;
+  position: absolute;
+  z-index: 1;
 }
 .details {
   display: flex;

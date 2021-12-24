@@ -22,6 +22,9 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
   getBids(state: AuctionStateInterface): [] | undefined {
     return state.bids;
   },
+  getBidBackUpdated(state: AuctionStateInterface): [] | undefined {
+    return state.bids;
+  },
   getBidsUpdated(state: AuctionStateInterface): [] | undefined {
     return state.bidsUpdated;
   },

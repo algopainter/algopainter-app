@@ -25,7 +25,9 @@
         @favoriteClicked="favoriteClicked"
       />
     </div>
-    <q-img class="art-image" :src="art.nft.previewImage" />
+    <q-card :class="[isGwei ? 'item-container' : 'item-container-personal']">
+      <q-img class="" :src="art.nft.previewImage" :class="[isGwei ? 'art-image-gwei ' : 'art-image']" />
+    </q-card>
     <div class="details q-pa-sm">
       <div class="name">
         {{ $t('dashboard.homePage.symbol') }}{{ art.nft.index }} {{ art.title }}
@@ -178,6 +180,7 @@ export default class GalleryItem extends Vue.with(Props) {
   goToAuctionId: string | null = null;
   auction!: IAuctionItem;
   loadingGoToAuctionId: boolean = true;
+  isGwei: string = '';
 
   collectionArtController: CollectionArtController =
     new CollectionArtController();
@@ -188,6 +191,13 @@ export default class GalleryItem extends Vue.with(Props) {
     }
     this.likes = this.art.likes;
     void this.loadAuctionData();
+    void this.collection();
+  }
+
+  collection() {
+    if (this.art.collectionName === 'Gwei' || this.art.collectionName === 'Expressions') {
+      this.isGwei = this.art.collectionName;
+    }
   }
 
   get auctionEnded() {
@@ -400,6 +410,27 @@ export default class GalleryItem extends Vue.with(Props) {
 .cursor-pointer {
   cursor: pointer;
 }
+.item-container-personal {
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+.item-container{
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+.personImg{
+  width: 100%;
+}
 
 .teste {
   width: 100px;
@@ -414,6 +445,12 @@ export default class GalleryItem extends Vue.with(Props) {
 }
 
 .art-image {
+  border-radius: 5px;
+  object-fit: contain;
+  max-width: 250px;
+}
+
+.art-image-gwei{
   border-radius: 5px;
   width: 300px;
   height: 300px;

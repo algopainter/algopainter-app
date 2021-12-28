@@ -9,6 +9,8 @@ export default interface MintStateInterface {
     isPreviewing: boolean,
     hasPreviewed: boolean,
     artBasicInfo: IArtBasicInfo | undefined,
+    IPFSUrl: string | undefined,
+    userConfirmations: boolean | undefined,
     isMinting: boolean,
   },
   expressions: {
@@ -16,8 +18,10 @@ export default interface MintStateInterface {
     itemParameters: IGweiParsedItemParameters | undefined,
     previewUrl: string | undefined,
     isPreviewing: boolean,
-    isMinting: boolean,
-    artBasicInfo: IArtBasicInfo | undefined,
     hasPreviewed: boolean,
+    artBasicInfo: IArtBasicInfo | undefined,
+    IPFSUrl: string | undefined,
+    userConfirmations: boolean | undefined,
+    isMinting: boolean,
   },
 }

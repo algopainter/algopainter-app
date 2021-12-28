@@ -29,13 +29,3 @@ export interface IArtBasicInfo {
   name: string;
   description: string;
 }
-
-export interface INewMint {
-  inspiration: number;
-  text: string;
-  useRandom: boolean;
-  probability: number;
-  place: number;
-  amount: number; 
-  tokenURI: string;
-}

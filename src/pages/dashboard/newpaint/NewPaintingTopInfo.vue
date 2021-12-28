@@ -29,7 +29,7 @@
 <script lang="ts">
 import { Options, Vue, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
-import AlgoPainterExpressionsProxy from 'src/eth/AlgoPainterExpressionsProxy';
+import AlgoPainterExpressionsProxy from 'src/eth/AlgoPainterExpressionsItemProxy';
 import AlgoPainterGweiItemProxy from 'src/eth/AlgoPainterGweiItemProxy';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
@@ -70,11 +70,11 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   account!: string;
 
   batchPrice?: string;
-  mintedImagesAmount!: number; 
+  mintedImagesAmount!: number;
   remainingImages!: number; 
   tokensToBurn!: string;
 
-  currentAmount?: number;
+  currentAmount!: number;
 
   loading: boolean = true;
 
@@ -91,7 +91,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   onIsConnectedChanged() {
     if (this.isConnected) {
       this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
-      this.collectionSystem = (this.collectionName === 'gwei') 
+      this.collectionSystem = (this.collectionName === 'gwei')
         ? new AlgoPainterGweiItemProxy(this.networkInfo)
         : new AlgoPainterExpressionsProxy(this.networkInfo);
     }

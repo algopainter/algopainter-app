@@ -68,7 +68,7 @@ export default {
     gwei: {
       title: 'New Painting - Gwei',
       create: 'Create Your Art',
-      typeAText: 'Give me an inspirational text',
+      inspirationalText: 'Give me an inspirational text',
       paintOnWall: 'Hang the paint on Wall?',
       randomColors: 'Apply random color inversion:',
       colorInversionProbability: 'Define the color inversion probability',
@@ -98,6 +98,41 @@ export default {
     artDescription: 'Give a description for your artwork',
     leftInfoBtnName: 'Generate Preview',
     rightInfoBtnName: 'Mint this Artwork',
+    mintConfirmations: {
+      rawFileLink: 'Click here to see the raw image (high resolution) file',
+      rawFile: 'I have checked the raw file and it is exactly what I want!',
+      download: 'I downloaded the raw file and saved a backup version of the generated image!',
+    },
+    dialog: {
+      title: 'Minting your artwork',
+      btnName: {
+        ok: 'Ok',
+        tryAgain: 'Try again',
+        finish: 'Finish the process',
+      },
+      steps: {
+        previewFile: 'Generate the preview file',
+        rawFile: 'Generate the raw file',
+        descriptorFile: 'Generate the descriptor file',
+        confirmations: 'Collect confirmations',
+        walletApproval: 'Wallet approval',
+      },
+      statuses: {
+        generatingPreviewFile: 'Generating the preview file...',
+        previewFileGenerated: 'Preview file generated',
+        generatingRawFile: 'Generating the raw file (it may take a while)...',
+        generatingRawFileError: 'An error has occurred while generating the raw file... Try again!',
+        rawFileGenerated: 'Raw file generated',
+        generatingDescriptorFile: 'Generating the descriptor file...',
+        descriptorFileGenerated: 'Descriptor file generated',
+        collectingUserConfirmations: 'Collecting user confirmations...',
+        userConfirmationsCollected: 'Confirmations collected',
+        waitingForWalletApproval: 'Waiting for the wallet approval...',
+        walletApproved: 'Your amazing artwork was minted successfully. Check out your gallery!',
+        mintError: 'An error has occurred while minting... Try again!',
+        imageMinted: 'Success',
+      },
+    }
   },
   myPaint: {
     title: 'My Amazing Paint',

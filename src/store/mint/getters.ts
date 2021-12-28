@@ -29,6 +29,24 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_EXPRESSIONS_BASIC_INFO(state: MintStateInterface): IArtBasicInfo | undefined {
     return state.expressions.artBasicInfo;
   },
+  GET_GWEI_IPFS_URL(state: MintStateInterface): string | undefined {
+    return state.gwei.IPFSUrl;
+  },
+  GET_EXPRESSIONS_IPFS_URL(state: MintStateInterface): string | undefined {
+    return state.expressions.IPFSUrl;
+  },
+  GET_GWEI_USER_CONFIRMATIONS(state: MintStateInterface): boolean | undefined {
+    return state.gwei.userConfirmations;
+  },
+  GET_EXPRESSIONS_USER_CONFIRMATIONS(state: MintStateInterface): boolean | undefined {
+    return state.expressions.userConfirmations;
+  },
+  GET_GWEI_IS_MINTING(state: MintStateInterface): boolean | undefined {
+    return state.gwei.isMinting;
+  },
+  GET_EXPRESSIONS_IS_MINTING(state: MintStateInterface): boolean | undefined {
+    return state.expressions.isMinting;
+  },
 };
 
 export default getters;

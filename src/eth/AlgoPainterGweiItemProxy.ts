@@ -4,12 +4,12 @@ import { ContractMethod } from './Web3Impl';
 import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterGweiItem from './AlgoPainterGweiItem.json';
 import { getGweiItemContractByNetworkId } from './Config';
-import { INewMint } from 'src/models/IMint';
-import { TransactionConfig } from "web3-eth";
+import { INewMintGwei } from 'src/models/INewPaintingGwei';
+import { TransactionConfig } from 'web3-eth';
 // import { PromiEvent } from 'web3-core';
 // import { Contract } from 'web3-eth-contract';
 
-export default class AlgoPainterGweiProxy {
+export default class AlgoPainterGweiItemProxy {
   declare smartContract: {
     methods: {
       getCurrentAmount(
@@ -59,7 +59,7 @@ export default class AlgoPainterGweiProxy {
   }
 
   async getAmountToBurn() : Promise<number> {
-    return Number(window.web3.utils.fromWei(await this.smartContract.methods.getAmountToBurn().call<string>(), "ether"));
+    return Number(window.web3.utils.fromWei(await this.smartContract.methods.getAmountToBurn().call<string>(), 'ether'));
   }
 
   async hashData(
@@ -68,7 +68,6 @@ export default class AlgoPainterGweiProxy {
     useRandom: boolean,
     probability: number, 
   ) : Promise<string> {
-    console.log('hashData', inspiration, text, useRandom, probability);
     return await this.smartContract.methods.hashData(
       inspiration,
       text,
@@ -90,26 +89,20 @@ export default class AlgoPainterGweiProxy {
   }
 
   async checkIfAvailable(inspiration: number, text: string, useRandom: boolean, probability: number) {
-    console.log('checkIfAvailable')
     const hash = await this.smartContract.methods
       .hashData(inspiration, text, useRandom, probability)
       .call<string>();
 
-    console.log('hash', hash);
-
     const tokenId = await this.smartContract.methods.getTokenByHash(hash).call<string>();
 
-    console.log('tokenId 1', tokenId);
-
-    return tokenId.toString() === "0";
+    return tokenId.toString() === '0';
   }
 
   async mint(
-    newMint: INewMint,
+    newMint: INewMintGwei,
     from: string,
     cb: any,
   ) {
-    console.log('cb', cb);
     if (
       !(await this.checkIfAvailable(
         newMint.inspiration,
@@ -118,8 +111,9 @@ export default class AlgoPainterGweiProxy {
         newMint.probability
       ))
     ) {
-      throw new Error(
-        'PAINTING_ALREADY_REGISTERED'
+      throw Object.assign(
+        new Error('PAINTING_ALREADY_REGISTERED'),
+        { code: 'PAINTING_ALREADY_REGISTERED' }
       );
     }
 
@@ -151,15 +145,15 @@ export default class AlgoPainterGweiProxy {
     return new Promise((resolve, reject) => {
       window.web3.eth
         .sendTransaction(txObject)
-        .on("transactionHash", resolve)
-        .on("confirmation", function(confirmationNumber, receipt) {
+        .on('transactionHash', resolve)
+        .on('confirmation', function(confirmationNumber, receipt) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           cb(null, {
             receipt,
             confirmationNumber
           });
         })
-        .on("error", reject)
+        .on('error', reject)
         .catch(console.error);
     });
   }

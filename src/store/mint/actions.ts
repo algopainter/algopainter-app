@@ -9,7 +9,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName: string = value.collectionName;
 
     if (collectionName === 'gwei') {
-      this.commit("mint/SET_GWEI_COLLECTION_INFO", collectionInfo);
+      this.commit('mint/SET_GWEI_COLLECTION_INFO', collectionInfo);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_COLLECTION_INFO', collectionInfo);
     }
@@ -20,7 +20,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName: string = value.collectionName;
 
     if (collectionName === 'gwei') {
-      this.commit("mint/SET_GWEI_PREVIEW_URL", previewUrl);
+      this.commit('mint/SET_GWEI_PREVIEW_URL', previewUrl);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_PREVIEW_URL', previewUrl);
     }
@@ -31,7 +31,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName: string = value.collectionName;
 
     if (collectionName === 'gwei') {
-      this.commit("mint/SET_GWEI_ITEM_PARAMETERS", parsedItem);
+      this.commit('mint/SET_GWEI_ITEM_PARAMETERS', parsedItem);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_ITEM_PARAMETERS', parsedItem);
     }
@@ -42,9 +42,42 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName: string = value.collectionName;
 
     if (collectionName === 'gwei') {
-      this.commit("mint/SET_GWEI_BASIC_INFO", artBasicInfo);
+      this.commit('mint/SET_GWEI_BASIC_INFO', artBasicInfo);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_BASIC_INFO', artBasicInfo);
+    }
+  },
+
+  IPFSUrl(type, value) {
+    const IPFSUrl: string = value.IPFSUrl;
+    const collectionName: string = value.collectionName;
+
+    if (collectionName === 'gwei') {
+      this.commit('mint/SET_GWEI_IPFS_URL', IPFSUrl);
+    } else if (collectionName === 'expressions') {
+      this.commit('mint/SET_EXPRESSIONS_IPFS_URL', IPFSUrl);
+    }
+  },
+
+  userConfirmations(type, value) {
+    const userConfirmations: boolean = value.userConfirmations;
+    const collectionName: string = value.collectionName;
+
+    if (collectionName === 'gwei') {
+      this.commit('mint/SET_GWEI_USER_CONFIRMATIONS', userConfirmations);
+    } else if (collectionName === 'expressions') {
+      this.commit('mint/SET_EXPRESSIONS_USER_CONFIRMATIONS', userConfirmations);
+    }
+  },
+
+  mintingStatus(type, value) {
+    const isMinting: boolean = value.isMinting;
+    const collectionName: string = value.collectionName;
+
+    if (collectionName === 'gwei') {
+      this.commit('mint/SET_GWEI_IS_MINTING', isMinting);
+    } else if (collectionName === 'expressions') {
+      this.commit('mint/SET_EXPRESSIONS_IS_MINTING', isMinting);
     }
   },
 };

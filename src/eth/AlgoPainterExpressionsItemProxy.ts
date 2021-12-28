@@ -2,12 +2,12 @@ import { AbiItem } from 'web3-utils';
 import { ContractMethod } from './Web3Impl';
 
 import { NetworkInfo } from 'src/store/user/types';
-import AlgoPainterExpressions from './AlgoPainterExpressions.json';
+import AlgoPainterExpressions from './AlgoPainterExpressionsItem.json';
 import { getExpressionItemContractByNetworkId } from './Config';
 // import { PromiEvent } from 'web3-core';
 // import { Contract } from 'web3-eth-contract';
 
-export default class AlgoPainterExpressionsProxy {
+export default class AlgoPainterExpressionsItemProxy {
   declare smartContract: {
     methods: {
       getCurrentAmount(

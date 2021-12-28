@@ -9,6 +9,8 @@ function state(): MintStateInterface {
       isPreviewing: false,
       hasPreviewed: false,
       artBasicInfo: undefined,
+      IPFSUrl: undefined,
+      userConfirmations: undefined,
       isMinting: false,
     },
     expressions: {
@@ -16,9 +18,11 @@ function state(): MintStateInterface {
       itemParameters: undefined,
       previewUrl: undefined,
       isPreviewing: false,
-      isMinting: false,
-      artBasicInfo: undefined,
       hasPreviewed: false,
+      artBasicInfo: undefined,
+      IPFSUrl: undefined,
+      userConfirmations: undefined,
+      isMinting: false,
     },
   };
 }

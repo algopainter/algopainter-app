@@ -1,71 +1,102 @@
 <template>
-  <div class="title">
-    {{ $t('dashboard.newPainting.parameters') }}
-  </div>
-  <div class="algo-radio">
-    <p class="label">{{ $t('dashboard.newPainting.gwei.randomColors') }}</p>
-    <div class="row q-col-gutter-md">
-      <q-radio
-        v-model="item.useRandom"
-        :label="$t('dashboard.newPainting.gwei.yesLabel')"
-        class="option"
-        :val="'true'"
+  <div v-if="hasAllowance">
+    <div class="title">
+      {{ $t('dashboard.newPainting.parameters') }}
+    </div>
+      <q-input
+        v-model="item.text"
+        :label="$t('dashboard.newPainting.gwei.inspirationalText')"
+        maxlength="64"
+        counter
       />
-      <q-radio
-        v-model="item.useRandom"
-        :label="$t('dashboard.newPainting.gwei.noLabel')"
-        class="option"
-        :val="'false'"
+    <div class="algo-radio">
+      <p class="label">{{ $t('dashboard.newPainting.gwei.randomColors') }}</p>
+      <div class="row q-col-gutter-md">
+        <q-radio
+          v-model="item.useRandom"
+          :label="$t('dashboard.newPainting.gwei.yesLabel')"
+          class="option"
+          :val="'true'"
+        />
+        <q-radio
+          v-model="item.useRandom"
+          :label="$t('dashboard.newPainting.gwei.noLabel')"
+          class="option"
+          :val="'false'"
+        />
+      </div>
+    </div>
+    <div class="algo-slider" v-if="item.useRandom === 'true'">
+      <p class="label">
+        {{ $t('dashboard.newPainting.gwei.colorInversionProbability') }}
+      </p>
+      <q-slider
+        v-model="item.probability"
+        color="primary"
+        min="0"
+        max="10"
       />
     </div>
-  </div>
-  <div class="algo-slider" v-if="item.useRandom === 'true'">
-    <p class="label">
-      {{ $t('dashboard.newPainting.gwei.colorInversionProbability') }}
-    </p>
-    <q-slider
-      v-model="item.probability"
+    <q-select
+      v-model="item.inspiration"
+      :label="$t('dashboard.newPainting.gwei.inspirations')"
+      :options="inspirationValue"
+    />
+    <q-select
+      v-model="item.wallType"
+      :label="$t('dashboard.newPainting.gwei.exhibition')"
+      :options="exhibitionValue"
+    />
+    <q-select
+      v-model="item.overlay"
+      :label="$t('dashboard.newPainting.gwei.technique')"
+      :options="techniqueValue"
+    />
+    <algo-button
+      :label="$t('dashboard.newPainting.leftInfoBtnName')"
+      :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
       color="primary"
-      min="0"
-      max="10"
+      @click="generatePreview"
     />
   </div>
-  <q-select
-    v-model="item.inspiration"
-    :label="$t('dashboard.newPainting.gwei.inspirations')"
-    :options="inspirationValue"
-  />
-  <q-select
-    v-model="item.wallType"
-    :label="$t('dashboard.newPainting.gwei.exhibition')"
-    :options="exhibitionValue"
-  />
-  <q-select
-    v-model="item.overlay"
-    :label="$t('dashboard.newPainting.gwei.technique')"
-    :options="techniqueValue"
-  />
-  <algo-button
-    :label="$t('dashboard.newPainting.leftInfoBtnName')"
-    :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
-    color="primary"
-    @click="generatePreview"
-  />
+
+  <div v-if="!hasAllowance">
+    <p>test</p>
+  </div>
+  <q-dialog v-model="isMintDialogOpen" persistent>
+    <mint-dialog
+      :mint-status="mintStatus"
+      :collection-name="collectionName"
+      @request-close="onCloseStatusDialog"
+    />
+  </q-dialog>
 </template>
 
 <script lang="ts">
 import { Options, Vue, prop } from 'vue-class-component';
-import AlgoSlider from 'components/common/AlgoSlider.vue';
+import { Ref, Watch } from 'vue-property-decorator';
+import { QDialog } from 'quasar';
 import AlgoButton from 'components/common/Button.vue';
-import { IGweiItemParameters, IGweiParameters, IGweiParsedItemParameters, IGweiPayload } from 'src/models/INewPaintingGwei';
+import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
+import { IGweiItemParameters, IGweiParsedItemParameters, IGweiPayload, INewMintGwei } from 'src/models/INewPaintingGwei';
 import { NetworkInfo } from 'src/store/user/types';
 import { mapGetters } from 'vuex';
 import AlgoPainterGweiProxy from 'src/eth/AlgoPainterGweiItemProxy';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
-import { Watch } from 'vue-property-decorator';
 import { getGweiItemContractByNetworkId } from 'src/eth/Config';
-import { ICollectionInfo, IArtBasicInfo, INewMint } from 'src/models/IMint';
+import { ICollectionInfo, IArtBasicInfo } from 'src/models/IMint';
 import IPFSHelper from "src/helpers/IPFSHelper";
+
+enum MintStatus{
+  GeneratingPreviewFile,
+  GeneratingRawFile,
+  GeneratingRawFileError,
+  GeneratingDescriptorFile,
+  CollectingUserConfirmations,
+  WaitingForWalletApproval,
+  MintError,
+  ImageMinted,
+}
 
 class Props {
   collectionName = prop({
@@ -76,8 +107,8 @@ class Props {
 
 @Options({
   components: {
-    AlgoSlider,
-    AlgoButton, 
+    AlgoButton,
+    MintDialog,
   },
   computed: {
     ...mapGetters(
@@ -90,43 +121,42 @@ class Props {
       'mint', {
         collectionInfo: 'GET_GWEI_COLLECTION_INFO',
         artBasicInfo: 'GET_GWEI_BASIC_INFO',
+        userConfirmations: 'GET_GWEI_USER_CONFIRMATIONS',
+        isMinting: 'GET_GWEI_IS_MINTING',
       }),
   }
 })
-export default class NewPaintingLeftInfo extends Vue.with(Props) {
+export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
+  @Ref() dialogRef!: QDialog;
+
   gweiSystem!: AlgoPainterGweiProxy;
   algoPainterTokenProxy!: AlgoPainterTokenProxy;
   isConnected!: boolean;
   networkInfo!: NetworkInfo;
   account!: string;
-
   collectionInfo!: ICollectionInfo;
-  itemParameters!: IGweiItemParameters;
   artBasicInfo!: IArtBasicInfo;
+  userConfirmations!: boolean;
+  isMinting!: boolean;
 
+  itemParameters!: IGweiItemParameters;
   hasAllowance: boolean = false;
+  ticks = Date.now();
+  tokenURI!: string;
 
-  isError: boolean = false;
-  isLoading: boolean = false;
-  encodedImage: string = '';
-  loaded: boolean = false;
-  isUploadingToIPFS: boolean = false;
-  creating: boolean = false;
+  isMinted: boolean = false;
+  errorMsg: string = '';
+  transactionHash!: any;
+  isWaitingTransaction: boolean = false;
+  receipt!: any;
 
-  parameters: IGweiParameters = {
-    isUploadingToIPFS: false,
-    creating: false,
-    dialog: false,
-    showUpdate: false,
-    parsedText: '',
-    parsedInspiration: '-1',
-    parsedUseRandom: 'false',
-    parsedOverlay: 0,
-    parsedProbability: 1,
-    parsedWallType: '1',
-  }
+  parsedItem!: IGweiParsedItemParameters;
+
+  mintStatus: MintStatus | null = null;
+  isMintDialogOpen: boolean = false;
 
   item: IGweiItemParameters = {
+    text: 'My Amazing Painting',
     useRandom: 'false',
     inspiration: {
       value: '1',
@@ -143,8 +173,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       value: '1',
     },
   }
-
-  parsedItem!: IGweiParsedItemParameters;
 
   created() {
     if (this.isConnected) {
@@ -166,38 +194,18 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   }
 
   mounted() {
-    this.clearParameters();
-    this.updateInfo().catch(console.error);
+    this.checkAllowance().catch(console.error);
   }
 
-  clearParameters() {
-    this.parameters.isUploadingToIPFS = false;
-    this.parameters.creating = false;
-    this.parameters.dialog = false;
-    this.parameters.showUpdate = false;
-    this.parameters.parsedText = '';
-    this.parameters.parsedInspiration = '-1';
-    this.parameters.parsedUseRandom = 'false';
-    this.parameters.parsedOverlay = 0;
-    this.parameters.parsedProbability = 1;
-    this.parameters.parsedWallType = '1';  
-  }
-
-  async updateInfo() {
+  async checkAllowance() {
     this.hasAllowance = await this.algoPainterTokenProxy.allowance(this.account, this.gweiContractAddress);
   }
   
   generatePreview() {
-    this.isError = false;
-    this.isLoading = true;
-
     this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
 
-    console.log('this.item.probability', this.item.probability);
-    console.log('(this.item.probability / 10)', (this.item.probability / 10));
-    console.log('parseFloat((this.item.probability / 10).toFixed(1))', parseFloat((this.item.probability / 10).toFixed(1)));
-
     this.parsedItem = {
+      parsedText: this.item.text,
       parsedUseRandom: this.item.useRandom,
       parsedInspiration: this.item.inspiration.value,
       parsedProbability: parseFloat((this.item.probability / 10).toFixed(1)),
@@ -206,13 +214,10 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       parsedWallType: this.item.wallType.value,
     }
 
-    console.log('this.parsedItem', this.parsedItem);
-
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const previewUrl = `${process.env.VUE_APP_GWEI_ENDPOINT}?text=mint%20test&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}`;
-    
-    this.setItemParameters(this.parsedItem).catch(console.error);
+    const previewUrl = `${process.env.VUE_APP_GWEI_ENDPOINT}?width=300&height=300&ticks=${this.ticks}&text=${this.parsedItem.parsedText}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}`;
 
+    this.setItemParameters(this.parsedItem).catch(console.error);
     this.setPreviewUrl(previewUrl).catch(console.error);
   }
 
@@ -223,10 +228,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         parsedItem: parsedItem,
         collectionName: this.collectionName,
       })
-      .then(() => {
-        this.isLoading = false;
-        this.loaded = true;
-      });
   }
 
   async setPreviewUrl(previewUrl: string) {
@@ -238,29 +239,37 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       })
   }
 
-  @Watch('artBasicInfo')
+  @Watch('isMinting')
   onArtBasicInfoChanged() {
-    this.mint().catch(console.error);
+    if (this.isMinting) {
+      this.mint().catch(console.error);
+    }
   }
 
   srcIPFS() {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    return `${process.env.VUE_APP_GWEI_ENDPOINT}?text=${encodeURIComponent(this.artBasicInfo.name)}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}`;
+    return `${process.env.VUE_APP_GWEI_ENDPOINT}?text=${encodeURIComponent(this.parsedItem.parsedText)}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}`;
   }
 
-  isMinted: boolean = false;
-  isMinting: boolean = false;
-  errorMsg: string = '';
+  async setIPFSUrl(IPFSUrl: string) {
+    await this.$store
+      .dispatch({
+        type: 'mint/IPFSUrl',
+        IPFSUrl: IPFSUrl,
+        collectionName: this.collectionName,
+      })
+  }
 
   async mint() {
+    this.isMintDialogOpen = true;
+    this.mintStatus = MintStatus.GeneratingPreviewFile;
     this.isMinted = false;
-    this.isMinting = true;
     this.errorMsg = "";
     // this.rules();
 
     const payload: IGweiPayload = {
       image: this.srcIPFS(),
-      text: this.artBasicInfo.name,
+      text: this.parsedItem.parsedText,
       inspiration: this.parsedItem.parsedInspiration,
       useRandom: this.parsedItem.parsedUseRandom,
       probability: this.parsedItem.parsedProbability,
@@ -272,48 +281,75 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       mintedBy: this.account,
     }
 
-    console.log('payload', payload);
+    this.mintStatus = MintStatus.GeneratingRawFile;
 
-    this.isUploadingToIPFS = true;
+    try {
+      const ipfsData: {path: string} = await IPFSHelper.add(payload);
+      const ipfsPath = ipfsData.path;
+      this.tokenURI = 'https://ipfs.io/ipfs/' + ipfsPath;
+      this.setIPFSUrl(this.srcIPFS()).catch(console.error);
+      this.mintStatus = MintStatus.CollectingUserConfirmations;
+    } catch (e) {
+      this.mintStatus = MintStatus.GeneratingRawFileError;
+    }
+  }
 
-    const ipfsData: {path: string} = await IPFSHelper.add(payload);
-    
-    const ipfsPath = ipfsData.path;
+  @Watch('userConfirmations')
+  onUserConfirmationsChanged() {
+    if (this.userConfirmations) {
+      this.finishMinting().catch(console.error);
+    }
+  }
 
-    const tokenURI = 'https://ipfs.io/ipfs/' + ipfsPath;
+  async finishMinting() {
+    this.mintStatus = MintStatus.WaitingForWalletApproval;
 
-    console.log('ipfsData', ipfsData);
-    console.log('tokenURI', tokenURI);
-  
-    this.isUploadingToIPFS = false;
-
-    const newMint: INewMint = {
+    const newMint: INewMintGwei = {
       inspiration: Number(this.parsedItem.parsedInspiration),
-      text: this.artBasicInfo.name,
+      text: this.parsedItem.parsedText,
       useRandom: this.parsedItem.parsedUseRandom === 'true',
       probability: this.parsedItem.parsedProbability * 10,
       place: Number(this.parsedItem.parsedWallType),
-      tokenURI,
+      tokenURI: this.tokenURI,
       amount: Number(this.collectionInfo.batchPriceBlockchain),
     };
 
-    console.log({ newMint });
-
-    this.creating = true;
-
-    this.transactionHash = await this.gweiSystem.mint(newMint, this.account, (receipt: any) => {
-      this.isWaitingTransaction = false;
-      this.receipt = receipt;
-      this.isMinting = false;
-      this.isMinted = true;
-    });
+    try {
+      this.transactionHash = await this.gweiSystem.mint(newMint, this.account, (receipt: any) => {
+        this.isWaitingTransaction = false;
+        this.receipt = receipt;
+        this.isMinted = true;
+        this.mintStatus = MintStatus.ImageMinted;
+      });
+    } catch (error: any) {
+      this.mintStatus = MintStatus.MintError;
+      switch (error.code) {
+        case 'INVALID_MINIMUM_AMOUNT':
+          this.errorMsg =
+            'Your payment must be greater than or equal to the minimum amount';
+          break;
+        case 'PAINTING_ALREADY_REGISTERED':
+          this.errorMsg = 'This painting was already generated for another costumer';
+          break;
+        case 4001:
+          this.errorMsg =
+            'MetaMask Tx Signature: User denied transaction signature.';
+          break;
+        default:
+          this.errorMsg = 'Unexpected error';
+      }
+    }
 
     this.isWaitingTransaction = true;
   }
 
-  transactionHash!: any;
-  isWaitingTransaction: boolean = false;
-  receipt!: any;
+  onCloseStatusDialog() {
+    this.isMintDialogOpen = false;
+
+    if (this.mintStatus === MintStatus.ImageMinted) {
+      this.dialogRef.hide();
+    }
+  }
 
   inspirationValue = [
     {
@@ -344,7 +380,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       value: '6',
       label: 'Madness',
     },
-
   ]
 
   exhibitionValue = [
@@ -408,39 +443,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       label: 'Heavy Brush',
     },
   ]
-
-  get inspirationOptions() {
-    return [
-      {
-        label: this.$t('dashboard.newPainting.gwei.inspirations.random'),
-        value: 'random',
-      },
-      {
-        label: this.$t('dashboard.newPainting.gwei.inspirations.calm'),
-        value: 'calm',
-      },
-      {
-        label: this.$t('dashboard.newPainting.gwei.inspirations.colorful'),
-        value: 'colorful-blocks',
-      },
-      {
-        label: this.$t('dashboard.newPainting.gwei.inspirations.paths'),
-        value: 'colorful-paths',
-      },
-      {
-        label: this.$t('dashboard.newPainting.gwei.inspirations.flows'),
-        value: 'hot-flows',
-      },
-      {
-        label: this.$t('dashboard.newPainting.gwei.inspirations.galaxy'),
-        value: 'galaxy',
-      },
-      {
-        label: this.$t('dashboard.newPainting.gwei.inspirations.days'),
-        value: '5000-Days',
-      },
-    ];
-  }
 }
 </script>
 

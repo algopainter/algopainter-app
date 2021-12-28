@@ -142,7 +142,7 @@ export default class NewPaintingGwei extends Vue {
   }
 
   hasAllowance: boolean = false;
-  mintedImagesAmount!: number; 
+  mintedImagesAmount!: number;
   minAmount: number = 0;
   totalSupply: number = 0;
   tokensToBurn: number = 0;
@@ -181,7 +181,7 @@ export default class NewPaintingGwei extends Vue {
     this.parameters.parsedUseRandom = 'false';
     this.parameters.parsedOverlay = 0;
     this.parameters.parsedProbability = 1;
-    this.parameters.parsedWallType = '1';  
+    this.parameters.parsedWallType = '1';
   }
 
   async updateInfo() {

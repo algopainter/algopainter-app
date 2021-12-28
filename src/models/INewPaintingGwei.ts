@@ -1,4 +1,5 @@
 export interface IGweiItemParameters {
+  text: string,
   useRandom: string,
   inspiration: {
     label: string,
@@ -17,6 +18,7 @@ export interface IGweiItemParameters {
 }
 
 export interface IGweiParsedItemParameters {
+  parsedText: string,
   parsedUseRandom: string,
   parsedInspiration: string,
   parsedProbability: number,
@@ -38,16 +40,12 @@ export interface IGweiPayload {
   overlayOpacity: number | string,
   mintedBy: string,
 }
-
-export interface IGweiParameters {
-  isUploadingToIPFS: boolean,
-  creating: boolean,
-  dialog: boolean,
-  showUpdate: boolean,
-  parsedText: string,
-  parsedInspiration: string,
-  parsedUseRandom: string,
-  parsedOverlay: number,
-  parsedProbability: number,
-  parsedWallType: string,  
+export interface INewMintGwei {
+  inspiration: number;
+  text: string;
+  useRandom: boolean;
+  probability: number;
+  place: number;
+  amount: number; 
+  tokenURI: string;
 }

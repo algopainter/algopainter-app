@@ -26,6 +26,25 @@ const mutation: MutationTree<MintStateInterface> = {
   SET_EXPRESSIONS_BASIC_INFO(state: MintStateInterface, payload) {
     state.expressions.artBasicInfo = payload;
   },
+  SET_GWEI_IPFS_URL(state: MintStateInterface, payload) {
+    state.gwei.IPFSUrl = payload;
+  },
+  SET_EXPRESSIONS_IPFS_URL(state: MintStateInterface, payload) {
+    state.expressions.IPFSUrl = payload;
+  },
+  SET_GWEI_USER_CONFIRMATIONS(state: MintStateInterface, payload) {
+    console.log('payload', payload);
+    state.gwei.userConfirmations = payload;
+  },
+  SET_EXPRESSIONS_USER_CONFIRMATIONS(state: MintStateInterface, payload) {
+    state.expressions.userConfirmations = payload;
+  },
+  SET_GWEI_IS_MINTING(state: MintStateInterface, payload) {
+    state.gwei.isMinting = payload;
+  },
+  SET_EXPRESSIONS_IS_MINTING(state: MintStateInterface, payload) {
+    state.expressions.isMinting = payload;
+  },
 };
 
 export default mutation;

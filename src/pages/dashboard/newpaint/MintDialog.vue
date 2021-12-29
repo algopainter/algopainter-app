@@ -86,7 +86,7 @@
             </div>
           </div>
         </div>
-        <div 
+        <div
           v-if="collectionName !== 'gwei'"
           class="col-12 step"
         >
@@ -173,7 +173,7 @@
             </div>
           </div>
         </div>
-        <div 
+        <div
           v-if="mintStatus === MintStatus.CollectingUserConfirmations && isIpfsUrlSet"
           class="col-12 step column"
         >

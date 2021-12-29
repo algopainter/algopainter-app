@@ -4,12 +4,12 @@
     id="new-painting"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? '' : 'row']"
   >
-    <div 
+    <div
       :class="'col-7 new-painting-left-info'"
     >
-      <component :is="collectionComponent" :collection-name="collectionName"/>
+      <component :is="collectionComponent" :collection-name="collectionName" />
     </div>
-    <div 
+    <div
       :class="'col-5 new-painting-right-info'"
     >
       <new-painting-right-info :collection-name="collectionName" />
@@ -45,7 +45,7 @@ export default class NewPainting extends Vue {
     const { collection } = this.$route.params;
     this.collectionName = collection;
 
-    this.collectionToken = (this.collectionName === 'gwei') ? 'ALGOP' : 'BNB'; 
+    this.collectionToken = (this.collectionName === 'gwei') ? 'ALGOP' : 'BNB';
 
     this.collectionComponent = (collection === 'gwei') ? 'new-painting-left-info-gwei' : 'new-painting-left-info-expressions';
   }

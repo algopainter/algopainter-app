@@ -71,7 +71,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
 
   batchPrice?: string;
   mintedImagesAmount!: number;
-  remainingImages!: number; 
+  remainingImages!: number;
   tokensToBurn!: string;
 
   currentAmount!: number;
@@ -81,7 +81,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   created() {
     if (this.isConnected) {
       this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
-      this.collectionSystem = (this.collectionName === 'gwei') 
+      this.collectionSystem = (this.collectionName === 'gwei')
         ? new AlgoPainterGweiItemProxy(this.networkInfo)
         : new AlgoPainterExpressionsProxy(this.networkInfo);
     }

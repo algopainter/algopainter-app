@@ -3,12 +3,12 @@
     <div class="title">
       {{ $t('dashboard.newPainting.parameters') }}
     </div>
-      <q-input
-        v-model="item.text"
-        :label="$t('dashboard.newPainting.gwei.inspirationalText')"
-        maxlength="64"
-        counter
-      />
+    <q-input
+      v-model="item.text"
+      :label="$t('dashboard.newPainting.gwei.inspirationalText')"
+      maxlength="64"
+      counter
+    />
     <div class="algo-radio">
       <p class="label">{{ $t('dashboard.newPainting.gwei.randomColors') }}</p>
       <div class="row q-col-gutter-md">
@@ -26,7 +26,7 @@
         />
       </div>
     </div>
-    <div class="algo-slider" v-if="item.useRandom === 'true'">
+    <div v-if="item.useRandom === 'true'" class="algo-slider">
       <p class="label">
         {{ $t('dashboard.newPainting.gwei.colorInversionProbability') }}
       </p>
@@ -85,7 +85,7 @@ import AlgoPainterGweiProxy from 'src/eth/AlgoPainterGweiItemProxy';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import { getGweiItemContractByNetworkId } from 'src/eth/Config';
 import { ICollectionInfo, IArtBasicInfo, MintStatus } from 'src/models/IMint';
-import IPFSHelper from "src/helpers/IPFSHelper";
+import IPFSHelper from 'src/helpers/IPFSHelper';
 
 class Props {
   collectionName = prop({
@@ -132,9 +132,12 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   hasAllowance: boolean = false;
   ticks = Date.now();
   tokenURI!: string;
+  baseUrl!: string | undefined;
 
-  errorMsg: string = '';
-  transactionHash!: any;
+  isError: boolean = false;
+  errorMessage: string = '';
+  isConfigured: boolean = false;
+
   isWaitingTransaction: boolean = false;
   receipt!: any;
 
@@ -182,13 +185,21 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   mounted() {
+    this.baseUrl = process.env.VUE_APP_GWEI_ENDPOINT;
+    this.checkIfConfigured();
     this.checkAllowance().catch(console.error);
+  }
+
+  checkIfConfigured() {
+    if (!this.isConfigured) {
+      this.setFormInitialState().catch(console.error);
+    }
   }
 
   async checkAllowance() {
     this.hasAllowance = await this.algoPainterTokenProxy.allowance(this.account, this.gweiContractAddress);
   }
-  
+
   generatePreview() {
     this.parsedItem = {
       parsedText: this.item.text,
@@ -200,8 +211,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       parsedWallType: this.item.wallType.value,
     }
 
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const previewUrl = `${process.env.VUE_APP_GWEI_ENDPOINT}?width=300&height=300&ticks=${this.ticks}&text=${this.parsedItem.parsedText}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}`;
+    const previewUrl = (this.baseUrl) ? `${this.baseUrl}?width=300&height=300&ticks=${this.ticks}&text=${this.parsedItem.parsedText}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}` : '';
 
     this.setItemParameters(this.parsedItem).catch(console.error);
     this.setPreviewUrl(previewUrl).catch(console.error);
@@ -233,8 +243,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   srcIPFS() {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    return `${process.env.VUE_APP_GWEI_ENDPOINT}?text=${encodeURIComponent(this.parsedItem.parsedText)}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}`;
+    return (this.baseUrl) ? `${this.baseUrl}?text=${encodeURIComponent(this.parsedItem.parsedText)}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}` : '';
   }
 
   async setIPFSUrl(IPFSUrl: string) {
@@ -247,6 +256,10 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   async mint() {
+    // call the contract to check if available
+    // this.setModalInitialState().catch(console.error);
+
+    this.setModalInitialState().catch(console.error);
     this.isMintDialogOpen = true;
     this.mintStatus = MintStatus.GeneratingPreviewFile;
 
@@ -274,6 +287,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       this.mintStatus = MintStatus.CollectingUserConfirmations;
     } catch (e) {
       this.mintStatus = MintStatus.GeneratingRawFileError;
+      this.setModalInitialState().catch(console.error);
     }
   }
 
@@ -285,6 +299,9 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   async finishMinting() {
+    this.isConfigured = false;
+    this.mintStatus = MintStatus.MintAwaitingInput;
+
     const newMint: INewMintGwei = {
       inspiration: Number(this.parsedItem.parsedInspiration),
       text: this.parsedItem.parsedText,
@@ -295,34 +312,132 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       amount: Number(this.collectionInfo.batchPriceBlockchain),
     };
 
-    this.mintStatus = MintStatus.MintAwaitingConfirmation;
-
     try {
-      this.transactionHash = await this.gweiSystem.mint(newMint, this.account, (receipt: any) => {
+      const result: any = await this.gweiSystem.mint(newMint, this.account, (receipt: any) => {
         this.isWaitingTransaction = false;
         this.receipt = receipt;
         this.mintStatus = MintStatus.ItemMinted;
       });
-    } catch (error: any) {
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      result.on('error', (error: any) => {
+        this.mintStatus = MintStatus.MintError;
+        this.setModalInitialState().catch(console.error);
+        this.isError = true;
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${error}`;
+      }).catch(console.error);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      result.on('transactionHash', () => {
+        this.mintStatus = MintStatus.MintAwaitingConfirmation;
+      }).catch(console.error);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      result.on('confirmation', () => {
+        if (!this.isConfigured) {
+          this.mintStatus = MintStatus.ItemMinted;
+          this.setFormInitialState().catch(console.error);
+        };
+      }).catch(console.error);
+    } catch (e: any) {
       this.mintStatus = MintStatus.MintError;
-      switch (error.code) {
+      this.setModalInitialState().catch(console.error);
+      this.isError = true;
+
+      switch (e.code) {
         case 'INVALID_MINIMUM_AMOUNT':
-          this.errorMsg =
+          this.errorMessage =
             'Your payment must be greater than or equal to the minimum amount';
           break;
         case 'PAINTING_ALREADY_REGISTERED':
-          this.errorMsg = 'This painting was already generated for another costumer';
+          this.errorMessage = 'This painting was already generated for another costumer';
           break;
         case 4001:
-          this.errorMsg =
-            'MetaMask Tx Signature: User denied transaction signature.';
+          this.errorMessage = 'MetaMask Tx Signature: User denied transaction signature.';
           break;
         default:
-          this.errorMsg = 'Unexpected error';
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${e.code}`;
       }
     }
 
     this.isWaitingTransaction = true;
+  }
+
+  async setFormInitialState() {
+    this.isConfigured = true;
+    this.isError = false;
+    this.errorMessage = '';
+
+    this.item.text = 'My Amazing Painting';
+    this.item.useRandom = 'false';
+
+    this.item.inspiration = {
+      value: '1',
+      label: 'Calm',
+    };
+
+    this.item.probability = 5;
+    this.item.overlay = {
+      value: '0',
+      label: 'Regular',
+    };
+
+    this.item.overlayOpacity = '10';
+
+    this.item.wallType = {
+      value: '1',
+      label: 'Wall',
+    };
+
+    await this.$store
+      .dispatch({
+        type: 'mint/artBasicInfo',
+        artBasicInfo: undefined,
+        collectionName: this.collectionName,
+      })
+
+    await this.$store
+      .dispatch({
+        type: 'mint/previewUrl',
+        previewUrl: undefined,
+        collectionName: this.collectionName,
+      })
+
+    await this.$store
+      .dispatch({
+        type: 'mint/itemParameters',
+        parsedItem: undefined,
+        collectionName: this.collectionName,
+      })
+
+    await this.$store
+      .dispatch({
+        type: 'mint/IPFSUrl',
+        IPFSUrl: undefined,
+        collectionName: this.collectionName,
+      })
+  }
+
+  async setModalInitialState() {
+    // this.mintStatus = MintStatus.GeneratingPreviewFile;
+    // this.isBackupWarningOk = false;
+    // this.isRawFileWarningOk = false;
+    this.isError = false;
+
+    await this.$store
+      .dispatch({
+        type: 'mint/mintingStatus',
+        isMinting: false,
+        collectionName: this.collectionName,
+      })
+    await this.$store
+      .dispatch({
+        type: 'mint/userConfirmations',
+        userConfirmations: false,
+        collectionName: this.collectionName,
+      })
   }
 
   onCloseStatusDialog() {
@@ -455,7 +570,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
 <style lang="scss">
   .option {
     .q-radio__label {
-      color: rgba(0, 0, 0, 0.6) !important; 
+      color: rgba(0, 0, 0, 0.6) !important;
     }
   }
 </style>

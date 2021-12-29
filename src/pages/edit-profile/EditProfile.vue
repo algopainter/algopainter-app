@@ -343,7 +343,6 @@ export default class EditProfile extends Vue {
         icon: 'mdi-check',
       });
     } catch (e) {
-      // console.log(Object.entries(e));
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 409) {
         Notify.create({

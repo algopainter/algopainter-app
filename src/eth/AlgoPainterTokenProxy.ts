@@ -4,7 +4,7 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import AlgoPainterToken from './AlgoPainterToken.json';
 import { NetworkInfo } from 'src/store/user/types';
 import getAlgoPainterContractByNetworkId from './Config';
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 
 declare global {
   interface Window {

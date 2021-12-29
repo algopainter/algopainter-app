@@ -66,7 +66,7 @@ const routes: RouteRecordRaw[] = [
         path: 'create-collectible/new-painting/:collection',
         component: () => import('src/pages/dashboard/newpaint/NewPainting.vue'),
         meta: {
-          title: i18n.global.t('dashboard.newPainting.gwei.title'),
+          title: i18n.global.t('dashboard.newPainting.title'),
         },
       },
       {

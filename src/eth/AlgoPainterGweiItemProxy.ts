@@ -43,7 +43,7 @@ export default class AlgoPainterGweiItemProxy {
 
   constructor(networkInfo: NetworkInfo) {
     this.contractAddress = getGweiItemContractByNetworkId(networkInfo.id);
-    
+
     this.smartContract = new window.web3.eth.Contract(
       AlgoPainterGweiItem as AbiItem[],
       this.contractAddress,
@@ -66,13 +66,13 @@ export default class AlgoPainterGweiItemProxy {
     inspiration: number,
     text: string,
     useRandom: boolean,
-    probability: number, 
+    probability: number,
   ) : Promise<string> {
     return await this.smartContract.methods.hashData(
       inspiration,
       text,
       useRandom,
-      probability, 
+      probability,
     ).call<string>();
   }
 

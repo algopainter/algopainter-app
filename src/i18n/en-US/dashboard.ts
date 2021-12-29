@@ -65,6 +65,7 @@ export default {
     getYourArt: 'Get here your art',
   },
   newPainting: {
+    title: 'New Painting',
     gwei: {
       title: 'New Painting - Gwei',
       create: 'Create Your Art',

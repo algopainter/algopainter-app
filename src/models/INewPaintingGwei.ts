@@ -46,6 +46,6 @@ export interface INewMintGwei {
   useRandom: boolean;
   probability: number;
   place: number;
-  amount: number; 
+  amount: number;
   tokenURI: string;
 }

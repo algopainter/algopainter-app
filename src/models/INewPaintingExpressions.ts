@@ -23,7 +23,7 @@ export interface IExpressionsItemParameters {
     label: string,
   },
   innerColorHue: number,
-  overlay: { 
+  overlay: {
     value: number,
     label: string,
   },

@@ -5,7 +5,7 @@
       :src="collectionImagePlaceholder"
       class="img"
     />
-    <q-spinner 
+    <q-spinner
       v-else-if="isImgLoading && previewUrl "
       size="50px"
       color="primary"

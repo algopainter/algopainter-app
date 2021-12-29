@@ -15,6 +15,14 @@
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
+              v-else-if="mintStatus === MintStatus.GeneratingPreviewFileError"
+              size="60px"
+              color="negative"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert-circle" />
+            </q-avatar>
+            <q-avatar
               v-else
               size="60px"
               color="positive"
@@ -100,6 +108,14 @@
               <q-spinner color="white" />
             </q-avatar>
             <q-avatar
+              v-else-if="mintStatus === MintStatus.GeneratingDescriptorFileError"
+              size="60px"
+              color="negative"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert-circle" />
+            </q-avatar>
+            <q-avatar
               v-else-if="mintStatus > MintStatus.GeneratingDescriptorFile"
               size="60px"
               color="positive"
@@ -178,7 +194,7 @@
         <div class="col-12 step">
           <div class="avatar">
             <q-avatar
-              v-if="mintStatus < MintStatus.WaitingForWalletApproval"
+              v-if="mintStatus < MintStatus.MintAwaitingInput"
               size="60px"
               color="grey"
               text-color="white"
@@ -186,7 +202,15 @@
               <q-icon name="mdi-cancel" />
             </q-avatar>
             <q-avatar
-              v-else-if="mintStatus === MintStatus.WaitingForWalletApproval"
+              v-else-if="mintStatus === MintStatus.MintAwaitingInput"
+              size="60px"
+              color="warning"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="mintStatus === MintStatus.MintAwaitingConfirmation"
               size="60px"
               color="primary"
               text-color="white"
@@ -202,7 +226,7 @@
               <q-icon name="mdi-alert-circle" />
             </q-avatar>
             <q-avatar
-              v-else-if="mintStatus > MintStatus.WaitingForWalletApproval"
+              v-else-if="mintStatus > MintStatus.MintError"
               size="60px"
               color="positive"
               text-color="white"
@@ -246,17 +270,7 @@
 import { Vue, Options, Prop, Watch } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import AlgoButton from 'components/common/Button.vue';
-
-enum MintStatus{
-  GeneratingPreviewFile,
-  GeneratingRawFile,
-  GeneratingRawFileError,
-  GeneratingDescriptorFile,
-  CollectingUserConfirmations,
-  WaitingForWalletApproval,
-  MintError,
-  ImageMinted,
-}
+import { MintStatus } from 'src/models/IMint';
 
 @Options({
   components: {
@@ -321,8 +335,28 @@ export default class MintDialog extends Vue {
     switch (this.mintStatus) {
       case MintStatus.GeneratingPreviewFile:
         return this.$t('dashboard.newPainting.dialog.statuses.generatingPreviewFile');
-      default:
+      case MintStatus.GeneratingPreviewFileError:
+        return this.$t('dashboard.newPainting.dialog.statuses.generatingPreviewFileError');
+      case MintStatus.GeneratingRawFile:
         return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      case MintStatus.GeneratingRawFileError:
+        return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      case MintStatus.GeneratingDescriptorFile:
+        return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      case MintStatus.GeneratingDescriptorFileError:
+        return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      case MintStatus.CollectingUserConfirmations:
+        return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      case MintStatus.MintAwaitingInput:
+        return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      case MintStatus.MintAwaitingConfirmation:
+        return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      case MintStatus.MintError:
+        return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      case MintStatus.ItemMinted:
+        return this.$t('dashboard.newPainting.dialog.statuses.previewFileGenerated');
+      default:
+        return this.$t('');
     }
   }
 
@@ -332,10 +366,22 @@ export default class MintDialog extends Vue {
         return this.$t('dashboard.newPainting.dialog.statuses.generatingRawFile');
       case MintStatus.GeneratingRawFileError:
         return this.$t('dashboard.newPainting.dialog.statuses.generatingRawFileError');
-      case MintStatus.GeneratingDescriptorFile || MintStatus.CollectingUserConfirmations || MintStatus.WaitingForWalletApproval || MintStatus.MintError || MintStatus.ImageMinted:
-        return this.$t('');
-      default:
+      case MintStatus.GeneratingDescriptorFile:
         return this.$t('dashboard.newPainting.dialog.statuses.rawFileGenerated');
+      case MintStatus.GeneratingDescriptorFileError:
+        return this.$t('dashboard.newPainting.dialog.statuses.rawFileGenerated');
+      case MintStatus.CollectingUserConfirmations:
+        return this.$t('dashboard.newPainting.dialog.statuses.rawFileGenerated');
+      case MintStatus.MintAwaitingInput:
+        return this.$t('dashboard.newPainting.dialog.statuses.rawFileGenerated');
+      case MintStatus.MintAwaitingConfirmation:
+        return this.$t('dashboard.newPainting.dialog.statuses.rawFileGenerated');
+      case MintStatus.MintError:
+        return this.$t('dashboard.newPainting.dialog.statuses.rawFileGenerated');
+      case MintStatus.ItemMinted:
+        return this.$t('dashboard.newPainting.dialog.statuses.rawFileGenerated');
+      default:
+        return this.$t('');
     }
   }
 
@@ -343,10 +389,20 @@ export default class MintDialog extends Vue {
     switch (this.mintStatus) {
       case MintStatus.GeneratingDescriptorFile:
         return this.$t('dashboard.newPainting.dialog.statuses.generatingDescriptorFile');
-      case MintStatus.CollectingUserConfirmations || MintStatus.WaitingForWalletApproval || MintStatus.MintError || MintStatus.ImageMinted:
-        return this.$t('');
-      default:
+      case MintStatus.GeneratingDescriptorFileError:
+        return this.$t('dashboard.newPainting.dialog.statuses.generatingDescriptorFileError');
+      case MintStatus.CollectingUserConfirmations:
         return this.$t('dashboard.newPainting.dialog.statuses.descriptorFileGenerated');
+      case MintStatus.MintAwaitingInput:
+        return this.$t('dashboard.newPainting.dialog.statuses.descriptorFileGenerated');
+      case MintStatus.MintAwaitingConfirmation:
+        return this.$t('dashboard.newPainting.dialog.statuses.descriptorFileGenerated');
+      case MintStatus.MintError:
+        return this.$t('dashboard.newPainting.dialog.statuses.descriptorFileGenerated');
+      case MintStatus.ItemMinted:
+        return this.$t('dashboard.newPainting.dialog.statuses.descriptorFileGenerated');
+      default:
+        return this.$t('');
     }
   }
 
@@ -354,11 +410,13 @@ export default class MintDialog extends Vue {
     switch (this.mintStatus) {
       case MintStatus.CollectingUserConfirmations:
         return this.$t('dashboard.newPainting.dialog.statuses.collectingUserConfirmations');
-      case MintStatus.WaitingForWalletApproval:
+      case MintStatus.MintAwaitingInput:
+        return this.$t('dashboard.newPainting.dialog.statuses.userConfirmationsCollected');
+      case MintStatus.MintAwaitingConfirmation:
         return this.$t('dashboard.newPainting.dialog.statuses.userConfirmationsCollected');
       case MintStatus.MintError:
         return this.$t('dashboard.newPainting.dialog.statuses.userConfirmationsCollected');
-      case MintStatus.ImageMinted:
+      case MintStatus.ItemMinted:
         return this.$t('dashboard.newPainting.dialog.statuses.userConfirmationsCollected');
       default:
         return this.$t('');
@@ -367,9 +425,11 @@ export default class MintDialog extends Vue {
 
   get fifthStepLabel() {
     switch (this.mintStatus) {
-      case MintStatus.WaitingForWalletApproval:
-        return this.$t('dashboard.newPainting.dialog.statuses.waitingForWalletApproval');
-      case MintStatus.ImageMinted:
+      case MintStatus.MintAwaitingInput:
+        return this.$t('dashboard.newPainting.dialog.statuses.mintAwaitingInput');
+      case MintStatus.MintAwaitingConfirmation:
+        return this.$t('dashboard.newPainting.dialog.statuses.mintAwaitingConfirmation');
+      case MintStatus.ItemMinted:
         return this.$t('dashboard.newPainting.dialog.statuses.walletApproved');
       case MintStatus.MintError:
         return this.$t('dashboard.newPainting.dialog.statuses.mintError');
@@ -379,9 +439,11 @@ export default class MintDialog extends Vue {
   }
 
   get okBtnDisabled() {
-    return this.mintStatus !== MintStatus.ImageMinted &&
+    return this.mintStatus !== MintStatus.GeneratingPreviewFileError &&
+      this.mintStatus !== MintStatus.GeneratingRawFileError &&
+      this.mintStatus !== MintStatus.GeneratingDescriptorFileError &&
       this.mintStatus !== MintStatus.MintError &&
-      this.mintStatus !== MintStatus.GeneratingRawFileError
+      this.mintStatus !== MintStatus.ItemMinted
   }
 }
 </script>

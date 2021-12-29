@@ -3,82 +3,80 @@
     {{ $t('dashboard.newPainting.parameters') }}
   </div>
   <q-select
-    v-model="NewArtFields.fieldA"
+    v-model="item.background"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelA })"
-    :options="fieldAOptions"
+    :options="backgroundOptions"
     class="full-width"
   />
   <q-select
-    v-model="NewArtFields.fieldB"
+    v-model="item.gender"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelB })"
-    :options="fieldBOptions"
+    :options="genderOptions"
   />
   <q-select
-    v-model="NewArtFields.fieldC"
+    v-model="item.expressions"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelC })"
-    :options="fieldCOptions"
+    :options="expressionsOptions"
   />
   <q-select
-    v-model="NewArtFields.fieldD"
+    v-model="item.expressionTemplate"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelD })"
-    :options="fieldDOptions"
+    :options="expressionTemplateOptions"
   />
-  <q-radio
-    v-model="NewArtFields.fieldE"
+  <q-checkbox
+    v-model="item.useWireframe"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelE })"
     class="full-width q-pt-sm"
-    :val="true"
   />
   <div class="algo-slider">
     <p class="label">{{ $t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelF }) }}</p>
     <q-slider
-      v-model="NewArtFields.fieldF"
+      v-model="item.wireframeHue"
       :min="0"
-      :max="50"
+      :max="9"
     />
   </div>
-  <q-radio
-    v-model="NewArtFields.fieldG"
+  <q-checkbox
+    v-model="item.useWireframeBlend"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelG })"
     class="full-width q-pt-sm"
-    :val="true"
   />
   <q-select
-    v-model="NewArtFields.fieldH"
+    v-model="item.wireframeBlendStyle"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelH })"
-    :options="fieldHOptions"
+    :options="wireframeBlendStyleOptions"
   />
   <div class="algo-slider">
     <p class="label">{{ $t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelI }) }}</p>
     <q-slider
-      v-model="NewArtFields.fieldI"
+      v-model="item.innerColorHue"
       :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelI })"
       :min="0"
-      :max="50"
+      :max="9"
     />
   </div>
   <q-select
-    v-model="NewArtFields.fieldJ"
+    v-model="item.overlay"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelJ })"
-    :options="fieldIOptions"
+    :options="overlayOptions"
   />
   <div class="algo-slider">
     <p class="label">{{ $t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelK }) }}</p>
     <q-slider
-      v-model="NewArtFields.fieldK"
+      v-model="item.overlayHue"
       :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelK })"
       :min="0"
-      :max="50"
+      :max="9"
     />
   </div>
-  <q-radio
-    v-model="NewArtFields.fieldL"
+  <q-checkbox
+    v-model="item.useShadow"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelL })"
     class="full-width q-pt-sm"
     :val="false"
   />
-  <q-radio
-    v-model="NewArtFields.fieldM"
+  <q-checkbox
+    v-model="item.flip"
     :label="$t('dashboard.newPainting.fieldLabel', { label: newArtLabels.labelM })"
     class="full-width q-pt-sm"
     :val="false"
@@ -87,6 +85,7 @@
     :label="$t('dashboard.newPainting.leftInfoBtnName')"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
     color="primary"
+    @click="generatePreview()"
   />
 
   <q-dialog v-model="isMintDialogOpen" persistent>
@@ -100,31 +99,19 @@
 
 <script lang="ts">
 import { Options, Vue, prop } from 'vue-class-component';
-import { Ref } from 'vue-property-decorator';
+import { Ref, Watch } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterExpressionsProxy from 'src/eth/AlgoPainterExpressionsItemProxy';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
-// import { getExpressionItemContractByNetworkId } from 'src/eth/Config';
-// import { IExpressionsCollection } from 'src/models/INewPaintingExpressions';
-import { ICollectionInfo, IArtBasicInfo } from 'src/models/IMint';
+import { getExpressionItemContractByNetworkId } from 'src/eth/Config';
+import { IExpressionsItemParameters, IExpressionsParsedItemParameters, IExpressionsMintParameters, IExpressionsPayload } from 'src/models/INewPaintingExpressions';
+import { ICollectionInfo, IArtBasicInfo, MintStatus } from 'src/models/IMint';
 // import IPFSHelper from "src/helpers/IPFSHelper";
 import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
 import AlgoButton from 'components/common/Button.vue';
 import { mapGetters } from 'vuex';
-import { paint } from 'src/workers/painting.worker';
-import CollectionController from 'src/controllers/collection/CollectionController';
-
-enum MintStatus{
-  GeneratingPreviewFile,
-  GeneratingRawFile,
-  GeneratingRawFileError,
-  GeneratingDescriptorFile,
-  CollectingUserConfirmations,
-  WaitingForWalletApproval,
-  MintError,
-  ImageMinted,
-}
+import PinningServiceHelper from 'src/helpers/PinningServiceHelper';
 
 interface INewPainting {
   labelA?: string,
@@ -164,9 +151,9 @@ class Props {
     ...mapGetters(
       'mint', {
         collectionInfo: 'GET_EXPRESSIONS_COLLECTION_INFO',
-        artBasicInfo: 'GET_EXPRESSIONS_COLLECTION_INFO',
-        userConfirmations: 'GET_EXPRESSIONS_COLLECTION_INFO',
-        isMinting: 'GET_EXPRESSIONS_COLLECTION_INFO',
+        artBasicInfo: 'GET_EXPRESSIONS_BASIC_INFO',
+        userConfirmations: 'GET_EXPRESSIONS_USER_CONFIRMATIONS',
+        isMinting: 'GET_EXPRESSIONS_IS_MINTING',
       }),
   }
 })
@@ -182,11 +169,20 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   artBasicInfo!: IArtBasicInfo;
   userConfirmations!: boolean;
   isMinting!: boolean;
+  intParameters: number[] = [];
 
   mintStatus: MintStatus | null = null;
   isMintDialogOpen: boolean = false;
 
-  collection!: any; 
+  isError: boolean = false;
+  errorMessage: string = '';
+  isConfigured: boolean = false;
+
+  previewIPFSHash!: string | undefined;
+  rawIPFSHash!: string | undefined;
+  descriptorIPFSHash!: string;
+
+  parsedItem!: IExpressionsParsedItemParameters;
 
   newArtLabels: INewPainting = {
     labelA: 'Background',
@@ -204,20 +200,38 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
     labelM: 'Flip',
   }
 
-  NewArtFields = {
-    fieldA: 'Bitcoin',
-    fieldB: 'Female',
-    fieldC: 'Angry',
-    fieldD: 'SpaceCode',
-    fieldE: true,
-    fieldF: 0,
-    fieldG: true,
-    fieldH: 'Add',
-    fieldI: 0,
-    fieldJ: 'Fractal Perception',
-    fieldK: 0,
-    fieldL: false,
-    fieldM: false,
+  item: IExpressionsItemParameters = {
+    background: {
+      value: 1,
+      label: 'Bitcoin',
+    },
+    gender: {
+      value: 0,
+      label: 'Female',
+    },
+    expressions: {
+      value: 2,
+      label: 'Angry',
+    },
+    expressionTemplate: {
+      value: 1,
+      label: 'Space Code',
+    },
+    useWireframe: true,
+    wireframeHue: 0,
+    useWireframeBlend: true,
+    wireframeBlendStyle: {
+      value: 0,
+      label: 'Add',
+    },
+    innerColorHue: 0,
+    overlay: { 
+      value: 1,
+      label: 'Fractal Perception',
+    },
+    overlayHue: 0,
+    useShadow: false,
+    flip: false,
   }
 
   created() {
@@ -228,113 +242,382 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   }
 
   mounted() {
-    this.loadData();
+    this.checkIfConfigured();
   }
 
-  isConfigured: boolean = false;
-
-  loadData() {
-    const collectionController = new CollectionController();
-
-    this.collection = collectionController.getCollectionById(1);
-
+  checkIfConfigured() {
     if (!this.isConfigured) {
-      this.setFormInitialState();
+      this.setFormInitialState().catch(console.error);
     }
   }
 
-  isError: boolean = false;
-  errorMessage: string = "";
-  encodedImage: string = "";
-  paintingInfo: any = {};
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo)
+      this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo)
+    }
+  }
 
-  setFormInitialState() {
-    this.isError = false;
-    this.errorMessage = "";
-    this.isConfigured = true;
-    this.encodedImage = this.collection.artist.avatar;
-    const parsedPaintingInfo: any = {};
+  get expressionsContractAddress() {
+    return getExpressionItemContractByNetworkId(this.networkInfo.id);
+  }
 
-    for (const parameter of this.collection.parameters) {
-      parsedPaintingInfo[parameter.name] = parameter.defaultValue;
+  getExpression(value: string) {
+    switch (value) {
+      case '0':
+        return 'serious';
+      case '1':
+        return 'happy';
+      case '2':
+        return 'angry';
+      case '3':
+        return 'disgust';
+      default:
+        return 'surprise';
+    }
+  }
+
+  generatePreview() {
+    this.parsedItem = {
+      background: this.item.background.value,
+      gender: this.item.gender.value.toString() === '0' ? 'F' : 'M',
+      expressions: this.getExpression(this.item.expressions.value.toString()),
+      expressionTemplate: this.item.expressionTemplate.value,
+      useWireframe: this.item.useWireframe,
+      wireframeHue: this.item.wireframeHue,
+      useWireframeBlend: this.item.useWireframeBlend,
+      wireframeBlendStyle: `BLEND_${this.item.wireframeBlendStyle.label.toUpperCase()}`,
+      innerColorHue: this.item.innerColorHue,
+      overlay: this.item.overlay.value,
+      overlayHue: this.item.overlayHue,
+      useShadow: this.item.useShadow,
+      flip: this.item.flip,
     }
 
-    this.paintingInfo = Object.assign({}, parsedPaintingInfo);
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    const previewUrl = `${process.env.VUE_APP_EXPRESSIONS_ENDPOINT}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expressions}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=400x400&flip=${this.parsedItem.flip}`;
 
-    console.log(this.paintingInfo);
+    this.setItemParameters(this.parsedItem).catch(console.error);
+    this.setPreviewUrl(previewUrl).catch(console.error);
   }
 
-  isLoading: boolean = false;
-  loaded: boolean = false;
-
-  async generatePreview() {
-    this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo)
-
-    this.isError = false;
-    this.isLoading = true;
-    this.encodedImage = await paint(this.collection, this.paintingInfo, false);
-    this.isLoading = false;
-    this.loaded = true;
+  async setItemParameters(parsedItem: IExpressionsParsedItemParameters) {
+    await this.$store
+      .dispatch({
+        type: 'mint/itemParameters',
+        parsedItem: parsedItem,
+        collectionName: this.collectionName,
+      })
   }
 
-  /*
-    const getBase64FromUrl = async (url: string) => {
-      const data = await fetch(url);
-      const blob = await data.blob();
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob); 
-        reader.onloadend = () => {
-          const base64data = reader.result;   
-          resolve(base64data);
-        }
+  async setPreviewUrl(previewUrl: string) {
+    await this.$store
+      .dispatch({
+        type: 'mint/previewUrl',
+        previewUrl: previewUrl,
+        collectionName: this.collectionName,
+      })
+  }
+
+  @Watch('isMinting')
+  onIsMintingChanged() {
+    if (this.isMinting) {
+      this.mint().catch(console.error);
+    }
+  }
+
+  parseUrl(urlType: string) {
+    switch (urlType) {
+      case 'preview':
+        return process.env.VUE_APP_EXPRESSIONS_ENDPOINT ? `${process.env.VUE_APP_EXPRESSIONS_ENDPOINT}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expressions}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=400x400&flip=${this.parsedItem.flip.toString()}` : '';
+      case 'raw':
+        return process.env.VUE_APP_EXPRESSIONS_ENDPOINT ? `${process.env.VUE_APP_EXPRESSIONS_ENDPOINT}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expressions}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=2000x2000&flip=${this.parsedItem.flip.toString()}` : '';
+      default:
+        return '';
+    }
+  }
+
+  async mint() {
+    try {
+      this.setModalInitialState().catch(console.error);
+
+      const mintParameters: IExpressionsMintParameters = {
+        background: this.item.background.value,
+        gender: this.item.gender.value,
+        expressions: this.item.expressions.value,
+        expressionTemplate: this.item.expressionTemplate.value,
+        useWireframe: this.item.useWireframe ? 1 : 0,
+        wireframeHue: this.item.wireframeHue,
+        useWireframeBlend: this.item.useWireframeBlend ? 1 : 0,
+        wireframeBlendStyle: this.item.wireframeBlendStyle.value,
+        innerColorHue: this.item.innerColorHue,
+        overlay: this.item.overlay.value,
+        overlayHue: this.item.overlayHue,
+        useShadow: this.item.useShadow ? 1 : 0,
+        flip: this.item.flip ? 1 : 0,
+      }
+
+      Object.values(mintParameters).forEach((parameter) => {
+        this.intParameters.push(parameter);
       });
+
+      try {
+        await this.expressionsSystem.callMint(this.intParameters, this.collectionInfo.batchPriceBlockchain, '', this.account);
+      } catch (e: any) {
+        this.setModalInitialState().catch(console.error);
+
+        this.isError = true;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        if (e.message && e.message.indexOf('ALREADY_REGISTERED') >= 0) {
+          this.errorMessage = 'Another user has minted an artwork using this configuration, please select other set of parameters.';
+          return;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        if (e.message && e.message.indexOf('PRICE_HAS_CHANGED') >= 0) {
+          this.errorMessage = 'The current price has changed, please update the page!';
+          return;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        if (e.message && e.message.indexOf('INVALID_AMOUNT') >= 0) {
+          this.errorMessage = 'Invalid amount!';
+          return;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${e.message}`;
+        return;
+      }
+
+      this.isMintDialogOpen = true;
+
+      this.mintStatus = MintStatus.GeneratingPreviewFile;
+
+      const previewPiningResult = await PinningServiceHelper.pinFile('Expressions - Preview', 1, this.parseUrl('preview'));
+      this.previewIPFSHash = previewPiningResult.ipfsHash;
+
+      if (!this.previewIPFSHash) {
+        this.setModalInitialState().catch(console.error);
+        this.isError = true;
+        this.errorMessage = 'An error has occured while generating preview file!';
+        return;
+      }
+
+      this.mintStatus = MintStatus.GeneratingRawFile;
+
+      const rawPiningResult = await PinningServiceHelper.pinFile('Expressions - Raw', 1, this.parseUrl('raw'));
+      this.rawIPFSHash = rawPiningResult.ipfsHash;
+
+      if (!this.rawIPFSHash) {
+        this.setModalInitialState().catch(console.error);
+        this.mintStatus = MintStatus.GeneratingRawFileError;
+        this.isError = true;
+        this.errorMessage = 'An error has occured while generating raw file!';
+        return;
+      }
+
+      this.mintStatus = MintStatus.GeneratingDescriptorFile;
+
+      const payload: IExpressionsPayload = {
+        name: this.artBasicInfo.name,
+        description: this.artBasicInfo.description,
+        image: `https://ipfs.io/ipfs/${this.rawIPFSHash}`,
+        previewImage: `https://ipfs.io/ipfs/${this.previewIPFSHash}`,
+        collection: {
+          id: 1,
+          name: 'Expressions',
+        },
+        parameters: this.parsedItem,
+        mintedBy: this.account,
+      };
+
+      const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
+      this.descriptorIPFSHash = (descriptorPinningResult.ipfsHash) ? descriptorPinningResult.ipfsHash : '';
+
+      if (!this.descriptorIPFSHash) {
+        this.setModalInitialState().catch(console.error);
+        this.isError = true;
+        this.errorMessage = 'An error has occured while generating descriptor file!';
+        return;
+      }
+
+      this.setIPFSUrl(`https://ipfs.io/ipfs/${this.rawIPFSHash}`).catch(console.error);
+
+      this.mintStatus = MintStatus.CollectingUserConfirmations;
+    } catch (e) {
+      console.log(e);
+      this.setModalInitialState().catch(console.error);
     }
+  }
 
-    const base64 = await getBase64FromUrl(url)
+  async setIPFSUrl(IPFSUrl: string) {
+    await this.$store
+      .dispatch({
+        type: 'mint/IPFSUrl',
+        IPFSUrl: IPFSUrl,
+        collectionName: this.collectionName,
+      })
+  }
 
-    console.log('base64', base64);
-    console.log('base64.data', base64);
-
-    const payload = {
-      ...this.artBasicInfo,
-      mintedBy: this.account,
-      base64,
+  @Watch('userConfirmations')
+  onUserConfirmationsChanged() {
+    if (this.userConfirmations) {
+      this.finishMinting();
     }
-  */
+  }
+
+  finishMinting() {
+    try {
+      this.isConfigured = false;
+      this.mintStatus = MintStatus.MintAwaitingInput;
+
+      const result = this.expressionsSystem.mint(this.intParameters, this.collectionInfo.batchPriceBlockchain, this.descriptorIPFSHash, this.account);
+
+      result.on('error', (error: any) => {
+        this.setModalInitialState().catch(console.error);
+        this.mintStatus = MintStatus.MintError;
+        this.isError = true;
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${error}`;
+      }).catch(console.error);
+
+      result.on('transactionHash', () => {
+        this.mintStatus = MintStatus.MintAwaitingConfirmation;
+      }).catch(console.error);
+
+      result.on('confirmation', () => {
+        if (!this.isConfigured) {
+          this.mintStatus = MintStatus.ItemMinted;
+          console.log('inside IF confirmation catch');
+          this.setFormInitialState().catch(console.error);
+        };
+      }).catch(console.error);
+    } catch (e: any) {
+      this.setModalInitialState().catch(console.error);
+
+      this.isError = true;
+
+      if (e.code === 4001) {
+        this.isError = false;
+      } else {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${e.message}`;
+      }
+    }
+  }
 
   onCloseStatusDialog() {
     this.isMintDialogOpen = false;
 
-    if (this.mintStatus === MintStatus.ImageMinted) {
+    if (this.mintStatus === MintStatus.ItemMinted) {
       this.dialogRef.hide();
     }
   }
 
-  fieldAOptions = [
+  async setFormInitialState() {
+    console.log('setFormInitialState');
+    this.isConfigured = true;
+    this.isError = false;
+    this.errorMessage = '';
+
+    this.item.background = {
+      value: 1,
+      label: 'Bitcoin',
+    };
+
+    this.item.gender = {
+      value: 0,
+      label: 'Female',
+    };
+
+    this.item.expressions = {
+      value: 2,
+      label: 'Angry',
+    };
+
+    this.item.expressionTemplate = {
+      value: 1,
+      label: 'Space Code',
+    };
+
+    this.item.useWireframe = true;
+    this.item.wireframeHue = 0;
+    this.item.useWireframeBlend = true;
+
+    this.item.wireframeBlendStyle = {
+      value: 0,
+      label: 'Add',
+    };
+
+    this.item.innerColorHue = 0;
+
+    this.item.overlay = {
+      value: 1,
+      label: 'Fractal Perception',
+    };
+
+    this.item.overlayHue = 0;
+    this.item.useShadow = false;
+    this.item.flip = false;
+
+    await this.$store
+      .dispatch({
+        type: 'mint/artBasicInfo',
+        artBasicInfo: undefined,
+        collectionName: this.collectionName,
+      })
+  }
+
+  async setModalInitialState() {
+    this.mintStatus = MintStatus.GeneratingPreviewFile;
+    this.previewIPFSHash = '';
+    this.rawIPFSHash = '';
+    this.descriptorIPFSHash = '';
+    // this.isBackupWarningOk = false;
+    // this.isRawFileWarningOk = false;
+    this.isError = false;
+
+    await this.$store
+      .dispatch({
+        type: 'mint/mintingStatus',
+        isMinting: false,
+        collectionName: this.collectionName,
+      })
+    await this.$store
+      .dispatch({
+        type: 'mint/userConfirmations',
+        userConfirmations: false,
+        collectionName: this.collectionName,
+      })
+  }
+
+  backgroundOptions = [
     {
-      value: '0',
+      value: '1',
       label: 'Bitcoin',
     },
     {
-      value: '1',
+      value: '2',
       label: 'Block Saturation',
     },
     {
-      value: '2',
+      value: '3',
       label: 'Inner Circuit',
     },
     {
-      value: '3',
+      value: '4',
       label: 'High Voltage',
     },
     {
-      value: '4',
+      value: '5',
       label: 'Mars',
     },
   ]
 
-  fieldBOptions = [
+  genderOptions = [
     {
       value: '0',
       label: 'Female',
@@ -345,7 +628,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
     },
   ]
 
-  fieldCOptions = [
+  expressionsOptions = [
     {
       value: '0',
       label: 'Neutral',
@@ -368,30 +651,30 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
     },
   ]
 
-  fieldDOptions = [
+  expressionTemplateOptions = [
     {
-      value: '0',
+      value: '1',
       label: 'Space Code',
     },
     {
-      value: '1',
+      value: '2',
       label: 'Deep Tracking',
     },
     {
-      value: '2',
+      value: '3',
       label: 'Nebula Metrics',
     },
     {
-      value: '3',
+      value: '4',
       label: 'Plasma',
     },
     {
-      value: '4',
+      value: '5',
       label: 'Galaxy Node',
     },
   ]
 
-  fieldHOptions = [
+  wireframeBlendStyleOptions = [
     {
       value: '0',
       label: 'Add',
@@ -417,26 +700,26 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       label: 'Lighten',
     },
     {
-      value: '6',
+      value: '7',
       label: 'Multiply',
     },
   ]
 
-  fieldIOptions = [
+  overlayOptions = [
     {
-      value: '0',
+      value: '1',
       label: 'Fractal Perception',
     },
     {
-      value: '1',
+      value: '2',
       label: 'Soul Link',
     },
     {
-      value: '2',
+      value: '3',
       label: 'Magnetic Fields',
     },
     {
-      value: '3',
+      value: '4',
       label: 'Z-Mesh',
     },
   ]

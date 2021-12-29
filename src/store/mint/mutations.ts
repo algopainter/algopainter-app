@@ -33,7 +33,6 @@ const mutation: MutationTree<MintStateInterface> = {
     state.expressions.IPFSUrl = payload;
   },
   SET_GWEI_USER_CONFIRMATIONS(state: MintStateInterface, payload) {
-    console.log('payload', payload);
     state.gwei.userConfirmations = payload;
   },
   SET_EXPRESSIONS_USER_CONFIRMATIONS(state: MintStateInterface, payload) {

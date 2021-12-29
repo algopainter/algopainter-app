@@ -84,19 +84,8 @@ import { mapGetters } from 'vuex';
 import AlgoPainterGweiProxy from 'src/eth/AlgoPainterGweiItemProxy';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import { getGweiItemContractByNetworkId } from 'src/eth/Config';
-import { ICollectionInfo, IArtBasicInfo } from 'src/models/IMint';
+import { ICollectionInfo, IArtBasicInfo, MintStatus } from 'src/models/IMint';
 import IPFSHelper from "src/helpers/IPFSHelper";
-
-enum MintStatus{
-  GeneratingPreviewFile,
-  GeneratingRawFile,
-  GeneratingRawFileError,
-  GeneratingDescriptorFile,
-  CollectingUserConfirmations,
-  WaitingForWalletApproval,
-  MintError,
-  ImageMinted,
-}
 
 class Props {
   collectionName = prop({
@@ -144,7 +133,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   ticks = Date.now();
   tokenURI!: string;
 
-  isMinted: boolean = false;
   errorMsg: string = '';
   transactionHash!: any;
   isWaitingTransaction: boolean = false;
@@ -169,8 +157,8 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     },
     overlayOpacity: '10',
     wallType: {
-      label: 'Wall',
       value: '1',
+      label: 'Wall',
     },
   }
 
@@ -202,8 +190,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
   
   generatePreview() {
-    this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
-
     this.parsedItem = {
       parsedText: this.item.text,
       parsedUseRandom: this.item.useRandom,
@@ -240,7 +226,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   @Watch('isMinting')
-  onArtBasicInfoChanged() {
+  onIsMintingChanged() {
     if (this.isMinting) {
       this.mint().catch(console.error);
     }
@@ -263,9 +249,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   async mint() {
     this.isMintDialogOpen = true;
     this.mintStatus = MintStatus.GeneratingPreviewFile;
-    this.isMinted = false;
-    this.errorMsg = "";
-    // this.rules();
 
     const payload: IGweiPayload = {
       image: this.srcIPFS(),
@@ -284,7 +267,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     this.mintStatus = MintStatus.GeneratingRawFile;
 
     try {
-      const ipfsData: {path: string} = await IPFSHelper.add(payload);
+      const ipfsData: {path: string} = await IPFSHelper.addGwei(payload);
       const ipfsPath = ipfsData.path;
       this.tokenURI = 'https://ipfs.io/ipfs/' + ipfsPath;
       this.setIPFSUrl(this.srcIPFS()).catch(console.error);
@@ -302,8 +285,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   async finishMinting() {
-    this.mintStatus = MintStatus.WaitingForWalletApproval;
-
     const newMint: INewMintGwei = {
       inspiration: Number(this.parsedItem.parsedInspiration),
       text: this.parsedItem.parsedText,
@@ -314,12 +295,13 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       amount: Number(this.collectionInfo.batchPriceBlockchain),
     };
 
+    this.mintStatus = MintStatus.MintAwaitingConfirmation;
+
     try {
       this.transactionHash = await this.gweiSystem.mint(newMint, this.account, (receipt: any) => {
         this.isWaitingTransaction = false;
         this.receipt = receipt;
-        this.isMinted = true;
-        this.mintStatus = MintStatus.ImageMinted;
+        this.mintStatus = MintStatus.ItemMinted;
       });
     } catch (error: any) {
       this.mintStatus = MintStatus.MintError;
@@ -346,7 +328,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   onCloseStatusDialog() {
     this.isMintDialogOpen = false;
 
-    if (this.mintStatus === MintStatus.ImageMinted) {
+    if (this.mintStatus === MintStatus.ItemMinted) {
       this.dialogRef.hide();
     }
   }

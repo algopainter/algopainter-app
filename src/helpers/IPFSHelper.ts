@@ -15,8 +15,16 @@ export default class IPFSHelper {
   }
   */
 
-  static async add(data:IGweiPayload) {
+  static async addGwei(data:IGweiPayload) {
     const response = await api.post('images/pinToIPFS/JSON', data);
+
+    return {
+      path: response.data.ipfsHash
+    };
+  }
+
+  static async addExpressions(data:IGweiPayload) {
+    const response = await api.post('images/pinToIPFS/FILE', data);
 
     return {
       path: response.data.ipfsHash

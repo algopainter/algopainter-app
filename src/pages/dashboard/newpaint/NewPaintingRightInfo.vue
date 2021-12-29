@@ -158,7 +158,6 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   }
 
   async mint() {
-    console.log('mint - righinfo', this.artBasicInfo);
     await this.$store
       .dispatch({
         type: 'mint/artBasicInfo',
@@ -187,13 +186,12 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
     setTimeout(() => { this.imgLoadingEnded() }, 10000);
   }
 
-  @Watch('previewUrlExpression')
+  @Watch('previewUrlExpressions')
   onPreviewUrlExpressionChanged() {
     this.isPreviewUrlSet = true;
     this.previewUrl = this.previewUrlExpressions;
-    this.isImgLoaded = false;
-    this.isImgLoading = true;
-    setTimeout(() => { this.imgLoadingEnded() }, 10000);
+    this.isImgLoading = false;
+    this.isImgLoaded = true;
   }
 }
 </script>

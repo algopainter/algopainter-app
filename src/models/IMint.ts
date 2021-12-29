@@ -29,3 +29,17 @@ export interface IArtBasicInfo {
   name: string;
   description: string;
 }
+
+export enum MintStatus{
+  GeneratingPreviewFile,
+  GeneratingPreviewFileError,
+  GeneratingRawFile,
+  GeneratingRawFileError,
+  GeneratingDescriptorFile,
+  GeneratingDescriptorFileError,
+  CollectingUserConfirmations,
+  MintAwaitingInput,
+  MintAwaitingConfirmation,
+  MintError,
+  ItemMinted,
+}

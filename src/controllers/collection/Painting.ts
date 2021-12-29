@@ -1,4 +1,5 @@
-import Jimp from "jimp";
+/*
+import Jimp from 'jimp';
 
 export const STEP_LOADING_BACKGROUND = 1;
 export const STEP_LOADING_EXPRESSION = 2;
@@ -157,7 +158,6 @@ export default class Painting {
       // Jimp.BLEND_HARDLIGHT
       // Jimp.BLEND_LIGHTEN
       // Jimp.BLEND_MULTIPLY
-      /*
         if (useWireframeBlend) {
           backgroundFile.composite(wireframeFile, 0, 0, {
             mode: Jimp[wireframeBlendStyle],
@@ -167,7 +167,6 @@ export default class Painting {
         } else {
           backgroundFile.composite(wireframeFile, 0, 0);
         }
-      */
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     cb(STEP_COMPOSITING_INNERCOLOR);
@@ -196,3 +195,4 @@ export default class Painting {
     return backgroundFile;
   }
 }
+*/

@@ -4,8 +4,8 @@ import { ContractMethod } from './Web3Impl';
 import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterExpressions from './AlgoPainterExpressionsItem.json';
 import { getExpressionItemContractByNetworkId } from './Config';
-// import { PromiEvent } from 'web3-core';
-// import { Contract } from 'web3-eth-contract';
+import { PromiEvent } from 'web3-core';
+import { Contract } from 'web3-eth-contract';
 
 export default class AlgoPainterExpressionsItemProxy {
   declare smartContract: {
@@ -16,6 +16,11 @@ export default class AlgoPainterExpressionsItemProxy {
       ): ContractMethod;
       totalSupply(): ContractMethod;
       getServiceFee(): ContractMethod;
+      mint(
+        parameters: number[],
+        expectedAmount: string,
+        tokenURI: string,
+      ): ContractMethod;
     };
   };
 
@@ -38,5 +43,31 @@ export default class AlgoPainterExpressionsItemProxy {
 
   async getServiceFee() : Promise<number> {
     return await this.smartContract.methods.getServiceFee().call<number>();
+  }
+
+  async callMint(
+    parameters: number[],
+    expectedAmount: string,
+    tokenURI: string,
+    from: string,
+  ) : Promise<Contract> {
+    return await this.smartContract.methods.mint(
+      parameters,
+      expectedAmount,
+      tokenURI,
+    ).call({ from: from, value: expectedAmount } as unknown as { from: string, value: number });
+  }
+
+  mint(
+    parameters: number[],
+    expectedAmount: string,
+    tokenURI: string,
+    from: string,
+  ) : PromiEvent<Contract> {
+    return this.smartContract.methods.mint(
+      parameters,
+      expectedAmount,
+      tokenURI,
+    ).send({ from: from, value: expectedAmount });
   }
 }

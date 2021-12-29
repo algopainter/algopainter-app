@@ -1,3 +1,4 @@
+/*
 import Painting from 'src/controllers/collection/Painting';
 
 export const paint = async (collection: any, paintingInfo: any, rawImage: boolean) => {
@@ -23,3 +24,4 @@ export const paint = async (collection: any, paintingInfo: any, rawImage: boolea
 
   return encodedImage;
 };
+*/

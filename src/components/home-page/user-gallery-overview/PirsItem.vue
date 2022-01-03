@@ -325,10 +325,11 @@ export default class PirsItem extends Vue.with(Props) {
   async getPirsPercentage() {
     try {
       this.imagePirsRate =
-        (await this.bidBackPirsSystem.getInvestorPirsRate(this.art.index)) /
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        (await this.bidBackPirsSystem.getPIRSRate(this.art.index)) /
         100;
     } catch (error) {
-      console.log('Error - getInvestorPirsRate - PirsItem');
+      console.log('Error - getPIRSRate - PirsItem');
     }
     if (this.imagePirsRate > 0) {
       this.getCurrentPrizeAmount().catch(console.error);

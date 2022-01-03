@@ -315,13 +315,13 @@ export default class Auction extends Vue {
     }
   }
 
-  async getInvestorPirsRate() {
+  async getPIRSRate() {
     if (this.auction) {
       try {
         this.itemInvestorPirsRate =
-          await this.bidBackPirsSystem.getInvestorPirsRate(this.auction.index) / 100;
+          await this.bidBackPirsSystem.getPIRSRate(this.auction.index) / 100;
       } catch (error) {
-        console.log('Error - getInvestorPirsRate - Auction');
+        console.log('Error - getPIRSRate - Auction');
       }
     }
   }
@@ -340,7 +340,7 @@ export default class Auction extends Vue {
   async loadAuctionDetails() {
     this.auction = await getAuctionDetails(this.auctionId);
     void this.getBidBackRate();
-    void this.getInvestorPirsRate();
+    void this.getPIRSRate();
     void this.getCreatorRoyaltiesRate();
   }
 

@@ -42,9 +42,9 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "bytes32",
+        "internalType": "address",
         "name": "_tokenAddress",
-        "type": "bytes32"
+        "type": "address"
       },
       {
         "indexed": false,
@@ -139,12 +139,44 @@
   },
   {
     "inputs": [],
+    "name": "CONFIGURATOR_ROLE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
       {
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "bidbackRatePerAuction",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -293,7 +325,7 @@
   {
     "inputs": [
       {
-        "internalType": "contract AlgoPainterAuctionSystem",
+        "internalType": "address",
         "name": "_auctionSystemAddress",
         "type": "address"
       }
@@ -324,7 +356,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setMaxInvestorPirsRate",
+    "name": "setMaxPIRSRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -363,9 +395,9 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "address",
         "name": "_tokenAddress",
-        "type": "bytes32"
+        "type": "address"
       },
       {
         "internalType": "uint256",
@@ -378,7 +410,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setInvestorPirsRate",
+    "name": "setPIRSRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -447,7 +479,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getInvestorPirsRate",
+    "name": "getPIRSRate",
     "outputs": [
       {
         "internalType": "uint256",
@@ -461,9 +493,9 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "address",
         "name": "_tokenAddress",
-        "type": "bytes32"
+        "type": "address"
       },
       {
         "internalType": "uint256",
@@ -471,7 +503,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getInvestorPirsRatePerImage",
+    "name": "getPIRSRatePerImage",
     "outputs": [
       {
         "internalType": "uint256",

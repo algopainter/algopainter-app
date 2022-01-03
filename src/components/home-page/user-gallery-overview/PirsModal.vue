@@ -159,7 +159,8 @@ export default class PirsModal extends Vue {
   }
 
   async getAuctionPirsRate() {
-    this.auctionPirsRate = (await this.bidBackPirsSystem.getInvestorPirsRate(this.getAuctionInfoPirs.index)) / 10000;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    this.auctionPirsRate = (await this.bidBackPirsSystem.getPIRSRate(this.getAuctionInfoPirs.index)) / 10000;
   }
 
   formatHighestBidAmount() {

@@ -468,7 +468,7 @@ export default class PirsModalSimulator extends Vue {
 
     const stakeAmount = (isASimulation) ? Number(this.stakeAmount) : this.stakeAmount;
 
-    this.auctionPirsRate = (await this.bidBackPirsSystem.getInvestorPirsRate(this.getAuctionInfoPirs.index)) / 10000;
+    this.auctionPirsRate = (await this.bidBackPirsSystem.getPIRSRate(this.getAuctionInfoPirs.index)) / 10000;
     this.totalPirsStaked = this.setFormatCurrency(await this.rewardsSystem.getTotalPirsStakes(this.getAuctionInfoPirs.index));
 
     this.auctionCurrency = this.getAuctionInfoPirs.minimumBid.tokenSymbol;

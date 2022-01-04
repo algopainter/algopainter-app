@@ -39,6 +39,7 @@
       <div class="text-h6 text-bold text-center justify-center q-my-md">
         <div class="q-my-md">
           {{ $t('dashboard.bid.yourLastBid') }}
+          {{ amountToReturn }}
           <div class="row justify-center">
             {{ bidCorreting(MyHighBid) }}
             <div class="q-ml-sm">
@@ -73,7 +74,7 @@
         </div>
         <div class="col q-gutter-sm">
           <div v-if="hasReturn">
-            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw' + auctionItem.returns[userAccount])" @click="claimBid" />
           </div>
         </div>
       </div>

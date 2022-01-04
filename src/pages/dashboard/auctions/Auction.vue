@@ -126,8 +126,7 @@
               @click="cancelAuction"
             />
             <algo-button
-              v-else
-              class="full-width q-py-sm"
+              class="full-width q-py-sm q-mt-md"
               color="primary"
               outline
               :label="$t('dashboard.auctionPage.placeABid')"

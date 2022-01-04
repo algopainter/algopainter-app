@@ -129,7 +129,7 @@
             label="-"
             color="primary"
             class="btn-staked"
-            :disable="disableUnstackBtn || isEnded"
+            :disable="disableUnstackBtn"
             @click="unstackCoin()"
           />
           <algo-button
@@ -306,7 +306,9 @@ export default class gallerySelect extends Vue.with(Props) {
       if (this.auctionBidBackRate > 0) {
         this.getCurrentPrizeAmount().catch(console.error);
       }
-      this.getUserStackedBidBack();
+      setInterval(() => {
+        this.getUserStackedBidBack();
+      }, 1000);
     } catch (error) {
       console.log('Error - getBidBackPercentage - GallerySelect');
     }
@@ -344,7 +346,6 @@ export default class gallerySelect extends Vue.with(Props) {
 
   getUserStackedBidBack() {
     this.algopStaked = this.art.bidbacks[this.account] || 0;
-
     this.disableUnstackBtn = this.algopStaked <= 0 || this.isEnded;
     this.showHarvestBtn = this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;
     this.showHarvestMsg = !this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;

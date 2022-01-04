@@ -128,7 +128,6 @@
             <algo-button
               class="full-width q-py-sm q-mt-md"
               color="primary"
-              outline
               :label="$t('dashboard.auctionPage.placeABid')"
               @click="placeABidAction"
             />

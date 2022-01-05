@@ -5,6 +5,7 @@ export interface AuctionStateInterface {
   topBuyers: [],
   auctions: [],
   bids: [],
+  bidbacks: [],
   bidsUpdated: [],
   pirsUpdated: [],
   bidBack: [],

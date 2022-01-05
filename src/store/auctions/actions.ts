@@ -100,7 +100,7 @@ const actions: ActionTree<AuctionStateInterface, StateInterface> = {
         `users/${account}/auctions/biding?forBidbacks=true&page=${page}&perPage=${perPage}&order.expirationDt=1`,
       );
       const bids = result.data as [];
-      this.commit('auctions/SET_BIDS', bids);
+      this.commit('auctions/SET_BIDBACK', bids);
     } catch (e) {
       console.log('Error - getBidBack - auctions actions');
     }

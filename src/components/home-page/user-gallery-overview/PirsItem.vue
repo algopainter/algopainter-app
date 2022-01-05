@@ -332,7 +332,9 @@ export default class PirsItem extends Vue.with(Props) {
       console.log('Error - getPIRSRate - PirsItem');
     }
     if (this.imagePirsRate > 0) {
-      this.getCurrentPrizeAmount().catch(console.error);
+      setInterval(() => {
+        this.getCurrentPrizeAmount().catch(console.error);
+      }, 1000);
     }
     this.getUserStakedPirs();
   }

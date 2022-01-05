@@ -307,7 +307,6 @@ export default class gallerySelect extends Vue.with(Props) {
         setInterval(() => {
           this.getCurrentPrizeAmount().catch(console.error);
         }, 1000);
-        this.getCurrentPrizeAmount().catch(console.error);
       }
       setInterval(() => {
         this.getUserStackedBidBack();

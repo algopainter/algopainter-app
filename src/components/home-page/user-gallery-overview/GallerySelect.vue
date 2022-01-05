@@ -304,6 +304,9 @@ export default class gallerySelect extends Vue.with(Props) {
         this.art.index,
       ) / 100;
       if (this.auctionBidBackRate > 0) {
+        setInterval(() => {
+          this.getCurrentPrizeAmount().catch(console.error);
+        }, 1000);
         this.getCurrentPrizeAmount().catch(console.error);
       }
       setInterval(() => {

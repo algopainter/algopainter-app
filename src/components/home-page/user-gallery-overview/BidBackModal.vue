@@ -208,20 +208,22 @@ export default class BidBackModal extends Vue {
 
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
-      account: this.getAuctionInfoBidBack._id,
+      account: this.getAuctionInfoBidBack.owner,
+      collectionOwner: this.getAuctionInfoBidBack.item.collectionOwner,
+      itemIndex: this.getAuctionInfoBidBack.item.index,
     }).then(async() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;
+      const auction = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
       const auctionBids = auction.bids;
       const auctionBidsReversed: IBid[] = [];
       const bidderAccounts: string | string[] = [];
 
-      auctionBids.forEach((bid) => {
+      auctionBids.forEach(bid => {
         auctionBidsReversed.push(bid);
       });
       auctionBidsReversed.reverse();
 
-      auctionBidsReversed.forEach((bid) => {
+      auctionBidsReversed.forEach(bid => {
         const account = bid.account;
         const formattedAccount = this.formatAccount(account);
         const name = this.formatName(bid.name);

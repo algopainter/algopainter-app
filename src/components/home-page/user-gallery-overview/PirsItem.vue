@@ -379,7 +379,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   getUserStakedPirs() {
     if (this.art.pirs) {
-      this.algopStaked = this.art.pirs[this.account] || 0;
+      this.algopStaked = this.art.pirs && (this.art.pirs[this.account] || 0);
     }
     this.disableUnstackBtn = this.algopStaked <= 0 || this.art.ended;
     this.showHarvestBtn =
@@ -515,6 +515,7 @@ export default class PirsItem extends Vue.with(Props) {
         this.getTime();
       }
     }
+    this.getUserStakedPirs();
     this.lastCountDays = this.countDays;
     this.lastCountHours = this.countHours;
     this.lastCountMinutes = this.countMinutes;

@@ -52,11 +52,15 @@
               class="row justify-start time-year q-gutter-sm"
             >
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countYear }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countYear }}
+                </div>
                 <span> {{ $t('dashboard.bid.year') }} </span>
               </div>
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
 
@@ -83,7 +87,9 @@
             </div>
             <div v-else class="row justify-start time q-gutter-sm">
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
 
@@ -348,7 +354,7 @@ export default class PirsItem extends Vue.with(Props) {
       const bidAmount = blockchainToCurrency(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         highestBidAmount,
-        this.coinDetails.decimalPlaces
+        this.coinDetails.decimalPlaces,
       );
       this.lastBid = this.$n(bidAmount, 'decimal', {
         maximumFractionDigits: this.coinDetails.decimalPlaces,

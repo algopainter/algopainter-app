@@ -36,7 +36,7 @@
               {{
                 ' ' +
                   $t('dashboard.auctions.pirsModalSimulator.lastBidValue', {
-                    highestBid: formatHighestBidAmount().toFixed(2),
+                    highestBid: formatHighestBidAmount(),
                     auctionCurrency: getAuctionInfoPirs.minimumBid.tokenSymbol,
                   })
               }}
@@ -325,7 +325,7 @@ export default class PirsModalSimulator extends Vue {
 
     const allowance = await this.auctionCoinTokenProxy.allowance(
       this.account,
-      this.auctionRewardsContractAddress
+      this.auctionRewardsContractAddress,
     );
 
     if (allowance < amount) {
@@ -343,7 +343,7 @@ export default class PirsModalSimulator extends Vue {
         .approve(
           this.auctionRewardsContractAddress,
           numberToString(allowanceAmount),
-          this.account
+          this.account,
         )
         .on('error', () => {
           this.placingBidBackStatus =
@@ -510,7 +510,7 @@ export default class PirsModalSimulator extends Vue {
               pastOwners.length === 1 && isASimulation
                 ? `${(
                     this.formatHighestBidAmount() * this.auctionPirsRate
-                  ).toFixed(2)} ${this.auctionCurrency}`
+                )}  ${this.auctionCurrency}`
                 : `0.000 ${this.auctionCurrency}`,
           });
         });
@@ -554,12 +554,14 @@ export default class PirsModalSimulator extends Vue {
           });
         }
 
-        const auctionPirsPrize = this.formatHighestBidAmount() * this.auctionPirsRate;
+        const auctionPirsPrize = blockchainToCurrency(
+          this.getAuctionInfoPirs.highestBid.netAmount,
+          this.coinDetails.decimalPlaces) * this.auctionPirsRate;
 
         if (this.getAuctionInfoPirs.pirshare) {
           Object.keys(this.getAuctionInfoPirs.pirshare).forEach(() => {
             this.pastOwnersList.forEach((account) => {
-              account.pirsPrize = `${((account.stakedAlgopPercentage / 100) * auctionPirsPrize).toFixed(2)} ${this.auctionCurrency}`;
+              account.pirsPrize = `${((account.stakedAlgopPercentage / 100) * auctionPirsPrize)} ${this.auctionCurrency}`;
             });
           });
         }

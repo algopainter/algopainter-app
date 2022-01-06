@@ -163,17 +163,6 @@ export default class BidBackModal extends Vue {
     },
   ];
 
-  formatHighestBidAmount() {
-    const bidBackAmount = blockchainToCurrency(
-      this.getAuctionInfoBidBack.highestBid.netAmount,
-      this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
-
-    return this.$n(bidBackAmount, 'decimal', {
-      maximumFractionDigits: this.coinDetails.decimalPlaces,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
-  }
-
   @Watch('getAuctionInfoBidBack')
   onGetAuctionChanged() {
     this.userBid = [];
@@ -195,6 +184,19 @@ export default class BidBackModal extends Vue {
     }
 
     return coin;
+  }
+
+  formatHighestBidAmount() {
+    const amountBid = blockchainToCurrency(
+      this.getAuctionInfoBidBack.highestBid
+        ? this.getAuctionInfoBidBack.highestBid.netAmount
+        : 0,
+      this.coinDetails.decimalPlaces,
+    );
+    return this.$n(amountBid, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
   }
 
   setFormatCurrency(amount: number) {
@@ -249,7 +251,10 @@ export default class BidBackModal extends Vue {
             tokenSymbol: this.auctionCurrency,
             stakedAlgop: 0,
             stakedAlgopPercentage: 0,
-            bidBackPrize: `0.000 ${this.auctionCurrency}`,
+            bidBackPrize:
+            auctionBidsReversed.length === 1
+              ? `${(this.formatHighestBidAmount())} ${this.auctionCurrency}`
+              : `0.000 ${this.auctionCurrency}`,
           });
         }
       });

@@ -35,7 +35,7 @@
               {{
                 ' ' +
                   $t('dashboard.auctions.pirsModal.lastBidValue', {
-                    highestBid: formatHighestBidAmount().toFixed(2),
+                    highestBid: formatHighestBidAmount(),
                     auctionCurrency: getAuctionInfoPirs.minimumBid.tokenSymbol,
                   })
               }}
@@ -205,6 +205,7 @@ export default class PirsModal extends Vue {
         const account = owner.account;
         const formattedAccount = this.formatAccount(account);
         const name = this.formatName(owner.name);
+        this.auctionCurrency = this.getAuctionInfoPirs.minimumBid.tokenSymbol;
 
         this.pastOwnersList.push({
           name: name,
@@ -212,7 +213,10 @@ export default class PirsModal extends Vue {
           formattedAccount: formattedAccount,
           stakedAlgop: 0,
           stakedAlgopPercentage: 0,
-          pirsPrize: `0.000 ${this.auctionCurrency}`,
+          pirsPrize:
+          pastOwners.length === 1
+            ? `${(this.formatHighestBidAmount())} ${this.auctionCurrency}`
+            : `0.000  ${this.auctionCurrency}`,
         });
       });
 
@@ -243,12 +247,19 @@ export default class PirsModal extends Vue {
         });
       }
 
-      const auctionPirsPrize = this.formatHighestBidAmount() * this.auctionPirsRate;
+      const auctionPirsPrize = blockchainToCurrency(
+        this.getAuctionInfoPirs.highestBid.netAmount,
+        this.coinDetails.decimalPlaces) * this.auctionPirsRate;
 
       if (this.getAuctionInfoPirs.pirshare) {
         Object.keys(this.getAuctionInfoPirs.pirshare).forEach(() => {
           this.pastOwnersList.forEach((account) => {
-            account.pirsPrize = `${((account.stakedAlgopPercentage / 100) * auctionPirsPrize).toFixed(2)} ${this.auctionCurrency}`;
+            const valuePrize = ((account.stakedAlgopPercentage / 100) * auctionPirsPrize);
+            const formatPrize = this.$n(valuePrize, 'decimal', {
+              maximumFractionDigits: this.coinDetails.decimalPlaces,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
+            account.pirsPrize = `${formatPrize} ${this.auctionCurrency}`;
           });
         });
       }

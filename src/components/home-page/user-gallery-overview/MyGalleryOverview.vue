@@ -10,7 +10,8 @@
       rounded
       outlined
       bottom-slots
-      @update:model-value="filterCollection(1, currentCollection.label)">
+      @update:model-value="filterCollection(1, currentCollection.label)"
+    >
       <template #before>
         <q-icon name="filter_list" color="primary" />
       </template>
@@ -120,10 +121,10 @@
         </div>
         <div v-else class="col-12 q-mt-lg">
           <div class="text-h6 text-primary text-center q-pb-md">
-            {{ $t('dashboard.homePage.gallery.noItemsPersonal.onSaleMsg1') }}
+            {{ $t('dashboard.gallery.noItemsPersonal.onSaleMsg1') }}
           </div>
           <div class="text-h9 text-primary text-center q-pb-md">
-            {{ $t('dashboard.homePage.gallery.noItemsPersonal.onSaleMsg2') }}
+            {{ $t('dashboard.gallery.noItemsPersonal.onSaleMsg2') }}
           </div>
         </div>
       </div>

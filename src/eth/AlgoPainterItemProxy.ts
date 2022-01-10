@@ -19,7 +19,6 @@ export default class AlgoPainterItemProxy {
     );
   }
 
-  
   async ownerOf(tokenID: number): Promise<string> {
     const response: unknown = await this.algoPainter.methods
       .ownerOf(tokenID).call();

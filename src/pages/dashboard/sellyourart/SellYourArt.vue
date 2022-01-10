@@ -640,9 +640,6 @@ export default class SellYourArt extends Vue {
     }).on('error', () => {
       this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedError;
     });
-    if (this.isCreator) {
-      await this.setInvestorPirs(this.PIRSRate * 100);
-    }
   }
 
   async setInvestorPirs(pirs: number) {

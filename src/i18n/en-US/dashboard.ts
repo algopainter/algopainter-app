@@ -388,6 +388,7 @@ export default {
     btnName: {
       goToAuction: 'Go to auction',
       stakeAlgop: 'Stake ALGOP',
+      sell: 'Sell your Art',
     },
     loadMore: '{msg}',
     gwei: 'Gwei',

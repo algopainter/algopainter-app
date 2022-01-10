@@ -47,7 +47,7 @@
             <div>
               <gallery-item
                 :art="item"
-                :btn-name="'dashboard.gallery.btnName.goToAuction'"
+                :btn-name="'dashboard.gallery.btnName.sell'"
                 @favoriteClicked="favoriteClicked"
               />
             </div>

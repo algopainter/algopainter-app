@@ -502,7 +502,7 @@ export default class PirsModalSimulator extends Vue {
             auctionCurrency: this.auctionCurrency,
             stakedAlgop:
               name === 'You' && isASimulation && stakeAmount
-                ? stakeAmount
+                ? stakeAmount + this.totalPirsStaked
                 : 0,
             stakedAlgopPercentage:
               pastOwners.length === 1 && isASimulation ? 100 : 0,

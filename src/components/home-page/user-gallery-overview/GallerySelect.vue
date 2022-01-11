@@ -130,7 +130,7 @@
             label="-"
             color="primary"
             class="btn-staked"
-            :disable="disableUnstackBtn || isEnded"
+            :disable="disableUnstackBtn"
             @click="unstackCoin()"
           />
           <algo-button
@@ -309,15 +309,18 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   async getBidBackPercentage() {
-    try {
-      this.auctionBidBackRate =
-        (await this.bidBackPirsSystem.getBidBackRate(this.art.index)) / 100;
-      if (this.auctionBidBackRate > 0) {
-        this.getCurrentPrizeAmount().catch(console.error);
+    if (this.art) {
+      try {
+        this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(
+          this.art.index,
+        ) / 100;
+        if (this.auctionBidBackRate > 0) {
+          this.getCurrentPrizeAmount().catch(console.error);
+        }
+        this.getUserStackedBidBack();
+      } catch (error) {
+        console.log('Error - getBidBackPercentage - GallerySelect');
       }
-      this.getUserStackedBidBack();
-    } catch (error) {
-      console.log('Error - getBidBackPercentage - GallerySelect');
     }
   }
 
@@ -352,8 +355,7 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   getUserStackedBidBack() {
-    this.algopStaked = this.art.bidbacks[this.account] || 0;
-
+    this.algopStaked = this.art.bidbacks && (this.art.bidbacks[this.account] || 0);
     this.disableUnstackBtn = this.algopStaked <= 0 || this.isEnded;
     this.showHarvestBtn =
       this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;
@@ -401,7 +403,6 @@ export default class gallerySelect extends Vue.with(Props) {
 
     const userBidBackShare =
       totalBidBackStaked > 0 ? this.algopStaked / totalBidBackStaked : 0;
-
     this.userCurrentPrizeAmount = userBidBackShare * totalBidBackPrize;
   }
 
@@ -489,6 +490,7 @@ export default class gallerySelect extends Vue.with(Props) {
         this.getTime();
       }
     }
+    this.getUserStackedBidBack();
     this.lastCountDays = this.countDays;
     this.lastCountHours = this.countHours;
     this.lastCountMinutes = this.countMinutes;

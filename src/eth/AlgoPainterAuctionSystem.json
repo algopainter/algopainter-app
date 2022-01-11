@@ -139,14 +139,8 @@
       },
       {
         "indexed": false,
-        "internalType": "contract IAuctionSystemManager",
-        "name": "auctionSystemManager",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "contract IAuctionRewardsTotalRatesProvider",
-        "name": "rewardsTotalRatesProviderAddress",
+        "internalType": "address",
+        "name": "rewardsRatesProvider",
         "type": "address"
       }
     ],
@@ -185,12 +179,6 @@
         "internalType": "uint256",
         "name": "netAmount",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "isOverriden",
-        "type": "bool"
       }
     ],
     "name": "HighestBidIncreased",
@@ -464,84 +452,6 @@
         "type": "address"
       },
       {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "onERC1155BatchReceived",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "onERC1155Received",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
@@ -597,25 +507,6 @@
     "name": "revokeRole",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
-    ],
-    "name": "supportsInterface",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -698,10 +589,10 @@
   },
   {
     "inputs": [],
-    "name": "getAuctionSystemManager",
+    "name": "getAuctionHook",
     "outputs": [
       {
-        "internalType": "contract IAuctionSystemManager",
+        "internalType": "contract IAuctionHook",
         "name": "",
         "type": "address"
       }
@@ -711,10 +602,10 @@
   },
   {
     "inputs": [],
-    "name": "getRewardsTotalRatesProviderAddress",
+    "name": "getRewardsRates",
     "outputs": [
       {
-        "internalType": "contract IAuctionRewardsTotalRatesProvider",
+        "internalType": "contract IAuctionRewardsRates",
         "name": "",
         "type": "address"
       }
@@ -750,19 +641,40 @@
         "type": "address[]"
       },
       {
-        "internalType": "contract IAuctionSystemManager",
-        "name": "_auctionSystemManager",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IAuctionRewardsTotalRatesProvider",
-        "name": "_rewardsTotalRatesProviderAddress",
+        "internalType": "address",
+        "name": "_rewardsRatesAddress",
         "type": "address"
       }
     ],
     "name": "setup",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nftCreators",
+        "type": "address"
+      }
+    ],
+    "name": "setAlgoPainterNFTCreators",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAlgoPainterNFTCreators",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -812,12 +724,12 @@
   {
     "inputs": [
       {
-        "internalType": "contract IAuctionSystemManager",
-        "name": "_auctionSystemManager",
+        "internalType": "contract IAuctionHook",
+        "name": "_auctionHook",
         "type": "address"
       }
     ],
-    "name": "setAuctionSystemManager",
+    "name": "setauctionHook",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -825,12 +737,12 @@
   {
     "inputs": [
       {
-        "internalType": "contract IAuctionRewardsTotalRatesProvider",
-        "name": "_rewardsTotalRatesProviderAddress",
+        "internalType": "contract IAuctionRewardsRates",
+        "name": "_rewardsRates",
         "type": "address"
       }
     ],
-    "name": "setRewardsTotalRatesProviderAddress",
+    "name": "setrewardsRates",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -838,7 +750,7 @@
   {
     "inputs": [
       {
-        "internalType": "enum AlgoPainterAuctionSystem.TokenType",
+        "internalType": "enum IAlgoPainterAuctionSystem.TokenType",
         "name": "_tokenType",
         "type": "uint8"
       },
@@ -866,6 +778,11 @@
         "internalType": "contract IERC20",
         "name": "_tokenPriceAddress",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_bidbackRate",
+        "type": "uint256"
       }
     ],
     "name": "createAuction",
@@ -932,7 +849,7 @@
         "type": "address"
       },
       {
-        "internalType": "enum AlgoPainterAuctionSystem.TokenType",
+        "internalType": "enum IAlgoPainterAuctionSystem.TokenType",
         "name": "tokenType",
         "type": "uint8"
       },
@@ -962,9 +879,9 @@
         "type": "address"
       },
       {
-        "internalType": "bool",
-        "name": "ended",
-        "type": "bool"
+        "internalType": "enum IAlgoPainterAuctionSystem.AuctionState",
+        "name": "state",
+        "type": "uint8"
       },
       {
         "internalType": "address",
@@ -1091,6 +1008,11 @@
       },
       {
         "internalType": "uint256",
+        "name": "creatorAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "rewardsAmount",
         "type": "uint256"
       }
@@ -1144,6 +1066,19 @@
       }
     ],
     "name": "cancelAuction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "emergencyCancelAuction",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

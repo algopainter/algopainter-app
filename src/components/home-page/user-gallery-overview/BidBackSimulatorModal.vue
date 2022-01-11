@@ -480,7 +480,7 @@ export default class BidBackModalSimulator extends Vue {
   formatHighestBidAmount() {
     const bidBackAmount = blockchainToCurrency(
       this.getAuctionInfoBidBack.highestBid.netAmount,
-      this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
+      this.coinDetails.decimalPlaces);
     return this.$n(bidBackAmount, 'decimal', {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -528,7 +528,7 @@ export default class BidBackModalSimulator extends Vue {
           formattedAccount: formattedAccount,
           highestBid: highestBid,
           auctionCurrency: this.auctionCurrency,
-          stakedAlgop: name === 'You' && isASimulation && stakeAmount ? stakeAmount : 0,
+          stakedAlgop: name === 'You' && isASimulation && stakeAmount ? stakeAmount + this.totalBidBackStaked : 0,
           stakedAlgopPercentage: auctionBidsReversed.length === 1 && isASimulation ? 100 : 0,
           bidBackPrize:
             auctionBidsReversed.length === 1 && isASimulation

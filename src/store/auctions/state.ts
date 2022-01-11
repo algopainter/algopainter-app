@@ -10,6 +10,7 @@ function state(): AuctionStateInterface {
     bidsUpdated: [],
     pirsUpdated: [],
     bidBack: [],
+    bidbacks: [],
     owner: [],
     auctionId: undefined,
     openAuctionModal: false,

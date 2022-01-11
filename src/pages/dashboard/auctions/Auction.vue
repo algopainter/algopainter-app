@@ -131,7 +131,6 @@
             <algo-button
               :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-py-sm q-mt-md' : 'full-width q-py-sm q-mt-md']"
               color="primary"
-              outline
               :label="$t('dashboard.auctionPage.placeABid')"
               @click="placeABidAction"
             />
@@ -321,13 +320,13 @@ export default class Auction extends Vue {
     }
   }
 
-  async getInvestorPirsRate() {
+  async getPIRSRate() {
     if (this.auction) {
       try {
         this.itemInvestorPirsRate =
-          await this.bidBackPirsSystem.getInvestorPirsRate(this.auction.index) / 100;
+          await this.bidBackPirsSystem.getPIRSRate(this.auction.index) / 100;
       } catch (error) {
-        console.log('Error - getInvestorPirsRate - Auction');
+        console.log('Error - getPIRSRate - Auction');
       }
     }
   }
@@ -350,7 +349,7 @@ export default class Auction extends Vue {
   async loadAuctionDetails() {
     this.auction = await getAuctionDetails(this.auctionId);
     void this.getBidBackRate();
-    void this.getInvestorPirsRate();
+    void this.getPIRSRate();
     void this.getCreatorRoyaltiesRate();
   }
 

@@ -467,7 +467,8 @@ export default class OnsaleItem extends Vue.with(Props) {
     this.goToAuctionId = this.auction._id;
     this.index = this.auction.index;
     this.auctionBidbackRate = await this.bidBackPirsSystem.getBidBackRate(this.index) / 100;
-    this.imagePirsRate = await this.bidBackPirsSystem.getInvestorPirsRate(this.index) / 100;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    this.imagePirsRate = await this.bidBackPirsSystem.getPIRSRate(this.index) / 100;
     this.loadingGoToAuctionId = false;
     this.tokenPriceAddress = this.auction.minimumBid.tokenPriceAddress;
     this.minimumBidvalue = this.auction.minimumBid.amount;

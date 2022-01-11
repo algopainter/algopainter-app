@@ -49,7 +49,7 @@
         <div class="col q-gutter-sm">
           <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
           <div v-if="hasReturn">
-            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid')" @click="claimBid" />
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid',{amountRemove: amountToReturn})" class="remove" @click="claimBid" />
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@
         </div>
         <div class="col q-gutter-sm">
           <div v-if="hasReturn">
-            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw')" @click="claimBid" />
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw',{amountRemove: amountToReturn})" class="remove" @click="claimBid" />
           </div>
         </div>
       </div>
@@ -265,6 +265,9 @@ export default class BidsStatus extends Vue.with(Props) {
 </script>
 <style scoped>
  .box{
+    width: 250px;
+  }
+  .remove{
     width: 250px;
   }
 </style>

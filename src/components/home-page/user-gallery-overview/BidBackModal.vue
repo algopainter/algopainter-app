@@ -163,17 +163,6 @@ export default class BidBackModal extends Vue {
     },
   ];
 
-  formatHighestBidAmount() {
-    const bidBackAmount = blockchainToCurrency(
-      this.getAuctionInfoBidBack.highestBid.netAmount,
-      this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
-
-    return this.$n(bidBackAmount, 'decimal', {
-      maximumFractionDigits: this.coinDetails.decimalPlaces,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
-  }
-
   @Watch('getAuctionInfoBidBack')
   onGetAuctionChanged() {
     this.userBid = [];
@@ -197,6 +186,19 @@ export default class BidBackModal extends Vue {
     return coin;
   }
 
+  formatHighestBidAmount() {
+    const amountBid = blockchainToCurrency(
+      this.getAuctionInfoBidBack.highestBid
+        ? this.getAuctionInfoBidBack.highestBid.netAmount
+        : 0,
+      this.coinDetails.decimalPlaces,
+    );
+    return this.$n(amountBid, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
+  }
+
   setFormatCurrency(amount: number) {
     return blockchainToCurrency(amount, this.coinDetails.decimalPlaces);
   }
@@ -208,20 +210,22 @@ export default class BidBackModal extends Vue {
 
     void this.$store.dispatch({
       type: 'auctions/getAuctions',
-      account: this.getAuctionInfoBidBack._id,
+      account: this.getAuctionInfoBidBack.owner,
+      collectionOwner: this.getAuctionInfoBidBack.item.collectionOwner,
+      itemIndex: this.getAuctionInfoBidBack.item.index,
     }).then(async() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const auction = this.$store.getters['auctions/getAuctions'] as IAuctionItem;
+      const auction = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
       const auctionBids = auction.bids;
       const auctionBidsReversed: IBid[] = [];
       const bidderAccounts: string | string[] = [];
 
-      auctionBids.forEach((bid) => {
+      auctionBids.forEach(bid => {
         auctionBidsReversed.push(bid);
       });
       auctionBidsReversed.reverse();
 
-      auctionBidsReversed.forEach((bid) => {
+      auctionBidsReversed.forEach(bid => {
         const account = bid.account;
         const formattedAccount = this.formatAccount(account);
         const name = this.formatName(bid.name);
@@ -247,7 +251,10 @@ export default class BidBackModal extends Vue {
             tokenSymbol: this.auctionCurrency,
             stakedAlgop: 0,
             stakedAlgopPercentage: 0,
-            bidBackPrize: `0.000 ${this.auctionCurrency}`,
+            bidBackPrize:
+            auctionBidsReversed.length === 1
+              ? `${(this.formatHighestBidAmount())} ${this.auctionCurrency}`
+              : `0.000 ${this.auctionCurrency}`,
           });
         }
       });

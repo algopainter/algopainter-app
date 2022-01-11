@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 <template>
   <div
     v-if="loading"
@@ -214,6 +215,7 @@
                   </q-input>
                   <q-input
                     v-else
+                    v-model="PIRSRate"
                     inputmode="number"
                     mask="#"
                     reverse-fill-mask
@@ -379,6 +381,10 @@ enum CreatingAuctionStatus {
   ContractApprovedAwaitingInput,
   ContractApprovedAwaitingConfirmation,
   ContractApprovedError,
+  SettingPirsAwaitingInput,
+  SettingPirsAwaitingConfirmation,
+  SettingPirsError,
+  SettingPirsCompleted,
   CreateAuctionAwaitingInput,
   CreateAuctionAwaitingConfirmation,
   CreateAuctionError,
@@ -387,10 +393,6 @@ enum CreatingAuctionStatus {
   SettingBidBackAwaitingConfirmation,
   SettingBidBackError,
   SettingBidBackCompleted,
-  SettingPirsAwaitingInput,
-  SettingPirsAwaitingConfirmation,
-  SettingPirsError,
-  SettingPirsCompleted,
 }
 
 @Options({
@@ -418,6 +420,7 @@ export default class SellYourArt extends Vue {
   networkInfo!: NetworkInfo;
   userAccount!: string;
   isConnected!: boolean;
+  PIRSRate!: number;
 
   image: IImage | null = null;
   loading: boolean = false;
@@ -621,6 +624,11 @@ export default class SellYourArt extends Vue {
   }
 
   async approveContract() {
+    if (typeof this.PIRSRate === 'undefined') {
+      if (this.imagePirsRate) {
+        this.PIRSRate = this.imagePirsRate;
+      }
+    }
     this.createAuctionStatus = CreatingAuctionStatus.CheckingContractApproved;
 
     const contractApproved = await this.artTokenContract.isApprovedForAll(
@@ -645,6 +653,27 @@ export default class SellYourArt extends Vue {
     });
   }
 
+  async setInvestorPirs(pirs: number) {
+    const { id } = this.$route.params;
+    this.image = await getImage(id as string);
+    this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingInput;
+    await this.pirsSystem
+      .setPIRSRate(
+        this.image.collectionOwner,
+        this.image.nft.index,
+        pirs,
+        this.userAccount,
+      )
+      .on('transactionHash', () => {
+        this.createAuctionStatus =
+          CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
+      })
+      .on('error', () => {
+        this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
+      });
+    this.createAuctionStatus = CreatingAuctionStatus.SettingPirsCompleted;
+  }
+
   async createAuction(auction: INewAuction) {
     try {
       this.displayingStatus = true;
@@ -654,17 +683,19 @@ export default class SellYourArt extends Vue {
       }
 
       await this.approveContract();
+      if (this.isCreator) {
+        await this.setInvestorPirs(this.PIRSRate * 100);
+      }
 
       const { minimumPrice, endDate, endTime, bidBack } = auction;
+      const bidBackRate = bidBack * 100;
       let { pirs } = auction;
       const { decimalPlaces } = this.selectedCoin;
-
       if (typeof pirs === 'undefined') {
         if (this.imagePirsRate) {
           pirs = this.imagePirsRate;
         }
       }
-
       const minimumPriceFormatted = currencyToBlockchain(
         Number(minimumPrice),
         decimalPlaces,
@@ -678,6 +709,7 @@ export default class SellYourArt extends Vue {
           minimumPriceFormatted,
           endDate,
           endTime,
+          bidBackRate,
         )) !== 'no error'
       ) {
         this.displayingStatus = false;
@@ -692,6 +724,7 @@ export default class SellYourArt extends Vue {
           numberToString(minimumPriceFormatted),
           moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
           this.selectedCoin.tokenAddress,
+          bidBackRate,
           this.userAccount,
         )
         .on('transactionHash', () => {
@@ -704,11 +737,6 @@ export default class SellYourArt extends Vue {
       this.createAuctionStatus = CreatingAuctionStatus.AuctionCreated;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
-
-      await this.setBidBack(bidBack * 100);
-      if (this.isCreator) {
-        await this.setInvestorPirs(pirs * 100);
-      }
     } catch {
       this.displayingStatus = false;
     }
@@ -718,6 +746,7 @@ export default class SellYourArt extends Vue {
     minimumPriceFormatted: number,
     endDate: string,
     endTime: string,
+    bidBack: number,
   ) {
     if (this.image && this.selectedCoin) {
       try {
@@ -728,6 +757,7 @@ export default class SellYourArt extends Vue {
           numberToString(minimumPriceFormatted),
           moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
           this.selectedCoin.tokenAddress,
+          bidBack,
           this.userAccount,
         );
         return 'no error';
@@ -754,49 +784,13 @@ export default class SellYourArt extends Vue {
     }
   }
 
-  async setBidBack(bidBack: number) {
-    this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackAwaitingInput;
-
-    await this.bidBackSystem.setBidBackRate(
-      this.auctionId,
-      bidBack,
-      this.userAccount,
-    ).on('transactionHash', () => {
-      this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackAwaitingConfirmation;
-    }).on('error', () => {
-      this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackError;
-    });
-    this.createAuctionStatus = CreatingAuctionStatus.SettingBidBackCompleted;
-  }
-
-  async setInvestorPirs(pirs: number) {
-    const { id } = this.$route.params;
-    this.image = await getImage(id as string);
-    this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingInput;
-    await this.pirsSystem
-      .setInvestorPirsRate(
-        this.image.collectionOwner,
-        this.image.nft.index,
-        pirs,
-        this.userAccount,
-      )
-      .on('transactionHash', () => {
-        this.createAuctionStatus =
-          CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
-      })
-      .on('error', () => {
-        this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
-      });
-    this.createAuctionStatus = CreatingAuctionStatus.SettingPirsCompleted;
-  }
-
   onCloseStatusDialog() {
     this.displayingStatus = false;
 
     if (
       this.createAuctionStatus ===
         CreatingAuctionStatus.SettingBidBackCompleted ||
-      this.createAuctionStatus === CreatingAuctionStatus.SettingPirsCompleted
+      this.createAuctionStatus === CreatingAuctionStatus.AuctionCreated
     ) {
       this.$q.notify({
         type: 'positive',

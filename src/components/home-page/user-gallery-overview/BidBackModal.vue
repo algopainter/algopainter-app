@@ -214,6 +214,9 @@ export default class BidBackModal extends Vue {
       collectionOwner: this.getAuctionInfoBidBack.item.collectionOwner,
       itemIndex: this.getAuctionInfoBidBack.item.index,
     }).then(async() => {
+      const auctionBidBackPrize = blockchainToCurrency(
+        this.getAuctionInfoBidBack.highestBid.netAmount,
+        this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const auction = this.$store.getters['auctions/getPirsAuction'] as IAuctionItem;
       const auctionBids = auction.bids;
@@ -253,7 +256,7 @@ export default class BidBackModal extends Vue {
             stakedAlgopPercentage: 0,
             bidBackPrize:
             auctionBidsReversed.length === 1
-              ? `${(this.formatHighestBidAmount())} ${this.auctionCurrency}`
+              ? `${(this.formatPrize(auctionBidBackPrize))} ${this.auctionCurrency}`
               : `0.000 ${this.auctionCurrency}`,
           });
         }
@@ -279,17 +282,10 @@ export default class BidBackModal extends Vue {
           });
         });
 
-        const auctionBidBackPrize = blockchainToCurrency(
-          this.getAuctionInfoBidBack.highestBid.netAmount,
-          this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
-
         Object.keys(this.getAuctionInfoBidBack.bidbackshare).forEach(() => {
           this.userBid.forEach((bidder) => {
             const valuePrize = ((bidder.stakedAlgopPercentage / 100) * auctionBidBackPrize);
-            const formatPrize = this.$n(valuePrize, 'decimal', {
-              maximumFractionDigits: this.coinDetails.decimalPlaces,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } as any);
+            const formatPrize = this.formatPrize(valuePrize);
             bidder.bidBackPrize = `${formatPrize} ${this.auctionCurrency}`;
           });
         });
@@ -297,6 +293,13 @@ export default class BidBackModal extends Vue {
 
       this.loadingTable = false;
     });
+  }
+
+  formatPrize(valuePrize: number) {
+    return this.$n(valuePrize, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
   }
 
   formatAccount(account: string) {

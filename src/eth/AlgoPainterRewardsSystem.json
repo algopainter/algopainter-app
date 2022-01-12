@@ -1,5 +1,41 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_emergencyTimeInterval",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "BidbackClaimed",
+    "type": "event"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -47,6 +83,31 @@
       }
     ],
     "name": "BidbackUnstaked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "PIRSClaimed",
     "type": "event"
   },
   {
@@ -176,12 +237,51 @@
   },
   {
     "inputs": [],
+    "name": "CONFIGURATOR_ROLE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
       {
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "allowedSender",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "auctionSystem",
+    "outputs": [
+      {
+        "internalType": "contract IAlgoPainterAuctionSystem",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -292,6 +392,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "inEmncyState",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -328,6 +441,52 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "rewardsRatesProvider",
+    "outputs": [
+      {
+        "internalType": "contract IAuctionRewardsRates",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "setEmergencyState",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "stakeToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_tokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setStakeToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -341,48 +500,9 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getAllowedSender",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "_rewardsTokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "setRewardsTokenAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getRewardsTokenAddress",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract AlgoPainterAuctionSystem",
         "name": "_auctionSystemAddress",
         "type": "address"
       }
@@ -393,22 +513,9 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getAuctionSystemAddress",
-    "outputs": [
-      {
-        "internalType": "contract AlgoPainterAuctionSystem",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "contract IAuctionRewardsRatesProvider",
+        "internalType": "address",
         "name": "_rewardsRatesProviderAddress",
         "type": "address"
       }
@@ -416,45 +523,6 @@
     "name": "setRewardsRatesProviderAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getRewardsRatesProviderAddress",
-    "outputs": [
-      {
-        "internalType": "contract IAuctionRewardsRatesProvider",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IAuctionRewardsTotalRatesProvider",
-        "name": "_rewardsTotalRatesProviderAddress",
-        "type": "address"
-      }
-    ],
-    "name": "setRewardsTotalRatesProviderAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getRewardsTotalRatesProviderAddress",
-    "outputs": [
-      {
-        "internalType": "contract IAuctionRewardsTotalRatesProvider",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -549,6 +617,21 @@
         "internalType": "address",
         "name": "owner",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "nftAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nftTokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenPriceAddress",
+        "type": "address"
       }
     ],
     "name": "onAuctionCreated",
@@ -607,7 +690,7 @@
         "type": "uint256"
       }
     ],
-    "name": "onWithdraw",
+    "name": "onBidWithdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -746,16 +829,36 @@
         "internalType": "uint256",
         "name": "auctionId",
         "type": "uint256"
-      },
+      }
+    ],
+    "name": "hasPIRSStakes",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "auctionId",
         "type": "uint256"
       }
     ],
-    "name": "withdrawPirs",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "hasBidbackStakes",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -780,6 +883,19 @@
       }
     ],
     "name": "claimPirs",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "emergencyTransfer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

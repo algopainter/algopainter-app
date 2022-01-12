@@ -10,7 +10,8 @@
       rounded
       outlined
       bottom-slots
-      @update:model-value="filterCollection(1, currentCollection.label)">
+      @update:model-value="filterCollection(1, currentCollection.label)"
+    >
       <template #before>
         <q-icon name="filter_list" color="primary" />
       </template>
@@ -20,7 +21,7 @@
         <algo-button
           v-for="(btn, index) in galleryTabs"
           :key="index"
-          :label="$t(`dashboard.homePage.${btn.label}`) + btn.contLabel"
+          :label="$t(`dashboard.gallery.navigator.${btn.label}`) + btn.contLabel"
           outline
           class="algo-button q-px-md q-ml-sm"
           :color="currentBtnClicked === btn.btnIndex ? 'primary' : 'grey-5'"
@@ -46,7 +47,7 @@
             <div>
               <gallery-item
                 :art="item"
-                :btn-name="'dashboard.homePage.sell'"
+                :btn-name="'dashboard.gallery.btnName.sell'"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -54,7 +55,7 @@
         </div>
         <div v-else class="col-12 q-mt-lg justify-center">
           <p class="text-h6 text-primary text-center q-pb-md text-noItems">
-            {{ $t('dashboard.homePage.personalNoItems') }}
+            {{ $t('dashboard.gallery.noItemsPersonal.galleryMsg') }}
           </p>
         </div>
       </div>
@@ -83,7 +84,7 @@
         <algo-button
           v-if="!galleryTabs[0].noData"
           :label="
-            $t('dashboard.homePage.loadMore', {
+            $t('dashboard.gallery.btnName.goToAuction', {
               msg: btnLoadMoreMsg,
             })
           "
@@ -112,7 +113,7 @@
             <div>
               <onsale-item
                 :art="item"
-                :btn-name="'dashboard.homePage.goToAuction'"
+                :btn-name="'dashboard.gallery.btnName.goToAuction'"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -120,10 +121,10 @@
         </div>
         <div v-else class="col-12 q-mt-lg">
           <div class="text-h6 text-primary text-center q-pb-md">
-            {{ $t('dashboard.homePage.noItemsForSalePrivate1') }}
+            {{ $t('dashboard.gallery.noItemsPersonal.onSaleMsg1') }}
           </div>
           <div class="text-h9 text-primary text-center q-pb-md">
-            {{ $t('dashboard.homePage.noItemsForSalePrivate2') }}
+            {{ $t('dashboard.gallery.noItemsPersonal.onSaleMsg2') }}
           </div>
         </div>
       </div>
@@ -152,7 +153,7 @@
         <algo-button
           v-if="!galleryTabs[1].noData"
           :label="
-            $t('dashboard.homePage.loadMore', {
+            $t('dashboard.gallery.loadMore', {
               msg: btnLoadMoreMsg,
             })
           "
@@ -182,7 +183,7 @@
         </div>
         <div v-else class="col-12 q-mt-lg justify-center">
           <div class="text-h6 text-primary text-center q-pb-md">
-            {{ $t('dashboard.homePage.noItems') }}
+            {{ $t('dashboard.gallery.noItemsPersonal.likedMsg') }}
           </div>
         </div>
       </div>
@@ -211,7 +212,7 @@
         <algo-button
           v-if="!galleryTabs[2].noData"
           :label="
-            $t('dashboard.homePage.loadMore', {
+            $t('dashboard.gallery.loadMore', {
               msg: btnLoadMoreMsg,
             })
           "
@@ -230,13 +231,13 @@
           <div v-for="(item, index) in galleryTabs[3].data" :key="index">
             <pirs-item
               :art="item"
-              :btn-name="'dashboard.auctions.stackAlgop'"
+              :btn-name="'dashboard.gallery.btnName.stakeAlgop'"
               @favoriteClicked="favoriteClicked"
             />
           </div>
         </div>
         <div v-else class="text-h6 text-primary text-center q-pb-md">
-          {{ $t('dashboard.homePage.personalNoPirs') }}
+          {{ $t('dashboard.gallery.noItemsPersonal.pirsMsg') }}
         </div>
       </div>
       <div v-else>
@@ -264,7 +265,7 @@
         <algo-button
           v-if="!galleryTabs[3].noData"
           :label="
-            $t('dashboard.homePage.loadMore', {
+            $t('dashboard.gallery.loadMore', {
               msg: btnLoadMoreMsg,
             })
           "
@@ -283,13 +284,13 @@
           <div v-for="(item, index) in galleryTabs[4].data" :key="index">
             <gallery-select
               :art="item"
-              :btn-name="'dashboard.auctions.stackAlgop'"
+              :btn-name="'dashboard.gallery.btnName.stakeAlgop'"
               @favoriteClicked="favoriteClicked"
             />
           </div>
         </div>
         <div v-else class="text-h6 text-primary text-center q-pb-md">
-          {{ $t('dashboard.homePage.personalNoBid') }}
+          {{ $t('dashboard.gallery.noItemsPersonal.bidBackMsg') }}
         </div>
       </div>
       <div v-else>
@@ -317,7 +318,7 @@
         <algo-button
           v-if="!galleryTabs[3].noData"
           :label="
-            $t('dashboard.homePage.loadMore', {
+            $t('dashboard.gallery.loadMore', {
               msg: btnLoadMoreMsg,
             })
           "
@@ -369,22 +370,36 @@ enum GalleryTabsEnum {
     OnsaleItem,
   },
   computed: {
-    ...mapGetters('collections', ['pirsTabImages']),
+    ...mapGetters('collections', {
+      pirsTabData: 'pirsTabImages',
+      onSaleTabData: 'GET_USER_ON_SALE',
+      galleryTabData: 'GET_IMAGES',
+      filterCollectionOptions: 'GET_COLLECTIONS',
+    }),
+    ...mapGetters('auctions', {
+      bidBackTabData: 'getBidBack',
+    }),
     ...mapGetters('user', {
       userAccount: 'account',
       networkInfo: 'networkInfo',
       isConnected: 'isConnected',
+      likedTabData: 'GET_USER_LIKES',
     }),
   },
 })
 export default class MyGalleryOverview extends Vue {
   isConnected?: boolean;
   userAccount?: string;
+  galleryTabData!: IAxiosPaginated;
+  onSaleTabData!: IAxiosPaginated;
+  likedTabData!: IAxiosPaginated;
+  pirsTabData!: IAxiosPaginated;
+  bidBackTabData!: IAxiosPaginated;
+  filterCollectionOptions!: IAxios;
 
   galleryTabsEnum: GalleryTabsEnum = GalleryTabsEnum.GalleryTab;
   currentBtnClicked: number = 1;
 
-  pirsTabImages!: IAxiosPaginated;
   loadMoreBtn: boolean = false;
   btnLoadMoreMsg: string = 'Load More';
   loadMoreCounter: number = 1;
@@ -401,7 +416,7 @@ export default class MyGalleryOverview extends Vue {
 
   galleryTabs: IGalleryTab[] = [
     {
-      label: 'gallery',
+      label: 'galleryBtn',
       cont: 0,
       contLabel: '',
       btnIndex: 1,
@@ -414,7 +429,7 @@ export default class MyGalleryOverview extends Vue {
       reloadInterval: 0,
     },
     {
-      label: 'onSale',
+      label: 'onSaleBtn',
       cont: 0,
       contLabel: '',
       btnIndex: 2,
@@ -426,7 +441,7 @@ export default class MyGalleryOverview extends Vue {
       reloadInterval: 0,
     },
     {
-      label: 'like',
+      label: 'likedBtn',
       cont: 0,
       contLabel: '',
       btnIndex: 3,
@@ -438,7 +453,7 @@ export default class MyGalleryOverview extends Vue {
       reloadInterval: 0,
     },
     {
-      label: 'pirs',
+      label: 'pirsBtn',
       cont: 0,
       contLabel: '',
       btnIndex: 4,
@@ -450,7 +465,7 @@ export default class MyGalleryOverview extends Vue {
       reloadInterval: 0,
     },
     {
-      label: 'bid',
+      label: 'bidBackBtn',
       cont: 0,
       contLabel: '',
       btnIndex: 5,
@@ -539,19 +554,20 @@ export default class MyGalleryOverview extends Vue {
 
   async getCollections() {
     this.getCollectionsLoading = true;
+
     await this.$store
       .dispatch({
         type: 'collections/getAllCollections',
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'collections/GET_COLLECTIONS'
-        ] as IAxios;
-        const collectionFilter = response.data;
+        const collectionFilter = this.filterCollectionOptions.data;
+
         collectionFilter.forEach((item: ICollection) => {
-          this.collectionFilter.push({ label: item.title });
+          if (item.title !== 'Personal Item') {
+            this.collectionFilter.push({ label: item.title });
+          }
         });
+
         this.getCollectionsLoading = false;
       });
   }
@@ -597,9 +613,7 @@ export default class MyGalleryOverview extends Vue {
     watcher: boolean = false,
     isRefresh: boolean = false,
   ) {
-    if (!isRefresh) {
-      this.galleryTabs[0].loadingData = true;
-    }
+    this.galleryTabs[0].loadingData = !isRefresh;
     this.galleryTabs[0].currentPage = page;
     if (!watcher) {
       this.currentBtnClicked = 1;
@@ -610,19 +624,15 @@ export default class MyGalleryOverview extends Vue {
         type: 'collections/getUserItems',
         account: this.userAccount,
         page: page,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
         collectionName: collection,
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'collections/GET_IMAGES'
-        ] as IAxiosPaginated;
         if (this.isConnected) {
-          this.galleryTabs[0].data = response.data as [];
-          this.galleryTabs[0].cont = response.count;
-          this.galleryTabs[0].contLabel = ` (${response.count})`;
-          this.galleryTabs[0].maxPages = response.pages;
+          this.galleryTabs[0].data = this.galleryTabData.data as [];
+          this.galleryTabs[0].cont = this.galleryTabData.count;
+          this.galleryTabs[0].contLabel = ` (${this.galleryTabData.count})`;
+          this.galleryTabs[0].maxPages = this.galleryTabData.pages;
           this.galleryTabs[0].noData = this.galleryTabs[0].data.length === 0;
         }
         this.galleryTabs[0].loadingButtons = false;
@@ -636,9 +646,7 @@ export default class MyGalleryOverview extends Vue {
     watcher: boolean = false,
     isRefresh: boolean = false,
   ) {
-    if (!isRefresh) {
-      this.galleryTabs[1].loadingData = true;
-    }
+    this.galleryTabs[1].loadingData = !isRefresh;
     this.galleryTabs[1].currentPage = page;
     if (!watcher) {
       this.currentBtnClicked = 2;
@@ -649,19 +657,15 @@ export default class MyGalleryOverview extends Vue {
         type: 'collections/getUserOnSale',
         account: this.userAccount,
         page: page,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
         collectionName: collection,
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'collections/GET_USER_ON_SALE'
-        ] as IAxiosPaginated;
         if (this.isConnected) {
-          this.galleryTabs[1].data = response.data;
-          this.galleryTabs[1].cont = response.count;
-          this.galleryTabs[1].contLabel = ` (${response.count})`;
-          this.galleryTabs[1].maxPages = response.pages;
+          this.galleryTabs[1].data = this.onSaleTabData.data;
+          this.galleryTabs[1].cont = this.onSaleTabData.count;
+          this.galleryTabs[1].contLabel = ` (${this.onSaleTabData.count})`;
+          this.galleryTabs[1].maxPages = this.onSaleTabData.pages;
           this.galleryTabs[1].noData = this.galleryTabs[1].data.length === 0;
         }
         this.galleryTabs[1].loadingData = false;
@@ -674,9 +678,7 @@ export default class MyGalleryOverview extends Vue {
     watcher: boolean = false,
     isRefresh: boolean = false,
   ) {
-    if (!isRefresh) {
-      this.galleryTabs[2].loadingData = true;
-    }
+    this.galleryTabs[2].loadingData = !isRefresh;
     this.galleryTabs[2].currentPage = page;
     if (!watcher) {
       this.currentBtnClicked = 3;
@@ -687,29 +689,26 @@ export default class MyGalleryOverview extends Vue {
         type: 'user/getUserLikes',
         account: this.userAccount,
         page: page,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
         collectionName: collection,
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'user/GET_USER_LIKES'
-        ] as IAxiosPaginated;
         if (this.isConnected) {
-          this.galleryTabs[2].data = response.data;
-          this.galleryTabs[2].cont = response.count;
-          this.galleryTabs[2].contLabel = ` (${response.count})`;
-          this.galleryTabs[2].maxPages = response.pages;
+          this.galleryTabs[2].data = this.likedTabData.data;
+          this.galleryTabs[2].cont = this.likedTabData.count;
+          this.galleryTabs[2].contLabel = ` (${this.likedTabData.count})`;
+          this.galleryTabs[2].maxPages = this.likedTabData.pages;
           this.galleryTabs[2].noData = this.galleryTabs[2].data.length === 0;
         }
         this.galleryTabs[2].loadingData = false;
       });
   }
 
-  getPirs(page: number = 1, isRefresh: boolean = false) {
-    if (!isRefresh) {
-      this.galleryTabs[3].loadingData = true;
-    }
+  getPirs(
+    page: number = 1,
+    isRefresh: boolean = false,
+  ) {
+    this.galleryTabs[3].loadingData = !isRefresh;
     this.galleryTabs[3].currentPage = page;
 
     this.currentBtnClicked = 4;
@@ -720,26 +719,28 @@ export default class MyGalleryOverview extends Vue {
         type: 'collections/getUserPirsTabImages',
         account: this.userAccount,
         page: page,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
       })
       .then(() => {
         if (this.isConnected) {
-          this.galleryTabs[3].data = this.pirsTabImages.data;
+          this.galleryTabs[3].data = this.pirsTabData.data;
           this.galleryTabs[3].cont =
-            this.pirsTabImages.count > 0 ? this.pirsTabImages.count : 0;
+          this.pirsTabData.count > 0 ? this.pirsTabData.count : 0;
           this.galleryTabs[3].contLabel = ` (${this.galleryTabs[3].cont})`;
-          this.galleryTabs[3].maxPages = this.pirsTabImages.pages;
+          this.galleryTabs[3].maxPages = this.pirsTabData.pages;
           this.galleryTabs[3].noData = this.galleryTabs[3].data.length === 0;
         }
 
         this.galleryTabs[3].loadingData = false;
-      }).catch(console.error);
+      })
+      .catch(console.error);
   }
 
-  getBidBack(page: number = 1, isRefresh: boolean = false) {
-    if (!isRefresh) {
-      this.galleryTabs[4].loadingData = true;
-    }
+  getBidBack(
+    page: number = 1,
+    isRefresh: boolean = false,
+  ) {
+    this.galleryTabs[4].loadingData = !isRefresh;
     this.galleryTabs[4].currentPage = page;
     this.currentBtnClicked = 5;
     this.galleryTabsEnum = GalleryTabsEnum.BidBackTab;
@@ -748,22 +749,19 @@ export default class MyGalleryOverview extends Vue {
         type: 'auctions/getBidBack',
         account: this.userAccount,
         page: page,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'auctions/getBidBack'
-        ] as IAxiosPaginated;
         if (this.isConnected) {
-          this.galleryTabs[4].data = response.data;
-          this.galleryTabs[4].cont = response.count > 0 ? response.count : 0;
+          this.galleryTabs[4].data = this.bidBackTabData.data;
+          this.galleryTabs[4].cont = this.bidBackTabData.count > 0 ? this.bidBackTabData.count : 0;
           this.galleryTabs[4].contLabel = ` (${this.galleryTabs[4].cont})`;
-          this.galleryTabs[4].maxPages = response.pages;
+          this.galleryTabs[4].maxPages = this.bidBackTabData.pages;
           this.galleryTabs[4].noData = this.galleryTabs[4].data.length === 0;
         }
         this.galleryTabs[4].loadingData = false;
-      }).catch(console.error);
+      })
+      .catch(console.error);
   }
 
   async loadMore(
@@ -781,17 +779,13 @@ export default class MyGalleryOverview extends Vue {
         type: 'collections/getUserItems',
         account: this.userAccount,
         page: this.loadMoreCounter,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
         collectionName: collection,
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'collections/GET_IMAGES'
-        ] as IAxiosPaginated;
-        const tempGalleryArts = response.data;
-        this.galleryTabs[0].cont = response.count;
-        this.galleryTabs[0].contLabel = ` (${response.count})`;
+        const tempGalleryArts = this.galleryTabData.data;
+        this.galleryTabs[0].cont = this.galleryTabData.count;
+        this.galleryTabs[0].contLabel = ` (${this.galleryTabData.count})`;
         if (tempGalleryArts.length === 0) {
           this.btnLoadMoreMsg = 'Nothing else to show';
           this.noMoreImages = true;
@@ -821,17 +815,13 @@ export default class MyGalleryOverview extends Vue {
         type: 'collections/getUserOnSale',
         account: this.userAccount,
         page: this.loadMoreCounterOnSale,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
         collectionName: collection,
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'collections/GET_USER_ON_SALE'
-        ] as IAxiosPaginated;
-        const onSaleMobile = response.data;
-        this.galleryTabs[1].cont = response.count;
-        this.galleryTabs[1].contLabel = ` (${response.count})`;
+        const onSaleMobile = this.onSaleTabData.data;
+        this.galleryTabs[1].cont = this.onSaleTabData.count;
+        this.galleryTabs[1].contLabel = ` (${this.onSaleTabData.count})`;
         if (onSaleMobile.length === 0) {
           this.btnLoadMoreMsg = 'Nothing else to show';
           this.noMoreImages = true;
@@ -861,17 +851,13 @@ export default class MyGalleryOverview extends Vue {
         type: 'user/getUserLikes',
         account: this.userAccount,
         page: this.loadMoreCounterLike,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
         collectionName: collection,
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'user/GET_USER_LIKES'
-        ] as IAxiosPaginated;
-        const likeMobile = response.data;
-        this.galleryTabs[2].cont = response.count;
-        this.galleryTabs[2].contLabel = ` (${response.count})`;
+        const likeMobile = this.likedTabData.data;
+        this.galleryTabs[2].cont = this.likedTabData.count;
+        this.galleryTabs[2].contLabel = ` (${this.likedTabData.count})`;
         if (likeMobile.length === 0) {
           this.btnLoadMoreMsg = 'Nothing else to show';
           this.noMoreImages = true;
@@ -895,18 +881,18 @@ export default class MyGalleryOverview extends Vue {
         type: 'collections/getUserPirsTabImages',
         account: this.userAccount,
         page: this.loadMoreCounterPirs,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
       })
       .then(() => {
-        this.galleryTabs[3].cont = this.pirsTabImages.count;
-        this.galleryTabs[3].contLabel = ` (${this.pirsTabImages.count})`;
+        this.galleryTabs[3].cont = this.pirsTabData.count;
+        this.galleryTabs[3].contLabel = ` (${this.pirsTabData.count})`;
 
-        if (this.pirsTabImages.data.length === 0) {
+        if (this.pirsTabData.data.length === 0) {
           this.btnLoadMoreMsg = 'Nothing else to show';
           this.noMoreImages = true;
           this.galleryTabs[3].noData = this.galleryTabs[3].data.length === 0;
         } else {
-          this.pirsTabImages.data.forEach((i) => {
+          this.pirsTabData.data.forEach((i) => {
             this.galleryTabs[3].data.push(i);
           });
         }
@@ -922,18 +908,14 @@ export default class MyGalleryOverview extends Vue {
     await this.$store
       .dispatch({
         type: 'auctions/getBidBack',
-        account: this.userAccount, // '0x3E20E1efcb1ae11C3db0495aF83139d1b9C0D26a',
+        account: this.userAccount,
         page: this.loadMoreCounterBidBack,
-        perPage: '9',
+        perPage: this.maxItemsPerPage,
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'auctions/getBidBack'
-        ] as IAxiosPaginated;
-        const likeMobile = response.data;
-        this.galleryTabs[4].cont = response.count;
-        this.galleryTabs[4].contLabel = ` (${response.count})`;
+        const likeMobile = this.bidBackTabData.data;
+        this.galleryTabs[4].cont = this.bidBackTabData.count;
+        this.galleryTabs[4].contLabel = ` (${this.bidBackTabData.count})`;
         if (likeMobile.length === 0) {
           this.btnLoadMoreMsg = 'Nothing else to show';
           this.noMoreImages = true;

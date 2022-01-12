@@ -52,11 +52,15 @@
               class="row justify-start time-year q-gutter-sm"
             >
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countYear }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countYear }}
+                </div>
                 <span> {{ $t('dashboard.bid.year') }} </span>
               </div>
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
 
@@ -83,7 +87,9 @@
             </div>
             <div v-else class="row justify-start time q-gutter-sm">
               <div>
-                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
+                <div class="text-bold">
+                  <!-- {{ days }}  -->{{ countDays }}
+                </div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
 
@@ -325,13 +331,16 @@ export default class PirsItem extends Vue.with(Props) {
   async getPirsPercentage() {
     try {
       this.imagePirsRate =
-        (await this.bidBackPirsSystem.getInvestorPirsRate(this.art.index)) /
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        (await this.bidBackPirsSystem.getPIRSRate(this.art.index)) /
         100;
     } catch (error) {
-      console.log('Error - getInvestorPirsRate - PirsItem');
+      console.log('Error - getPIRSRate - PirsItem');
     }
     if (this.imagePirsRate > 0) {
-      this.getCurrentPrizeAmount().catch(console.error);
+      setInterval(() => {
+        this.getCurrentPrizeAmount().catch(console.error);
+      }, 1000);
     }
     this.getUserStakedPirs();
   }
@@ -345,7 +354,7 @@ export default class PirsItem extends Vue.with(Props) {
       const bidAmount = blockchainToCurrency(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         highestBidAmount,
-        this.coinDetails.decimalPlaces
+        this.coinDetails.decimalPlaces,
       );
       this.lastBid = this.$n(bidAmount, 'decimal', {
         maximumFractionDigits: this.coinDetails.decimalPlaces,
@@ -376,7 +385,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   getUserStakedPirs() {
     if (this.art.pirs) {
-      this.algopStaked = this.art.pirs[this.account] || 0;
+      this.algopStaked = this.art.pirs && (this.art.pirs[this.account] || 0);
     }
     this.disableUnstackBtn = this.algopStaked <= 0 || this.art.ended;
     this.showHarvestBtn =
@@ -512,6 +521,7 @@ export default class PirsItem extends Vue.with(Props) {
         this.getTime();
       }
     }
+    this.getUserStakedPirs();
     this.lastCountDays = this.countDays;
     this.lastCountHours = this.countHours;
     this.lastCountMinutes = this.countMinutes;

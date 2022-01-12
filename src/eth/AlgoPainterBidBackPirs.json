@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -23,18 +28,18 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
+        "internalType": "bytes32",
         "name": "_tokenAddress",
-        "type": "address"
+        "type": "bytes32"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_creatorPirsRate",
+        "name": "_creatorRoyaltiesRate",
         "type": "uint256"
       }
     ],
-    "name": "CreatorPirsUpdated",
+    "name": "CreatorRoyaltiesUpdated",
     "type": "event"
   },
   {
@@ -139,12 +144,68 @@
   },
   {
     "inputs": [],
+    "name": "CONFIGURATOR_ROLE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
       {
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "bidbackRatePerAuction",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "creatorRoyaltiesRates",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -293,7 +354,77 @@
   {
     "inputs": [
       {
-        "internalType": "contract AlgoPainterAuctionSystem",
+        "internalType": "bytes32",
+        "name": "hashKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rate",
+        "type": "uint256"
+      }
+    ],
+    "name": "setRate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "hashKey",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "toggleCanSetCreatorRate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_distributorAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setAuctionDistributorAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAuctionDistributorAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_auctionSystemAddress",
         "type": "address"
       }
@@ -306,17 +437,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
-        "name": "_maxCreatorPirsRate",
+        "name": "_maxCreatorRoyaltiesRate",
         "type": "uint256"
       }
     ],
-    "name": "setMaxCreatorPirsRate",
+    "name": "setMaxCreatorRoyaltiesRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -329,7 +455,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setMaxInvestorPirsRate",
+    "name": "setMaxPIRSRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -383,7 +509,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setInvestorPirsRate",
+    "name": "setPIRSRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -391,17 +517,17 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_hashAddress",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
-        "name": "_creatorPirsRate",
+        "name": "_creatorRoyaltiesRate",
         "type": "uint256"
       }
     ],
-    "name": "setCreatorPirsRate",
+    "name": "setCreatorRoyaltiesRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -409,12 +535,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_hashAddress",
+        "type": "bytes32"
       }
     ],
-    "name": "getCreatorPIRSByTokenAddress",
+    "name": "getCreatorRoyaltiesByTokenAddress",
     "outputs": [
       {
         "internalType": "uint256",
@@ -452,7 +578,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getInvestorPirsRate",
+    "name": "getPIRSRate",
     "outputs": [
       {
         "internalType": "uint256",
@@ -476,26 +602,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getInvestorPirsRatePerImage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_auctionId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getCreatorPirsRate",
+    "name": "getPIRSRatePerImage",
     "outputs": [
       {
         "internalType": "uint256",
@@ -512,9 +619,46 @@
         "internalType": "address",
         "name": "_tokenAddress",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
       }
     ],
-    "name": "getMaxCreatorPirsRate",
+    "name": "hasPIRSRateSetPerImage",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCreatorRoyaltiesRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMaxCreatorRoyaltiesRate",
     "outputs": [
       {
         "internalType": "uint256",

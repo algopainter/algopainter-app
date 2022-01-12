@@ -264,7 +264,7 @@ export default class AccountDetails extends Vue {
   sliceBio(): string {
     const bio = this.profile.bio as string;
     if (!this.expanded) {
-      const bioInic = bio.slice(0, 139);
+      const bioInic = bio?.slice(0, 139);
       return bioInic;
     } else {
       return bio;

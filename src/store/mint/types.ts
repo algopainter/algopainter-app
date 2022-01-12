@@ -12,6 +12,7 @@ export default interface MintStateInterface {
     IPFSUrl: string | undefined,
     userConfirmations: boolean | undefined,
     isMinting: boolean,
+    errorMessage: string | undefined,
   },
   expressions: {
     collectionInfo: ICollectionInfo | undefined,
@@ -23,5 +24,6 @@ export default interface MintStateInterface {
     IPFSUrl: string | undefined,
     userConfirmations: boolean | undefined,
     isMinting: boolean,
+    errorMessage: string | undefined,
   },
 }

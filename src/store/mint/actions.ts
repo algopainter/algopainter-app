@@ -80,6 +80,17 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_EXPRESSIONS_IS_MINTING', isMinting);
     }
   },
+
+  errorMessage(type, value) {
+    const errorMessage: string = value.errorMessage;
+    const collectionName: string = value.collectionName;
+
+    if (collectionName === 'gwei') {
+      this.commit('mint/SET_GWEI_ERROR_MESSAGE', errorMessage);
+    } else if (collectionName === 'expressions') {
+      this.commit('mint/SET_EXPRESSIONS_ERROR_MESSAGE', errorMessage);
+    }
+  },
 };
 
 export default actions;

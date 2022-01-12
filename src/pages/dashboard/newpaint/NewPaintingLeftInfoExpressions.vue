@@ -281,6 +281,9 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   }
 
   generatePreview() {
+    this.isError = false;
+    this.errorMessage = '';
+
     this.parsedItem = {
       background: this.item.background.value,
       gender: this.item.gender.value.toString() === '0' ? 'F' : 'M',
@@ -372,24 +375,24 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('ALREADY_REGISTERED') >= 0) {
-          this.errorMessage = 'Another user has minted an artwork using this configuration, please select other set of parameters.';
+          this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.alreadyMinted');
           return;
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('PRICE_HAS_CHANGED') >= 0) {
-          this.errorMessage = 'The current price has changed, please update the page!';
+          this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.priceChanged');
           return;
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('INVALID_AMOUNT') >= 0) {
-          this.errorMessage = 'Invalid amount!';
+          this.$t('dashboard.newPainting.expressions.mintErrors.invalidAmount');
           return;
         }
 
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${e.message}`;
+        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.unexpected', { errorMsg: e.message });
         return;
       }
 
@@ -403,7 +406,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       if (!this.previewIPFSHash) {
         this.setModalInitialState().catch(console.error);
         this.isError = true;
-        this.errorMessage = 'An error has occured while generating preview file!';
+        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.generating', { type: 'preview' });
         return;
       }
 
@@ -416,7 +419,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         this.setModalInitialState().catch(console.error);
         this.mintStatus = MintStatus.GeneratingRawFileError;
         this.isError = true;
-        this.errorMessage = 'An error has occured while generating raw file!';
+        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.generating', { type: 'raw' });
         return;
       }
 
@@ -441,7 +444,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       if (!this.descriptorIPFSHash) {
         this.setModalInitialState().catch(console.error);
         this.isError = true;
-        this.errorMessage = 'An error has occured while generating descriptor file!';
+        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.generating', { type: 'descriptor' });
         return;
       }
 
@@ -452,6 +455,16 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       console.log(e);
       this.setModalInitialState().catch(console.error);
     }
+  }
+
+  @Watch('errorMessage')
+  async onErrorMessageChanged() {
+    await this.$store
+      .dispatch({
+        type: 'mint/errorMessage',
+        errorMessage: this.errorMessage,
+        collectionName: this.collectionName,
+      })
   }
 
   async setIPFSUrl(IPFSUrl: string) {
@@ -482,7 +495,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         this.mintStatus = MintStatus.MintError;
         this.isError = true;
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${error}`;
+        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.unexpected', { errorMsg: error });
       }).catch(console.error);
 
       result.on('transactionHash', () => {
@@ -504,7 +517,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         this.isError = false;
       } else {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${e.message}`;
+        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.unexpected', { errorMsg: e.message });
       }
     }
   }

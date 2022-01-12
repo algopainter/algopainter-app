@@ -47,6 +47,12 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_EXPRESSIONS_IS_MINTING(state: MintStateInterface): boolean | undefined {
     return state.expressions.isMinting;
   },
+  GET_GWEI_ERROR_MESSAGE(state: MintStateInterface): string | undefined {
+    return state.gwei.errorMessage;
+  },
+  GET_EXPRESSIONS_ERROR_MESSAGE(state: MintStateInterface): string | undefined {
+    return state.expressions.errorMessage;
+  },
 };
 
 export default getters;

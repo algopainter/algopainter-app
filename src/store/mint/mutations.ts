@@ -44,6 +44,12 @@ const mutation: MutationTree<MintStateInterface> = {
   SET_EXPRESSIONS_IS_MINTING(state: MintStateInterface, payload) {
     state.expressions.isMinting = payload;
   },
+  SET_GWEI_ERROR_MESSAGE(state: MintStateInterface, payload) {
+    state.gwei.errorMessage = payload;
+  },
+  SET_EXPRESSIONS_ERROR_MESSAGE(state: MintStateInterface, payload) {
+    state.expressions.errorMessage = payload;
+  },
 };
 
 export default mutation;

@@ -28,7 +28,7 @@ const mutation: MutationTree<AuctionStateInterface> = {
     state.bids = payload as [];
   },
   SET_BIDBACK(state: AuctionStateInterface, payload) {
-    state.bids = payload as [];
+    state.bidbacks = payload as [];
   },
   SET_BIDS_UPDATED(state: AuctionStateInterface, payload) {
     state.bidsUpdated = payload as [];

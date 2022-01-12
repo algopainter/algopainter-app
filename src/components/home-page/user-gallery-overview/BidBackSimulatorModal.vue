@@ -480,7 +480,7 @@ export default class BidBackModalSimulator extends Vue {
   formatHighestBidAmount() {
     const bidBackAmount = blockchainToCurrency(
       this.getAuctionInfoBidBack.highestBid.netAmount,
-      this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
+      this.coinDetails.decimalPlaces);
     return this.$n(bidBackAmount, 'decimal', {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -490,6 +490,10 @@ export default class BidBackModalSimulator extends Vue {
   async setTableInfo(isASimulation: boolean = true) {
     this.userBid = [];
     this.loadingTable = true;
+
+    const auctionBidBackPrize = blockchainToCurrency(
+      this.getAuctionInfoBidBack.highestBid.netAmount,
+      this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
 
     const stakeAmount = (isASimulation) ? Number(this.stakeAmount) : this.stakeAmount;
 
@@ -528,11 +532,11 @@ export default class BidBackModalSimulator extends Vue {
           formattedAccount: formattedAccount,
           highestBid: highestBid,
           auctionCurrency: this.auctionCurrency,
-          stakedAlgop: name === 'You' && isASimulation && stakeAmount ? stakeAmount : 0,
+          stakedAlgop: name === 'You' && isASimulation && stakeAmount ? stakeAmount + this.totalBidBackStaked : 0,
           stakedAlgopPercentage: auctionBidsReversed.length === 1 && isASimulation ? 100 : 0,
           bidBackPrize:
             auctionBidsReversed.length === 1 && isASimulation
-              ? `${(this.formatHighestBidAmount())} ${this.auctionCurrency}`
+              ? `${(this.formatPrize(auctionBidBackPrize))} ${this.auctionCurrency}`
               : `0.000 ${this.auctionCurrency}`,
         });
       }
@@ -577,10 +581,6 @@ export default class BidBackModalSimulator extends Vue {
         });
       });
 
-      const auctionBidBackPrize = blockchainToCurrency(
-        this.getAuctionInfoBidBack.highestBid.netAmount,
-        this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
-
       Object.keys(this.getAuctionInfoBidBack.bidbackshare).forEach(() => {
         this.userBid.forEach((bidder) => {
           const valuePrize = ((bidder.stakedAlgopPercentage / 100) * auctionBidBackPrize);
@@ -594,6 +594,13 @@ export default class BidBackModalSimulator extends Vue {
     }
 
     this.loadingTable = false;
+  }
+
+  formatPrize(valuePrize: number) {
+    return this.$n(valuePrize, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
   }
 
   formatAccount(account: string) {

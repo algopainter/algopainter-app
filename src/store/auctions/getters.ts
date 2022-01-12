@@ -29,7 +29,7 @@ const getters: GetterTree<AuctionStateInterface, StateInterface> = {
     return state.pirsUpdated;
   },
   getBidBack(state: AuctionStateInterface): [] | undefined {
-    return state.bids;
+    return state.bidbacks;
   },
   getPirsAuction(state: AuctionStateInterface): [] | undefined {
     return state.pirsAuction;

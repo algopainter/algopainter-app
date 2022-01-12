@@ -136,13 +136,22 @@ export default class HomePageGallery extends Vue {
   }
 
   async getCollections() {
-    const collections = await new CollectionController().getCollections();
+    const resp = await new CollectionController().getCollections();
+    const collections: ICollection[] = [];
+
+    resp?.forEach((collection: ICollection) => {
+      if (collection.title.toLowerCase() !== 'personal item') {
+        collections.push(collection);
+      }
+    });
     if (collections) {
-      this.collections = collections.slice(0, 3); // Simulation of three items received from api, only
+      this.collections = collections;
       this.currentCollection = collections[0];
-      const images = await new CollectionController().getCollectionsImages(collections[0]._id);
+      const images = await new CollectionController().getCollectionsImages(
+        collections[0]._id
+      );
       this.currentCollectionGallery = images.map((image) =>
-        this.mapImageToGalleryItem(image),
+        this.mapImageToGalleryItem(image)
       );
     }
     this.currentCollectionGallery.forEach((item) => {

@@ -227,7 +227,7 @@ export default {
     auctionDistribution: 'Auction Distribution',
     saleNumber: 'Sale {saleNumber} of {totalSales}',
     highestBidBy: 'Highest bid by {highestBidBy}',
-    auctionRates: 'Rates: {bidBackRate}% BidBack / {investorPirsRate}% Investor PIRS / {creatorPirsRate}% Creator Royalties',
+    auctionRates: 'Rates: {bidBackRate}% BidBack / {investorPirsRate}% Investor PIRS / {creatorRoyaltiesRate}% Creator Royalties',
     pirsDestination: '{pirs} of sales will go to {role}',
     previousBid: 'Offered {bidPrice} for {bidAtInDays} days ago',
     previousBidBy: 'by {name}',
@@ -388,6 +388,7 @@ export default {
     btnName: {
       goToAuction: 'Go to auction',
       stakeAlgop: 'Stake ALGOP',
+      sell: 'Sell your Art',
     },
     loadMore: '{msg}',
     gwei: 'Gwei',
@@ -479,8 +480,8 @@ export default {
     yourBid: 'Your Bid',
     yourLastBid: 'Your Last Bid',
     bidAgain: 'Bid again',
-    bidWithdraw: 'Withdraw my bid',
-    removeBid: 'Remove my bid',
+    bidWithdraw: 'Withdraw my bid {amountRemove} ALGOP',
+    removeBid: 'Withdraw my bid {amountRemove} ALGOP',
     of: ',',
   },
   stackModalAlgop: {

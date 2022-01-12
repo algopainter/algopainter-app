@@ -55,110 +55,6 @@
             </div>
           </div>
         </div>
-        <div class="col-12 step">
-          <div class="avatar">
-            <q-avatar
-              v-if="createAuctionStatus < CreatingAuctionStatus.CreateAuctionAwaitingInput"
-              size="60px"
-              color="grey"
-              text-color="white"
-            >
-              <q-icon name="mdi-cancel" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionAwaitingInput"
-              size="60px"
-              color="warning"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionAwaitingConfirmation"
-              size="60px"
-              color="primary"
-              text-color="white"
-            >
-              <q-spinner color="white" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionError"
-              size="60px"
-              color="negative"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert-circle" />
-            </q-avatar>
-            <q-avatar
-              v-else
-              size="60px"
-              color="positive"
-              text-color="white"
-            >
-              <q-icon name="mdi-check" />
-            </q-avatar>
-          </div>
-          <div class="label">
-            <div class="title">
-              {{ $t('dashboard.sellYourArt.createAuction') }}
-            </div>
-            <div>
-              {{ secondStepLabel }}
-            </div>
-          </div>
-        </div>
-        <div class="col-12 step">
-          <div class="avatar">
-            <q-avatar
-              v-if="createAuctionStatus < CreatingAuctionStatus.SettingBidBackAwaitingInput"
-              size="60px"
-              color="grey"
-              text-color="white"
-            >
-              <q-icon name="mdi-cancel" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidBackAwaitingInput"
-              size="60px"
-              color="warning"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidBackAwaitingConfirmation"
-              size="60px"
-              color="primary"
-              text-color="white"
-            >
-              <q-spinner color="white" />
-            </q-avatar>
-            <q-avatar
-              v-else-if="createAuctionStatus === CreatingAuctionStatus.SettingBidBackError"
-              size="60px"
-              color="negative"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert-circle" />
-            </q-avatar>
-            <q-avatar
-              v-else
-              size="60px"
-              color="positive"
-              text-color="white"
-            >
-              <q-icon name="mdi-check" />
-            </q-avatar>
-          </div>
-          <div class="label">
-            <div class="title">
-              {{ $t('dashboard.sellYourArt.statuses.createBidBack') }}
-            </div>
-            <div>
-              {{ bidBackLabel }}
-            </div>
-          </div>
-        </div>
         <div
           v-if="isCreator"
           class="col-12 step"
@@ -204,6 +100,14 @@
             >
               <q-icon name="mdi-check" />
             </q-avatar>
+            <q-avatar
+              v-else
+              size="60px"
+              color="positive"
+              text-color="white"
+            >
+              <q-icon name="mdi-check" />
+            </q-avatar>
           </div>
           <div class="label">
             <div class="title">
@@ -211,6 +115,58 @@
             </div>
             <div>
               {{ pirsLabel }}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 step">
+          <div class="avatar">
+            <q-avatar
+              v-if="createAuctionStatus < CreatingAuctionStatus.CreateAuctionAwaitingInput"
+              size="60px"
+              color="grey"
+              text-color="white"
+            >
+              <q-icon name="mdi-cancel" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionAwaitingInput"
+              size="60px"
+              color="warning"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionAwaitingConfirmation"
+              size="60px"
+              color="primary"
+              text-color="white"
+            >
+              <q-spinner color="white" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.CreateAuctionError"
+              size="60px"
+              color="negative"
+              text-color="white"
+            >
+              <q-icon name="mdi-alert-circle" />
+            </q-avatar>
+            <q-avatar
+              v-else-if="createAuctionStatus === CreatingAuctionStatus.AuctionCreated"
+              size="60px"
+              color="positive"
+              text-color="white"
+            >
+              <q-icon name="mdi-check" />
+            </q-avatar>
+          </div>
+          <div class="label">
+            <div class="title">
+              {{ $t('dashboard.sellYourArt.createAuction') }}
+            </div>
+            <div>
+              {{ secondStepLabel }}
             </div>
           </div>
         </div>
@@ -237,6 +193,10 @@ enum CreatingAuctionStatus {
   ContractApprovedAwaitingInput,
   ContractApprovedAwaitingConfirmation,
   ContractApprovedError,
+  SettingPirsAwaitingInput,
+  SettingPirsAwaitingConfirmation,
+  SettingPirsError,
+  SettingPirsCompleted,
   CreateAuctionAwaitingInput,
   CreateAuctionAwaitingConfirmation,
   CreateAuctionError,
@@ -245,10 +205,6 @@ enum CreatingAuctionStatus {
   SettingBidBackAwaitingConfirmation,
   SettingBidBackError,
   SettingBidBackCompleted,
-  SettingPirsAwaitingInput,
-  SettingPirsAwaitingConfirmation,
-  SettingPirsError,
-  SettingPirsCompleted,
 }
 
 @Options({
@@ -283,6 +239,23 @@ export default class CreateAuctionStatusCard extends Vue {
     }
   }
 
+  get pirsLabel() {
+    switch (this.createAuctionStatus) {
+      case CreatingAuctionStatus.SettingPirsAwaitingInput:
+        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingInput');
+      case CreatingAuctionStatus.SettingPirsAwaitingConfirmation:
+        return this.$t(
+          'dashboard.sellYourArt.statuses.pirsAwaitingConfirmation',
+        );
+      case CreatingAuctionStatus.SettingPirsError:
+        return this.$t('dashboard.sellYourArt.statuses.pirsError');
+      case CreatingAuctionStatus.SettingPirsCompleted:
+        return this.$t('dashboard.sellYourArt.statuses.pirsCompleted');
+      default:
+        return this.$t('dashboard.sellYourArt.statuses.pirsCompleted');
+    }
+  }
+
   get secondStepLabel() {
     switch (this.createAuctionStatus) {
       case CreatingAuctionStatus.CreateAuctionAwaitingInput:
@@ -300,39 +273,22 @@ export default class CreateAuctionStatusCard extends Vue {
     }
   }
 
-  get bidBackLabel() {
-    switch (this.createAuctionStatus) {
-      case CreatingAuctionStatus.SettingBidBackAwaitingInput:
-        return this.$t('dashboard.sellYourArt.statuses.bidBackAwaitingInput');
-      case CreatingAuctionStatus.SettingBidBackAwaitingConfirmation:
-        return this.$t(
-          'dashboard.sellYourArt.statuses.bidBackAwaitingConfirmation',
-        );
-      case CreatingAuctionStatus.SettingBidBackError:
-        return this.$t('dashboard.sellYourArt.statuses.bidBackError');
-      case CreatingAuctionStatus.SettingBidBackCompleted:
-        return this.$t('dashboard.sellYourArt.statuses.bidBackCompleted');
-      default:
-        return this.$t('dashboard.sellYourArt.statuses.createBidBack');
-    }
-  }
-
-  get pirsLabel() {
-    switch (this.createAuctionStatus) {
-      case CreatingAuctionStatus.SettingPirsAwaitingInput:
-        return this.$t('dashboard.sellYourArt.statuses.pirsAwaitingInput');
-      case CreatingAuctionStatus.SettingPirsAwaitingConfirmation:
-        return this.$t(
-          'dashboard.sellYourArt.statuses.pirsAwaitingConfirmation',
-        );
-      case CreatingAuctionStatus.SettingPirsError:
-        return this.$t('dashboard.sellYourArt.statuses.pirsError');
-      case CreatingAuctionStatus.SettingPirsCompleted:
-        return this.$t('dashboard.sellYourArt.statuses.pirsCompleted');
-      default:
-        return this.$t('dashboard.sellYourArt.statuses.createBidBack');
-    }
-  }
+  // get bidBackLabel() {
+  //   switch (this.createAuctionStatus) {
+  //     case CreatingAuctionStatus.SettingBidBackAwaitingInput:
+  //       return this.$t('dashboard.sellYourArt.statuses.bidBackAwaitingInput');
+  //     case CreatingAuctionStatus.SettingBidBackAwaitingConfirmation:
+  //       return this.$t(
+  //         'dashboard.sellYourArt.statuses.bidBackAwaitingConfirmation',
+  //       );
+  //     case CreatingAuctionStatus.SettingBidBackError:
+  //       return this.$t('dashboard.sellYourArt.statuses.bidBackError');
+  //     case CreatingAuctionStatus.SettingBidBackCompleted:
+  //       return this.$t('dashboard.sellYourArt.statuses.bidBackCompleted');
+  //     default:
+  //       return this.$t('dashboard.sellYourArt.statuses.createBidBack');
+  //   }
+  // }
 
   get okBtnDisabled() {
     return (

@@ -12,7 +12,6 @@
         <side-bar
           @userIsNotLogged="refreshModal"
           @pageOptionClicked="pageOptionClicked"
-          @openNewPaintingModal="openNewPaintingModal"
         />
       </q-drawer>
       <q-page-container class="q-px-md">
@@ -22,7 +21,6 @@
           :page-to-go-after-connected="page"
         />
         <wrong-chain-dialog v-if="showWrongChainDialog" />
-        <NewPaintingModal v-model="showNewPaintingModal" />
         <AuctionModal v-model="openAuctionModal" />
         <BidBackModal v-model="openBidBackModal" />
         <BidBackSimulatorModal v-model="openBidBackSimulatorModal" />
@@ -40,7 +38,6 @@ import SideBar from 'components/SideBar.vue';
 import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
 import WrongChainDialog from 'components/common/WrongChainDialog.vue';
 import { Watch } from 'vue-property-decorator';
-import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
 import AuctionModal from 'src/components/modal/AuctionModal.vue';
 import BidBackModal from 'src/components/home-page/user-gallery-overview/BidBackModal.vue';
 import BidBackSimulatorModal from 'src/components/home-page/user-gallery-overview/BidBackSimulatorModal.vue';
@@ -55,7 +52,6 @@ import { NetworkInfo } from 'src/store/user/types';
     SideBar,
     ConnectYourWallet,
     WrongChainDialog,
-    NewPaintingModal,
     AuctionModal,
     BidBackModal,
     PirsModal,
@@ -79,9 +75,6 @@ import { NetworkInfo } from 'src/store/user/types';
       networkInfo: 'networkInfo',
       openConnectYourWalletModal: 'GET_OPEN_CONNECT_YOUR_WALLET_MODAL',
     }),
-    ...mapGetters('collections', {
-      isNewPaintingModalOpen: 'GET_IS_NEW_PAINTING_MODAL_OPEN',
-    }),
   },
 })
 export default class MainLayout extends Vue {
@@ -94,8 +87,6 @@ export default class MainLayout extends Vue {
   openPirsModal!: boolean;
   openBidBackModal!: boolean;
   openAuctionModal!: boolean;
-  isNewPaintingModalOpen!: boolean;
-  showNewPaintingModal: boolean = false;
   openConnectYourWalletModal!: boolean;
   showWrongChainDialog: boolean = false;
   isAuctionModalOpen: boolean = false;
@@ -103,19 +94,6 @@ export default class MainLayout extends Vue {
   isPirsModalOpen: boolean = false;
   page: string = '';
   artistModal: boolean = false;
-
-  @Watch('isNewPaintingModalOpen')
-  onIsNewPaintingModalChanged() {
-    this.showNewPaintingModal = this.isNewPaintingModalOpen || false;
-  }
-
-  openNewPaintingModal() {
-    this.$store
-      .dispatch({
-        type: 'collections/openNewPaintingModal',
-      })
-      .catch(console.error);
-  }
 
   beforeMount() {
     this.headerMenu();

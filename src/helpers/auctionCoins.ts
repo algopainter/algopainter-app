@@ -8,8 +8,8 @@ export const auctionCoins = [
   },
   {
     value: '2',
-    label: 'BNB',
-    tokenAddress: '',
+    label: 'BUSD',
+    tokenAddress: '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee',
     decimalPlaces: 18,
     img: '/images/BNB.svg',
   },
@@ -26,19 +26,5 @@ export const auctionCoins = [
     tokenAddress: '0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867',
     decimalPlaces: 18,
     img: '/images/DAI.svg',
-  },
-  {
-    value: '5',
-    label: 'ETH',
-    tokenAddress: '',
-    decimalPlaces: 8,
-    img: '/images/ETH.svg',
-  },
-  {
-    value: '6',
-    label: 'DASH',
-    tokenAddress: '',
-    decimalPlaces: 18,
-    img: '/images/DASH.svg',
   },
 ];

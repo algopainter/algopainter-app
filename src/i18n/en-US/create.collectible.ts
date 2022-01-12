@@ -60,9 +60,9 @@ export default {
       approveContractAvailable: 'Smart contract approved',
       mintImageTitle: 'Mint',
       mintImageInput: 'Awaiting confirmation.',
-      mintImageConfirmation: 'YAY! Your artwork has been successfully minted.',
+      mintImageConfirmation: 'Awaiting confirmation.',
       mintImageError: 'Error minting the image. Please try again.',
-      mintImageAvailable: 'Awaiting confirmation.',
+      mintImageAvailable: 'YAY! Your artwork has been successfully minted.',
     }
   },
 };

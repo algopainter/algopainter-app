@@ -2,8 +2,18 @@
   {
     "inputs": [
       {
-        "internalType": "contract AlgoPainterToken",
-        "name": "_algop",
+        "internalType": "address",
+        "name": "algopAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "nftCreatorsAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "algoPainterRewardsRatesAddress",
         "type": "address"
       },
       {
@@ -762,18 +772,44 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_algoPainterBidBackPirs",
+        "name": "_nftCreators",
         "type": "address"
       }
     ],
-    "name": "setAlgoPainterBidBackPirsAddress",
+    "name": "setAlgoPainterNFTCreators",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "getAlgoPainterBidBackPirsAddress",
+    "name": "getAlgoPainterNFTCreators",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "algoPainterRewardsRatesAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setAlgoPainterRewardsRatesAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAlgoPainterRewardsRatesAddress",
     "outputs": [
       {
         "internalType": "address",

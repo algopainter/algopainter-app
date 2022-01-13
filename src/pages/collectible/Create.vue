@@ -31,6 +31,33 @@
       </div>
     </div>
     <div v-if="activeFormId === 'createWithArtist'" class="col q-mt-md">
+      <div class="q-pa-md">
+        <p class="row justify-center text-h5">
+          {{ $t('dashboard.selectAlgoP') }}
+        </p>
+        <div class="row justify-center">
+          <q-btn
+            round
+            type="a"
+            :to="{name: 'newPainting', params: { collection: 'gwei' } }"
+            target="_blank"
+          >
+            <q-avatar size="250px" class="avatar">
+              <img width="150px" class="img" src="/images/gwei.png" />
+            </q-avatar>
+          </q-btn>
+          <q-btn
+            round
+            type="a"
+            :to="{name: 'newPainting', params: { collection: 'expressions' } }"
+            target="_blank"
+          >
+            <q-avatar size="250px" class="avatar">
+              <img src="/images/manwithnoname.png" />
+            </q-avatar>
+          </q-btn>
+        </div>
+      </div>
       <!--
       <div>
         <p class="text-bold text-subtitle2">
@@ -211,10 +238,6 @@ export default class Create extends Vue {
   clickedButton(id: string): void {
     this.activeFormId = id;
 
-    if (id === 'createWithArtist') {
-      this.openNewPaintingModal();
-    }
-
     this.imageButtons = this.imageButtons.map((item) => {
       if (item.id !== id) {
         item.isDisabled = true;
@@ -223,14 +246,6 @@ export default class Create extends Vue {
       }
       return item;
     });
-  }
-
-  openNewPaintingModal() {
-    this.$store
-      .dispatch({
-        type: 'collections/openNewPaintingModal',
-      })
-      .catch(console.error);
   }
 
   clickImg(name: string): void {

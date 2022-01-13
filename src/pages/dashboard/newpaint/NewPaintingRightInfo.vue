@@ -42,11 +42,25 @@
     </div>
     <algo-button
       :label="$t('dashboard.newPainting.rightInfoBtnName')"
-      :disable="!isAwareOfFee || !artBasicInfo.name || !artBasicInfo.description || !isPreviewUrlSet"
+      :disable="!isAwareOfFee || !artBasicInfo.name || !artBasicInfo.description || !isPreviewUrlSet || isError"
       class="full-width q-mt-lg"
       color="primary"
       @click="mint"
     />
+    <div v-if="isError" class="error row q-mt-lg">
+      <div class="col-2">
+        <q-avatar
+          size="60px"
+          color="negative"
+          text-color="white"
+        >
+          <q-icon name="mdi-alert-circle" />
+        </q-avatar>
+      </div>
+      <div class="col-10 self-center">
+        {{ errorMessage }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -85,6 +99,8 @@ class Props {
       itemParametersExpressions: 'GET_EXPRESSIONS_ITEM_PARAMETERS',
       previewUrlGwei: 'GET_GWEI_PREVIEW_URL',
       previewUrlExpressions: 'GET_EXPRESSIONS_PREVIEW_URL',
+      errorMessageGwei: 'GET_GWEI_ERROR_MESSAGE',
+      errorMessageExpressions: 'GET_EXPRESSIONS_ERROR_MESSAGE',
     }),
   }
 })
@@ -101,6 +117,11 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   isCollectionInfoSet: boolean = false;
 
   itemParametersGwei!: IGweiParsedItemParameters;
+
+  errorMessageGwei!: string;
+  errorMessageExpressions!: string;
+  isError: boolean = false;
+  errorMessage!: string;
 
   collectionImagePlaceholder!: string;
 
@@ -153,6 +174,18 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
     this.artBasicInfo.name = this.itemParametersGwei.parsedText;
   }
 
+  @Watch('errorMessageGwei')
+  onErrorMessageGweiChanged() {
+    this.errorMessage = this.errorMessageGwei;
+    this.isError = (this.errorMessageExpressions !== '');
+  }
+
+  @Watch('errorMessageExpressions')
+  onErrorMessageExpressionsChanged() {
+    this.errorMessage = this.errorMessageExpressions;
+    this.isError = (this.errorMessageExpressions !== '');
+  }
+
   async getServiceFee() {
     this.expressionsFeePercentage = await this.expressionsSystem.getServiceFee() / 100;
   }
@@ -197,6 +230,13 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 </script>
 
 <style lang="scss" scoped>
+  .error {
+    padding: 10px;
+    border: $primary solid 1px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
   .img-container {
     display: flex;
     justify-content: center;

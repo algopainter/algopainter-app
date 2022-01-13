@@ -133,7 +133,7 @@
                 <q-icon name="mdi-alert-circle" />
               </q-avatar>
               <q-avatar
-                v-else
+                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.PersonalItemCreated"
                 size="60px"
                 color="positive"
                 text-color="white"
@@ -279,8 +279,11 @@ export default class MyPaint extends Vue.with(Props) {
       case PainterPersonalItemStatus.PersonalItemError:
         return this.$t('createCollectible.mintModal.approveStatus.mintImageError',
         );
+      case PainterPersonalItemStatus.PersonalItemCreated:
+        return this.$t('createCollectible.mintModal.approveStatus.approveContractAvailable'
+        );
       default:
-        return this.$t('createCollectible.mintModal.approveStatus.mintImageAvailable',
+        return this.$t('createCollectible.mintModal.approveStatus.mintImageInput',
         );
     }
   }

@@ -372,8 +372,8 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   async mint() {
     try {
       if (this.responseMint) {
-        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
         await this.approveContractTransfer(this.mintValue);
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
         await this.personalItemContract.mint(
           this.responseMint.data.name,
           this.responseMint.data.rawImageHash,
@@ -383,7 +383,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         ).on('transactionHash', () => {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
         }).on('error', () => {
-          this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceError;
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
           setTimeout(() => {
             this.okBtnDisabled = false;
           }, 1000);

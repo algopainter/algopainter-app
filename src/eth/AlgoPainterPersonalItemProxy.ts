@@ -12,7 +12,7 @@ export default class AlgoPainterPersonalItemProxy {
       mint(
         name: string,
         imageHash: string,
-        creatorPercentage: string,
+        creatorPercentage: number,
         tokenURI: string,
       ): ContractMethod;
       getCurrentAmount(
@@ -38,7 +38,7 @@ export default class AlgoPainterPersonalItemProxy {
     return this.smartContract.methods.mint(
       name,
       imageHash,
-      creatorPercentage.toString(),
+      creatorPercentage,
       tokenURI,
     ).send({ from: account });
   }

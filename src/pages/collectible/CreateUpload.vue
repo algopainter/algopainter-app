@@ -94,7 +94,14 @@
             (val) => val >= 1 || $t('dashboard.sellYourArt.minimumBidBackRate'),
             (val) => val <= 30 || $t('dashboard.sellYourArt.maximumBidBackRate'),
           ]"
-        />
+        >
+          <template #append>
+            <q-icon name="mdi-help-circle-outline" />
+            <q-tooltip class="bg-primary">
+              {{ $t('createCollectible.create.fields.createRoyaltyTooltip') }}
+            </q-tooltip>
+          </template>
+        </q-input>
       </div>
     </div>
     <div class="row justify-center q-pb-md">

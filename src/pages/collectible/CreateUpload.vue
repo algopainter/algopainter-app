@@ -94,7 +94,14 @@
             (val) => val >= 1 || $t('dashboard.sellYourArt.minimumBidBackRate'),
             (val) => val <= 30 || $t('dashboard.sellYourArt.maximumBidBackRate'),
           ]"
-        />
+        >
+          <template #append>
+            <q-icon name="mdi-help-circle-outline" />
+            <q-tooltip class="bg-primary">
+              {{ $t('createCollectible.create.fields.createRoyaltyTooltip') }}
+            </q-tooltip>
+          </template>
+        </q-input>
       </div>
     </div>
     <div class="row justify-center q-pb-md">
@@ -372,8 +379,8 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   async mint() {
     try {
       if (this.responseMint) {
-        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
         await this.approveContractTransfer(this.mintValue);
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
         await this.personalItemContract.mint(
           this.responseMint.data.name,
           this.responseMint.data.rawImageHash,
@@ -383,7 +390,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         ).on('transactionHash', () => {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
         }).on('error', () => {
-          this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceError;
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
           setTimeout(() => {
             this.okBtnDisabled = false;
           }, 1000);

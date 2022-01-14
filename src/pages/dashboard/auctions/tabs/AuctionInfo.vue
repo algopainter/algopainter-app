@@ -15,7 +15,7 @@
     <div class="col-12">
       <q-separator />
     </div>
-    <div class="col-12">
+    <div v-if="auction.item.collectionName !== 'PersonalItem'" class="col-12">
       <auction-user-card
         :user="collection"
         :title="$t('dashboard.auctionPage.collection')"

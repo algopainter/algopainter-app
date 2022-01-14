@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 <template>
   <div
     v-if="loading"
@@ -482,7 +482,7 @@ export default class SellYourArt extends Vue {
   async getCreatorRoyaltiesRate() {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
-    if (this.image.collectionName !== null && this.image.collectionName === 'PersonalItem') {
+    if (this.image.collectionName === 'PersonalItem') {
       this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.image.nft.index) as string;
       this.createdItems = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
       this.collectionCreatorRoyaltiesRate = this.createdItems / 100;

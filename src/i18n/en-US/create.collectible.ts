@@ -20,7 +20,8 @@ export default {
       titleLabel: 'Title',
       descriptionLabel: 'Description',
       putOnSaleLabel: 'Put on sale',
-      createRoyalty: 'Create Royalty',
+      createRoyalty: 'Create Royalty%',
+      createRoyaltyTooltip: 'This is the PIRS percentage (i.e., the royalty) that the artist, who created the collection, will receive.',
       responsibility: 'By clicking on the checkbox, I agree that I am responsible for the submitted image and that it does not contain any pornographic attributes and does not violate any type of guideline, whether political, religious, or from any community, race, person, and country.',
       agreeValue: 'I understand and agree with the 100{CurrentAmount} $ALGOP amount that will be discounted to mint this artwork',
     },
@@ -60,9 +61,9 @@ export default {
       approveContractAvailable: 'Smart contract approved',
       mintImageTitle: 'Mint',
       mintImageInput: 'Awaiting confirmation.',
-      mintImageConfirmation: 'YAY! Your artwork has been successfully minted.',
+      mintImageConfirmation: 'Awaiting confirmation.',
       mintImageError: 'Error minting the image. Please try again.',
-      mintImageAvailable: 'Awaiting confirmation.',
+      mintImageAvailable: 'YAY! Your artwork has been successfully minted.',
     }
   },
 };

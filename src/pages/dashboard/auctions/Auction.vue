@@ -335,7 +335,7 @@ export default class Auction extends Vue {
     if (this.auction) {
       try {
         if (this.auction.item.collectionName === 'PersonalItem') {
-          this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.auction.index) as string;
+          this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.auction.item.index) as string;
           this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem) / 100;
         } else {
           this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesRate(this.auction.index) / 100;

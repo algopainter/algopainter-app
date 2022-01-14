@@ -34,7 +34,7 @@ export interface IExpressionsItemParameters {
 export interface IExpressionsParsedItemParameters {
   background: number,
   gender: string,
-  expressions: string,
+  expression: string,
   expressionTemplate: number,
   useWireframe: boolean,
   wireframeHue: number,
@@ -44,13 +44,14 @@ export interface IExpressionsParsedItemParameters {
   overlay: number,
   overlayHue: number,
   useShadow: boolean,
+  shadowHue: number,
   flip: boolean,
 }
 
 export interface IExpressionsMintParameters {
   background: number,
   gender: number,
-  expressions: number,
+  expression: number,
   expressionTemplate: number,
   useWireframe: number,
   wireframeHue: number,
@@ -60,6 +61,7 @@ export interface IExpressionsMintParameters {
   overlay: number,
   overlayHue: number,
   useShadow: number,
+  shadowHue: number,
   flip: number,
 }
 

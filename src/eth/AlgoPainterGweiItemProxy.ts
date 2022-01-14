@@ -157,4 +157,22 @@ export default class AlgoPainterGweiItemProxy {
         .catch(console.error);
     });
   }
+
+  async mintCall(
+    newMint: INewMintGwei,
+  ) : Promise<string> {
+    const amount = this.etherToWei(newMint.amount);
+
+    const resp = await this.smartContract.methods.mint(
+      newMint.inspiration,
+      newMint.text,
+      newMint.useRandom,
+      newMint.probability,
+      newMint.place,
+      amount,
+      newMint.tokenURI,
+    ).call<string>()
+
+    return resp;
+  }
 }

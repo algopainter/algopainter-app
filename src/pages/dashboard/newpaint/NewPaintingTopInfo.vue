@@ -172,127 +172,150 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
 </script>
 
 <style lang="scss" scoped>
-#new-painting-top-info {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  p{
-    margin: 0px;
-  }
-  > div {
-    border: 1px solid $primary;
-    border-radius: 5px;
-    padding: 12px 24px;
-    min-width: 300px;
-    text-align: center;
-    font-weight: bold;
-    .title {
-      font-size: 16px;
-      color: #A5A5A5;
-    }
-    .amount {
-      color: $secondary;
-      font-size: 45px;
-    }
-  }
-  .batch-price,
-  .remaining,
-  .minted {
-    margin-right: min(15px);
-  }
-}
-
-@media(max-width: 1385px) {
   #new-painting-top-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    p{
+      margin: 0px;
+    }
     > div {
-      min-width: 220px;
+      border: 1px solid $primary;
+      border-radius: 5px;
+      padding: 12px 24px;
+      min-width: 300px;
+      text-align: center;
+      font-weight: bold;
+      .title {
+        font-size: 16px;
+        color: #A5A5A5;
+      }
+      .amount {
+        color: $secondary;
+        font-size: 45px;
+      }
     }
-  }
-}
-
-@media(max-width: 1024px) {
-  #new-painting-top-info {
-    > div {
-      min-width: 160px;
-    }
-  }
-}
-
-@media(max-width: 768px) {
-  #new-painting-top-info {
-  > div {
-    min-width: 150px;
-    .title {
-      font-size: 10px;
-    }
-    .amount {
-      font-size: 30px;
-    }
-  }
     .batch-price,
     .remaining,
     .minted {
-      margin-right: min(10px);
+      margin-right: min(15px);
     }
   }
-}
 
-@media(max-width: 541px) {
-  #new-painting-top-info {
-    > div {
-      padding: 8px 8px 0px 8px;
-      min-width: 90px !important;
-    }
-    .batch-price,
-    .minted,
-    .remaining {
-      margin-right: min(0px);
-    }
-    .tokens-to-burn,
-    .minted {
-      margin-top: 5px;
-    }
-  }
-}
-
-@media(max-width: 480px) {
-  #new-painting-top-info {
-    > div {
-      padding: 8px 16px 0px 16px;
-      width: 187px;
-    }
-  }
-}
-
-@media(max-width: 375px) {
-  #new-painting-top-info {
-    > div {
-      width: 168px;
-    }
-  }
-}
-
-@media(max-width: 360px) {
-  #new-painting-top-info {
-    > div {
-      width: 160px;
-      .amount {
-        font-size: 27px;
+  @media(max-width: 1385px) {
+    #new-painting-top-info {
+      > div {
+        min-width: 220px;
       }
     }
   }
-}
 
-@media(max-width: 320px) {
-  #new-painting-top-info {
-    justify-content: center;
-    > div {
-      .amount {
-        font-size: 23px;
+  @media(max-width: 1024px) {
+    #new-painting-top-info {
+      > div {
+        min-width: 160px;
       }
     }
-    .remaining {
-      margin-top: 5px;
+  }
+
+  @media(max-width: 820px) {
+    #new-painting-top-info {
+    > div {
+      .amount {
+        font-size: 50px;
+      }
+    }
+  }
+
+  @media(max-width: 768px) {
+    #new-painting-top-info {
+    > div {
+      min-width: 130px;
+      .title {
+        font-size: 10px;
+      }
+      .amount {
+        font-size: 30px;
+      }
+    }
+      .batch-price,
+      .remaining,
+      .minted {
+        margin-right: min(10px);
+      }
+    }
+  }
+
+  @media(max-width: 541px) {
+    #new-painting-top-info {
+      > div {
+        padding: 8px 8px 0px 8px;
+        min-width: 90px !important;
+      }
+      .batch-price,
+      .minted,
+      .remaining {
+        margin-right: min(0px);
+      }
+      .tokens-to-burn,
+      .minted {
+        margin-top: 5px;
+      }
+    }
+  }
+
+  @media(max-width: 480px) {
+    #new-painting-top-info {
+      > div {
+        padding: 8px 16px 0px 16px;
+        width: 187px;
+      }
+    }
+  }
+
+  @media(max-width: 393px) {
+    #new-painting-top-info {
+      justify-content: center !important;
+      .remaining {
+        margin-top: 5px;
+      }
+    }
+  }
+
+  @media(max-width: 375px) {
+    #new-painting-top-info {
+      justify-content: space-between;
+      > div {
+        width: 168px;
+      }
+      .remaining {
+        margin-top: 0px;
+      }
+    }
+  }
+
+  @media(max-width: 360px) {
+    #new-painting-top-info {
+      > div {
+        width: 160px;
+        .amount {
+          font-size: 27px;
+        }
+      }
+    }
+  }
+
+  @media(max-width: 320px) {
+    #new-painting-top-info {
+      justify-content: center;
+      > div {
+        .amount {
+          font-size: 23px;
+        }
+      }
+      .remaining {
+        margin-top: 5px;
+      }
     }
   }
 }

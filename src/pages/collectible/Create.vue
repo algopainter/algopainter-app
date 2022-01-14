@@ -40,7 +40,6 @@
             round
             type="a"
             :to="{name: 'newPainting', params: { collection: 'gwei' } }"
-            target="_blank"
           >
             <q-avatar size="250px" class="avatar">
               <img width="150px" class="img" src="/images/gwei.png" />
@@ -50,7 +49,6 @@
             round
             type="a"
             :to="{name: 'newPainting', params: { collection: 'expressions' } }"
-            target="_blank"
           >
             <q-avatar size="250px" class="avatar">
               <img src="/images/manwithnoname.png" />

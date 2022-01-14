@@ -285,9 +285,9 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
     this.errorMessage = '';
 
     this.parsedItem = {
-      background: this.item.background.value,
+      background: Number(this.item.background.value),
       gender: this.item.gender.value.toString() === '0' ? 'F' : 'M',
-      expressions: this.getExpression(this.item.expressions.value.toString()),
+      expression: this.getExpression(this.item.expressions.value.toString()),
       expressionTemplate: this.item.expressionTemplate.value,
       useWireframe: this.item.useWireframe,
       wireframeHue: this.item.wireframeHue,
@@ -297,10 +297,11 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       overlay: this.item.overlay.value,
       overlayHue: this.item.overlayHue,
       useShadow: this.item.useShadow,
+      shadowHue: 0,
       flip: this.item.flip,
     }
 
-    const previewUrl = (this.baseUrl) ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expressions}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=400x400&flip=${this.parsedItem.flip.toString()}` : '';
+    const previewUrl = (this.baseUrl) ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expression}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=400x400&flip=${this.parsedItem.flip.toString()}` : '';
 
     this.setItemParameters(this.parsedItem).catch(console.error);
     this.setPreviewUrl(previewUrl).catch(console.error);
@@ -334,9 +335,9 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   parseUrl(urlType: string) {
     switch (urlType) {
       case 'preview':
-        return this.baseUrl ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expressions}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=400x400&flip=${this.parsedItem.flip.toString()}` : '';
+        return this.baseUrl ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expression}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=400x400&flip=${this.parsedItem.flip.toString()}` : '';
       case 'raw':
-        return this.baseUrl ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expressions}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=2000x2000&flip=${this.parsedItem.flip.toString()}` : '';
+        return this.baseUrl ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expression}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=2000x2000&flip=${this.parsedItem.flip.toString()}` : '';
       default:
         return '';
     }
@@ -347,9 +348,9 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       this.setModalInitialState().catch(console.error);
 
       const mintParameters: IExpressionsMintParameters = {
-        background: this.item.background.value,
+        background: Number(this.item.background.value),
         gender: this.item.gender.value,
-        expressions: this.item.expressions.value,
+        expression: this.item.expressions.value,
         expressionTemplate: this.item.expressionTemplate.value,
         useWireframe: this.item.useWireframe ? 1 : 0,
         wireframeHue: this.item.wireframeHue,
@@ -359,6 +360,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         overlay: this.item.overlay.value,
         overlayHue: this.item.overlayHue,
         useShadow: this.item.useShadow ? 1 : 0,
+        shadowHue: 0,
         flip: this.item.flip ? 1 : 0,
       }
 
@@ -375,24 +377,24 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('ALREADY_REGISTERED') >= 0) {
-          this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.alreadyMinted');
+          this.errorMessage = this.$t('dashboard.newPainting.mintErrors.alreadyMinted');
           return;
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('PRICE_HAS_CHANGED') >= 0) {
-          this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.priceChanged');
+          this.errorMessage = this.$t('dashboard.newPainting.mintErrors.priceChanged');
           return;
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('INVALID_AMOUNT') >= 0) {
-          this.$t('dashboard.newPainting.expressions.mintErrors.invalidAmount');
+          this.$t('dashboard.newPainting.mintErrors.invalidAmount');
           return;
         }
 
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.unexpected', { errorMsg: e.message });
+        this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
         return;
       }
 
@@ -406,7 +408,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       if (!this.previewIPFSHash) {
         this.setModalInitialState().catch(console.error);
         this.isError = true;
-        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.generating', { type: 'preview' });
+        this.errorMessage = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
         return;
       }
 
@@ -419,7 +421,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         this.setModalInitialState().catch(console.error);
         this.mintStatus = MintStatus.GeneratingRawFileError;
         this.isError = true;
-        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.generating', { type: 'raw' });
+        this.errorMessage = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
         return;
       }
 
@@ -444,7 +446,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       if (!this.descriptorIPFSHash) {
         this.setModalInitialState().catch(console.error);
         this.isError = true;
-        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.generating', { type: 'descriptor' });
+        this.errorMessage = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
         return;
       }
 
@@ -495,7 +497,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         this.mintStatus = MintStatus.MintError;
         this.isError = true;
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.unexpected', { errorMsg: error });
+        this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: error });
       }).catch(console.error);
 
       result.on('transactionHash', () => {
@@ -517,7 +519,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         this.isError = false;
       } else {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        this.errorMessage = this.$t('dashboard.newPainting.expressions.mintErrors.unexpected', { errorMsg: e.message });
+        this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
       }
     }
   }
@@ -607,12 +609,11 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   }
 
   async setModalInitialState() {
+    this.intParameters = [];
     this.mintStatus = MintStatus.GeneratingPreviewFile;
     this.previewIPFSHash = '';
     this.rawIPFSHash = '';
     this.descriptorIPFSHash = '';
-    // this.isBackupWarningOk = false;
-    // this.isRawFileWarningOk = false;
     this.isError = false;
 
     await this.$store

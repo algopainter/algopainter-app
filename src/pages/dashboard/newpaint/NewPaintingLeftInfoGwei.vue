@@ -61,7 +61,6 @@
   </div>
 
   <div v-if="!hasAllowance">
-    <p>test</p>
   </div>
   <q-dialog v-model="isMintDialogOpen" persistent>
     <mint-dialog
@@ -138,7 +137,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   errorMessage: string = '';
   isConfigured: boolean = false;
 
-  isWaitingTransaction: boolean = false;
   receipt!: any;
 
   parsedItem!: IGweiParsedItemParameters;
@@ -201,6 +199,9 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   generatePreview() {
+    this.isError = false;
+    this.errorMessage = '';
+
     this.parsedItem = {
       parsedText: this.item.text,
       parsedUseRandom: this.item.useRandom,
@@ -213,15 +214,15 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
 
     const previewUrl = (this.baseUrl) ? `${this.baseUrl}?width=300&height=300&ticks=${this.ticks}&text=${this.parsedItem.parsedText}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}` : '';
 
-    this.setItemParameters(this.parsedItem).catch(console.error);
+    this.setItemParameters().catch(console.error);
     this.setPreviewUrl(previewUrl).catch(console.error);
   }
 
-  async setItemParameters(parsedItem: IGweiParsedItemParameters) {
+  async setItemParameters() {
     await this.$store
       .dispatch({
         type: 'mint/itemParameters',
-        parsedItem: parsedItem,
+        parsedItem: this.parsedItem,
         collectionName: this.collectionName,
       })
   }
@@ -256,8 +257,28 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   async mint() {
-    // call the contract to check if available
-    // this.setModalInitialState().catch(console.error);
+    const available = await this.gweiSystem.checkIfAvailable(Number(this.parsedItem.parsedInspiration), this.parsedItem.parsedText, this.parsedItem.parsedUseRandom === 'true', this.parsedItem.parsedProbability * 10);
+
+    if (!available) {
+      this.isError = true;
+      this.errorMessage = this.$t('dashboard.newPainting.mintErrors.alreadyMinted');
+
+      await this.$store
+        .dispatch({
+          type: 'mint/mintingStatus',
+          isMinting: false,
+          collectionName: this.collectionName,
+        })
+
+      await this.$store
+        .dispatch({
+          type: 'mint/artBasicInfo',
+          artBasicInfo: undefined,
+          collectionName: this.collectionName,
+        })
+
+      return;
+    }
 
     this.setModalInitialState().catch(console.error);
     this.isMintDialogOpen = true;
@@ -291,6 +312,16 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     }
   }
 
+  @Watch('errorMessage')
+  async onErrorMessageChanged() {
+    await this.$store
+      .dispatch({
+        type: 'mint/errorMessage',
+        errorMessage: this.errorMessage,
+        collectionName: this.collectionName,
+      })
+  }
+
   @Watch('userConfirmations')
   onUserConfirmationsChanged() {
     if (this.userConfirmations) {
@@ -313,56 +344,37 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     };
 
     try {
-      const result: any = await this.gweiSystem.mint(newMint, this.account, (receipt: any) => {
-        this.isWaitingTransaction = false;
+      await this.gweiSystem.mint(newMint, this.account, (receipt: any) => {
         this.receipt = receipt;
-        this.mintStatus = MintStatus.ItemMinted;
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      result.on('error', (error: any) => {
-        this.mintStatus = MintStatus.MintError;
-        this.setModalInitialState().catch(console.error);
-        this.isError = true;
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${error}`;
-      }).catch(console.error);
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      result.on('transactionHash', () => {
-        this.mintStatus = MintStatus.MintAwaitingConfirmation;
-      }).catch(console.error);
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      result.on('confirmation', () => {
         if (!this.isConfigured) {
           this.mintStatus = MintStatus.ItemMinted;
+          this.receipt = null;
           this.setFormInitialState().catch(console.error);
         };
-      }).catch(console.error);
+      });
+
+      this.mintStatus = MintStatus.MintAwaitingConfirmation;
     } catch (e: any) {
+      this.isError = true;
+      this.receipt = null;
       this.mintStatus = MintStatus.MintError;
       this.setModalInitialState().catch(console.error);
-      this.isError = true;
 
       switch (e.code) {
         case 'INVALID_MINIMUM_AMOUNT':
-          this.errorMessage =
-            'Your payment must be greater than or equal to the minimum amount';
+          this.$t('dashboard.newPainting.mintErrors.invalidAmount');
           break;
         case 'PAINTING_ALREADY_REGISTERED':
-          this.errorMessage = 'This painting was already generated for another costumer';
+          this.errorMessage = this.$t('dashboard.newPainting.mintErrors.alreadyMinted');
           break;
         case 4001:
-          this.errorMessage = 'MetaMask Tx Signature: User denied transaction signature.';
+          this.errorMessage = this.$t('dashboard.newPainting.mintErrors.deniedSignature');
           break;
         default:
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${e.code}`;
+          this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.code });
       }
     }
-
-    this.isWaitingTransaction = true;
   }
 
   async setFormInitialState() {
@@ -421,9 +433,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   async setModalInitialState() {
-    // this.mintStatus = MintStatus.GeneratingPreviewFile;
-    // this.isBackupWarningOk = false;
-    // this.isRawFileWarningOk = false;
     this.isError = false;
 
     await this.$store

@@ -15,10 +15,9 @@ export default class AlgoPainterPersonalItemProxy {
         creatorPercentage: number,
         tokenURI: string,
       ): ContractMethod;
-      getCurrentAmount(
-        algoPainterId: number,
-        supply: number,
-      ): ContractMethod;
+      mintCost(): ContractMethod;
+      mintCostToken(): ContractMethod;
+      mintToken(): ContractMethod;
       getTokenHashForAuction(
         tokenId: number,
       ): ContractMethod;
@@ -34,17 +33,24 @@ export default class AlgoPainterPersonalItemProxy {
     );
   }
 
-  mint(name: string, imageHash: string, creatorPercentage: number, tokenURI: string, account: string) : PromiEvent<Contract> {
+  mint(name: string, imageHash: string, creatorPercentage: number, tokenURI: string, account: string, cost: string) : PromiEvent<Contract> {
     return this.smartContract.methods.mint(
       name,
       imageHash,
       creatorPercentage,
       tokenURI,
-    ).send({ from: account });
+    ).send({ value: cost, from: account });
   }
 
-  async getMintPrice() : Promise<number> {
-    return await this.smartContract.methods.getCurrentAmount(2, 0).call<number>();
+  async getMintPrice() : Promise<{ cost: string, costToken: string, token: string }> {
+    const cost = await this.smartContract.methods.mintCost().call<string>();
+    const costToken = await this.smartContract.methods.mintCostToken().call<string>();
+    const token = await this.smartContract.methods.mintCostToken().call<string>();
+    return {
+      cost,
+      costToken,
+      token
+    };
   }
 
   async getTokenHashForAuction(tokenId: number) {

@@ -141,7 +141,10 @@
             v-model="isAgreeValue"
             color="green"
             :label="
-              $t('createCollectible.create.fields.agreeValue')"
+              $t('createCollectible.create.fields.agreeValue', {
+                CurrentAmount: mintValueView,
+                Token: 'BNB'
+              })"
           />
         </template>
       </q-field>
@@ -152,9 +155,7 @@
           type="submit"
           color="primary"
           :disabled="isDisabled"
-          :label="$t('createCollectible.create.btnCreate',{
-            CurrentAmount: mintValue,
-          })"
+          :label="$t('createCollectible.create.btnCreate')"
         />
         <mint-modal
           v-model="OpenModal"
@@ -235,7 +236,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   painterPersonalItemStatus: PainterPersonalItemStatus = PainterPersonalItemStatus.None;
   algopTokenContract!: ERC20TokenProxy;
   networkInfo!: NetworkInfo;
-  mintValue: number = 0;
+  mintValue: string = '';
   account!: string;
   dataMint: string = ''
   responseMint?: IMintData;
@@ -256,8 +257,8 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     this.algopTokenContract = new ERC20TokenProxy(getAlgoPainterContractByNetworkId(this.networkInfo.id));
   }
 
-  mounted() {
-    this.personalItemContract.getMintPrice().then(_mintValue => this.mintValue = _mintValue).catch(console.error);
+  async mounted() {
+    await this.personalItemContract.getMintPrice().then(costs => this.mintValue = costs.cost).catch(console.error);
   }
 
   async previewImage(e: Event) {
@@ -310,7 +311,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     return getPersonalItemContractByNetworkId(this.networkInfo.id);
   }
 
-  async approveContractTransfer(amount: number) {
+  async approveContractTransfer(amount: number | string) {
     this.painterPersonalItemStatus = PainterPersonalItemStatus.CheckingAllowance;
 
     const allowance = await this.algopTokenContract.allowance(this.account, this.personalItemContractAddress);
@@ -376,6 +377,10 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     }
   }
 
+  get mintValueView() {
+    return new Web3Helper().fromWei(this.mintValue);
+  }
+
   async mint() {
     try {
       if (this.responseMint) {
@@ -387,6 +392,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
           this.responseMint.data.creatorRoyalty,
           this.responseMint.tokenURI,
           this.account,
+          this.mintValue
         ).on('transactionHash', () => {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
         }).on('error', () => {

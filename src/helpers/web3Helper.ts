@@ -43,4 +43,8 @@ export default class Web3Helper {
       address,
     );
   }
+
+  fromWei(value: string) : string {
+    return this.web3.utils.fromWei(value);
+  }
 }

@@ -88,13 +88,15 @@ export default {
     expressions: {
       title: 'New Painting - Expressions',
       artMintingFee: 'I accept to pay {feeAmount} {collectionCurrency}, including {feePercentage}% of service fee to mint this artwork',
-      mintErrors: {
-        alreadyMinted: 'Another user has minted an artwork using this configuration, please select other set of parameters.',
-        priceChanged: 'The current price has changed, please update the page!',
-        invalidAmount: 'Invalid amount!',
-        unexpected: 'An unexpected error has occurred, please try again! \n\n {errorMsg}',
-        generating: 'An error has occured while generating {type} file!',
-      }
+    },
+    mintErrors: {
+      alreadyMinted: 'Another user has minted an artwork using this configuration, please select other set of parameters.',
+      priceChanged: 'The current price has changed, please update the page!',
+      invalidAmount: 'Invalid amount!',
+      deniedSignature: 'MetaMask Tx Signature: User denied transaction signature.',
+      minimumAmount: 'Your payment must be greater than or equal to the minimum amount',
+      unexpected: 'An unexpected error has occurred, please try again! \n\n {errorMsg}',
+      generating: 'An error has occured while generating {type} file!',
     },
     batchPrice: 'Batch price ({coin})',
     remaining: 'Remaining',

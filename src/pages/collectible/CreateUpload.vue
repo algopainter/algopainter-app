@@ -185,7 +185,6 @@ import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterPersonalItemProxy, { PainterPersonalItemStatus } from 'src/eth/AlgoPainterPersonalItemProxy';
 import getAlgoPainterContractByNetworkId, { getPersonalItemContractByNetworkId } from 'src/eth/Config';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
-import { numberToString } from 'src/helpers/format/numberToString';
 import { IMintData } from 'src/models/IMint';
 
 class PropsTypes {
@@ -311,29 +310,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     return getPersonalItemContractByNetworkId(this.networkInfo.id);
   }
 
-  async approveContractTransfer(amount: number | string) {
-    this.painterPersonalItemStatus = PainterPersonalItemStatus.CheckingAllowance;
-
-    const allowance = await this.algopTokenContract.allowance(this.account, this.personalItemContractAddress);
-
-    if (allowance < amount) {
-      this.painterPersonalItemStatus = PainterPersonalItemStatus.IncreateAllowanceAwaitingInput;
-
-      await this.algopTokenContract
-        .approve(
-          this.personalItemContractAddress,
-          numberToString(amount),
-          this.account,
-        ).on('error', () => {
-          this.painterPersonalItemStatus =
-            PainterPersonalItemStatus.IncreateAllowanceError;
-        }).on('transactionHash', () => {
-          this.painterPersonalItemStatus =
-            PainterPersonalItemStatus.IncreateAllowanceAwaitingConfirmation;
-        });
-    }
-  }
-
   async saveMintData() {
     this.statusData = 'aproved';
     try {
@@ -384,7 +360,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   async mint() {
     try {
       if (this.responseMint) {
-        await this.approveContractTransfer(this.mintValue);
         this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
         await this.personalItemContract.mint(
           this.responseMint.data.name,
@@ -405,8 +380,10 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         });
         this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
         setTimeout(() => {
+          this.OpenModal = false;
           this.okBtnDisabled = false;
-        }, 1000);
+          void this.$router.push('/my-gallery')
+        }, 3000);
       } else {
         throw new Error('NFT Mint information is missing.');
       }

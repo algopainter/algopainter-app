@@ -38,6 +38,7 @@
                   id="imagem"
                   type="file"
                   name="imagem"
+                  accept=".jpg,.jpeg,.png"
                   @change="previewImage"
                 >
               </div>
@@ -268,15 +269,22 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
 
       if (file) {
         if (file.size < CreateUpload.FILE_SIZE_LIMIT) {
-          const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve((reader.result || '').toString());
-            reader.onerror = error => reject(error);
-          });
-          const base64 = await toBase64(file);
-          this.formData.image = base64;
-          this.isDisabled = false;
+          if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
+            const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = () => resolve((reader.result || '').toString());
+              reader.onerror = error => reject(error);
+            });
+            const base64 = await toBase64(file);
+            this.formData.image = base64;
+            this.isDisabled = false;
+          } else {
+            this.$q.notify({
+              type: 'negative',
+              message: this.$t('createCollectible.create.errorTypeImage')
+            })
+          }
         } else {
           this.$q.notify({
             type: 'negative',

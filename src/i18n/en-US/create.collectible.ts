@@ -13,6 +13,7 @@ export default {
     import: 'Choose File',
     descriFile: 'PNG, JPG or JPEG. Max 30MB.',
     errorFile: 'image must be less than 30MB',
+    errorTypeImage: 'file type not allowed, allowed types are PNG, JPEG, JPG.',
     btnCreate: 'Create item',
     requiredField: 'Required field',
     fields: {

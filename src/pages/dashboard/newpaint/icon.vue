@@ -1,7 +1,8 @@
 <template>
   <div v-if="iconName = 'gwei'">
     <svg
-      width="264" height="420" viewBox="0 0 323 514" fill="none" xmlns="http://www.w3.org/2000/svg"
+      v-if="collectionName === 'gwei'"
+      :width="width" :height="heigth" :viewBox="viewBox" fill="none" xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
       <rect width="264" height="420" fill="url(#pattern0)" />
@@ -22,6 +23,26 @@ class Props {
   iconName = prop({
     type: String,
     required: true,
+  });
+
+  collectionName = prop({
+    type: String,
+    required: false,
+  });
+
+  width = prop({
+    type: String,
+    required: false,
+  });
+
+  heigth = prop({
+    type: String,
+    required: false,
+  });
+
+  viewBox = prop({
+    type: String,
+    required: false,
   });
 }
 export default class Icon extends Vue.with(Props) {

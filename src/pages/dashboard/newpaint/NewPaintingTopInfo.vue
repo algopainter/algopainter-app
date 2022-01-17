@@ -164,7 +164,17 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
       return coin.label === this.collectionToken;
     });
     if (!coin) {
-      throw new Error('COIN_NOT_FOUND');
+      if (this.collectionToken === 'BNB') {
+        return {
+          value: '2',
+          label: 'BNB',
+          tokenAddress: '',
+          decimalPlaces: 18,
+          img: '/images/BNB.svg',
+        }
+      } else {
+        throw new Error('COIN_NOT_FOUND');
+      }
     }
     return coin;
   }

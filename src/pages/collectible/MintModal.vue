@@ -49,58 +49,6 @@
           <div class="col-12 step">
             <div class="avatar">
               <q-avatar
-                v-if="painterPersonalItemStatus < PainterPersonalItemStatus.IncreateAllowanceAwaitingInput"
-                size="60px"
-                color="grey"
-                text-color="white"
-              >
-                <q-icon name="mdi-cancel" />
-              </q-avatar>
-              <q-avatar
-                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.IncreateAllowanceAwaitingInput"
-                size="60px"
-                color="warning"
-                text-color="white"
-              >
-                <q-icon name="mdi-alert" />
-              </q-avatar>
-              <q-avatar
-                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.IncreateAllowanceAwaitingConfirmation"
-                size="60px"
-                color="primary"
-                text-color="white"
-              >
-                <q-spinner color="white" />
-              </q-avatar>
-              <q-avatar
-                v-else-if="painterPersonalItemStatus === PainterPersonalItemStatus.IncreateAllowanceError"
-                size="60px"
-                color="negative"
-                text-color="white"
-              >
-                <q-icon name="mdi-alert-circle" />
-              </q-avatar>
-              <q-avatar
-                v-else
-                size="60px"
-                color="positive"
-                text-color="white"
-              >
-                <q-icon name="mdi-check" />
-              </q-avatar>
-            </div>
-            <div class="label">
-              <div class="title">
-                {{ $t('createCollectible.mintModal.approveStatus.approveContractTitle') }}
-              </div>
-              <div>
-                {{ secondStepLabel }}
-              </div>
-            </div>
-          </div>
-          <div class="col-12 step">
-            <div class="avatar">
-              <q-avatar
                 v-if="painterPersonalItemStatus < PainterPersonalItemStatus.PersonalItemAwaitingInput"
                 size="60px"
                 color="grey"
@@ -244,26 +192,6 @@ export default class MyPaint extends Vue.with(Props) {
       default:
         return this.$t(
           'dashboard.sellYourArt.statuses.approveContractAvailable',
-        );
-    }
-  }
-
-  get secondStepLabel() {
-    switch (this.painterPersonalItemStatus) {
-      case PainterPersonalItemStatus.CheckingAllowance:
-        return this.$t('createCollectible.mintModal.approveStatus.approveContractApproved',
-        );
-      case PainterPersonalItemStatus.IncreateAllowanceAwaitingInput:
-        return this.$t('createCollectible.mintModal.approveStatus.approveContractInput',
-        );
-      case PainterPersonalItemStatus.IncreateAllowanceError:
-        return this.$t('createCollectible.mintModal.approveStatus.approveContractError',
-        );
-      case PainterPersonalItemStatus.IncreateAllowanceAwaitingConfirmation:
-        return this.$t('createCollectible.mintModal.approveStatus.approveContractConfirmation',
-        );
-      default:
-        return this.$t('createCollectible.mintModal.approveStatus.approveContractAvailable',
         );
     }
   }

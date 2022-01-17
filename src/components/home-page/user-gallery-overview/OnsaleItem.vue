@@ -93,6 +93,7 @@
               class="flex items-center q-col-gutter-sm q-ml-xs"
             >
               <div
+                v-if="tokenPriceAddress"
                 class="price"
               >
                 <div class="row">

@@ -36,24 +36,30 @@
           {{ $t('dashboard.selectAlgoP') }}
         </p>
         <div class="row justify-center">
-          <q-btn
-            round
-            type="a"
-            :to="{name: 'newPainting', params: { collection: 'gwei' } }"
-          >
-            <q-avatar size="250px" class="avatar">
-              <img width="150px" class="img" src="/images/gwei.png" />
-            </q-avatar>
-          </q-btn>
-          <q-btn
-            round
-            type="a"
-            :to="{name: 'newPainting', params: { collection: 'expressions' } }"
-          >
-            <q-avatar size="250px" class="avatar">
-              <img src="/images/manwithnoname.png" />
-            </q-avatar>
-          </q-btn>
+          <div>
+            <q-btn
+              round
+              type="a"
+              :to="{name: 'newPainting', params: { collection: 'gwei' } }"
+            >
+              <q-avatar size="250px" class="avatar">
+                <img width="150px" class="img" src="/images/gwei.png" />
+              </q-avatar>
+            </q-btn>
+            <p class="text-bold text-center">Hashly Gwei</p>
+          </div>
+          <div>
+            <q-btn
+              round
+              type="a"
+              :to="{name: 'newPainting', params: { collection: 'expressions' } }"
+            >
+              <q-avatar size="250px" class="avatar">
+                <img src="/images/manwithnoname.png" />
+              </q-avatar>
+            </q-btn>
+            <p class="text-bold text-center">Man With No Name</p>
+          </div>
         </div>
       </div>
       <!--

@@ -265,7 +265,7 @@ export default {
     bidBackTooltip: 'A user can create an auction and set a BidBack percentage. It will incentivize all the users to send bids because all the bidders will join the BidBack pool and receive an artwork sell price percentage.',
     // eslint-disable-next-line max-len
     pirsTooltip: 'The PIRS (Perpetual Inclusive Royalty System) will bring attention to your artwork because all the owners will receive a royalty incentivate to buy and sell. Only the first owner can set the PIRS percentage. The following owners will only receive the corresponding value.',
-    creatorTooltip: 'This is the PIRS percentage (i.e., the royalty) that the artist, who created the collection, will receive.',
+    creatorTooltip: 'This is the creator percentage royalty that the artist, who created the collection, will receive.',
     statuses: {
       contractApprove: 'Approve contract',
       checkingContractApproved: 'Verifying if the contract is already approved',

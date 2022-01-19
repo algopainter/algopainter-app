@@ -8,7 +8,7 @@
         <q-btn
           round
           type="a"
-          href="https://app.algopainter.art/paintings/new"
+          :to="{name: 'newPainting', params: { collection: 'gwei' } }"
           target="_blank"
         >
           <q-avatar size="250px" class="avatar">
@@ -18,7 +18,7 @@
         <q-btn
           round
           type="a"
-          href="https://app.algopainter.art/collections/1/new"
+          :to="{name: 'newPainting', params: { collection: 'expressions' } }"
           target="_blank"
         >
           <q-avatar size="250px" class="avatar">

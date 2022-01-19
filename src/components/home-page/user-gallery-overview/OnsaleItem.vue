@@ -90,6 +90,7 @@
         <i18n-t keypath="dashboard.auctions.minimumBid">
           <template #highestBid>
             <div
+              v-if="tokenPriceAddress"
               class="flex items-center q-col-gutter-sm q-ml-xs"
             >
               <div

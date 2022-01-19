@@ -128,9 +128,9 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'create-collection',
-        component: () => import('src/pages/collectible/Index.vue'),
+        component: () => import('src/pages/create-collection/CreateCollection.vue'),
         meta: {
-          title: i18n.global.t('dashboard.creationCollection.title'),
+          title: i18n.global.t('dashboard.createCollection.title'),
         },
       },
     ],

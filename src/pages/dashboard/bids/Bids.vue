@@ -81,7 +81,7 @@ export default class Bids extends Vue {
 }
 </script>
 <style lang="scss">
-.container-bid{
-  margin-right: 16px;
-}
+// .container-bid{
+//   margin-right: 16px;
+// }
 </style>

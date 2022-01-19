@@ -49,7 +49,10 @@
             }}
           </div>
           <div class="col-12">
-            <div v-if="auctionEnded">
+            <div
+              v-if="auctionEnded"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row ']"
+            >
               {{
                 $t('dashboard.auctionPage.auctionEnded', {
                   endDate: endTimeFormatted,
@@ -58,7 +61,7 @@
             </div>
             <div
               v-else
-              class="row"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row ']"
             >
               <div class="col-auto remaining-time-label on-left">
                 {{ $t('dashboard.auctionPage.auctionRemainingTime') }}
@@ -116,17 +119,17 @@
               </q-tab-panel>
             </q-tab-panels>
           </div>
-          <div class="col-12">
+          <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'col-12']">
             <algo-button
               v-if="account === auction.owner"
-              class="full-width q-py-sm q-mt-sm"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-py-sm q-mt-sm' : 'full-width q-py-sm q-mt-sm ']"
               color="primary"
               outline
               :label="$t('dashboard.auctionPage.cancelAuction')"
               @click="cancelAuction"
             />
             <algo-button
-              class="full-width q-py-sm q-mt-md"
+              :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-py-sm q-mt-md' : 'full-width q-py-sm q-mt-md']"
               color="primary"
               :label="$t('dashboard.auctionPage.placeABid')"
               @click="placeABidAction"
@@ -166,6 +169,7 @@ import BidsList from './tabs/BidsList.vue';
 import AuctionHistory from './tabs/AuctionHistory.vue';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
+import AlgoPainterPersonalItemProxy from 'src/eth/AlgoPainterPersonalItemProxy';
 
 import { NetworkInfo } from 'src/store/user/types';
 
@@ -202,11 +206,13 @@ export default class Auction extends Vue {
   isConnected!: boolean;
   auctionSystem!: AlgoPainterAuctionSystemProxy;
   bidBackPirsSystem!: AlgoPainterBidBackPirsProxy;
+  personalItemContract = <AlgoPainterPersonalItemProxy>{};
   displayingStatus: boolean = false;
   deleteAuctionStatus: DeletingAuctionStatus | null = null;
   auctionBidBackRate: number = 0;
   itemInvestorPirsRate: number = 0;
   collectionCreatorRoyaltiesRate: number = 0;
+  hashPersonalItem!: string;
 
   get auctionId(): string {
     const { id } = this.$route.params;
@@ -295,6 +301,7 @@ export default class Auction extends Vue {
     }, 5000) as unknown as number;
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.bidBackPirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
   }
 
   unmounted() {
@@ -327,8 +334,12 @@ export default class Auction extends Vue {
   async getCreatorRoyaltiesRate() {
     if (this.auction) {
       try {
-        this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesRate(this.auction.index);
-        this.collectionCreatorRoyaltiesRate = this.collectionCreatorRoyaltiesRate / 100;
+        if (this.auction.item.collectionName === 'PersonalItem') {
+          this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.auction.item.index) as string;
+          this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem) / 100;
+        } else {
+          this.collectionCreatorRoyaltiesRate = await this.bidBackPirsSystem.getCreatorRoyaltiesRate(this.auction.index) / 100;
+        }
       } catch (error) {
         console.log('Error - collectionCreatorRoyaltiesRate - Auction');
       }

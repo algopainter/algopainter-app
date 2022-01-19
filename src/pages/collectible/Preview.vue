@@ -1,13 +1,13 @@
 <template>
   <div class="col preview-size">
-    <div :hidden="$q.screen.lt.md">
+    <div>
       <div class="text-h6">
         {{ $t('createCollectible.create.preview') }}
       </div>
       <div class="row text-h6 ap-preview-box justify-center items-center">
         <div class="col">
           <p
-            v-if="imagePreview === null"
+            v-if="imagePreview === '' "
             class="text-center"
           >
             {{ $t('createCollectible.create.previewText') }}
@@ -20,14 +20,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="row justify-center q-py-md q-mt-md">
-      <algo-button
-        type="submit"
-        color="primary"
-        :label="$t('createCollectible.create.btnCreate')"
-        @click="OpenModal = true"
-      />
     </div>
   </div>
   <mint-modal
@@ -75,8 +67,20 @@ OpenModal: boolean = false;
 }
 
 .preview-size {
-  width: 100%;
+  width: 300px;
+  position: absolute;
   height: 450px;
+  margin-top: -65rem;
+  margin-left: -50px;
+}
+@media (min-width:1800px){
+.preview-size {
+  width: 300px;
+  position: absolute;
+  height: 450px;
+  margin-top: -100rem;
+  margin-left: -100px;
+}
 }
 
 </style>

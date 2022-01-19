@@ -2,8 +2,8 @@
 <template>
   <div class="btn-container q-mx-auto row items-center justify-center">
     <q-select
-      v-if="currentBtnClicked !== 4 && currentBtnClicked !== 5"
       v-model="currentCollection"
+      :disable="currentBtnClicked === 4 || currentBtnClicked === 5"
       :options="collectionFilter"
       color="primary"
       :loading="getCollectionsLoading"
@@ -32,10 +32,7 @@
   </div>
   <div class="row justify-center">
     <div
-      v-if="
-        !galleryTabs[0].loadingButtons &&
-          currentBtnClicked === galleryTabs[0].btnIndex
-      "
+      v-if="!galleryTabs[0].loadingButtons && currentBtnClicked === galleryTabs[0].btnIndex"
       class="col-12 flex q-col-gutter-md justify-center"
     >
       <div v-if="!galleryTabs[0].loadingData">
@@ -47,7 +44,7 @@
             <div>
               <gallery-item
                 :art="item"
-                :btn-name="'dashboard.gallery.btnName.sell'"
+                :btn-name="'dashboard.gallery.btnName.bntSell'"
                 @favoriteClicked="favoriteClicked"
               />
             </div>
@@ -108,7 +105,10 @@
       class="col-12 flex q-col-gutter-md justify-center"
     >
       <div v-if="!galleryTabs[1].loadingData">
-        <div v-if="!galleryTabs[1].noData" class="col-12 flex q-col-gutter-md">
+        <div
+          v-if="!galleryTabs[1].noData"
+          class="col-12 flex q-col-gutter-md justify-center"
+        >
           <div v-for="(item, index) in galleryTabs[1].data" :key="index">
             <div>
               <onsale-item
@@ -228,7 +228,11 @@
     <div v-else-if="currentBtnClicked === galleryTabs[3].btnIndex" class="col">
       <div v-if="!galleryTabs[3].loadingData">
         <div v-if="!galleryTabs[3].noData" class="col">
-          <div v-for="(item, index) in galleryTabs[3].data" :key="index">
+          <div
+            v-for="(item, index) in galleryTabs[3].data"
+            :key="index"
+            class="q-mx-lg galleries-spacing"
+          >
             <pirs-item
               :art="item"
               :btn-name="'dashboard.gallery.btnName.stakeAlgop'"
@@ -281,7 +285,11 @@
     <div v-else-if="currentBtnClicked === galleryTabs[4].btnIndex" class="col">
       <div v-if="!galleryTabs[4].loadingData">
         <div v-if="!galleryTabs[4].noData" class="col">
-          <div v-for="(item, index) in galleryTabs[4].data" :key="index">
+          <div
+            v-for="(item, index) in galleryTabs[4].data"
+            :key="index"
+            class="q-mx-lg galleries-spacing"
+          >
             <gallery-select
               :art="item"
               :btn-name="'dashboard.gallery.btnName.stakeAlgop'"
@@ -410,7 +418,7 @@ export default class MyGalleryOverview extends Vue {
   noMoreImages: boolean = false;
   maxItemsPerPage: number = 9;
 
-  currentCollection: {label: string} = { label: 'All Collections' };
+  currentCollection: { label: string } = { label: 'All Collections' };
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
   getCollectionsLoading: boolean = true;
 
@@ -486,17 +494,26 @@ export default class MyGalleryOverview extends Vue {
     switch (this.galleryTabsEnum) {
       case GalleryTabsEnum.GalleryTab:
         this.galleryTabs[0].reloadInterval = setInterval(() => {
-          this.getGalleryArts(1, this.currentCollection.label, false, true).catch(console.error);
+          this.getGalleryArts(
+            1,
+            this.currentCollection.label,
+            false,
+            true
+          ).catch(console.error);
         }, 5000);
         break;
       case GalleryTabsEnum.OnSaleTab:
         this.galleryTabs[1].reloadInterval = setInterval(() => {
-          this.getOnSale(1, this.currentCollection.label, false, true).catch(console.error);
+          this.getOnSale(1, this.currentCollection.label, false, true).catch(
+            console.error
+          );
         }, 5000);
         break;
       case GalleryTabsEnum.LikedTab:
         this.galleryTabs[2].reloadInterval = setInterval(() => {
-          this.getLikes(1, this.currentCollection.label, false, true).catch(console.error);
+          this.getLikes(1, this.currentCollection.label, false, true).catch(
+            console.error
+          );
         }, 5000);
         break;
       case GalleryTabsEnum.PirsTab:
@@ -518,9 +535,30 @@ export default class MyGalleryOverview extends Vue {
     this.getPirs(1);
     this.getBidBack(1);
     this.getGalleryArts(1, 'All Collections').catch(console.error);
-    this.galleryTabs[0].reloadInterval = setInterval(() => {
-      this.getGalleryArts(1, this.currentCollection.label, false, true).catch(console.error);
-    }, 5000);
+    this.setCurrentBtnClicked();
+  }
+
+  unmounted() {
+    this.galleryTabs.forEach((tab) => {
+      clearInterval(tab.reloadInterval as number);
+    });
+  }
+
+  setCurrentBtnClicked() {
+    switch (this.$route.params.btn) {
+      case 'Pirs':
+        this.getPirs(1);
+        break;
+      case 'BidBack':
+        this.getBidBack(1);
+        break;
+      default:
+        this.galleryTabs[0].reloadInterval = setInterval(() => {
+          this.getGalleryArts(1, this.currentCollection.label, false, true).catch(
+            console.error
+          );
+        }, 5000);
+    }
   }
 
   @Watch('userAccount')
@@ -535,10 +573,14 @@ export default class MyGalleryOverview extends Vue {
   @Watch('currentCollection')
   onCollectionChanged() {
     if (this.currentBtnClicked !== 1) {
-      this.getGalleryArts(1, this.currentCollection.label, true).catch(console.error);
+      this.getGalleryArts(1, this.currentCollection.label, true).catch(
+        console.error
+      );
     }
     if (this.currentBtnClicked !== 2) {
-      this.getOnSale(1, this.currentCollection.label, true).catch(console.error);
+      this.getOnSale(1, this.currentCollection.label, true).catch(
+        console.error
+      );
     }
     if (this.currentBtnClicked !== 3) {
       this.getLikes(1, this.currentCollection.label, true).catch(console.error);
@@ -574,7 +616,7 @@ export default class MyGalleryOverview extends Vue {
 
   filterCollection(
     page: number = 1,
-    currentCollection: string = 'All Collections',
+    currentCollection: string = 'All Collections'
   ) {
     this.currentCollection.label = currentCollection;
     const device = window.innerWidth <= 768 ? 'mobile' : 'desktop';
@@ -611,7 +653,7 @@ export default class MyGalleryOverview extends Vue {
     page: number = 1,
     collection: string = this.currentCollection.label,
     watcher: boolean = false,
-    isRefresh: boolean = false,
+    isRefresh: boolean = false
   ) {
     this.galleryTabs[0].loadingData = !isRefresh;
     this.galleryTabs[0].currentPage = page;
@@ -644,7 +686,7 @@ export default class MyGalleryOverview extends Vue {
     page: number = 1,
     collection: string = this.currentCollection.label,
     watcher: boolean = false,
-    isRefresh: boolean = false,
+    isRefresh: boolean = false
   ) {
     this.galleryTabs[1].loadingData = !isRefresh;
     this.galleryTabs[1].currentPage = page;
@@ -676,7 +718,7 @@ export default class MyGalleryOverview extends Vue {
     page: number = 1,
     collection: string = this.currentCollection.label,
     watcher: boolean = false,
-    isRefresh: boolean = false,
+    isRefresh: boolean = false
   ) {
     this.galleryTabs[2].loadingData = !isRefresh;
     this.galleryTabs[2].currentPage = page;
@@ -766,7 +808,7 @@ export default class MyGalleryOverview extends Vue {
 
   async loadMore(
     collection: string = this.currentCollection.label,
-    filter: boolean = false,
+    filter: boolean = false
   ) {
     if (filter) {
       this.galleryTabs[0].loadingData = true;
@@ -802,7 +844,7 @@ export default class MyGalleryOverview extends Vue {
 
   async loadMoreOnSale(
     collection: string = this.currentCollection.label,
-    filter: boolean = false,
+    filter: boolean = false
   ) {
     if (filter) {
       this.galleryTabs[1].loadingData = true;
@@ -838,7 +880,7 @@ export default class MyGalleryOverview extends Vue {
 
   async loadMoreLike(
     collection: string = this.currentCollection.label,
-    filter: boolean = false,
+    filter: boolean = false
   ) {
     if (filter) {
       this.galleryTabs[2].loadingData = true;
@@ -966,8 +1008,14 @@ body.screen--sm,
   .btn-container {
     height: 50%;
   }
+  .btn-container > button {
+    min-width: 112px;
+  }
   .algo-button {
     margin-bottom: 10px;
   }
+}
+.galleries-spacing {
+  margin-top: 48px;
 }
 </style>

@@ -1,52 +1,38 @@
 <template>
-  <div>
-    <div
-      class="art-header flex q-pb-sm"
-    >
-      <div
-        v-for="(person, index) in art.users"
-        :key="index"
-        class="users"
-      >
-        <router-link :to="{name: 'customUrl', params: { customUrl: person.customProfile || person.account } }">
-          <q-avatar
-            size="lg"
-            class="q-mr-xm"
-            round
-          >
-            <img
-              :src="person.avatar || '/images/do-utilizador (1).png'"
-            >
-            <q-tooltip
-              class="bg-primary"
-            >
-              {{ person.role }}{{ $t('dashboard.homePage.colon') }} {{ person.name }}
+  <div class="gallery-item">
+    <div class="art-header flex q-pb-sm">
+      <div v-for="(person, index) in art.users" :key="index" class="users">
+        <router-link
+          :to="{
+            name: 'customUrl',
+            params: { customUrl: person.customProfile || person.account },
+          }"
+        >
+          <q-avatar size="lg" class="q-mr-xm" round>
+            <img :src="person.avatar || '/images/do-utilizador (1).png'" />
+            <q-tooltip class="bg-primary">
+              {{ person.role }}{{ $t('dashboard.homePage.colon') }}
+              {{ person.name }}
             </q-tooltip>
           </q-avatar>
         </router-link>
       </div>
       <q-space />
-      <ShareArtIcons
-        :art="art.nft.previewImage"
-        :_id="art._id"
-      />
+      <ShareArtIcons :art="art.nft.previewImage" :_id="art._id" />
       <LikeAnimation
         :liked="wasLiked"
         :likes="likes || art.likes"
         @favoriteClicked="favoriteClicked"
       />
     </div>
-    <q-img
-      class="art-image"
-      :src="art.nft.previewImage"
-    />
+    <q-card :class="[isGwei ? 'item-container' : 'item-container-personal']">
+      <q-img class="" :src="art.nft.previewImage" :class="[isGwei ? 'art-image-gwei ' : 'art-image']" />
+    </q-card>
     <div class="details q-pa-sm">
       <div class="name">
         {{ $t('dashboard.homePage.symbol') }}{{ art.nft.index }} {{ art.title }}
       </div>
-      <q-tooltip
-        class="bg-primary"
-      >
+      <q-tooltip class="bg-primary">
         {{ art.title }}
       </q-tooltip>
       <div class="item-actions row q-col-gutter-md justify-center">
@@ -55,15 +41,12 @@
             icon="visibility"
             size="10px"
             class="q-my-md item-visibility"
-            :class="[ btnName ? null : 'q-pl-auto' ]"
+            :class="[btnName ? null : 'q-pl-auto']"
             color="primary"
             :to="`/collections/${art._id}`"
           />
         </div>
-        <div
-          v-if="btnName"
-          class="col"
-        >
+        <div v-if="btnName" class="col">
           <algoButton
             v-if="btnName === 'dashboard.auctions.stackAlgop'"
             class="q-my-md action full-width"
@@ -71,7 +54,7 @@
             :label="$t(btnName)"
             @click="openAuctionModal"
           />
-          <div v-else-if="btnName === 'dashboard.homePage.goToAuction'">
+          <div v-else-if="btnName === 'dashboard.gallery.btnName.goToAuction'">
             <algoButton
               v-if="auction && auctionEnded"
               class="q-my-md action full-width"
@@ -107,19 +90,13 @@
         </div>
       </div>
     </div>
-    <q-dialog
-      v-model="displayEndAuctionStatus"
-      persistent
-    >
+    <q-dialog v-model="displayEndAuctionStatus" persistent>
       <end-auction-status-card
         :end-auction-status="endAuctionStatus"
         @request-close="onCloseEndAuctionDialog"
       />
     </q-dialog>
-    <q-dialog
-      v-model="displayCancelAuctionStatus"
-      persistent
-    >
+    <q-dialog v-model="displayCancelAuctionStatus" persistent>
       <return-nft
         :delete-auction-status="deleteAuctionStatus"
         @request-close="onCloseCancelAuctionDialog"
@@ -180,12 +157,11 @@ class Props {
     ReturnNft,
   },
   computed: {
-    ...mapGetters(
-      'user', {
-        networkInfo: 'networkInfo',
-        account: 'account',
-        isConnected: 'isConnected',
-      }),
+    ...mapGetters('user', {
+      networkInfo: 'networkInfo',
+      account: 'account',
+      isConnected: 'isConnected',
+    }),
   },
 })
 export default class GalleryItem extends Vue.with(Props) {
@@ -204,6 +180,7 @@ export default class GalleryItem extends Vue.with(Props) {
   goToAuctionId: string | null = null;
   auction!: IAuctionItem;
   loadingGoToAuctionId: boolean = true;
+  isGwei: string = '';
 
   collectionArtController: CollectionArtController =
     new CollectionArtController();
@@ -214,6 +191,13 @@ export default class GalleryItem extends Vue.with(Props) {
     }
     this.likes = this.art.likes;
     void this.loadAuctionData();
+    void this.collection();
+  }
+
+  collection() {
+    if (this.art.collectionName === 'Gwei' || this.art.collectionName === 'Expressions') {
+      this.isGwei = this.art.collectionName;
+    }
   }
 
   get auctionEnded() {
@@ -221,8 +205,10 @@ export default class GalleryItem extends Vue.with(Props) {
       return false;
     }
 
-    return this.auction.highestBid &&
-      moment(this.auction.expirationDt).isBefore(moment());
+    return (
+      this.auction.highestBid &&
+      moment(this.auction.expirationDt).isBefore(moment())
+    );
   }
 
   get auctionEndedWithNoBids() {
@@ -230,8 +216,10 @@ export default class GalleryItem extends Vue.with(Props) {
       return false;
     }
 
-    return this.auction.bids.length === 0 &&
-      moment(this.auction.expirationDt).isBefore(moment());
+    return (
+      this.auction.bids.length === 0 &&
+      moment(this.auction.expirationDt).isBefore(moment())
+    );
   }
 
   get coinDetails() {
@@ -259,7 +247,7 @@ export default class GalleryItem extends Vue.with(Props) {
 
     const value = blockchainToCurrency(
       highestBid ? highestBid.netAmount : 0,
-      decimalPlaces,
+      decimalPlaces
     );
 
     const amount = this.$n(value, 'decimal', {
@@ -272,8 +260,9 @@ export default class GalleryItem extends Vue.with(Props) {
   async loadAuctionData() {
     this.loadingGoToAuctionId = true;
 
-    const response = await api
-      .get<IAuctionItem[]>(`auctions?item._id=${this.art._id}`);
+    const response = await api.get<IAuctionItem[]>(
+      `auctions?item._id=${this.art._id}`
+    );
 
     const auction = response.data.pop();
 
@@ -293,7 +282,7 @@ export default class GalleryItem extends Vue.with(Props) {
   loadData() {
     this.wasLiked =
       (this.art.likers as string[]).filter(
-        (liker) => liker.toLowerCase() === this.account.toLowerCase(),
+        (liker) => liker.toLowerCase() === this.account.toLowerCase()
       ).length !== 0;
   }
 
@@ -308,21 +297,19 @@ export default class GalleryItem extends Vue.with(Props) {
   }
 
   postFavoriteArt() {
-    this.collectionArtController
-      .favoriteArt(this.art._id, this.account)
-      .then(
-        (result) => {
-          if (result.isFailure) {
-            this.like(true);
-            this.likeClicked = false;
-          }
+    this.collectionArtController.favoriteArt(this.art._id, this.account).then(
+      (result) => {
+        if (result.isFailure) {
+          this.like(true);
           this.likeClicked = false;
-        },
-        (error) => {
-          console.log('"like" post error: ', error);
-          this.likeClicked = false;
-        },
-      );
+        }
+        this.likeClicked = false;
+      },
+      (error) => {
+        console.log('"like" post error: ', error);
+        this.likeClicked = false;
+      }
+    );
     this.like();
   }
 
@@ -340,7 +327,7 @@ export default class GalleryItem extends Vue.with(Props) {
         (error) => {
           console.log('"like" delete error: ', error);
           this.likeClicked = false;
-        },
+        }
       );
     this.like(true);
   }
@@ -365,15 +352,14 @@ export default class GalleryItem extends Vue.with(Props) {
     this.displayEndAuctionStatus = true;
     this.endAuctionStatus = EndAuctionStatus.EndAuctionAwaitingInput;
 
-    await this.auctionSystem.endAuction(
-      this.auction.index,
-      this.account,
-    ).on('error', () => {
-      this.endAuctionStatus = EndAuctionStatus.EndAuctionError;
-    }).on('transactionHash', () => {
-      this.endAuctionStatus =
-        EndAuctionStatus.EndAuctionAwaitingConfirmation;
-    });
+    await this.auctionSystem
+      .endAuction(this.auction.index, this.account)
+      .on('error', () => {
+        this.endAuctionStatus = EndAuctionStatus.EndAuctionError;
+      })
+      .on('transactionHash', () => {
+        this.endAuctionStatus = EndAuctionStatus.EndAuctionAwaitingConfirmation;
+      });
 
     this.endAuctionStatus = EndAuctionStatus.AuctionEnded;
   }
@@ -384,11 +370,15 @@ export default class GalleryItem extends Vue.with(Props) {
     this.displayCancelAuctionStatus = true;
     this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionAwaitingInput;
 
-    await this.auctionSystem.cancelAuction(this.auction.index, this.account).on('transactionHash', () => {
-      this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation;
-    }).on('error', () => {
-      this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
-    });
+    await this.auctionSystem
+      .cancelAuction(this.auction.index, this.account)
+      .on('transactionHash', () => {
+        this.deleteAuctionStatus =
+          DeletingAuctionStatus.DeleteAuctionAwaitingConfirmation;
+      })
+      .on('error', () => {
+        this.deleteAuctionStatus = DeletingAuctionStatus.DeleteAuctionError;
+      });
 
     this.deleteAuctionStatus = DeletingAuctionStatus.AuctionDeleted;
   }
@@ -403,7 +393,9 @@ export default class GalleryItem extends Vue.with(Props) {
     if (this.deleteAuctionStatus === DeletingAuctionStatus.AuctionDeleted) {
       this.$q.notify({
         type: 'positive',
-        message: this.$t('dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionDeleted'),
+        message: this.$t(
+          'dashboard.auctionPage.cancelAuctionStatuses.deleteAuctionDeleted'
+        ),
       });
     }
   }
@@ -412,13 +404,32 @@ export default class GalleryItem extends Vue.with(Props) {
     void this.$store.dispatch('auctions/openAuctionModal');
   }
 }
-
 </script>
 
 <style lang="scss" scoped>
-
 .cursor-pointer {
   cursor: pointer;
+}
+.item-container-personal {
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+.item-container{
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+.personImg{
+  width: 100%;
 }
 
 .teste {
@@ -434,6 +445,12 @@ export default class GalleryItem extends Vue.with(Props) {
 }
 
 .art-image {
+  border-radius: 5px;
+  object-fit: contain;
+  max-width: 250px;
+}
+
+.art-image-gwei{
   border-radius: 5px;
   width: 300px;
   height: 300px;
@@ -509,11 +526,12 @@ export default class GalleryItem extends Vue.with(Props) {
     .action {
       min-width: unset;
     }
-    .item-visibility{
+    .item-visibility {
       align-items: center;
       min-width: 30px;
       text-align: center;
       justify-content: center;
+      padding: 8px 16px;
     }
     i {
       margin-right: 0px !important;

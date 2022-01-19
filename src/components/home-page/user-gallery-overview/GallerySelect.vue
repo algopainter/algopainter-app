@@ -1,11 +1,9 @@
 <template>
   <div class="row justify-between q-mb-md">
     <div class="col-12 col-md-3 col-lg-3 col-xl-3 col-xl-2 col-sm-6 col-xs-12">
-      <q-img
-        class="previewImage"
-        :src="art.item.previewImage"
-        alt="img art"
-      />
+      <q-card :class="[isGwei ? 'item-container' : 'item-container-personal']">
+        <q-img :class="[isGwei ? 'art-image-gwei ' : 'art-image']" :src="art.item.previewImage" alt="img art" />
+      </q-card>
     </div>
     <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
@@ -31,10 +29,7 @@
         </p>
       </div>
       <div class="text-bold text-h6">
-        <div
-          v-if="isEnded"
-          class="text-bold text-end"
-        >
+        <div v-if="isEnded" class="text-bold text-end">
           {{ $t('dashboard.bid.auctionEnd') }}
           <div class="text-bold">
             {{ monthExpirations }}
@@ -51,9 +46,7 @@
           <div class="text-bold">
             <div class="row justify-start time q-gutter-sm">
               <div>
-                <div class="text-bold">
-                  <!-- {{ days }}  -->{{ countDays }}
-                </div>
+                <div class="text-bold"><!-- {{ days }}  -->{{ countDays }}</div>
                 <span> {{ $t('dashboard.bid.days') }} </span>
               </div>
               <div>
@@ -98,33 +91,41 @@
               v-model="userCurrentPrizeAmount"
               fill-mask="0"
               input-class="text-left"
-              class="input-stack-algop"
+              class="input-stake-algop"
               readonly
             />
             <algo-button
               :label="$t('dashboard.gallery.bidBackTab.harvest')"
               color="primary"
-              class="btn-havest"
+              class="btn-harvest"
               :disable="isCoinHarvestDisabled"
               @click="claimBidBack"
             />
           </div>
         </template>
         <template v-else-if="showHarvestMsg">
-          <span class="text-bold flex q-my-md">
+          <span
+            :class="[
+              $q.screen.lt.md || $q.screen.lt.sm
+                ? 'text-bold flex q-my-md text-center'
+                : 'text-bold flex q-my-md',
+            ]"
+          >
             {{ $t('dashboard.gallery.bidBackTab.harvestMsg') }}
           </span>
         </template>
-        <span class="text-bold">
+        <span class="text-bold label-staked-algop">
           {{ $t('dashboard.gallery.bidBackTab.stakedAlgop') }}
         </span>
         <div class="flex container">
-          <span
-            v-if="!isStakedAlgopInputLoading"
-            class="input-stack-algop"
-          > {{ algopStaked ? setFormatCurrency(algopStaked) : 0 }}
+          <span v-if="!isStakedAlgopInputLoading" class="input-stake-algop">
+            {{ algopStaked ? setFormatCurrency(algopStaked) : 0 }}
           </span>
-          <q-spinner-dots v-else class="input-stack-algop-loading" color="primary" />
+          <q-spinner-dots
+            v-else
+            class="input-stake-algop-loading"
+            color="primary"
+          />
           <algo-button
             label="-"
             color="primary"
@@ -139,14 +140,8 @@
             :disable="isEnded"
             @click="stackCoin()"
           />
-          <stack-modal-algop
-            v-model="openModal"
-            :art="art"
-          />
-          <UnstackModalAlgop
-            v-model="openModalUnstack"
-            :art="art"
-          />
+          <stack-modal-algop v-model="openModal" :art="art" />
+          <UnstackModalAlgop v-model="openModalUnstack" :art="art" />
         </div>
       </div>
     </div>
@@ -166,22 +161,27 @@
           :label="$t('dashboard.gallery.bidBackTab.bidBackBtn')"
           color="primary"
           outline
-          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-px-xl q-mx-auto' : 'load-more q-px-lg q-mx-auto q-mb-sm']"
+          :class="[
+            $q.screen.lt.md || $q.screen.lt.sm
+              ? 'q-px-xl q-mx-auto'
+              : 'load-more q-px-lg q-mx-auto q-mb-sm',
+          ]"
           @click="openBidBackModal()"
         />
         <algo-button
           :label="$t('dashboard.gallery.bidBackTab.bidBackSimulatorBtn')"
           color="primary"
           outline
-          :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-mt-sm q-px-xl q-mx-auto' : 'load-more q-px-xl q-mx-auto']"
+          :class="[
+            $q.screen.lt.md || $q.screen.lt.sm
+              ? 'q-mt-sm q-px-xl q-mx-auto'
+              : 'load-more q-px-xl q-mx-auto',
+          ]"
           @click="openBidBackSimulatorModal()"
         />
       </div>
     </div>
-    <q-dialog
-      v-model="displayingStatus"
-      persistent
-    >
+    <q-dialog v-model="displayingStatus" persistent>
       <withdraw-bidBack-status-card
         :withdraw-bid-back-status="withdrawBidBackStatus"
         @request-close="onCloseStatusDialog"
@@ -250,7 +250,9 @@ export default class gallerySelect extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
-  updateBidBackStakedAlgop!: {collectionOwner: string, itemIndex: number} | undefined;
+  updateBidBackStakedAlgop!:
+    | { collectionOwner: string; itemIndex: number }
+    | undefined;
 
   openModal: boolean = false;
   openModalUnstack: boolean = false;
@@ -264,6 +266,7 @@ export default class gallerySelect extends Vue.with(Props) {
   userCurrentPrizeAmount: number = 0;
   isCoinHarvestDisabled: boolean = false;
   isStakedAlgopInputLoading: boolean = false;
+  isGwei: string = '';
 
   displayingStatus: boolean = false;
   withdrawBidBackStatus: WithdrawBidBackStatus | null = null;
@@ -296,6 +299,13 @@ export default class gallerySelect extends Vue.with(Props) {
     this.getBidBackPercentage().catch(console.error);
     this.getTime();
     this.formatTime();
+    this.collection();
+  }
+
+  collection() {
+    if (this.art.item.collectionName === 'Gwei' || this.art.item.collectionName === 'Expressions') {
+      this.isGwei = this.art.item.collectionName;
+    }
   }
 
   async getBidBackPercentage() {
@@ -317,7 +327,7 @@ export default class gallerySelect extends Vue.with(Props) {
   get getLastBid() {
     const bidAmount = blockchainToCurrency(
       this.art.highestBid.netAmount,
-      this.coinDetails.decimalPlaces,
+      this.coinDetails.decimalPlaces
     );
 
     return this.$n(bidAmount, 'decimal', {
@@ -347,23 +357,28 @@ export default class gallerySelect extends Vue.with(Props) {
   getUserStackedBidBack() {
     this.algopStaked = this.art.bidbacks && (this.art.bidbacks[this.account] || 0);
     this.disableUnstackBtn = this.algopStaked <= 0 || this.isEnded;
-    this.showHarvestBtn = this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;
-    this.showHarvestMsg = !this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;
+    this.showHarvestBtn =
+      this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;
+    this.showHarvestMsg =
+      !this.art.ended && this.algopStaked > 0 && this.auctionBidBackRate > 0;
   }
 
   async claimBidBack() {
     try {
       this.displayingStatus = true;
 
-      this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
+      this.withdrawBidBackStatus =
+        WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
 
       await this.rewardsSystem
         .claimBidBack(this.art.index, this.account)
         .on('transactionHash', () => {
-          this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
+          this.withdrawBidBackStatus =
+            WithdrawBidBackStatus.WithdrawBidBackAwaitingConfirmation;
         })
         .on('error', () => {
-          this.withdrawBidBackStatus = WithdrawBidBackStatus.WithdrawBidBackError;
+          this.withdrawBidBackStatus =
+            WithdrawBidBackStatus.WithdrawBidBackError;
         });
 
       this.isCoinHarvestDisabled = true;
@@ -376,10 +391,11 @@ export default class gallerySelect extends Vue.with(Props) {
 
   async getCurrentPrizeAmount() {
     const totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(
-      this.art.index,
+      this.art.index
     );
 
-    const auctionHighestBid = this.art.highestBid.netAmount / 1000000000000000000;
+    const auctionHighestBid =
+      this.art.highestBid.netAmount / 1000000000000000000;
 
     const auctionBidBackRate = this.auctionBidBackRate / 100;
 
@@ -399,17 +415,21 @@ export default class gallerySelect extends Vue.with(Props) {
   }
 
   openBidBackModal() {
-    this.$store.dispatch({
-      type: 'auctions/openBidBackModal',
-      auction: this.art,
-    }).catch(console.error);
+    this.$store
+      .dispatch({
+        type: 'auctions/openBidBackModal',
+        auction: this.art,
+      })
+      .catch(console.error);
   }
 
   openBidBackSimulatorModal() {
-    this.$store.dispatch({
-      type: 'auctions/openBidBackSimulatorModal',
-      auction: this.art,
-    }).catch(console.error);
+    this.$store
+      .dispatch({
+        type: 'auctions/openBidBackSimulatorModal',
+        auction: this.art,
+      })
+      .catch(console.error);
   }
 
   onCloseStatusDialog() {
@@ -479,7 +499,11 @@ export default class gallerySelect extends Vue.with(Props) {
 
   @Watch('updateBidBackStakedAlgop')
   onBidBackStakedAlgopChanged() {
-    if (this.art.item.collectionOwner === this.updateBidBackStakedAlgop?.collectionOwner && this.art.item.index === this.updateBidBackStakedAlgop.itemIndex) {
+    if (
+      this.art.item.collectionOwner ===
+        this.updateBidBackStakedAlgop?.collectionOwner &&
+      this.art.item.index === this.updateBidBackStakedAlgop.itemIndex
+    ) {
       this.isStakedAlgopInputLoading = true;
       // eslint-disable-next-line @typescript-eslint/unbound-method
       this.bidBackStakedUpdate = debounce(this.bidBackStakedUpdate, 5000);
@@ -489,17 +513,26 @@ export default class gallerySelect extends Vue.with(Props) {
 
   bidBackStakedUpdate() {
     try {
-      this.$store.dispatch({
-        type: 'auctions/getBidBackUpdated',
-        account: this.account.toLowerCase(),
-        collectionOwner: this.art.item.collectionOwner,
-        itemIndex: this.art.item.index,
-      }).then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters['auctions/getBidsUpdated'] as IAxios;
-        const updatedAuction = response.data as IAuctionItem[];
-        this.algopStaked = (updatedAuction[0].bidbacks && updatedAuction[0].bidbacks[this.account]) ? updatedAuction[0].bidbacks[this.account] : 0;
-      }).catch(console.error);
+      this.$store
+        .dispatch({
+          type: 'auctions/getBidBackUpdated',
+          account: this.account.toLowerCase(),
+          collectionOwner: this.art.item.collectionOwner,
+          itemIndex: this.art.item.index,
+        })
+        .then(() => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          const response = this.$store.getters[
+            'auctions/getBidsUpdated'
+          ] as IAxios;
+          const updatedAuction = response.data as IAuctionItem[];
+          this.algopStaked =
+            updatedAuction[0].bidbacks &&
+            updatedAuction[0].bidbacks[this.account]
+              ? updatedAuction[0].bidbacks[this.account]
+              : 0;
+        })
+        .catch(console.error);
     } catch (e) {
       console.log('Error - updateBidBackStakedAlgop - GallerySelect');
     } finally {
@@ -517,34 +550,76 @@ export default class gallerySelect extends Vue.with(Props) {
   text-overflow: ellipsis;
 }
 
+  .art-image {
+  border-radius: 5px;
+  object-fit: contain;
+  max-width: 250px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.art-image-gwei{
+  border-radius: 5px;
+  width: 300px;
+  height: 300px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.item-container-personal {
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+.item-container{
+    width: 300px;
+    height: 300px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
 .won-bid {
   color: $positive;
 }
-
 .btn-staked {
   min-width: 30px !important;
   margin-right: 10px;
   height: 30px;
   margin-top: 20px;
 }
-
-.btn-havest {
+.btn-harvest {
   min-width: 100px !important;
   height: 50px;
   margin-top: 10px;
 }
-
 .previewImage {
-  width: 290px;
+  border-radius: 5px;
+  width: 300px;
+  height: 300px;
 }
-.input-stack-algop {
+.time {
+  font-size: 0.9rem;
+  width: 100%;
+}
+.label-staked-algop {
+  display: inline-block;
+  position: relative;
+  top: 25px;
+}
+.input-stake-algop {
+  position: relative;
   width: 170px;
   margin-right: 10px;
-  margin-top: 25px;
+  margin-top: 34px;
   border-bottom: dashed;
   border-bottom-width: 1px;
 }
-.input-stack-algop-loading {
+.input-stake-algop-loading {
   width: 170px;
   margin-right: 10px;
   margin-top: 25px;
@@ -556,14 +631,10 @@ export default class gallerySelect extends Vue.with(Props) {
   text-align: unset;
   height: 100px;
   width: 100px;
-  margin-left: 45px;
+  margin-left: 40px;
   border-radius: 50%;
   background-color: $primary;
 }
-.time{
-    font-size: 0.9rem;
-    width: 100%;
-  }
 .coin {
   color: $primary;
 }
@@ -576,11 +647,12 @@ export default class gallerySelect extends Vue.with(Props) {
     text-align: center;
     align-items: center;
   }
-  .bidBack{
-    margin-top: 5px;
+  .bidBack {
     margin-left: 1px;
+    margin-bottom: 0px;
+    width: 165px;
   }
-  .time{
+  .time {
     justify-content: center;
   }
   .text-title {
@@ -598,16 +670,16 @@ export default class gallerySelect extends Vue.with(Props) {
   }
   .field-stack {
     width: 100%;
-    margin-left: 10%;
     margin-top: 10px;
     justify-content: space-between;
     align-items: center;
   }
   .ended-part {
-    text-align: center;
+    margin: 32px 0 0 0;
     display: flex;
+    text-align: center;
     justify-content: center;
-    align-items: baseline;
+    align-items: center;
     justify-items: center;
   }
   .load-more {
@@ -617,6 +689,14 @@ export default class gallerySelect extends Vue.with(Props) {
   .text-end {
     width: 100%;
     justify-content: center;
+  }
+}
+</style>
+
+<style lang="scss">
+.ended-part {
+  .q-btn {
+    min-width: 197.17px;
   }
 }
 </style>

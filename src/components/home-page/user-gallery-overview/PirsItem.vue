@@ -1,7 +1,9 @@
 <template>
   <div class="row justify-between q-mb-md">
     <div class="col-12 col-md-3 col-lg-3 col-xl-3 col-sm-6 col-xs-12">
-      <q-img class="previewImage" :src="art.item.previewImage" alt="img art" />
+      <q-card :class="[isGwei ? 'item-container' : 'item-container-personal']">
+        <q-img :class="[isGwei ? 'art-image-gwei ' : 'art-image']" :src="art.item.previewImage" alt="img art" />
+      </q-card>
     </div>
     <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
@@ -135,32 +137,42 @@
               v-model="userCurrentPrizeAmount"
               fill-mask="0"
               input-class="text-left"
-              class="input-stack-algop"
+              class="input-stake-algop"
               :disable="true"
               readonly
             />
             <algo-button
               :label="$t('dashboard.gallery.pirsTab.harvest')"
               color="primary"
-              class="btn-havest"
+              class="btn-harvest"
               :disable="isCoinHarvestDisabled"
               @click="harvestAlgop"
             />
           </div>
         </template>
         <template v-else-if="showHarvestMsg">
-          <span class="text-bold flex q-my-md">
+          <span
+            :class="[
+              $q.screen.lt.md || $q.screen.lt.sm
+                ? 'text-bold flex q-my-md text-center'
+                : 'text-bold flex q-my-md',
+            ]"
+          >
             {{ $t('dashboard.gallery.pirsTab.harvestMsg') }}
           </span>
         </template>
-        <span class="text-bold">
+        <span class="text-bold label-staked-algop">
           {{ $t('dashboard.gallery.pirsTab.stakedAlgop') }}
         </span>
         <div class="flex container">
-          <span v-if="!isStakedAlgopInputLoading" class="input-stack-algop">
+          <span v-if="!isStakedAlgopInputLoading" class="input-stake-algop">
             {{ algopStaked ? setFormatCurrency(algopStaked) : 0 }}
           </span>
-          <q-spinner-dots v-else class="input-stack-algop-loading" color="primary" />
+          <q-spinner-dots
+            v-else
+            class="input-stake-algop-loading"
+            color="primary"
+          />
           <algo-button
             label="-"
             color="primary"
@@ -198,14 +210,22 @@
           :label="$t('dashboard.gallery.pirsTab.btnPirs')"
           color="primary"
           outline
-          class="load-more q-px-xl q-mx-auto q-mb-sm"
+          :class="[
+            $q.screen.lt.md || $q.screen.lt.sm
+              ? 'q-px-xl q-mx-auto'
+              : 'load-more q-px-lg q-mx-auto q-mb-sm',
+          ]"
           @click="openPirsModal()"
         />
         <algo-button
           :label="$t('dashboard.gallery.pirsTab.pirsSimulatorBtn')"
           color="primary"
           outline
-          class="load-more q-px-xl q-mx-auto"
+          :class="[
+            $q.screen.lt.md || $q.screen.lt.sm
+              ? 'q-mt-sm q-px-xl q-mx-auto'
+              : 'load-more q-px-xl q-mx-auto',
+          ]"
           @click="openPirsSimulatorModal()"
         />
       </div>
@@ -279,7 +299,9 @@ export default class PirsItem extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   isConnected!: boolean;
-  updatePirsStakedAlgop!: {collectionOwner: string, itemIndex: number} | undefined;
+  updatePirsStakedAlgop!:
+    | { collectionOwner: string; itemIndex: number }
+    | undefined;
 
   openModal: boolean = false;
   openModalUnstack: boolean = false;
@@ -292,6 +314,7 @@ export default class PirsItem extends Vue.with(Props) {
   userCurrentPrizeAmount: number = 0;
   isCoinHarvestDisabled: boolean = false;
   isStakedAlgopInputLoading: boolean = false;
+  isGwei: string = '';
 
   displayingStatus: boolean = false;
   withdrawPirsStatus: WithdrawPirsStatus | null = null;
@@ -326,6 +349,13 @@ export default class PirsItem extends Vue.with(Props) {
     this.getLastBid();
     this.getTime();
     this.formatTime();
+    this.collection();
+  }
+
+  collection() {
+    if (this.art.item.collectionName === 'Gwei' || this.art.item.collectionName === 'Expressions') {
+      this.isGwei = this.art.item.collectionName;
+    }
   }
 
   async getPirsPercentage() {
@@ -421,7 +451,9 @@ export default class PirsItem extends Vue.with(Props) {
 
   async getCurrentPrizeAmount() {
     try {
-      const totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(this.art.index);
+      const totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(
+        this.art.index
+      );
 
       const auctionHighestBid = this.art.highestBid
         ? this.art.highestBid.netAmount / 1000000000000000000
@@ -449,17 +481,21 @@ export default class PirsItem extends Vue.with(Props) {
   }
 
   openPirsModal() {
-    this.$store.dispatch({
-      type: 'auctions/openPirsModal',
-      auction: this.art,
-    }).catch(console.error);
+    this.$store
+      .dispatch({
+        type: 'auctions/openPirsModal',
+        auction: this.art,
+      })
+      .catch(console.error);
   }
 
   openPirsSimulatorModal() {
-    this.$store.dispatch({
-      type: 'auctions/openPirsSimulatorModal',
-      auction: this.art,
-    }).catch(console.error);
+    this.$store
+      .dispatch({
+        type: 'auctions/openPirsSimulatorModal',
+        auction: this.art,
+      })
+      .catch(console.error);
   }
 
   onCloseStatusDialog() {
@@ -530,7 +566,11 @@ export default class PirsItem extends Vue.with(Props) {
 
   @Watch('updatePirsStakedAlgop')
   onPirsStakedAlgopChanged() {
-    if (this.art.item.collectionOwner === this.updatePirsStakedAlgop?.collectionOwner && this.art.item.index === this.updatePirsStakedAlgop.itemIndex) {
+    if (
+      this.art.item.collectionOwner ===
+        this.updatePirsStakedAlgop?.collectionOwner &&
+      this.art.item.index === this.updatePirsStakedAlgop.itemIndex
+    ) {
       this.isStakedAlgopInputLoading = true;
       // eslint-disable-next-line @typescript-eslint/unbound-method
       this.pirsStakedUpdated = debounce(this.pirsStakedUpdated, 5000);
@@ -540,17 +580,25 @@ export default class PirsItem extends Vue.with(Props) {
 
   pirsStakedUpdated() {
     try {
-      this.$store.dispatch({
-        type: 'auctions/getPirsUpdated',
-        account: this.account.toLowerCase(),
-        collectionOwner: this.art.item.collectionOwner,
-        itemIndex: this.art.item.index,
-      }).then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters['auctions/getPirsUpdated'] as IAxios;
-        const updatedAuction = response.data as IAuctionItem[];
-        this.algopStaked = (updatedAuction[0].pirs && updatedAuction[0].pirs[this.account]) ? updatedAuction[0].pirs[this.account] : 0;
-      }).catch(console.error);
+      this.$store
+        .dispatch({
+          type: 'auctions/getPirsUpdated',
+          account: this.account.toLowerCase(),
+          collectionOwner: this.art.item.collectionOwner,
+          itemIndex: this.art.item.index,
+        })
+        .then(() => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          const response = this.$store.getters[
+            'auctions/getPirsUpdated'
+          ] as IAxios;
+          const updatedAuction = response.data as IAuctionItem[];
+          this.algopStaked =
+            updatedAuction[0].pirs && updatedAuction[0].pirs[this.account]
+              ? updatedAuction[0].pirs[this.account]
+              : 0;
+        })
+        .catch(console.error);
     } catch (e) {
       console.log('Error - getPirsUpdated updatePirsStakedUpdate - PirsItem');
     } finally {
@@ -561,50 +609,88 @@ export default class PirsItem extends Vue.with(Props) {
 </script>
 
 <style scoped lang="scss">
+.time-year {
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+ .art-image {
+  border-radius: 5px;
+  object-fit: contain;
+  max-width: 250px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.art-image-gwei{
+  border-radius: 5px;
+  width: 300px;
+  height: 300px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.item-container-personal {
+    width: 300px;
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
+.item-container{
+    width: 300px;
+    height: 300px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 2px;
+}
+
 .text-title {
   white-space: nowrap;
   width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .won-bid {
   color: $positive;
 }
-
 .btn-staked {
   min-width: 30px !important;
   margin-right: 10px;
   height: 30px;
   margin-top: 20px;
 }
-
-.time-year {
-  font-size: 0.9rem;
-  width: 100%;
+.btn-harvest {
+  min-width: 100px !important;
+  height: 50px;
+  margin-top: 10px;
+}
+.previewImage {
+  border-radius: 5px;
+  width: 300px;
+  height: 300px;
 }
 .time {
   font-size: 0.9rem;
   width: 100%;
 }
-
-.btn-havest {
-  min-width: 100px !important;
-  height: 50px;
-  margin-top: 10px;
+.label-staked-algop {
+  display: inline-block;
+  position: relative;
+  top: 25px;
 }
-
-.previewImage {
-  width: 290px;
-}
-.input-stack-algop {
+.input-stake-algop {
+  position: relative;
   width: 170px;
   margin-right: 10px;
-  margin-top: 25px;
+  margin-top: 34px;
   border-bottom: dashed;
   border-bottom-width: 1px;
 }
-.input-stack-algop-loading {
+.input-stake-algop-loading {
   width: 170px;
   margin-right: 10px;
   margin-top: 25px;
@@ -628,37 +714,44 @@ export default class PirsItem extends Vue.with(Props) {
   font-size: 16px;
 }
 @media (max-width: 470px) {
-  .text-last {
+  .text {
     text-align: center;
+    align-items: center;
+  }
+  .pirs {
+    margin-left: 1px;
+    margin-bottom: 0px;
+    width: 165px;
+  }
+  .time {
+    justify-content: center;
   }
   .text-title {
     white-space: nowrap;
     width: 100%;
     overflow: hidden;
+    text-align: center;
     text-overflow: ellipsis;
   }
-  .pirs {
-    margin-top: 5px;
-    margin-left: 1px;
-  }
-  .time {
-    justify-content: center;
+  .text-last {
+    text-align: center;
   }
   .previewImage {
     width: 100%;
   }
   .field-stack {
     width: 100%;
-    margin-left: 10%;
-    margin-top: 10px;
+    margin-left: 10px;
+    margin-top: space-between;
     justify-content: center;
   }
   .ended-part {
-    text-align: center;
-    margin-top: 10px;
+    margin: 32px 0 0 0;
     display: flex;
-    margin-left: 10px;
-    justify-content: space-between;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
   }
   .load-more {
     height: 10px;
@@ -667,10 +760,6 @@ export default class PirsItem extends Vue.with(Props) {
   .text-end {
     width: 100%;
     justify-content: center;
-  }
-  .text {
-    text-align: center;
-    align-items: center;
   }
 }
 </style>

@@ -1,13 +1,13 @@
 import { IWalletConnectProviderOptions } from '@walletconnect/types';
 
-export default function getAlgoPainterContractByNetworkId(id: number) {
+export default function getAlgoPainterContractByNetworkId(id: number) : string {
   switch (id) {
     case 56:
       return '0xbee554dbbc677eb9fb711f5e939a2f2302598c75';
     case 97:
       return '0x01A9188076f1231dF2215F67b6A63231fE5e293E';
     default:
-      break;
+      return '';
   }
 }
 
@@ -59,5 +59,38 @@ export function getBidBackPirsContractByNetworkId(id: number): string {
       return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT_97 as string;
     default:
       return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT as string;
+  }
+}
+
+export function getPersonalItemContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_56 as string;
+    case 97:
+      return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_97 as string;
+    default:
+      return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_ as string;
+  }
+}
+
+export function getGweiItemContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_56 as string;
+    case 97:
+      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_97 as string;
+    default:
+      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_ as string;
+  }
+}
+
+export function getExpressionItemContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_56 as string;
+    case 97:
+      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_97 as string;
+    default:
+      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_ as string;
   }
 }

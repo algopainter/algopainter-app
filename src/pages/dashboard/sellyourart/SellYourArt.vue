@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 <template>
   <div
     v-if="loading"
@@ -251,7 +251,7 @@
                     reverse-fill-mask
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.creatorRoyalties')"
-                    :model-value="collectionCreatorRoyaltiesRate ? collectionCreatorRoyaltiesRate : 0"
+                    :model-value="collectionCreatorRoyaltiesRate"
                     readonly
                     @update:modelValue="handleChange"
                   >
@@ -360,6 +360,7 @@ import AlgoButton from 'components/common/Button.vue';
 import DateField from 'components/fields/DateField.vue';
 import TimeField from 'components/fields/TimeField.vue';
 import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
+import AlgoPainterPersonalItemProxy from 'src/eth/AlgoPainterPersonalItemProxy';
 
 interface INewAuction {
   minimumPrice: number;
@@ -425,9 +426,11 @@ export default class SellYourArt extends Vue {
   loadingCoins: boolean = false;
   bidBackSystem!: AlgoPainterBidBackPirsProxy;
   pirsSystem!: AlgoPainterBidBackPirsProxy;
+  personalItemContract = <AlgoPainterPersonalItemProxy>{};
   auctionId!: number;
   isCreator: boolean = false;
   createdPirs!: number | null;
+  createdItems!: number;
 
   coin: string = '3';
 
@@ -440,26 +443,27 @@ export default class SellYourArt extends Vue {
   isUserInformedAboutTheFee: boolean = false;
   isUserInformedThatPirsCanBeOnlySetOnce: boolean = false;
   auctionFeeRate!: string;
+  hashPersonalItem!: string;
 
   imagePirsRate!: number | null;
   pirPercent!: number | null;
-  collectionCreatorRoyaltiesRate!: number | null ;
+  collectionCreatorRoyaltiesRate: number | null = 0;
 
   mounted() {
+    void this.getCreatorRoyaltiesRate();
     void this.validatePirs();
     void this.getAuctionFeeRate();
-    void this.getCreatorRoyaltiesRate();
   }
 
   created() {
     if (!localStorage.isConnected) {
       return this.$router.push('/');
     }
-
+    void this.getCreatorRoyaltiesRate();
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
     this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-    void this.getCreatorRoyaltiesRate();
     void this.loadImage();
     void this.loadAvailableTokens();
   }
@@ -469,6 +473,7 @@ export default class SellYourArt extends Vue {
     if (this.isConnected) {
       this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
       this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
       this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
     }
   }
@@ -476,8 +481,14 @@ export default class SellYourArt extends Vue {
   async getCreatorRoyaltiesRate() {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
-    this.createdPirs = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
-    this.collectionCreatorRoyaltiesRate = this.createdPirs / 100;
+    if (this.image.collectionName === 'PersonalItem') {
+      this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.image.nft.index) as string;
+      this.createdItems = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
+      this.collectionCreatorRoyaltiesRate = this.createdItems / 100;
+    } else {
+      this.createdPirs = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
+      this.collectionCreatorRoyaltiesRate = this.createdPirs / 100;
+    }
   }
 
   getInvestorPirsRate() {

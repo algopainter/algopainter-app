@@ -63,7 +63,6 @@
                     @update:modelValue="handleChange"
                   >
                     <template #append>
-                      <q-icon name="mdi-help-circle-outline" />
                       <q-btn-dropdown
                         color="primary"
                         flat

@@ -147,7 +147,7 @@
               </span><br>
               <span>{{ $t('dashboard.viewArt.mint') }}</span>
               <span class="text-bold">
-                {{ image.nft.parameters.amount }} {{ $t('dashboard.viewArt.algop') }}
+                {{ formatHighestBidAmount() }} {{ $t('dashboard.viewArt.algop') }}
               </span><br>
             </div>
           </div>
@@ -173,6 +173,8 @@ import NewPaintingModal from '../../../components/modal/NewPaintingModal.vue';
 import UserUtils from 'src/helpers/user';
 import { IImageUser } from 'src/models/IImageUser';
 import { IProfile } from 'src/models/IProfile';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import { auctionCoins } from 'src/helpers/auctionCoins';
 
 @Options({
   components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton, NewPaintingModal },
@@ -257,6 +259,31 @@ export default class ViewArt extends Vue {
       default:
         return 'None';
     }
+  }
+
+  formatHighestBidAmount() {
+    const bidBackAmount = blockchainToCurrency(
+      Number(this.image.nft.parameters.amount),
+      this.coinDetails.decimalPlaces);
+    return this.$n(bidBackAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
+  }
+
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      return (
+        coin.tokenAddress.toLowerCase() ===
+        '0x01a9188076f1231df2215f67b6a63231fe5e293e'
+      );
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
   }
 
   changeBackground(value: string) {

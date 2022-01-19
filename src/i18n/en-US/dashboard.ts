@@ -585,5 +585,8 @@ export default {
   },
   createCollection: {
     title: 'Collection Registration',
+    stepOneTitle: 'About the Collection',
+    stepTwoTitle: 'Collection Metrics',
+    stepThreeTitle: 'API parameters',
   },
 };

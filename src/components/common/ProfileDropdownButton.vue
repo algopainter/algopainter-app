@@ -70,6 +70,19 @@
               </q-item-section>
             </q-item>
             <q-separator />
+            <q-item class="q-pl-none">
+              <q-item-section>
+                <div class="flex">
+                  <div
+                    class="text-bold cursor-pointer"
+                    @click="registerCollection"
+                  >
+                    {{ $t('dashboard.registerCollection') }}
+                  </div>
+                </div>
+              </q-item-section>
+            </q-item>
+            <q-separator />
             <q-item class="q-pa-none q-pt-md">
               <q-item-section>
                 <algo-button
@@ -176,7 +189,18 @@ export default class ProfileDropdownButton extends Vue {
   }
 
   async goToProfilePage() {
-    await this.$router.push('/edit-profile');
+    await this.$router.push('/edit-profile/' + 'editProfile');
+  }
+
+  async registerCollection() {
+    const result = await this.userController.getUserProfile(
+      this.accountAddress?.toLowerCase() as string,
+    );
+    if (result.isFailure) {
+      await this.$router.push('/edit-profile/' + 'registerCollection');
+    } else {
+      await this.$router.push('/create-collection');
+    }
   }
 }
 </script>

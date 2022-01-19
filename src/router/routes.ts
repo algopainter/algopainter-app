@@ -112,8 +112,19 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'editProfile',
-        path: 'edit-profile',
+        path: 'edit-profile/:name',
         component: () => import('pages/edit-profile/EditProfile.vue'),
+        children: [
+          {
+            path: '',
+            component: () => import('pages/edit-profile/EditProfile.vue'),
+          },
+          {
+            path: 'registerCollection',
+            component: () => import('pages/edit-profile/EditProfile.vue'),
+          },
+
+        ],
         meta: {
           title: i18n.global.t('dashboard.editProfile.title'),
         },

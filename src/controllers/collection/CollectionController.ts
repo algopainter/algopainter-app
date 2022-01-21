@@ -2,6 +2,7 @@
 import { ICollection } from 'src/models/ICollection';
 import { IImage } from 'src/models/IImage';
 import BaseController from '../BaseController';
+import Collections from 'src/data/Collections.json';
 
 export default class CollectionController extends BaseController {
   async getCollections() {
@@ -29,5 +30,9 @@ export default class CollectionController extends BaseController {
     } catch (error) {
       return [];
     }
+  }
+
+  getCollectionById(id: number) {
+    return Collections.find(c => c.id === id);
   }
 }

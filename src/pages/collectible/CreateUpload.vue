@@ -1,6 +1,192 @@
+<template>
+  <q-form @submit="saveMintData">
+    <div class="row justify-center">
+      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'col']">
+        <div class="q-upload-wrapper">
+          <div class="q-upload-label">
+            {{ $t('createCollectible.create.fields.uploadLabel') }}
+          </div>
+          <div class="row justify-beetewen">
+            <div class="col q-upload-box">
+              <p
+                v-if="formData.image === '' "
+                class="text-bold text-center align-center"
+              >
+                {{ $t('createCollectible.create.descriFile') }}
+              </p>
+              <div
+                v-else
+                class="row items-center justify-center q-mb-md"
+              >
+                <img
+                  :src="formData.image"
+                  class="img "
+                >
+                <q-btn
+                  icon="highlight_off"
+                  class="btn"
+                  @click="close"
+                />
+              </div>
+              <div class="row justify-center">
+                <label
+                  for="imagem"
+                  class="labelFile"
+                >
+                  {{ $t('createCollectible.create.import') }}</label>
+                <input
+                  id="imagem"
+                  type="file"
+                  name="imagem"
+                  accept=".jpg,.jpeg,.png"
+                  @change="previewImage"
+                >
+              </div>
+            </div>
+            <!-- <div :hidden="$q.screen.lt.md" class="preview">
+              <preview
+                :image-preview="formData.image"
+                @close="close"
+                @preview-evento="previewImage"
+              />
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-center">
+      <div class="col">
+        <q-input
+          v-model="formData.name"
+          bottom-slots
+          :label="$t('createCollectible.create.fields.titleLabel')"
+          counter
+          :maxlength="$props.titleMaxlength"
+          :rules="[(val) =>
+            val !== '' ||
+            $t('createCollectible.create.requiredField')]"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <q-input
+          v-model="formData.description"
+          bottom-slots
+          :label="$t('createCollectible.create.fields.descriptionLabel')"
+          counter
+          :maxlength="$props.descriptionMaxlength"
+          :rules="[(val) =>
+            val !== '' ||
+            $t('createCollectible.create.requiredField')]"
+        />
+      </div>
+    </div>
+    <div class="row justify-between">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <q-input
+          v-model="creatorRoyaltyValue"
+          bottom-slots
+          mask="#"
+          fill-mask="0"
+          reverse-fill-mask
+          :label="$t('createCollectible.create.fields.createRoyalty')"
+          :rules="[
+            (val) => val >= 1 || $t('dashboard.sellYourArt.minimumBidBackRate'),
+            (val) => val <= 30 || $t('dashboard.sellYourArt.maximumBidBackRate'),
+          ]"
+        >
+          <template #append>
+            <q-icon name="mdi-help-circle-outline" />
+            <q-tooltip class="bg-primary">
+              {{ $t('createCollectible.create.fields.createRoyaltyTooltip') }}
+            </q-tooltip>
+          </template>
+        </q-input>
+      </div>
+    </div>
+    <div class="row justify-center q-pb-md">
+      <q-field
+        ref="toggle"
+        :value="isresponsibility"
+        :rules="[
+          (val) => isresponsibility === true || $t('createCollectible.create.requiredField'),
+        ]"
+        borderless
+        dense
+        hide-bottom-space
+      >
+        <template #control>
+          <q-checkbox
+            v-model="isresponsibility"
+            color="green"
+            :label="
+              $t('createCollectible.create.fields.responsibility')"
+          />
+        </template>
+      </q-field>
+    </div>
+    <div class="row justify-start q-pb-md">
+      <q-field
+        ref="toggle"
+        :value="isAgreeValue"
+        :rules="[
+          (val) => isAgreeValue === true || $t('createCollectible.create.requiredField'),
+        ]"
+        borderless
+        dense
+        hide-bottom-space
+      >
+        <template #control>
+          <q-checkbox
+            v-model="isAgreeValue"
+            color="green"
+            :label="
+              $t('createCollectible.create.fields.agreeValue', {
+                CurrentAmount: mintValueView,
+                Token: 'BNB'
+              })"
+          />
+        </template>
+      </q-field>
+    </div>
+    <div class="preview-mobile">
+      <div class="btn-mint">
+        <algo-button
+          type="submit"
+          color="primary"
+          :disabled="isDisabled"
+          :label="$t('createCollectible.create.btnCreate')"
+        />
+        <mint-modal
+          v-model="OpenModal"
+          :open-modal="OpenModal"
+          :status-data="statusData"
+          :painter-personal-item-status="painterPersonalItemStatus"
+          :ok-btn-disabled="okBtnDisabled"
+          @request-close="onCloseMyGallery"
+        />
+      </div>
+    </div>
+  </q-form>
+</template>
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import UploadBox from '../../components/common/UploadBox.vue';
+import Preview from './Preview.vue';
+import AlgoButton from 'components/common/Button.vue';
+import MintModal from './MintModal.vue';
+import { isError } from 'src/helpers/utils';
+import { Form as VForm, Field as VField } from 'vee-validate';
+import { nanoid } from 'nanoid';
+import Web3Helper from 'src/helpers/web3Helper';
+import { api } from 'src/boot/axios';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
+import AlgoPainterPersonalItemProxy, { PainterPersonalItemStatus } from 'src/eth/AlgoPainterPersonalItemProxy';
+import getAlgoPainterContractByNetworkId, { getPersonalItemContractByNetworkId } from 'src/eth/Config';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
+import { IMintData } from 'src/models/IMint';
 
 class PropsTypes {
   uploadLabel: string | undefined;
@@ -11,118 +197,262 @@ class PropsTypes {
 }
 
 interface FormData {
-  title: string;
+  name: string;
   description: string;
-  putOnSale: boolean;
+  creatorRoyalty: number;
+  mintedBy: string;
+  image: string;
+  salt: string;
+  fileName: string;
 }
 
 @Options({
   components: {
     UploadBox,
+    Preview,
+    AlgoButton,
+    MintModal,
+    VForm,
+    VField,
+  },
+  computed: {
+    ...mapGetters('user', {
+      networkInfo: 'networkInfo',
+      account: 'account',
+    }),
   },
 })
 export default class CreateUpload extends Vue.with(PropsTypes) {
+  static FILE_SIZE_LIMIT = 31457280;
+
   imageData: string | null = null;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  previewImage(e: Event) {
+  OpenModal: boolean = false;
+  isDisabled: boolean = true;
+  statusData : string = '';
+  creatorRoyaltyValue: number = 0;
+  isresponsibility: boolean = false;
+  isAgreeValue: boolean = false;
+  personalItemContract = <AlgoPainterPersonalItemProxy>{};
+  painterPersonalItemStatus: PainterPersonalItemStatus = PainterPersonalItemStatus.None;
+  algopTokenContract!: ERC20TokenProxy;
+  networkInfo!: NetworkInfo;
+  mintValue: string = '';
+  account!: string;
+  dataMint: string = ''
+  responseMint?: IMintData;
+  okBtnDisabled: boolean = true;
+
+  formData: FormData = {
+    name: '',
+    description: '',
+    image: '',
+    mintedBy: '',
+    salt: '',
+    creatorRoyalty: 0,
+    fileName: '',
+  };
+
+  created() {
+    this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
+    this.algopTokenContract = new ERC20TokenProxy(getAlgoPainterContractByNetworkId(this.networkInfo.id));
+  }
+
+  async mounted() {
+    await this.personalItemContract.getMintPrice().then(costs => this.mintValue = costs.cost).catch(console.error);
+  }
+
+  async previewImage(e: Event) {
     const newLocal = (<HTMLInputElement>e.target).files;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const newLocala = newLocal!;
-    const file = newLocala[0];
-    if (file) {
-      this.imageData = URL.createObjectURL(file);
-    } else {
-      this.imageData = null;
+    if (newLocal) {
+      const file = newLocal[0];
+      this.formData.fileName = file.name;
+
+      if (file) {
+        if (file.size < CreateUpload.FILE_SIZE_LIMIT) {
+          if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
+            const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = () => resolve((reader.result || '').toString());
+              reader.onerror = error => reject(error);
+            });
+            const base64 = await toBase64(file);
+            this.formData.image = base64;
+            this.isDisabled = false;
+          } else {
+            this.$q.notify({
+              type: 'negative',
+              message: this.$t('createCollectible.create.errorTypeImage')
+            })
+          }
+        } else {
+          this.$q.notify({
+            type: 'negative',
+            message: this.$t('createCollectible.create.errorFile'),
+          });
+          this.formData.image = '';
+          this.isDisabled = true;
+        }
+      } else {
+        this.formData.image = '';
+        this.isDisabled = true;
+      }
+      this.$emit('preview-evento', this.imageData);
     }
-    this.$emit('preview-evento', this.imageData);
   }
 
   close() {
-    this.imageData = null;
+    this.formData = {
+      name: '',
+      description: '',
+      image: '',
+      mintedBy: '',
+      salt: '',
+      creatorRoyalty: 0,
+      fileName: '',
+    };
     this.$emit('close', this.imageData);
   }
 
-  formData: FormData = {
-    title: '',
-    description: '',
-    putOnSale: false,
-  };
+  get personalItemContractAddress() {
+    return getPersonalItemContractByNetworkId(this.networkInfo.id);
+  }
+
+  async saveMintData() {
+    this.statusData = 'aproved';
+    try {
+      this.OpenModal = true;
+      this.formData.creatorRoyalty = this.creatorRoyaltyValue * 100;
+      this.formData.mintedBy = this.$store.getters['user/account'] as string;
+      const data = {
+        ...this.formData,
+        salt: nanoid(),
+      };
+      const web3helper = new Web3Helper();
+      const userAccount = this.$store.getters['user/account'] as string;
+      const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
+
+      if (isError(signatureOrError as Error)) {
+        return;
+      }
+
+      const request = {
+        data,
+        signature: signatureOrError,
+        account: userAccount,
+        salt: data.salt,
+      };
+
+      await api.post('images/mint', request);
+      const ipfsUploadResult = await api.post('images/mint', request);
+      if (ipfsUploadResult.status === 200) {
+        this.responseMint = ipfsUploadResult.data as IMintData;
+      } else {
+        throw new Error('An error occured when uploading to IPFS ' + ipfsUploadResult.statusText);
+      }
+      this.statusData = 'confirme';
+      await this.mint();
+    } catch (e) {
+      this.$q.notify({
+        type: 'negative',
+        message: 'error mint image',
+      });
+      this.statusData = 'error';
+    }
+  }
+
+  get mintValueView() {
+    return new Web3Helper().fromWei(this.mintValue);
+  }
+
+  async mint() {
+    try {
+      if (this.responseMint) {
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
+        await this.personalItemContract.mint(
+          this.responseMint.data.name,
+          this.responseMint.data.rawImageHash,
+          this.responseMint.data.creatorRoyalty,
+          this.responseMint.tokenURI,
+          this.account,
+          this.mintValue
+        ).on('transactionHash', () => {
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
+        }).on('error', () => {
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
+          setTimeout(() => {
+            this.okBtnDisabled = false;
+          }, 1000);
+        }).catch(e => {
+          console.error(e);
+        });
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
+        setTimeout(() => {
+          this.OpenModal = false;
+          this.okBtnDisabled = false;
+          void this.$router.push('/my-gallery')
+        }, 3000);
+      } else {
+        throw new Error('NFT Mint information is missing.');
+      }
+    } catch (e) {
+      console.log('error mint', e);
+    }
+  }
+
+  onCloseMyGallery() {
+    void this.$router.push('/my-gallery');
+  }
 }
 </script>
-
-<template>
-  <div class="row">
-    <div class="col ">
-      <div class="q-upload-wrapper">
-        <div class="q-upload-label">
-          {{ $t('createCollectible.create.fields.uploadLabel') }}
-        </div>
-        <div class="col q-upload-box">
-          <p
-            v-if="imageData === null"
-            class="text-bold text-center align-center"
-          >
-            {{ $t('createCollectible.create.descriFile') }}
-          </p>
-          <div
-            v-else
-            class="row items-center justify-center q-mb-md"
-          >
-            <img
-              :src="imageData"
-              class="img "
-            >
-            <q-btn
-              icon="highlight_off"
-              class="btn"
-              @click="close"
-            />
-          </div>
-
-          <div class="row justify-center">
-            <label
-              for="imagem"
-              class="labelFile"
-            >
-              {{ $t('createCollectible.create.import') }}</label>
-            <input
-              id="imagem"
-              type="file"
-              name="imagem"
-              @change="previewImage"
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <q-input
-        v-model="formData.title"
-        bottom-slots
-        :label="$t('createCollectible.create.fields.titleLabel')"
-        counter
-        :maxlength="$props.titleMaxlength"
-      />
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <q-input
-        v-model="formData.description"
-        bottom-slots
-        :label="$t('createCollectible.create.fields.descriptionLabel')"
-        counter
-        :maxlength="$props.descriptionMaxlength"
-      />
-    </div>
-  </div>
-</template>
 
 <style lang="scss" scoped>
 .q-upload-wrapper {
   position: relative;
+}
+.preview{
+  position: absolute;
+}
+.btn-mint{
+  padding-bottom: 10px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.preview-mobile{
+    margin: 0;
+  }
+
+@media (min-width: 1024px){
+  .preview{
+    position: fixed;
+    left: 70%;
+    bottom: -30rem;
+}
+}
+@media (min-width: 1024px){
+  .preview{
+    position: fixed;
+    left: 70%;
+    bottom: -30rem;
+}
+}
+@media (max-width: 640px){
+  .preview{
+    left: 20%;
+    margin-top: 100%;
+    position: absolute;
+}
+.btn-mint{
+  margin-top: 2px;
+  margin-bottom: 10px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+}
+
 }
 
 .q-uploader-component-size {

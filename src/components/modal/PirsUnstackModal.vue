@@ -191,7 +191,7 @@ export default class PirsUnstackModal extends Vue.with(Props) {
   }
 
   get algoPainterContractByNetworkId() {
-    return getAlgoPainterContractByNetworkId(this.networkInfo.id) as string;
+    return getAlgoPainterContractByNetworkId(this.networkInfo.id);
   }
 
   get coinDetails() {

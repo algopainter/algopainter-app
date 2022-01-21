@@ -11,7 +11,11 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const page = value.page as string;
     const perPage = value.perPage as string;
     const collectionName = value.collectionName as string;
-    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    const currentCollection =
+      collectionName === undefined ||
+      collectionName.toLowerCase() === 'all collections'
+        ? ''
+        : collectionName;
     try {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=false`);
@@ -36,7 +40,11 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const page = value.page as string;
     const perPage = value.perPage as string;
     const collectionName = value.collectionName as string;
-    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    const currentCollection =
+      collectionName === undefined ||
+      collectionName.toLowerCase() === 'all collections'
+        ? ''
+        : collectionName;
     try {
       const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=true&includeExpired=true`);
       const images: [] = res.data;
@@ -50,7 +58,11 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     const page = value.page as string;
     const perPage = value.perPage as string;
     const collectionName = value.collectionName as string;
-    const currentCollection = (collectionName === undefined || collectionName.toLowerCase() === 'all collections') ? '' : collectionName;
+    const currentCollection =
+      collectionName === undefined ||
+      collectionName.toLowerCase() === 'all collections'
+        ? ''
+        : collectionName;
     try {
       const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=true&includeExpired=false`);
       const images: [] = res.data;
@@ -92,6 +104,9 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
     } catch (e) {
       console.log('error message - getUserPastImages');
     }
+  },
+  openNewPaintingModal() {
+    this.commit('collections/SET_OPEN_NEW_PAINTING_MODAL');
   },
 };
 

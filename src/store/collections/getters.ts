@@ -19,13 +19,16 @@ const getters: GetterTree<CollectionsStateInterface, StateInterface> = {
     return state.userOnSale;
   },
   GET_USER_PAST_IMAGES(state: CollectionsStateInterface): [] {
-    return state.userPastImages as [];
+    return state.userPastImages;
   },
   pirsTabImages(state: CollectionsStateInterface): [] {
-    return state.userPirsTabImages as [];
+    return state.userPirsTabImages;
   },
   GET_IMAGE_PAST_OWNERS(state: CollectionsStateInterface): [] {
-    return state.imagePastOwners as [];
+    return state.imagePastOwners;
+  },
+  GET_IS_NEW_PAINTING_MODAL_OPEN(state: CollectionsStateInterface): boolean {
+    return state.isNewPaintingModalOpen;
   },
 };
 

@@ -240,7 +240,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   @media(max-width: 768px) {
     #new-painting-top-info {
     > div {
-      min-width: 130px;
+      min-width: 120px;
       .title {
         font-size: 10px;
       }

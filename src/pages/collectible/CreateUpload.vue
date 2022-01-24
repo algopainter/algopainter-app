@@ -358,6 +358,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         message: 'error mint image',
       });
       this.statusData = 'error';
+      this.okBtnDisabled = false;
     }
   }
 
@@ -380,6 +381,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
         }).on('error', () => {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
+          this.okBtnDisabled = false;
           setTimeout(() => {
             this.okBtnDisabled = false;
           }, 1000);

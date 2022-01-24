@@ -590,5 +590,16 @@ export default {
     stepOneTitle: 'About the Collection',
     stepTwoTitle: 'Collection Metrics',
     stepThreeTitle: 'API parameters',
+    aboutTheCollection: {
+      about: 'About',
+      nameArtist: 'Artist name:',
+      nameCollection: 'Collection name:',
+      website:'Website or Portfolio:',
+      customUrl: 'Custom URL:',
+      nameArtistError:'Field artist name is required and must be less than 30 characters',
+      nameCollectionError:'Field Collection name is required and must be less than 30 characters',
+      description:'Description:',
+      socialMedia: 'Social media:'
+    }
   },
 };

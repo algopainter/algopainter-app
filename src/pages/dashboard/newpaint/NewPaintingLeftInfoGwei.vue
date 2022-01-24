@@ -503,11 +503,11 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     },
     {
       value: '3',
-      label: 'Room',
+      label: 'Bedroom',
     },
     {
       value: '4',
-      label: 'Bedroom',
+      label: 'High-Tech Gallery',
     },
     {
       value: '5',
@@ -515,7 +515,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     },
     {
       value: '6',
-      label: 'High-Tech Gallery',
+      label: 'Room',
     },
     {
       value: '7',

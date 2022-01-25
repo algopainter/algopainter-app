@@ -47,7 +47,7 @@
           />
           <q-input
             v-model="formFields.email"
-            :rules="[ email => email.indexOf('@') !== -1 && email.indexOf('.') !== -1] "
+            :rules="[ email => email ? email.indexOf('@') !== -1 && email.indexOf('.') !== -1 : true] "
             :error-message="$t('dashboard.editProfile.erroEmail')"
             :label="$t('dashboard.editProfile.email')"
           />
@@ -57,7 +57,7 @@
             v-model="formFields.customProfile"
             class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
-            prefix="appv2.algopainter.art/user/"
+            :prefix="returnPrefixUrl()"
           />
           <q-input
             v-model="formFields.webSite"
@@ -68,7 +68,7 @@
         <q-input
           v-model="formFields.bio"
           :label="$t('dashboard.editProfile.bio')"
-          :rules="[ val => val.length < 1001]"
+          :rules="[ val => val ? val.length < 1001 : true]"
           :error-message=" $t('dashboard.editProfile.erroBio')"
           outlined
           class="responsive-input q-col-gutter-x-md q-mt-md"
@@ -198,6 +198,10 @@ export default class EditProfile extends Vue {
   @Watch('account')
   onPropertyChanged() {
     void this.loadData();
+  }
+
+  returnPrefixUrl() {
+    return `${location.host}/user/`;
   }
 
   async previewImage(e: Event) {

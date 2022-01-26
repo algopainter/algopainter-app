@@ -81,7 +81,7 @@
                 class="full-width btn-edit"
                 size="lg"
                 color="primary"
-                to="/edit-profile"
+                to="/edit-profile/editProfile"
               >
                 {{ $t('dashboard.homePage.editAccount') }}
               </algo-button>

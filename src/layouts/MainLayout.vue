@@ -100,7 +100,7 @@ export default class MainLayout extends Vue {
   }
 
   headerMenu() {
-    this.leftDrawerOpen = window.innerWidth > 768;
+    this.leftDrawerOpen = window.innerWidth >= 768;
   }
 
   @Watch('isConnected')

@@ -8,6 +8,7 @@ export default {
   tokenBalance: '{amount} {token}',
   buyToken: 'Buy {token}',
   editProfileTerm: 'Edit profile',
+  registerCollection: 'Register algorithmic collection',
   balance: 'Balance',
   algop: '$ALGOP',
   selectAlgoP: 'Select an AlgoPainter',
@@ -437,6 +438,7 @@ export default {
     chooseFile: 'Choose File',
     sMedia: 'Social media',
     sChanges: 'Save changes',
+    changesRegistro: 'next',
     erroBio: 'Description" must be less than or equal to 1000 characters',
     erroName: 'Field name is required and must be less than 32 characters',
     erroEmail: 'Invalid email. Enter an existing email address',
@@ -588,6 +590,7 @@ export default {
     stepOneTitle: 'About the Collection',
     stepTwoTitle: 'Collection Metrics',
     stepThreeTitle: 'API parameters',
+<<<<<<< HEAD
     stepTwo: {
       amount: 'NFT amount',
       amountMax: 'You can sell 1000 NFTs per collection at most',
@@ -619,6 +622,18 @@ export default {
       emptyField: 'This field needs to be filled',
       wrongWallet: 'Fill all 42 digits',
       emptyNfts: 'You must sell at least one NFT in this collection',
+=======
+    aboutTheCollection: {
+      about: 'About',
+      nameArtist: 'Artist name:',
+      nameCollection: 'Collection name:',
+      website:'Website or Portfolio:',
+      customUrl: 'Custom URL:',
+      nameArtistError:'Field artist name is required and must be less than 30 characters',
+      nameCollectionError:'Field Collection name is required and must be less than 30 characters',
+      description:'Description:',
+      socialMedia: 'Social media:'
+>>>>>>> 4d64daf58b542dc858ea8032f7b43f914809506f
     }
   },
 };

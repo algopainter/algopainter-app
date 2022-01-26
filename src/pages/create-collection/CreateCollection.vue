@@ -26,7 +26,7 @@
         :done="step > 2"
       >
         <h6 v-if="$q.screen.lt.sm || $q.screen.lt.md" class="title">{{ $t('dashboard.createCollection.stepTwoTitle') }}</h6>
-        <collection-metrics :step="step" @data="storeData" />
+        <collection-metrics :step="step" @data="storeData" @verify="verifyStepTwo" />
       </q-step>
 
       <q-step
@@ -40,7 +40,7 @@
 
       <template #navigation>
         <q-stepper-navigation>
-          <q-btn color="primary" :label="step === 3 ? 'Finish' : 'Continue'" @click="next()" />
+          <q-btn color="primary" :disable="isStepTwoDisabled" :label="step === 3 ? 'Finish' : 'Continue'" @click="next()" />
           <q-btn
             v-if="step > 1" flat color="primary" label="Back" class="q-ml-sm"
             @click="previous()"
@@ -56,6 +56,27 @@ import { Vue, Options } from 'vue-class-component';
 import AboutTheCollection from './AboutTheCollection.vue';
 import CollectionMetrics from './CollectionMetrics.vue';
 import ApiParameters from './APIParameters.vue';
+import { Watch } from 'vue-property-decorator';
+
+interface ICollectionMetricsPriceRange {
+  from: number;
+  to: number;
+  amount: number | string;
+  tokenPriceAddress: string;
+  tokenPriceSymbol: string;
+}
+
+interface ICollectionMetrics {
+  nfts: number;
+  startDT: Date | string;
+  endDT: Date | string;
+  priceType: 'fixed' | 'variable';
+  tokenPriceAddress: string | null | undefined;
+  tokenPriceSymbol: string | null | undefined;
+  priceRange: ICollectionMetricsPriceRange[];
+  creatorPercentage: number;
+  walletAddress: string;
+}
 
 @Options({
   components: {
@@ -67,35 +88,57 @@ import ApiParameters from './APIParameters.vue';
 
 export default class CreateCollection extends Vue {
   step: number = 1;
+  isStepTwoDisabled = false;
+
   collectionData = {
     aboutTheCollection: {} as unknown,
     collectionMetrics: {} as unknown,
     apiParameters: {} as unknown,
   }
 
-  storeData(data: unknown, step: number) {
+  @Watch('step')
+  onStepChanged() {
+    switch (this.step) {
+      case 1:
+        this.isStepTwoDisabled = false;
+        break;
+    }
+  }
+
+  verifyStepTwo(validation: boolean) {
+    this.isStepTwoDisabled = validation;
+  }
+
+  storeData(data: any | ICollectionMetrics, step: number) {
     switch (step) {
       case 1:
         this.collectionData.aboutTheCollection = data;
-        console.log(this.collectionData.aboutTheCollection);
+        console.log('this.collectionData.collectionMetrics', this.collectionData.aboutTheCollection);
         break;
       case 2:
         this.collectionData.collectionMetrics = data;
-        console.log(this.collectionData.collectionMetrics);
+        console.log('this.collectionData.collectionMetrics', this.collectionData.collectionMetrics);
         break;
       case 3:
         this.collectionData.apiParameters = data;
-        console.log(this.collectionData.apiParameters);
+        console.log('this.collectionData.apiParameters', this.collectionData.apiParameters);
         break;
     }
   }
 
   next() {
-    if (this.step < 3) {
-      this.step++;
-    } else {
-      //send this.collectionData to the API
-      console.log(this.collectionData);
+    switch (this.step) {
+      case 1:
+        this.isStepTwoDisabled = true;
+        this.step++;
+        break;
+      case 2:
+        this.step++;
+        break;
+      case 3:
+        //send this.collectionData to the API
+        console.log(this.collectionData);
+        break;
     }
   }
 

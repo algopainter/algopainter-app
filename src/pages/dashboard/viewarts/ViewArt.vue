@@ -80,10 +80,13 @@
             <p class="text-bold text-h5 q-mb-sm">
               {{ $t('dashboard.viewArt.details') }}
             </p>
-            <span class="text-bold text-primary text-h6">
-              {{ $t('dashboard.viewArt.algoPainter') }}
-            </span>
-            <p>{{ image.collectionName }} </p>
+            <div v-if="image.collectionName !== 'PersonalItem'">
+              <span class="text-bold text-primary text-h6">
+                {{ $t('dashboard.viewArt.algoPainter') }}
+              </span>
+              <p>{{ image.collectionName }} </p>
+            </div>
+
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.owner') }}
             </span>

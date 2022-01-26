@@ -590,7 +590,6 @@ export default {
     stepOneTitle: 'About the Collection',
     stepTwoTitle: 'Collection Metrics',
     stepThreeTitle: 'API parameters',
-<<<<<<< HEAD
     stepTwo: {
       amount: 'NFT amount',
       amountMax: 'You can sell 1000 NFTs per collection at most',
@@ -622,7 +621,7 @@ export default {
       emptyField: 'This field needs to be filled',
       wrongWallet: 'Fill all 42 digits',
       emptyNfts: 'You must sell at least one NFT in this collection',
-=======
+    },
     aboutTheCollection: {
       about: 'About',
       nameArtist: 'Artist name:',
@@ -633,7 +632,6 @@ export default {
       nameCollectionError:'Field Collection name is required and must be less than 30 characters',
       description:'Description:',
       socialMedia: 'Social media:'
->>>>>>> 4d64daf58b542dc858ea8032f7b43f914809506f
     }
   },
 };

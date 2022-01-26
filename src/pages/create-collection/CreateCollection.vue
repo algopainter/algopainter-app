@@ -58,26 +58,6 @@ import CollectionMetrics from './CollectionMetrics.vue';
 import ApiParameters from './APIParameters.vue';
 import { Watch } from 'vue-property-decorator';
 
-interface ICollectionMetricsPriceRange {
-  from: number;
-  to: number;
-  amount: number | string;
-  tokenPriceAddress: string;
-  tokenPriceSymbol: string;
-}
-
-interface ICollectionMetrics {
-  nfts: number;
-  startDT: Date | string;
-  endDT: Date | string;
-  priceType: 'fixed' | 'variable';
-  tokenPriceAddress: string | null | undefined;
-  tokenPriceSymbol: string | null | undefined;
-  priceRange: ICollectionMetricsPriceRange[];
-  creatorPercentage: number;
-  walletAddress: string;
-}
-
 @Options({
   components: {
     AboutTheCollection,
@@ -109,7 +89,7 @@ export default class CreateCollection extends Vue {
     this.isStepTwoDisabled = validation;
   }
 
-  storeData(data: any | ICollectionMetrics, step: number) {
+  storeData(data: any, step: number) {
     switch (step) {
       case 1:
         this.collectionData.aboutTheCollection = data;

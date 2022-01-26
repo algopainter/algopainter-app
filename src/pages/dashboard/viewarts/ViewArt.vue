@@ -543,7 +543,7 @@ export default class ViewArt extends Vue {
 }
 
 .img{
-  max-height: 650px;
+  max-height: 100%;
   max-width: 650px;
 }
 

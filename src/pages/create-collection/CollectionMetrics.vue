@@ -652,6 +652,7 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 }
 </script>
+
 <style scoped lang="scss">
 .start-date,
 .end-date {

@@ -17,3 +17,10 @@ export interface ICreatorCollection {
   webSite? : string | null;
   customProfile?: string | undefined;
 }
+
+export interface IFormParams {
+  name: string;
+  dataType: string;
+  fieldType: string;
+  options: string[];
+}

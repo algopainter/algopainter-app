@@ -1,8 +1,8 @@
 <template>
-  <q-page class="q-gutter-lg q-pb-lg">
-    <div class="account-details q-pa-lg">
+  <q-page class="q-pa-lg">
+    <q-card class="account-details q-pa-lg">
       <UserAccountDetails />
-    </div>
+    </q-card>
     <div>
       <UserGalleryOverview />
     </div>
@@ -21,13 +21,11 @@ import UserGalleryOverview from 'components/home-page/user-gallery-overview/User
     UserGalleryOverview,
   },
 })
-export default class MyGallery extends Vue {
-}
+export default class MyGallery extends Vue {}
 </script>
 
 <style lang="scss" scoped>
 .account-details {
-  border: 2px dashed $primary;
   border-radius: 20px;
 }
 </style>

@@ -1,5 +1,32 @@
 export interface IMyGallery {
-
+collectionName: string;
+collectionOwner: string;
+createdAt: string;
+creator: string;
+description: string;
+likers: [];
+likes: number;
+nft: {
+  image: string;
+  index: number;
+  parameters: {
+    text: string;
+    inspiration: string;
+    useRandom: boolean;
+    probability: number;
+    place: string;
+    description: string;
+    amount: number;
+  }
+  previewImage: string;
+  rawImage: string;
+  _id: string;
+}
+onSale: boolean;
+owner: string;
+tags: [];
+title: string;
+updatedAt: string;
 users: {
   name: string;
   email: string;
@@ -12,37 +39,6 @@ users: {
   role: string;
   avatar: string;
 }
-tags: {
-
-}
-likers: {
-
-}
 _id: string;
-title: string;
-likes: number;
-creator: string
-owner: string;
-description: string;
-collectionName: string;
-collectionOwner: string;
-createdAt: string;
-updatedAt: string;
-nft: {
-  _id: string;
-  image: string;
-  index: number;
-  previewImage: string;
-  rawImage: string;
-  parameters: {
-    text: string;
-    inspiration: string;
-    useRandom: boolean;
-    probability: number;
-    place: string;
-    description: string;
-    amount: number;
-  }
-}
 __v: number;
 }

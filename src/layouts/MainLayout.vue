@@ -4,31 +4,28 @@
       <q-header class="q-py-lg bg-white row justify-center">
         <dashboard-header
           :left-drawer-open="leftDrawerOpen"
-          @connectYourWalletClicked="showModal = true"
+          @connectYourWalletClicked="showConnectYourWalletModal"
           @openDrawer="openDrawer"
         />
       </q-header>
-      <q-drawer
-        v-model="leftDrawerOpen"
-        :width="120"
-        :breakpoint="768"
-      >
+      <q-drawer v-model="leftDrawerOpen" :width="120" :breakpoint="768">
         <side-bar
-          @galleryClicked="refreshModal"
+          @userIsNotLogged="refreshModal"
           @pageOptionClicked="pageOptionClicked"
-          @openModalArtist="openModalArtist"
         />
       </q-drawer>
-      <q-page-container class="q-px-lg">
-        <router-view
-          @favoriteClicked="refreshModal"
-        />
+      <q-page-container class="q-px-md">
+        <router-view @favoriteClicked="refreshModal" />
         <connect-your-wallet
-          v-if="showModal"
+          v-if="showConnectYourWalletModal"
           :page-to-go-after-connected="page"
         />
         <wrong-chain-dialog v-if="showWrongChainDialog" />
-        <NewPaintingModal v-model="openModal" />
+        <AuctionModal v-model="openAuctionModal" />
+        <BidBackModal v-model="openBidBackModal" />
+        <BidBackSimulatorModal v-model="openBidBackSimulatorModal" />
+        <PirsModal v-model="openPirsModal" />
+        <PirsSimulatorModal v-model="openPirsSimulatorModal" />
       </q-page-container>
     </q-layout>
   </div>
@@ -41,7 +38,13 @@ import SideBar from 'components/SideBar.vue';
 import ConnectYourWallet from 'components/common/ConnectYourWallet.vue';
 import WrongChainDialog from 'components/common/WrongChainDialog.vue';
 import { Watch } from 'vue-property-decorator';
-import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
+import AuctionModal from 'src/components/modal/AuctionModal.vue';
+import BidBackModal from 'src/components/home-page/user-gallery-overview/BidBackModal.vue';
+import BidBackSimulatorModal from 'src/components/home-page/user-gallery-overview/BidBackSimulatorModal.vue';
+import PirsSimulatorModal from 'src/components/home-page/user-gallery-overview/PirsSimulatorModal.vue';
+import PirsModal from 'src/components/home-page/user-gallery-overview/PirsModal.vue';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
 
 @Options({
   components: {
@@ -49,71 +52,81 @@ import NewPaintingModal from 'src/components/modal/NewPaintingModal.vue';
     SideBar,
     ConnectYourWallet,
     WrongChainDialog,
-    NewPaintingModal,
+    AuctionModal,
+    BidBackModal,
+    PirsModal,
+    BidBackSimulatorModal,
+    PirsSimulatorModal,
   },
   watch: {
     isConnected: ['refreshModal'],
     networkInfo: ['refreshWrongChainDialog'],
   },
   computed: {
-    isConnected: false,
-    networkInfo: false,
+    ...mapGetters('auctions', [
+      'openAuctionModal',
+      'openBidBackModal',
+      'openBidBackSimulatorModal',
+      'openPirsModal',
+      'openPirsSimulatorModal',
+    ]),
+    ...mapGetters('user', {
+      isConnected: 'isConnected',
+      networkInfo: 'networkInfo',
+      openConnectYourWalletModal: 'GET_OPEN_CONNECT_YOUR_WALLET_MODAL',
+    }),
   },
 })
 export default class MainLayout extends Vue {
   leftDrawerOpen: boolean = false;
-  openModal: boolean = false;
-  showModal: boolean = false;
+  showConnectYourWalletModal: boolean = false;
+  isConnected!: boolean;
+  networkInfo!: NetworkInfo;
+  openBidBackSimulatorModal!: boolean;
+  openPirsSimulatorModal!: boolean;
+  openPirsModal!: boolean;
+  openBidBackModal!: boolean;
+  openAuctionModal!: boolean;
+  openConnectYourWalletModal!: boolean;
   showWrongChainDialog: boolean = false;
+  isAuctionModalOpen: boolean = false;
+  isBidBackModalOpen: boolean = false;
+  isPirsModalOpen: boolean = false;
   page: string = '';
   artistModal: boolean = false;
 
   beforeMount() {
     this.headerMenu();
-    this.walletAutomaticConnect();
   }
 
   headerMenu() {
-    if (window.innerWidth <= 768) {
-      this.leftDrawerOpen = false;
-    } else {
-      this.leftDrawerOpen = true;
-    }
-  }
-
-  walletAutomaticConnect() {
-    if (localStorage.isConnected) {
-      void this.$store.dispatch('user/connectToWallet', localStorage.wallet);
-    }
+    this.leftDrawerOpen = window.innerWidth >= 768;
   }
 
   @Watch('isConnected')
-  onPropertyChanged() {
+  onIsConnectedChanged() {
     localStorage.isConnected = this.isConnected;
+  }
+
+  @Watch('openConnectYourWalletModal')
+  onOpenConnectYourWalletModalChanged() {
+    this.showConnectYourWalletModal = this.openConnectYourWalletModal;
   }
 
   openDrawer() {
     this.leftDrawerOpen = true;
   }
 
-  openModalArtist() {
-    this.openModal = true;
-  }
-
-  get isConnected() {
-    return this.$store.state.user.isConnected;
-  }
-
-  get networkInfo() {
-    return this.$store.state.user.networkInfo;
-  }
-
   refreshModal() {
-    this.showModal = !this.isConnected;
+    this.$store
+      .dispatch('user/openConnectYourWalletModal')
+      .catch(console.error);
+    this.showConnectYourWalletModal = !this.isConnected;
   }
 
   refreshWrongChainDialog() {
-    this.showWrongChainDialog = (this.networkInfo?.id !== 56);
+    this.showWrongChainDialog =
+      this.networkInfo?.id !== 56 && this.networkInfo?.id !== 97;
   }
 
   pageOptionClicked(page: string) {

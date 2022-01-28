@@ -8,6 +8,12 @@ function state(): CollectionsStateInterface {
     userItems: '',
     images: [],
     collections: [],
+    userOnSale: [],
+    userOnSalePublic: [],
+    userPastImages: [],
+    imagePastOwners: [],
+    userPirsTabImages: [],
+    isNewPaintingModalOpen: false,
   };
 }
 

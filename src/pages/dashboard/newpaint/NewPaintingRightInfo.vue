@@ -1,0 +1,406 @@
+<template>
+  <div class="img-container">
+    <q-img
+      v-if="!previewUrlGwei && !previewUrlExpressions && collectionName !== 'gwei'"
+      :src="collectionImagePlaceholder"
+      class="img"
+    />
+    <div v-if="!previewUrlGwei && !previewUrlExpressions && collectionName === 'gwei'">
+      <q-img
+        v-if="collectionName !== 'gwei'"
+        :src="collectionImagePlaceholder"
+        class="img"
+      />
+      <div v-if="collectionName === 'gwei'">
+        <Icon :collection-name="'gwei'" :width="gweiPlaceholder.width" :heigth="gweiPlaceholder.heigth" :view-box="gweiPlaceholder.viewBox"></Icon>
+      </div>
+    </div>
+    <q-spinner
+      v-else-if="isImgLoading && previewUrl "
+      size="50px"
+      color="primary"
+    />
+    <q-img
+      v-show="isImgLoaded"
+      :src="previewUrl"
+      class="img"
+    />
+  </div>
+  <div class="content">
+    <q-input
+      v-model="artBasicInfo.name"
+      :label="$t('dashboard.newPainting.artName')"
+      :readonly="collectionName === 'gwei'"
+      :disable="collectionName === 'gwei'"
+      maxlength="64"
+      counter
+    />
+    <q-input
+      v-model="artBasicInfo.description"
+      :label="$t('dashboard.newPainting.artDescription')"
+      maxlength="64"
+      counter
+    />
+    <div class="flex justify-center">
+      <q-checkbox
+        v-if="isCollectionInfoSet"
+        v-model="isAwareOfFee"
+        :label="checkboxFeeLabel"
+        class="full-width q-pt-lg"
+      />
+      <q-spinner v-else size="20px" color="primary" />
+    </div>
+    <algo-button
+      :label="$t('dashboard.newPainting.rightInfoBtnName')"
+      :disable="!isAwareOfFee || !artBasicInfo.name || !artBasicInfo.description || !isPreviewUrlSet || isError"
+      class="full-width q-mt-lg"
+      color="primary"
+      @click="mint"
+    />
+    <div v-if="isError" class="error row q-mt-lg">
+      <div class="col-2 flex">
+        <q-avatar
+          size="60px"
+          color="negative"
+          class="icon self-center"
+          text-color="white"
+        >
+          <q-icon name="mdi-alert-circle" />
+        </q-avatar>
+      </div>
+      <div class="col-10 self-center message">
+        {{ errorMessage }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { Options, Vue, prop } from 'vue-class-component';
+import AlgoButton from 'components/common/Button.vue';
+import { ICollectionInfo, IArtBasicInfo } from 'src/models/IMint';
+import { mapGetters } from 'vuex';
+import { Watch } from 'vue-property-decorator';
+import AlgoPainterExpressionsProxy from 'src/eth/AlgoPainterExpressionsItemProxy';
+import { NetworkInfo } from 'src/store/user/types';
+import { IGweiParsedItemParameters } from 'src/models/INewPaintingGwei';
+import Icon from './icon.vue';
+
+class Props {
+  collectionName = prop({
+    type: String,
+    required: true,
+  });
+}
+
+@Options({
+  components: {
+    AlgoButton,
+    Icon
+  },
+  computed: {
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected',
+      ]),
+    ...mapGetters('mint', {
+      collectionInfoGwei: 'GET_GWEI_COLLECTION_INFO',
+      collectionInfoExpressions: 'GET_EXPRESSIONS_COLLECTION_INFO',
+      itemParametersGwei: 'GET_GWEI_ITEM_PARAMETERS',
+      itemParametersExpressions: 'GET_EXPRESSIONS_ITEM_PARAMETERS',
+      previewUrlGwei: 'GET_GWEI_PREVIEW_URL',
+      previewUrlExpressions: 'GET_EXPRESSIONS_PREVIEW_URL',
+      errorMessageGwei: 'GET_GWEI_ERROR_MESSAGE',
+      errorMessageExpressions: 'GET_EXPRESSIONS_ERROR_MESSAGE',
+    }),
+  }
+})
+export default class NewPaintingRightInfo extends Vue.with(Props) {
+  expressionsSystem!: AlgoPainterExpressionsProxy;
+
+  isConnected!: boolean;
+  networkInfo!: NetworkInfo;
+  account!: string;
+
+  collectionInfoGwei!: ICollectionInfo;
+  collectionInfoExpressions!: ICollectionInfo;
+  checkboxFeeLabel!: string;
+  isCollectionInfoSet: boolean = false;
+
+  itemParametersGwei!: IGweiParsedItemParameters;
+
+  errorMessageGwei!: string;
+  errorMessageExpressions!: string;
+  isError: boolean = false;
+  errorMessage!: string;
+
+  collectionImagePlaceholder!: string;
+
+  isAwareOfFee: boolean = false;
+  expressionsFeePercentage!: number;
+
+  previewUrl!: string | undefined;
+  previewUrlGwei!: string | undefined;
+  previewUrlExpressions!: string | undefined;
+  isPreviewUrlSet: boolean = false;
+
+  isImgLoaded: boolean = false;
+  isImgLoading: boolean = true;
+
+  artBasicInfo: IArtBasicInfo = {
+    name: '',
+    description: '',
+  }
+
+  gweiPlaceholder = {
+    width: '264',
+    heigth: '420',
+    viewBox: '0 0 323 514'
+  }
+
+  created() {
+    this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo);
+  }
+
+  mounted() {
+    this.collectionImagePlaceholder = (this.collectionName === 'gwei') ? 'img/hashly-gwei.svg' : 'img/manwithnoname.jpeg';
+    this.setGweiSvgProperties();
+  }
+
+  @Watch('collectionInfoGwei')
+  onCollectionInfoGweiChanged() {
+    this.checkboxFeeLabel = this.$t('dashboard.newPainting.gwei.artMintingFee', {
+      feeAmount: this.collectionInfoGwei.batchPriceCurrency,
+      collectionCurrency: this.collectionInfoGwei.collectionToken,
+    })
+    this.isCollectionInfoSet = true;
+  }
+
+  @Watch('collectionInfoExpressions')
+  async onCollectionInfoExpressionsChanged() {
+    await this.getServiceFee().catch(console.error);
+    this.checkboxFeeLabel = this.$t('dashboard.newPainting.expressions.artMintingFee', {
+      feeAmount: this.collectionInfoExpressions.batchPriceCurrency,
+      collectionCurrency: this.collectionInfoExpressions.collectionToken,
+      feePercentage: this.expressionsFeePercentage
+    })
+    this.isCollectionInfoSet = true;
+  }
+
+  @Watch('itemParametersGwei')
+  onItemParametersGweiChanged() {
+    this.artBasicInfo.name = (this.itemParametersGwei) ? this.itemParametersGwei.parsedText : '';
+  }
+
+  @Watch('errorMessageGwei')
+  onErrorMessageGweiChanged() {
+    this.errorMessage = this.errorMessageGwei;
+    this.isError = (this.errorMessageGwei !== '');
+  }
+
+  @Watch('errorMessageExpressions')
+  onErrorMessageExpressionsChanged() {
+    this.errorMessage = this.errorMessageExpressions;
+    this.isError = (this.errorMessageExpressions !== '');
+  }
+
+  async getServiceFee() {
+    this.expressionsFeePercentage = await this.expressionsSystem.getServiceFee() / 100;
+  }
+
+  async mint() {
+    await this.$store
+      .dispatch({
+        type: 'mint/artBasicInfo',
+        artBasicInfo: this.artBasicInfo,
+        collectionName: this.collectionName,
+      })
+    await this.$store
+      .dispatch({
+        type: 'mint/mintingStatus',
+        isMinting: true,
+        collectionName: this.collectionName,
+      })
+  }
+
+  imgLoadingEnded() {
+    this.isImgLoading = false;
+    this.isImgLoaded = true;
+  }
+
+  @Watch('previewUrlGwei')
+  onPreviewUrlGweiChanged() {
+    this.isPreviewUrlSet = true;
+    this.previewUrl = this.previewUrlGwei;
+    this.isImgLoaded = false;
+    this.isImgLoading = true;
+    setTimeout(() => { this.imgLoadingEnded() }, 10000);
+  }
+
+  @Watch('previewUrlExpressions')
+  onPreviewUrlExpressionChanged() {
+    this.isPreviewUrlSet = true;
+    this.previewUrl = this.previewUrlExpressions;
+    this.isImgLoading = false;
+    this.isImgLoaded = true;
+  }
+
+  setGweiSvgProperties() {
+    if (window.innerWidth <= 280) {
+      this.gweiPlaceholder.width = '150';
+      this.gweiPlaceholder.heigth = '220';
+      this.gweiPlaceholder.viewBox = '0 0 323 514';
+    } else if (window.innerWidth <= 414) {
+      this.gweiPlaceholder.width = '200';
+      this.gweiPlaceholder.heigth = '300';
+      this.gweiPlaceholder.viewBox = '0 0 323 514';
+    } else if (window.innerWidth <= 540) {
+      this.gweiPlaceholder.width = '200';
+      this.gweiPlaceholder.heigth = '320';
+      this.gweiPlaceholder.viewBox = '0 0 323 514';
+    } else if (window.innerWidth <= 820) {
+      this.gweiPlaceholder.width = '380';
+      this.gweiPlaceholder.heigth = '500';
+      this.gweiPlaceholder.viewBox = '0 0 323 514';
+    } else if (window.innerWidth <= 912) {
+      this.gweiPlaceholder.width = '480';
+      this.gweiPlaceholder.heigth = '600';
+      this.gweiPlaceholder.viewBox = '0 0 323 514';
+    } else if (window.innerWidth <= 1024) {
+      this.gweiPlaceholder.width = '200';
+      this.gweiPlaceholder.heigth = '320';
+      this.gweiPlaceholder.viewBox = '0 0 323 514';
+    } else {
+      this.gweiPlaceholder.width = '264';
+      this.gweiPlaceholder.heigth = '420';
+      this.gweiPlaceholder.viewBox = '0 0 323 514';
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+  .error {
+    padding: 10px;
+    border: $primary solid 1px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  @media (max-width: 1024px) {
+    .error {
+      .icon {
+        font-size: 45px !important;
+      }
+      .message {
+        font-size: 12px;
+      }
+    }
+  }
+
+  @media (max-width: 360px) {
+    .error {
+      .icon {
+        font-size: 40px !important;
+      }
+    }
+  }
+
+  @media (max-width: 280px) {
+    .error {
+      .icon {
+        font-size: 28px !important;
+      }
+      .message {
+        font-size: 10px;
+      }
+    }
+  }
+
+  .img-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+    min-height: 420px;
+    max-height: 420px;
+    align-items: center;
+      .img {
+        width: 80%;
+        height: 80%;
+      }
+  }
+
+  @media (max-width: 1024px) {
+    .img-container {
+      padding: 0px;
+      min-height: 200px;
+      max-height: 200px;
+      margin-top: 50px;
+    }
+    .content {
+      margin-top: 50px;
+    }
+  }
+
+  @media (max-width: 912px) {
+    .img-container {
+      margin-top: 215px;
+    }
+    .content {
+      margin-top: 225px;
+    }
+  }
+
+  @media (max-width: 820px) {
+    .img-container {
+      margin-top: 135px;
+    }
+    .content {
+      margin-top: 145px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .img-container {
+      margin-top: 185px;
+    }
+    .content {
+      margin-top: 195px;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .img-container {
+      margin-top: 90px;
+    }
+    .content {
+      margin-top: 100px;
+    }
+  }
+
+  @media (max-width: 414px) {
+    .img-container {
+      margin-top: 40px;
+    }
+    .content {
+      margin-top: 50px;
+    }
+  }
+
+  @media (max-width: 280px) {
+    .img-container {
+      margin-top: 0px;
+    }
+    .content {
+      margin-top: 10px;
+    }
+  }
+</style>
+
+<style lang="scss">
+  .q-img {
+    padding-bottom: 0px;
+  }
+</style>

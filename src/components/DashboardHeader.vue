@@ -6,10 +6,11 @@
       :class="[leftDrawerOpen ? 'hide' : 'show']"
       @click="moveDrawer"
     />
-    <q-toolbar-title class="title col-xs-6 col-sm-8 col-md-10 col-lg-10">
+    <q-toolbar-title class="title">
       {{ $route.meta.title }}
     </q-toolbar-title>
-    <nav class=" nav-bar text-primary col-xs-6 col-sm-4 col-md-2 col-lg-2 q-mr-md">
+    <nav class=" nav-bar text-primary q-pr-lg">
+      <auction-notificator />
       <profile-dropdown-button v-if="isConnected" />
       <algo-button
         v-else
@@ -26,6 +27,7 @@
 import { Options, Vue, prop } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import ProfileDropdownButton from 'components/common/ProfileDropdownButton.vue';
+import AuctionNotificator from './AuctionNotificator.vue';
 
 class Props {
   leftDrawerOpen = prop({
@@ -38,6 +40,7 @@ class Props {
   components: {
     AlgoButton,
     ProfileDropdownButton,
+    AuctionNotificator
   },
   computed: {
     isConnected: false,
@@ -50,7 +53,7 @@ export default class DashboardHeader extends Vue.with(Props) {
   windowSize = window.innerWidth;
 
   connectYourWalletClicked() {
-    this.$emit('connectYourWalletClicked');
+    void this.$store.dispatch('user/openConnectYourWalletModal');
   }
 
   get isConnected() {
@@ -99,7 +102,7 @@ export default class DashboardHeader extends Vue.with(Props) {
       display: none;
     }
     .nav-bar{
-      width: 48%;
+      width: 75%;
     }
   }
 }

@@ -2,17 +2,14 @@
 <template>
   <div class="side-bar q-pa-lg">
     <div class="content">
-      <q-img
-        src="../assets/icons/ALGOP.svg"
-        class="icon q-ml-sm q-mt-md"
-      />
+      <q-img src="../assets/icons/ALGOP.svg" class="icon q-ml-sm q-mt-md" />
       <div>
         <component
           :is="item.to ? 'router-link' : 'div'"
-          v-for="item, index in items"
+          v-for="(item, index) in items"
           :key="index"
           class="item"
-          :style="{'mask-image': `url(${item.icon})`}"
+          :style="{ 'mask-image': `url(${item.icon})` }"
           :to="item.to"
           @click="item.to ? null : item.onClick()"
         >
@@ -31,7 +28,8 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Vue, Options } from 'vue-class-component';
+import { mapGetters } from 'vuex';
 
 interface SideBarItem {
   icon: unknown;
@@ -41,8 +39,16 @@ interface SideBarItem {
   onClick: () => unknown;
 }
 
+@Options({
+  computed: {
+    ...mapGetters('user', {
+      isConnected: 'isConnected',
+    }),
+  },
+})
 export default class SideBar extends Vue {
   openModal: boolean = false;
+  isConnected!: boolean;
 
   get items(): SideBarItem[] {
     return [
@@ -54,21 +60,40 @@ export default class SideBar extends Vue {
       },
       {
         icon: require('../assets/icons/my-gallery.svg'),
-        label: 'My Gallery',
+        label: 'My gallery',
         onClick: () => {
-          if (this.$store.state.user.isConnected) {
-            void this.$router.push('/my-gallery');
+          if (this.isConnected) {
+            this.$router.push('/my-gallery').catch(console.error);
           } else {
-            this.$emit('galleryClicked');
+            this.$emit('userIsNotLogged');
             this.$emit('pageOptionClicked', '/my-gallery');
           }
         },
       },
       {
-        icon: require('../assets/icons/paint-board-and-brush.svg'),
+        icon: require('../assets/icons/magic-wand.svg'),
         label: 'Create collectible',
         onClick: () => {
-          this.$emit('openModalArtist');
+          if (this.isConnected) {
+            this.$router.push('/create-collectible').catch(console.error);
+          } else {
+            this.$emit('userIsNotLogged');
+            this.$emit('pageOptionClicked', '/create-collectible');
+          }
+        },
+      },
+      {
+        icon: require('../assets/icons/auction.svg'),
+        label: 'Bids',
+        onClick: () => {
+          if (this.isConnected) {
+            this.$router.push('/bids').catch(console.error);
+          } else {
+            this.$store
+              .dispatch('user/openConnectYourWalletModal')
+              .catch(console.error);
+            this.$emit('pageOptionClicked', '/bids');
+          }
         },
       },
     ];
@@ -83,7 +108,7 @@ export default class SideBar extends Vue {
     display: block;
     border-radius: 20px;
   }
-  .icon{
+  .icon {
     width: 80%;
   }
 
@@ -94,7 +119,7 @@ export default class SideBar extends Vue {
     cursor: pointer;
     width: 72px;
     height: 72px;
-    background-color: #FFF;
+    background-color: #fff;
     mask-size: 28px 28px;
     mask-repeat: no-repeat;
     mask-position: center center;

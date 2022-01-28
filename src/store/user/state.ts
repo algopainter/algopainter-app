@@ -10,6 +10,7 @@ function state(): UserStateInterface {
     userAccount: undefined,
     userProfile: undefined,
     userLikes: undefined,
+    openConnectYourWalletModal: false,
   };
 }
 

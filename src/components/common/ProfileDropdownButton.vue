@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="profile-dropdown-button-container">
     <q-button>
       <div class="q-gutter-xs row">
         <q-chip
@@ -25,7 +25,9 @@
           </div>
         </q-chip>
       </div>
-      <q-menu>
+      <q-menu
+        :offset="[50, 10]"
+      >
         <div class="q-pa-md">
           <div class="text-bold q-mb-md">
             {{ formatedAccount(4, -4) }}
@@ -47,7 +49,7 @@
                 <q-item-label class="text-bold">
                   {{
                     $t('dashboard.tokenBalance', {
-                      amount: formatAccountBalance(),
+                      amount: formattedAccountBalance,
                       token: 'ALGOP',
                     })
                   }}
@@ -120,9 +122,25 @@ export default class ProfileDropdownButton extends Vue {
     return this.$store.state.user.account;
   }
 
+  get formattedAccountBalance() {
+    return UserUtils.formatAccountBalance(this.balance, 2);
+  }
+
   mounted() {
-    void this.setAccountBalance();
     void this.loadUserProfile();
+    void this.setAccountBalance();
+  }
+
+  get isConnected() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return this.$store.getters['user/isConnected'];
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      void this.setAccountBalance();
+    }
   }
 
   @Watch('accountAddress')
@@ -137,11 +155,11 @@ export default class ProfileDropdownButton extends Vue {
 
   async loadUserProfile() {
     const result = await this.userController.getUserProfile(
-      this.accountAddress as string,
+      this.accountAddress?.toLowerCase() as string,
     );
     if (result.isFailure) {
       this.userProfile = {};
-      console.log('error - loadUserProfile ');
+      console.log('User has not created a profile');
     } else if ((result.getValue() as IProfile)._id) {
       this.userProfile = result.getValue() as IProfile;
     } else {
@@ -155,10 +173,6 @@ export default class ProfileDropdownButton extends Vue {
       inital,
       final,
     );
-  }
-
-  formatAccountBalance() {
-    return UserUtils.formatAccountBalance(this.balance, 2);
   }
 
   async goToProfilePage() {
@@ -180,5 +194,9 @@ export default class ProfileDropdownButton extends Vue {
   border: 3px solid #fff;
   border-radius: 34px !important;
   background: #fff;
+}
+.profile-dropdown-button-container {
+  display: flex;
+  align-items: center;
 }
 </style>

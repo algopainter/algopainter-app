@@ -30,9 +30,8 @@
           :label="$t('dashboard.gallery.newPainting')"
           class="q-ma-md btn-newPainting"
           color="primary"
-          @click="OpenModalArtist()"
+          @click="$router.push('/create-collectible')"
         />
-        <NewPaintingModal v-model="openModal" />
       </div>
     </div>
     <div class="row">
@@ -71,7 +70,7 @@
           color="primary"
           class="q-ma-xs btn-btnCreatepainter"
           :label="$t('dashboard.viewArt.btnCreatepainter')"
-          @click="OpenModalArtist()"
+          @click="$router.push('/create-collectible')"
         />
       </div>
       <div class="col-xs-12 col-sm-5 col-md-5 details">
@@ -80,10 +79,13 @@
             <p class="text-bold text-h5 q-mb-sm">
               {{ $t('dashboard.viewArt.details') }}
             </p>
-            <span class="text-bold text-primary text-h6">
-              {{ $t('dashboard.viewArt.algoPainter') }}
-            </span>
-            <p>{{ image.collectionName }} </p>
+            <div v-if="image.collectionName !== 'PersonalItem'">
+              <span class="text-bold text-primary text-h6">
+                {{ $t('dashboard.viewArt.algoPainter') }}
+              </span>
+              <p>{{ image.collectionName }} </p>
+            </div>
+
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.owner') }}
             </span>
@@ -106,13 +108,17 @@
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.description') }}
             </span>
-            <p> {{ image.description }} </p>
+            <p
+              class="text-description"
+            >
+              {{ image.description }}
+            </p>
             <div v-if="image.collectionName === 'Gwei'">
               <p class="text-bold text-primary text-h6">
                 {{ $t('dashboard.viewArt.parameters') }}
               </p>
               <span>{{ $t('dashboard.viewArt.text') }}</span>
-              <span class="text-bold">
+              <span class="text-bold text-description">
                 {{ image.nft.parameters.text }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.randomColor') }}</span>
@@ -139,11 +145,11 @@
               </span><br>
               <span>{{ $t('dashboard.viewArt.created') }}</span>
               <span class="text-bold">
-                {{ image.owner }}
+                {{ image.creator }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.mint') }}</span>
               <span class="text-bold">
-                {{ image.nft.parameters.amount }} {{ $t('dashboard.viewArt.algop') }}
+                {{ formatHighestBidAmount() }} {{ $t('dashboard.viewArt.algop') }}
               </span><br>
             </div>
           </div>
@@ -165,13 +171,14 @@ import ViewArtSkeleton from './ViewArtSkeleton.vue';
 import { api } from 'src/boot/axios';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
-import NewPaintingModal from '../../../components/modal/NewPaintingModal.vue';
 import UserUtils from 'src/helpers/user';
 import { IImageUser } from 'src/models/IImageUser';
 import { IProfile } from 'src/models/IProfile';
+import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
+import { auctionCoins } from 'src/helpers/auctionCoins';
 
 @Options({
-  components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton, NewPaintingModal },
+  components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton },
   computed: {
     account: '',
     isConnected: false,
@@ -183,16 +190,14 @@ import { IProfile } from 'src/models/IProfile';
 
 export default class ViewArt extends Vue {
   loading: boolean = true;
-  openModal: boolean = false;
-  selectAccount: string = '';
   options: string = 'None';
   chooseBackground: string = '';
   backgroundChange: boolean = false;
-  loadingImage: boolean = true;
   imageUrl: string = '';
+  likeClicked: boolean = false;
 
   mounted() {
-    void this.getDetailsData();
+    this.getDetailsData().catch(console.error);
   }
 
   parsedInspiration() {
@@ -254,13 +259,39 @@ export default class ViewArt extends Vue {
     }
   }
 
+  formatHighestBidAmount() {
+    const bidBackAmount = blockchainToCurrency(
+      Number(this.image.nft.parameters.amount),
+      this.coinDetails.decimalPlaces);
+    return this.$n(bidBackAmount, 'decimal', {
+      maximumFractionDigits: this.coinDetails.decimalPlaces,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
+  }
+
+  get coinDetails() {
+    const coin = auctionCoins.find((coin) => {
+      return (
+        coin.tokenAddress.toLowerCase() ===
+        '0x01a9188076f1231df2215f67b6a63231fe5e293e'
+      );
+    });
+
+    if (!coin) {
+      throw new Error('COIN_NOT_FOUND');
+    }
+
+    return coin;
+  }
+
   changeBackground(value: string) {
     this.backgroundChange = true;
     const parameters: Record<string, unknown> = this.image.nft.parameters;
     const arrayKeys = Object.keys(parameters);
     const arrayValues: (string | number)[] = Object.values(parameters) as (string | number)[];
     const arrayLength = arrayKeys.length;
-    let URL = 'https://gwei.algopainter.art/?';
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    let URL = `${process.env.VUE_APP_GWEI_ENDPOINT}?`;
     let counter = 0;
     arrayKeys.forEach(parameter => {
       counter++;
@@ -288,10 +319,6 @@ export default class ViewArt extends Vue {
       }
     });
     this.imageUrl = URL;
-  }
-
-  OpenModalArtist() {
-    this.openModal = true;
   }
 
   collectionArtController: CollectionArtController = new CollectionArtController();
@@ -329,9 +356,14 @@ export default class ViewArt extends Vue {
   }
 
   favoriteClicked(wasLiked: boolean) {
-    this.$emit('favoriteClicked');
-    if (this.isConnected) {
-      wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+    if (!this.likeClicked) {
+      this.likeClicked = true;
+      if (this.isConnected) {
+        wasLiked ? this.postFavoriteArt() : this.deleteFavoriteArt();
+      } else {
+        this.$store.dispatch('user/openConnectYourWalletModal').catch(console.error);
+        this.likeClicked = false;
+      }
     }
   }
 
@@ -349,10 +381,13 @@ export default class ViewArt extends Vue {
         (result) => {
           if (result.isFailure) {
             this.like(true);
+            this.likeClicked = false;
           }
+          this.likeClicked = false;
         },
         (error) => {
           console.log('"like" post error: ', error);
+          this.likeClicked = false;
         },
       );
     this.like();
@@ -365,10 +400,13 @@ export default class ViewArt extends Vue {
         (result) => {
           if (result.isFailure) {
             this.like();
+            this.likeClicked = false;
           }
+          this.likeClicked = false;
         },
         (error) => {
           console.log('"like" delete error: ', error);
+          this.likeClicked = false;
         },
       );
     this.like(true);
@@ -418,9 +456,14 @@ export default class ViewArt extends Vue {
     nft: {
       _id: '',
       image: '',
+      index: 1,
       previewImage: '',
       rawImage: '',
       parameters: { name: 'fake' },
+    },
+    pirs: {
+      creatorRate: 0,
+      investorRate: null,
     },
     users: [this.user as IProfile],
     collectionName: '',
@@ -467,6 +510,9 @@ export default class ViewArt extends Vue {
 
 </script>
 <style scoped>
+.text-description{
+  word-wrap: break-word;
+}
 
 .details{
   margin-left: 25px;
@@ -489,7 +535,7 @@ export default class ViewArt extends Vue {
 }
 
 .img{
-  max-height: 650px;
+  max-height: 100%;
   max-width: 650px;
 }
 

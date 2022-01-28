@@ -11,7 +11,7 @@
 const { configure } = require('quasar/wrappers');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
-module.exports = configure(function(ctx) {
+module.exports = configure(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli/supporting-ts
     supportTS: {
@@ -29,15 +29,10 @@ module.exports = configure(function(ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli/boot-files
-    boot: [
-      'i18n',
-      'axios',
-    ],
+    boot: ['vee-validate', 'i18n', 'axios'],
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
-    css: [
-      'app.scss',
-    ],
+    css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -107,6 +102,8 @@ module.exports = configure(function(ctx) {
         },
       },
 
+      cssAddon: true,
+
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
@@ -119,7 +116,7 @@ module.exports = configure(function(ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Notify'],
+      plugins: ['Dialog', 'Notify'],
     },
 
     // animations: 'all', // --- includes all animations
@@ -167,13 +164,13 @@ module.exports = configure(function(ctx) {
         name: 'AlgoPainter',
         short_name: 'AlgoPainter',
         // eslint-disable-next-line max-len
-        description: 'Create your own collectable crypto art. Join an artist. Join NFTs. Be unique.',
+        description:
+          'Create your own collectable crypto art. Join an artist. Join NFTs. Be unique.',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
         theme_color: '#027be3',
-        icons: [
-        ],
+        icons: [],
       },
     },
 
@@ -201,7 +198,6 @@ module.exports = configure(function(ctx) {
         // appCategoryType: '',
         // osxSign: '',
         // protocol: 'myapp://path',
-
         // Windows only
         // win32metadata: { ... }
       },

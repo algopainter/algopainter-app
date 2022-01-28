@@ -42,10 +42,19 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'auctions',
+        path: 'auctionsList',
         component: () => import('src/components/auctions/AuctionsList.vue'),
       },
       {
+        name: 'bids',
+        path: 'bids',
+        component: () => import('src/pages/dashboard/bids/Bids.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.bid.title'),
+        },
+      },
+      {
+        name: 'createCollectible',
         path: 'create-collectible',
         component: () => import('src/pages/collectible/Index.vue'),
         meta: {
@@ -53,6 +62,15 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'newPainting',
+        path: 'create-collectible/new-painting/:collection',
+        component: () => import('src/pages/dashboard/newpaint/NewPainting.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.newPainting.title'),
+        },
+      },
+      {
+        name: 'auction',
         path: 'auctions/:id',
         component: () => import('pages/dashboard/auctions/Auction.vue'),
         meta: {
@@ -60,6 +78,7 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'viewArt',
         path: 'collections/:id',
         component: () => import('pages/dashboard/viewarts/ViewArt.vue'),
         meta: {
@@ -67,13 +86,7 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'new-painting',
-        component: () => import('pages/dashboard/newpaint/NewPainting.vue'),
-        meta: {
-          title: i18n.global.t('dashboard.newPainting.title'),
-        },
-      },
-      {
+        name: 'myGallery',
         path: 'my-gallery',
         component: () => import('pages/dashboard/gallery/MyGallery.vue'),
         meta: {
@@ -90,13 +103,15 @@ const routes: RouteRecordRaw[] = [
       },
       */
       {
-        path: 'sell-your-art',
+        name: 'sellYourArt',
+        path: 'sell-your-art/:id',
         component: () => import('pages/dashboard/sellyourart/SellYourArt.vue'),
         meta: {
           title: i18n.global.t('dashboard.sellYourArt.title'),
         },
       },
       {
+        name: 'editProfile',
         path: 'edit-profile',
         component: () => import('pages/edit-profile/EditProfile.vue'),
         meta: {
@@ -104,10 +119,18 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'collectiblesGallery',
         path: 'gallery',
         component: () => import('src/pages/collectible/CollectiblesGallery.vue'),
         meta: {
           title: i18n.global.t('dashboard.gallery.title'),
+        },
+      },
+      {
+        path: 'create-collection',
+        component: () => import('src/pages/collectible/Index.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.creationCollection.title'),
         },
       },
     ],

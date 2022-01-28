@@ -2,7 +2,7 @@
   <q-form
     @submit="onSubmit"
   >
-    <div class="form row">
+    <q-card class="form row">
       <div class="col-xs-12 col-sm-12 col-md-3">
         <div class="column items-center q-gutter-md">
           <div class="col q-mt-xl">
@@ -47,7 +47,8 @@
           />
           <q-input
             v-model="formFields.email"
-            type="email"
+            :rules="[ email => email ? email.indexOf('@') !== -1 && email.indexOf('.') !== -1 : true] "
+            :error-message="$t('dashboard.editProfile.erroEmail')"
             :label="$t('dashboard.editProfile.email')"
           />
         </div>
@@ -56,7 +57,7 @@
             v-model="formFields.customProfile"
             class="input col-sm-12 col-md-6 q-pr-md"
             :label="$t('dashboard.editProfile.custom')"
-            prefix="appv2.algopainter.art/user/"
+            :prefix="returnPrefixUrl()"
           />
           <q-input
             v-model="formFields.webSite"
@@ -67,7 +68,7 @@
         <q-input
           v-model="formFields.bio"
           :label="$t('dashboard.editProfile.bio')"
-          :rules="[ val => val.length < 1001]"
+          :rules="[ val => val ? val.length < 1001 : true]"
           :error-message=" $t('dashboard.editProfile.erroBio')"
           outlined
           class="responsive-input q-col-gutter-x-md q-mt-md"
@@ -149,7 +150,7 @@
           @click="saveChanges"
         />
       </div>
-    </div>
+    </q-card>
     <q-inner-loading :showing="isLoading">
       <q-spinner-gears
         size="50px"
@@ -182,6 +183,7 @@ export default class EditProfile extends Vue {
   };
 
   isLoading: boolean = false;
+  isValid: boolean = false;
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -196,6 +198,10 @@ export default class EditProfile extends Vue {
   @Watch('account')
   onPropertyChanged() {
     void this.loadData();
+  }
+
+  returnPrefixUrl() {
+    return `${location.host}/user/`;
   }
 
   async previewImage(e: Event) {
@@ -219,9 +225,19 @@ export default class EditProfile extends Vue {
   }
 
   mounted() {
+    void this.emailValid();
     if (this.isConnected) {
       void this.loadData();
     }
+  }
+
+  validateEmail(email: string | undefined | null) {
+    const response = /\S+@\S+\.\S+/;
+    return response.test(email as string);
+  }
+
+  emailValid() {
+    this.isValid = this.validateEmail(this.formFields.email);
   }
 
   async loadData() {
@@ -250,6 +266,7 @@ export default class EditProfile extends Vue {
   }
 
   async saveChanges() {
+    this.isValid = this.validateEmail(this.formFields.email);
     const allowed: RegExp = /[^a-zA-Z0-9-]/g;
     const customProfile: string | undefined = this.formFields.customProfile;
     const notAllowed = allowed.test(customProfile as string);
@@ -275,7 +292,6 @@ export default class EditProfile extends Vue {
       this.isLoading = true;
       this.formFields.name = this.formFields.name?.trim();
       this.formFields.bio = this.formFields.bio?.trim();
-
       if (!this.formFields.email) {
         this.formFields.email = undefined;
       }
@@ -292,6 +308,17 @@ export default class EditProfile extends Vue {
         });
         return;
       }
+      if (this.formFields.email === '' || this.formFields.email === undefined) {
+        this.isValid = true;
+      }
+      if (this.isValid === false) {
+        Notify.create({
+          message: 'Invalid email. Enter your email correctly',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+        return;
+      }
 
       const data = {
         ...this.formFields,
@@ -303,7 +330,6 @@ export default class EditProfile extends Vue {
       const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
 
       if (isError(signatureOrError as Error)) {
-        console.log('assinatura negada ou api com falha, tratar cada erro aqui');
         return;
       }
 
@@ -321,7 +347,6 @@ export default class EditProfile extends Vue {
         icon: 'mdi-check',
       });
     } catch (e) {
-      // console.log(Object.entries(e));
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 409) {
         Notify.create({
@@ -364,8 +389,7 @@ export default class EditProfile extends Vue {
 </script>
 <style lang="scss" scoped>
 .form{
-    border: dashed 2px #f4538d;
-    border-radius: 20px;
+  border-radius: 20px;
 }
 
 input[type='file'] {

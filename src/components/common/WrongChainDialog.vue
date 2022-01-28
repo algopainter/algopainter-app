@@ -56,7 +56,7 @@ export default class WrongChainDialog extends Vue {
   }
 
   hide() {
-    if (this.networkInfo?.id === 56) {
+    if (this.networkInfo?.id === 56 || this.networkInfo?.id === 97) {
       this.$refs.dialog.hide();
     }
   }

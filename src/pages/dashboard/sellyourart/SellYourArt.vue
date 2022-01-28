@@ -1,231 +1,813 @@
-<template>
-  <div class="row justify-center">
-    <div class="col-xs-12 col-sm-12 col-md-6">
-      <div class="q-pa-md">
-        <account-details />
-        <div class="header q-gutter-md">
-          {{ $t('dashboard.sellYourArt.putMarketplace') }}
-        </div>
-        <div class="row q-gutter-sm justify-center ">
-          <algo-button
-            class="btn-fixed-width"
-            :class="{ btn1: selectBtn == 1 }"
-            :label="$t('dashboard.sellYourArt.FixedPrice')"
-            @click="selectBtn = 1"
-          />
-          <algo-button
-            class="btn-fixed-width"
-            :class="{ btn2: selectBtn == 2 }"
-            :label="$t('dashboard.sellYourArt.Timed')"
-            @click="selectBtn = 2"
-          />
-        </div>
-      </div>
-      <div v-if="selectBtn === 1">
-        <div
-          text-subtitle2
-          class="text-weight-bold q-mt-xs q-gutter-md q-px-md"
-        >
-          {{ $t('dashboard.sellYourArt.EnterPrice') }}
-        </div>
-        <div>
-          <span class="text-bold">
-            {{ $t('dashboard.sellYourArt.price') }}
-          </span>
-          <q-input
-            v-model="text"
-            type="number"
-            color="grey-3"
-            label-color="primary"
-          >
-            <template #append>
-              <q-select
-                v-model="coins"
-                :options="options"
-              >
-                <template #option="scope">
-                  <q-item
-                    v-bind="scope.itemProps"
-                    v-on="scope.itemEvents"
-                  >
-                    <img
-                      class="q-mr-xs"
-                      :src="scope.opt.img"
-                    >
 
-                    <q-item-section>
-                      <q-item-label>
-                        {{ scope.opt.label }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </template>
-          </q-input>
-          <div>
-            <div class="row q-pa-xs">
-              <div>
-                <span class="text-bold">
-                  {{ $t('dashboard.sellYourArt.creatorRoyalties') }}
-                </span>
-                <q-select
-                  v-model="investors"
-                  class="select-width q-gutter-x-md"
-                  :options="royalties"
+<template>
+  <div
+    v-if="loading"
+    class="flex flex-center q-pa-xl"
+  >
+    <q-spinner
+      color="primary"
+      size="80px"
+    />
+  </div>
+  <div
+    v-else
+    class="row q-col-gutter-lg"
+  >
+    <div
+      v-if="image"
+      class="col-12 col-sm-4 image-preview"
+    >
+      <div>
+        <q-img :src="image.nft.previewImage" />
+      </div>
+      <div class="title">
+        {{ image.title }}
+      </div>
+      <div class="description">
+        {{ image.description }}
+      </div>
+    </div>
+    <div class="col-12 col-sm-8">
+      <div class="row q-col-gutter-md">
+        <div class="col-12 header">
+          {{ $t('dashboard.sellYourArt.createAuction') }}
+        </div>
+        <div class="col-12">
+          <v-form v-slot="formProps">
+            <q-form
+              class="row q-col-gutter-md"
+              @submit="formProps.handleSubmit(createAuction)"
+            >
+              <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.minimumPrice')"
+                  name="minimumPrice"
+                  rules="required"
                 >
-                  <template #append>
-                    <q-btn flat>
-                      {{ $t('dashboard.sellYourArt.percent') }}
-                    </q-btn>
-                  </template>
-                </q-select>
+                  <q-input
+                    :label="$t('dashboard.sellYourArt.minimumPrice')"
+                    :model-value="field.value"
+                    inputmode="number"
+                    mask="#.####"
+                    reverse-fill-mask
+                    fill-mask="0"
+                    color="primary"
+                    :rules="[
+                      (val) =>
+                        val > 0 || $t('dashboard.sellYourArt.setAMinimumPrice'),
+                    ]"
+                    :error="!!errorMessage"
+                    :error-message="errorMessage"
+                    @update:modelValue="handleChange"
+                  >
+                    <template #append>
+                      <q-btn-dropdown
+                        color="primary"
+                        flat
+                      >
+                        <template #label>
+                          <q-avatar
+                            v-if="selectedCoin"
+                            size="sm"
+                            class="q-mr-md"
+                          >
+                            <img :src="selectedCoin.img">
+                          </q-avatar>
+                          <div>
+                            {{ selectedCoinLabel }}
+                          </div>
+                        </template>
+                        <template #default>
+                          <q-list>
+                            <q-item
+                              v-for="coin in allowedCoins"
+                              :key="coin.value"
+                              v-close-popup
+                              clickable
+                              @click="selectCoin(coin.value)"
+                            >
+                              <q-item-section avatar>
+                                <q-avatar size="sm">
+                                  <img :src="coin.img">
+                                </q-avatar>
+                              </q-item-section>
+                              <q-item-section>
+                                <q-item-label>
+                                  {{ coin.label }}
+                                </q-item-label>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                        </template>
+                      </q-btn-dropdown>
+                    </template>
+                  </q-input>
+                </v-field>
               </div>
-              <div>
-                <span class="text-bold">
-                  {{ $t('dashboard.sellYourArt.investorsRoyalties') }}</span>
-                <q-select
-                  v-model="creator"
-                  class="select-width"
-                  :options="royalties"
+              <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.endDate')"
+                  name="endDate"
+                  rules="required"
                 >
-                  <template #append>
-                    <q-btn flat>
-                      {{ $t('dashboard.sellYourArt.percent') }}
-                    </q-btn>
-                  </template>
-                </q-select>
+                  <date-field
+                    :model-value="field.value"
+                    :options="endDateOptions"
+                    :label="$t('dashboard.sellYourArt.endDate')"
+                    :rules="[
+                      (val) =>
+                        val !== '' ||
+                        $t('dashboard.sellYourArt.setAnEndDate'),
+                    ]"
+                    :error="!!errorMessage"
+                    :error-message="errorMessage"
+                    @update:modelValue="handleChange"
+                  />
+                </v-field>
               </div>
-            </div>
-            <div class="text-right q-mr-md">
-              <p class="text-bold">
-                {{ $t('dashboard.sellYourArt.service') }}
-              </p>
-              <span>
-                {{ $t('dashboard.sellYourArt.willReceive') }}
-              </span>
-              <span class="text-primary text-bold">
-                {{ $t('dashboard.sellYourArt.ireceive') }}
-              </span>
-              <span class="text-primary text-bold">
-                {{ coins.label }}
-              </span>
-              <span class="text-grey-5">
-                {{ $t('dashboard.sellYourArt.money') }}
-              </span>
-            </div>
-            <div class="row justify-center">
-              <algo-button
-                class="btn-fixed-width q-ma-xs"
-                color="primary"
-                outline
-                :label="$t('dashboard.sellYourArt.cancel')"
-              />
-              <algo-button
-                class="btn-fixed-width q-ma-xs"
-                color="primary"
-                outline
-                :label="$t('dashboard.sellYourArt.register')"
-              />
-            </div>
-          </div>
+              <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.endTime')"
+                  name="endTime"
+                  rules="required"
+                >
+                  <time-field
+                    :disable="!formProps.values.endDate"
+                    :model-value="field.value"
+                    :options="endTimeOptions(formProps.values.endDate)"
+                    :label="$t('dashboard.sellYourArt.endTime')"
+                    :rules="[
+                      (val) =>
+                        val !== '' ||
+                        $t('dashboard.sellYourArt.setAnEndDate'),
+                    ]"
+                    :error="!!errorMessage"
+                    :error-message="errorMessage"
+                    @update:modelValue="handleChange"
+                  />
+                </v-field>
+              </div>
+              <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange, errorMessage }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.bidBack')"
+                  name="bidBack"
+                  rules="required"
+                >
+                  <q-input
+                    inputmode="number"
+                    mask="#"
+                    reverse-fill-mask
+                    fill-mask="0"
+                    :label="$t('dashboard.sellYourArt.bidBack')"
+                    :model-value="field.value"
+                    :error-message="errorMessage"
+                    :error="!!errorMessage"
+                    :rules="[
+                      (val) => val >= 1 || $t('dashboard.sellYourArt.minimumBidBackRate'),
+                      (val) => val <= 30 || $t('dashboard.sellYourArt.maximumBidBackRate'),
+                    ]"
+                    @update:modelValue="handleChange"
+                  >
+                    <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
+                      <q-tooltip class="bg-primary">
+                        {{ $t('dashboard.sellYourArt.bidBackTooltip') }}
+                      </q-tooltip>
+                    </template>
+                  </q-input>
+                </v-field>
+              </div>
+              <div class="col-12">
+                <v-field
+                  v-slot="{ field, handleChange }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.pirs')"
+                  name="pirs"
+                >
+                  <q-input
+                    v-if="!isCreator"
+                    inputmode="number"
+                    mask="#"
+                    filled
+                    reverse-fill-mask
+                    fill-mask="0"
+                    :label="$t('dashboard.sellYourArt.pirs')"
+                    readonly
+                    :hint="$t('dashboard.sellYourArt.readOnlyField')"
+                    :model-value="imagePirsRate ? imagePirsRate : 0"
+                    @update:modelValue="handleChange"
+                  >
+                    <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
+                      <q-tooltip class="bg-primary">
+                        {{ $t('dashboard.sellYourArt.pirsTooltip') }}
+                      </q-tooltip>
+                    </template>
+                  </q-input>
+                  <q-input
+                    v-else
+                    v-model="PIRSRate"
+                    inputmode="number"
+                    mask="#"
+                    reverse-fill-mask
+                    fill-mask="0"
+                    :label="$t('dashboard.sellYourArt.pirs')"
+                    :model-value="field.value"
+                    :rules="[
+                      (val) => val >= 1 || $t('dashboard.sellYourArt.minimumPIRSRate'),
+                      (val) => val <= 30 || $t('dashboard.sellYourArt.maximumPIRSRate'),
+                    ]"
+                    @update:modelValue="handleChange"
+                  >
+                    <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
+                      <q-tooltip class="bg-primary">
+                        {{ $t('dashboard.sellYourArt.pirsTooltip') }}
+                      </q-tooltip>
+                    </template>
+                  </q-input>
+                </v-field>
+              </div>
+              <div class="col-12">
+                <v-field
+                  v-slot="{ handleChange }"
+                  class="col-12"
+                  :label="$t('dashboard.sellYourArt.creatorRoyalties')"
+                  name="royalties"
+                >
+                  <q-input
+                    inputmode="number"
+                    mask="#"
+                    :hint="$t('dashboard.sellYourArt.readOnlyField')"
+                    filled
+                    reverse-fill-mask
+                    fill-mask="0"
+                    :label="$t('dashboard.sellYourArt.creatorRoyalties')"
+                    :model-value="collectionCreatorRoyaltiesRate"
+                    readonly
+                    @update:modelValue="handleChange"
+                  >
+                    <template #append>
+                      <q-icon name="mdi-help-circle-outline" />
+                      <q-tooltip class="bg-primary">
+                        {{ $t('dashboard.sellYourArt.creatorTooltip') }}
+                      </q-tooltip>
+                    </template>
+                  </q-input>
+                </v-field>
+              </div>
+              <div class="col-12">
+                <div class="q-mr-md">
+                  <q-field
+                    v-if="isCreator"
+                    ref="toggle"
+                    :value="isUserInformedThatPirsCanBeOnlySetOnce"
+                    :rules="[
+                      (val) => isUserInformedThatPirsCanBeOnlySetOnce === true || $t('dashboard.sellYourArt.acknowledgeTerm'),
+                    ]"
+                    borderless
+                    dense
+                    hide-bottom-space
+                  >
+                    <template #control>
+                      <q-checkbox
+                        v-model="isUserInformedThatPirsCanBeOnlySetOnce"
+                        color="green"
+                        :label="$t('dashboard.sellYourArt.pirsMessage')"
+                      />
+                    </template>
+                  </q-field>
+                  <q-field
+                    ref="toggle"
+                    :value="isUserInformedAboutTheFee"
+                    :rules="[
+                      (val) => isUserInformedAboutTheFee === true || $t('dashboard.sellYourArt.acknowledgeTerm'),
+                    ]"
+                    borderless
+                    dense
+                    hide-bottom-space
+                  >
+                    <template #control>
+                      <q-checkbox
+                        v-model="isUserInformedAboutTheFee"
+                        color="green"
+                        :label="
+                          $t('dashboard.sellYourArt.feeMessage', {
+                            auctionFeePercentage: auctionFeeRate,
+                          })
+                        "
+                      />
+                    </template>
+                  </q-field>
+                </div>
+                <div class="flex justify-end">
+                  <algo-button
+                    class="q-mb-md"
+                    type="submit"
+                    color="primary"
+                    :label="$t('dashboard.sellYourArt.createAuction')"
+                  />
+                </div>
+              </div>
+            </q-form>
+          </v-form>
         </div>
       </div>
-      <div v-if="selectBtn === 2">
-        <!-- page sell auction -->
-      </div>
     </div>
-    <div>
-      <your-art class="q-ma-sm" />
-    </div>
+    <q-dialog
+      v-model="displayingStatus"
+      persistent
+    >
+      <create-auction-status-card
+        :create-auction-status="createAuctionStatus"
+        :is-creator="isCreator"
+        @request-close="onCloseStatusDialog"
+      />
+    </q-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import { mapGetters } from 'vuex';
+import moment from 'moment';
+import { Form as VForm, Field as VField } from 'vee-validate';
+import { clone } from 'ramda';
+
+import { auctionCoins } from 'src/helpers/auctionCoins';
+import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
+import { getImage } from 'src/api/images';
+import { IImage } from 'src/models/IImage';
+import AlgoPainterAuctionSystemProxy, {
+  TokenType,
+} from 'src/eth/AlgoPainterAuctionSystemProxy';
+import AlgoPainterItemProxy from 'src/eth/AlgoPainterItemProxy';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
+import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
+import { Watch } from 'vue-property-decorator';
+import { NetworkInfo } from 'src/store/user/types';
 
 import AlgoButton from 'components/common/Button.vue';
+import DateField from 'components/fields/DateField.vue';
+import TimeField from 'components/fields/TimeField.vue';
+import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
+import AlgoPainterPersonalItemProxy from 'src/eth/AlgoPainterPersonalItemProxy';
+import { numberToString } from 'src/helpers/format/numberToString';
 
-import YourArt from 'src/components/sellYourArt/YourArt.vue';
+interface INewAuction {
+  minimumPrice: number;
+  endDate: string;
+  endTime: string;
+  coin: string;
+  bidBack: number;
+  pirs: number;
+}
+
+interface IAllowedTokens {
+  [key: string]: boolean;
+}
+
+enum CreatingAuctionStatus {
+  CheckingContractApproved,
+  ContractApprovedAwaitingInput,
+  ContractApprovedAwaitingConfirmation,
+  ContractApprovedError,
+  SettingPirsAwaitingInput,
+  SettingPirsAwaitingConfirmation,
+  SettingPirsError,
+  SettingPirsCompleted,
+  CreateAuctionAwaitingInput,
+  CreateAuctionAwaitingConfirmation,
+  CreateAuctionError,
+  AuctionCreated,
+  SettingBidBackAwaitingInput,
+  SettingBidBackAwaitingConfirmation,
+  SettingBidBackError,
+  SettingBidBackCompleted,
+}
 
 @Options({
-  components: { AlgoButton, YourArt },
+  components: {
+    AlgoButton,
+    DateField,
+    TimeField,
+    CreateAuctionStatusCard,
+    VForm,
+    VField,
+  },
+  computed: {
+    ...mapGetters('user', {
+      userAccount: 'account',
+      networkInfo: 'networkInfo',
+      isConnected: 'isConnected',
+    }),
+  },
 })
-export default class sellYourArt extends Vue {
-  investors: null = null;
-  creator: null = null;
-  coins: string = '';
-  text: string = '';
-  selectBtn: number = 1;
+export default class SellYourArt extends Vue {
+  clone = clone;
 
-  options = [
-    {
-      value: '1',
-      label: 'BTC',
-      img: '/images/BTC.svg',
-    },
-    {
-      value: '2',
-      label: 'BNB',
-      img: '/images/BNB.svg',
-    },
-    {
-      value: '3',
-      label: 'ALGOP',
-      img: '/images/ALGOP.svg',
-    },
-    {
-      value: '4',
-      label: 'ETH',
-      img: '/images/ETH.svg',
-    },
-    {
-      value: '5',
-      label: 'DASH',
-      img: '/images/DASH.svg',
-    },
-  ];
+  auctionSystem!: AlgoPainterAuctionSystemProxy;
+  artTokenContract!: AlgoPainterItemProxy;
+  networkInfo!: NetworkInfo;
+  userAccount!: string;
+  isConnected!: boolean;
+  PIRSRate!: number;
 
-  royalties = [
-    {
-      value: 0,
-      label: '0',
-    },
-    {
-      value: 2.5,
-      label: '2.5',
-    },
-    {
-      value: 5,
-      label: '5',
-    },
-    {
-      value: 10,
-      label: '10',
-    },
-  ];
+  image: IImage | null = null;
+  loading: boolean = false;
+  loadingCoins: boolean = false;
+  bidBackSystem!: AlgoPainterBidBackPirsProxy;
+  pirsSystem!: AlgoPainterBidBackPirsProxy;
+  personalItemContract = <AlgoPainterPersonalItemProxy>{};
+  auctionId!: number;
+  isCreator: boolean = false;
+  createdPirs!: number | null;
+  createdItems!: number;
+
+  coin: string = '3';
+
+  allowedTokens: IAllowedTokens = {};
+
+  displayingStatus: boolean = false;
+  createAuctionStatus: CreatingAuctionStatus | null = null;
+  createBidBackStatus: CreatingAuctionStatus | null = null;
+
+  isUserInformedAboutTheFee: boolean = false;
+  isUserInformedThatPirsCanBeOnlySetOnce: boolean = false;
+  auctionFeeRate!: string;
+  hashPersonalItem!: string;
+
+  imagePirsRate!: number | null;
+  pirPercent!: number | null;
+  collectionCreatorRoyaltiesRate: number | null = 0;
+
+  mounted() {
+    void this.getCreatorRoyaltiesRate();
+    void this.validatePirs();
+    void this.getAuctionFeeRate();
+  }
+
+  created() {
+    if (!localStorage.isConnected) {
+      return this.$router.push('/');
+    }
+    void this.getCreatorRoyaltiesRate();
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+    this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
+    this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    void this.loadImage();
+    void this.loadAvailableTokens();
+  }
+
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+      this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
+      this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    }
+  }
+
+  async getCreatorRoyaltiesRate() {
+    const { id } = this.$route.params;
+    this.image = await getImage(id as string);
+    if (this.image.collectionName === 'PersonalItem') {
+      this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.image.nft.index) as string;
+      this.createdItems = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
+      this.collectionCreatorRoyaltiesRate = this.createdItems / 100;
+    } else {
+      this.createdPirs = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
+      this.collectionCreatorRoyaltiesRate = this.createdPirs / 100;
+    }
+  }
+
+  getInvestorPirsRate() {
+    if (this.image) {
+      this.pirPercent = this.image.pirs.investorRate;
+      if (this.pirPercent !== null) {
+        this.imagePirsRate = this.pirPercent / 100;
+      }
+    }
+  }
+
+  async getAuctionFeeRate() {
+    const auctionFeeRate =
+      (await this.auctionSystem.getAuctionFeeRate()) / 10000;
+
+    this.auctionFeeRate = this.$n(auctionFeeRate, 'percent', {
+      maximumFractionDigits: 2,
+    } as unknown as string);
+  }
+
+  get auctionSystemContractAddress() {
+    return getAuctionSystemContractByNetworkId(this.networkInfo.id);
+  }
+
+  get allowedCoins() {
+    return auctionCoins.filter((rawCoin) => {
+      return this.allowedTokens[rawCoin.tokenAddress.toLowerCase()];
+    });
+  }
+
+  get selectedCoin() {
+    if (!this.coin) {
+      return null;
+    }
+
+    const selectedOption = this.allowedCoins.find(
+      (option) => option.value === this.coin,
+    );
+
+    if (!selectedOption) {
+      return null;
+    }
+
+    return selectedOption;
+  }
+
+  get selectedCoinLabel() {
+    if (!this.selectedCoin) {
+      return this.$t('dashboard.sellYourArt.selectCoin');
+    }
+
+    return this.selectedCoin.label;
+  }
+
+  async validatePirs() {
+    const { id } = this.$route.params;
+
+    this.image = await getImage(id as string);
+
+    this.isCreator = !this.image.pirs.investorRate;
+
+    if (!this.isCreator) {
+      void this.getInvestorPirsRate();
+    }
+  }
+
+  get nowFormatted() {
+    return moment().format('YYYY/MM/DD');
+  }
+
+  async loadImage() {
+    const { id } = this.$route.params;
+
+    this.loading = true;
+
+    this.image = await getImage(id as string);
+    this.artTokenContract = new AlgoPainterItemProxy(
+      this.image.collectionOwner,
+    );
+
+    const owner = await this.artTokenContract.ownerOf(this.image.nft.index);
+
+    if (owner.toLowerCase() !== this.userAccount) {
+      return this.$router.push('/');
+    }
+
+    void this.getCreatorRoyaltiesRate();
+
+    this.loading = false;
+  }
+
+  async loadAvailableTokens() {
+    try {
+      this.loadingCoins = true;
+
+      const tokens = await this.auctionSystem.getAllowedTokens();
+
+      this.allowedTokens = tokens.reduce((curr, token) => {
+        return { ...curr, [token.toLowerCase()]: true };
+      }, {});
+
+      this.loadingCoins = false;
+    } catch {
+      this.loadingCoins = false;
+    }
+  }
+
+  selectCoin(coin: string) {
+    this.coin = coin;
+  }
+
+  endDateOptions(date: string) {
+    const dayWrapper = moment().add(30, 'days');
+    const dayString = dayWrapper.format('YYYY/MM/DD');
+    return date > this.nowFormatted && date <= dayString;
+  }
+
+  endTimeOptions(date: string) {
+    const now = moment().add(24, 'hours');
+    const currentDate = now.format('MM/DD/YYYY');
+
+    return (hour: number, minute: number | null) => {
+      if (currentDate !== date) {
+        return true;
+      }
+
+      const currentHour = now.hour();
+      const currentMinute = now.minute();
+      return !minute
+        ? hour > currentHour
+        : hour !== currentHour || minute > currentMinute;
+    };
+  }
+
+  async approveContract() {
+    if (typeof this.PIRSRate === 'undefined') {
+      if (this.imagePirsRate) {
+        this.PIRSRate = this.imagePirsRate;
+      }
+    }
+    this.createAuctionStatus = CreatingAuctionStatus.CheckingContractApproved;
+
+    const contractApproved = await this.artTokenContract.isApprovedForAll(
+      this.userAccount,
+      this.auctionSystemContractAddress,
+    );
+
+    if (contractApproved) {
+      return;
+    }
+
+    this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedAwaitingInput;
+
+    await this.artTokenContract.setApprovalForAll(
+      this.auctionSystemContractAddress,
+      true,
+      this.userAccount,
+    ).on('transactionHash', () => {
+      this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedAwaitingConfirmation;
+    }).on('error', () => {
+      this.createAuctionStatus = CreatingAuctionStatus.ContractApprovedError;
+    });
+  }
+
+  async setInvestorPirs(pirs: number) {
+    const { id } = this.$route.params;
+    this.image = await getImage(id as string);
+    this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingInput;
+    await this.pirsSystem
+      .setPIRSRate(
+        this.image.collectionOwner,
+        this.image.nft.index,
+        pirs,
+        this.userAccount,
+      )
+      .on('transactionHash', () => {
+        this.createAuctionStatus =
+          CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
+      })
+      .on('error', () => {
+        this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
+      });
+    this.createAuctionStatus = CreatingAuctionStatus.SettingPirsCompleted;
+  }
+
+  async createAuction(auction: INewAuction) {
+    try {
+      this.displayingStatus = true;
+
+      if (!this.image || !this.selectedCoin) {
+        return;
+      }
+
+      await this.approveContract();
+      if (this.isCreator) {
+        await this.setInvestorPirs(this.PIRSRate * 100);
+      }
+
+      const { minimumPrice, endDate, endTime, bidBack } = auction;
+      const bidBackRate = bidBack * 100;
+      let { pirs } = auction;
+      const { decimalPlaces } = this.selectedCoin;
+      if (typeof pirs === 'undefined') {
+        if (this.imagePirsRate) {
+          pirs = this.imagePirsRate;
+        }
+      }
+      const minimumPriceFormatted = currencyToBlockchain(
+        Number(minimumPrice),
+        decimalPlaces,
+      );
+
+      this.createAuctionStatus =
+        CreatingAuctionStatus.CreateAuctionAwaitingInput;
+
+      if (
+        (await this.createAuctionResponse(
+          minimumPriceFormatted,
+          endDate,
+          endTime,
+          bidBackRate,
+        )) !== 'no error'
+      ) {
+        this.displayingStatus = false;
+        return;
+      }
+
+      const auctionResponse = await this.auctionSystem
+        .createAuction(
+          TokenType.ERC721,
+          this.image.collectionOwner,
+          this.image.nft.index,
+          numberToString(minimumPriceFormatted),
+          moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
+          this.selectedCoin.tokenAddress,
+          bidBackRate,
+          this.userAccount,
+        )
+        .on('transactionHash', () => {
+          this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionAwaitingConfirmation;
+        })
+        .on('error', () => {
+          this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionError;
+        });
+
+      this.createAuctionStatus = CreatingAuctionStatus.AuctionCreated;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.auctionId = auctionResponse.events.AuctionCreated.returnValues.auctionId as number;
+    } catch {
+      this.displayingStatus = false;
+    }
+  }
+
+  async createAuctionResponse(
+    minimumPriceFormatted: number,
+    endDate: string,
+    endTime: string,
+    bidBack: number,
+  ) {
+    if (this.image && this.selectedCoin) {
+      try {
+        await this.auctionSystem.createAuctionCall(
+          TokenType.ERC721,
+          this.image.collectionOwner,
+          this.image.nft.index,
+          numberToString(minimumPriceFormatted),
+          moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
+          this.selectedCoin.tokenAddress,
+          bidBack,
+          this.userAccount,
+        );
+        return 'no error';
+      } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        const obj = JSON.parse(e.message.replace('Internal JSON-RPC error.', '')) as { code: number; data: string; message: string };
+        switch (obj.message) {
+          case 'execution reverted: AlgoPainterAuctionSystem:INVALID_TIME_STAMP':
+            return this.$q.notify({
+              type: 'negative',
+              message: this.$t(
+                'dashboard.sellYourArt.errorHandling.invalidTimeStamp',
+              ),
+              icon: 'mdi-alert',
+            });
+          default:
+            return this.$q.notify({
+              type: 'negative',
+              message: this.$t('dashboard.sellYourArt.errorHandling.default'),
+              icon: 'mdi-alert',
+            });
+        }
+      }
+    }
+  }
+
+  onCloseStatusDialog() {
+    this.displayingStatus = false;
+
+    if (
+      this.createAuctionStatus ===
+        CreatingAuctionStatus.SettingBidBackCompleted ||
+      this.createAuctionStatus === CreatingAuctionStatus.AuctionCreated
+    ) {
+      this.$q.notify({
+        type: 'positive',
+        message: this.$t('dashboard.sellYourArt.auctionCreated'),
+      });
+
+      void this.$router.push('/');
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.btn-fixed-width {
-  width: 100px;
-  height: 44px;
-  color: #f4538d;
-  border: 1px solid rgb(185, 185, 185);
-}
-
-.btn-fixed-width.btn1 {
-  border: 1px solid #f4538d;
-  color: #f4538d;
-}
-
-.btn-fixed-width.btn2 {
-  border: 1px solid #f4538d;
-  color: #f4538d;
-}
-
-.select-width {
-  width: 200px;
+.image-preview {
+  .title {
+    font-weight: bold;
+    font-size: 1.8rem;
+  }
 }
 </style>

@@ -2,6 +2,7 @@
 import { ICollection } from 'src/models/ICollection';
 import { IImage } from 'src/models/IImage';
 import BaseController from '../BaseController';
+import Collections from 'src/data/Collections.json';
 
 export default class CollectionController extends BaseController {
   async getCollections() {
@@ -13,7 +14,7 @@ export default class CollectionController extends BaseController {
     }
   }
 
-  async getCollectionsImages(id: string, page: number = 1, perPage: number = 24, collection: string = '') {
+  async getCollectionsImages(id: string, page: number = 1, perPage: number = 24) {
     try {
       const result = await this.get(`collections/${id}/images?page=${page}&perPage=${perPage}&order.nft.index=-1`);
       return result.data.data as IImage[];
@@ -29,5 +30,9 @@ export default class CollectionController extends BaseController {
     } catch (error) {
       return [];
     }
+  }
+
+  getCollectionById(id: number) {
+    return Collections.find(c => c.id === id);
   }
 }

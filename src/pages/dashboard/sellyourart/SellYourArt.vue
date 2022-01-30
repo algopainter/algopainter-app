@@ -344,7 +344,6 @@ import { clone } from 'ramda';
 
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
-import { numberToString } from 'src/helpers/format/numberToString';
 import { getImage } from 'src/api/images';
 import { IImage } from 'src/models/IImage';
 import AlgoPainterAuctionSystemProxy, {
@@ -361,6 +360,7 @@ import DateField from 'components/fields/DateField.vue';
 import TimeField from 'components/fields/TimeField.vue';
 import CreateAuctionStatusCard from 'components/auctions/auction/CreateAuctionStatusCard.vue';
 import AlgoPainterPersonalItemProxy from 'src/eth/AlgoPainterPersonalItemProxy';
+import { numberToString } from 'src/helpers/format/numberToString';
 
 interface INewAuction {
   minimumPrice: number;
@@ -601,11 +601,13 @@ export default class SellYourArt extends Vue {
   }
 
   endDateOptions(date: string) {
-    return date >= this.nowFormatted;
+    const dayWrapper = moment().add(30, 'days');
+    const dayString = dayWrapper.format('YYYY/MM/DD');
+    return date > this.nowFormatted && date <= dayString;
   }
 
   endTimeOptions(date: string) {
-    const now = moment();
+    const now = moment().add(24, 'hours');
     const currentDate = now.format('MM/DD/YYYY');
 
     return (hour: number, minute: number | null) => {
@@ -615,9 +617,8 @@ export default class SellYourArt extends Vue {
 
       const currentHour = now.hour();
       const currentMinute = now.minute();
-
       return !minute
-        ? hour >= currentHour
+        ? hour > currentHour
         : hour !== currentHour || minute > currentMinute;
     };
   }
@@ -760,7 +761,7 @@ export default class SellYourArt extends Vue {
           this.userAccount,
         );
         return 'no error';
-      } catch (e) {
+      } catch (e:any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         const obj = JSON.parse(e.message.replace('Internal JSON-RPC error.', '')) as { code: number; data: string; message: string };
         switch (obj.message) {

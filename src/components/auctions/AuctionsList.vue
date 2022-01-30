@@ -236,6 +236,8 @@ import AlgoButton from 'components/common/Button.vue';
 import moment from 'moment';
 import 'vue3-carousel/dist/carousel.css';
 import CarouselSkeleton from 'components/auctions/auction/CarouselSkeleton.vue';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 
 @Options({

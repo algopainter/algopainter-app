@@ -1,18 +1,12 @@
 <template>
-  <new-painting-top-info :collection-name="collectionName" :collection-token="collectionToken"></new-painting-top-info>
-  <div
-    id="new-painting"
-    :class="[$q.screen.lt.sm || $q.screen.lt.md ? '' : 'row']"
-  >
-    <div
-      :class="'col-7 new-painting-left-info'"
-    >
-      <component :is="collectionComponent" :collection-name="collectionName" />
+  <NewPaintingTopInfo :collection-name="collectionName" :collection-token="collectionToken" />
+  <div id="new-painting" :class="[$q.screen.lt.sm || $q.screen.lt.md ? '' : 'row']">
+    <div :class="'col-7 new-painting-left-info'">
+      <NewPaintingLeftInfoGwei v-if="collectionName === 'gwei'" :collection-name="collectionName" />
+      <NewPaintingLeftInfoExpressions v-if="collectionName !== 'gwei'" :collection-name="collectionName" />
     </div>
-    <div
-      :class="'col-5 new-painting-right-info'"
-    >
-      <new-painting-right-info :collection-name="collectionName" />
+    <div :class="'col-5 new-painting-right-info'">
+      <NewPaintingRightInfo :collection-name="collectionName" />
     </div>
   </div>
 </template>
@@ -35,7 +29,6 @@ import NewPaintingRightInfo from './NewPaintingRightInfo.vue';
 export default class NewPainting extends Vue {
   collectionName !: string | string[];
   collectionToken?: string;
-  collectionComponent!: string;
 
   created() {
     this.getCollectionName();
@@ -44,10 +37,7 @@ export default class NewPainting extends Vue {
   getCollectionName() {
     const { collection } = this.$route.params;
     this.collectionName = collection;
-
     this.collectionToken = (this.collectionName === 'gwei') ? 'ALGOP' : 'BNB';
-
-    this.collectionComponent = (collection === 'gwei') ? 'new-painting-left-info-gwei' : 'new-painting-left-info-expressions';
   }
 }
 </script>

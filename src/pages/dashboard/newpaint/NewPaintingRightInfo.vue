@@ -232,7 +232,6 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 
   @Watch('previewUrlGwei')
   onPreviewUrlGweiChanged() {
-    debugger;
     this.isPreviewUrlSet = true;
     this.previewUrl = this.previewUrlGwei;
     this.isImgLoaded = false;

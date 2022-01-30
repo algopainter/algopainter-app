@@ -16,6 +16,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
   },
 
   previewUrl(type, value) {
+    console.log(type)
+    debugger;
     const previewUrl: string = value.previewUrl;
     const collectionName: string = value.collectionName;
 

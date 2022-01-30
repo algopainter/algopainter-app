@@ -761,7 +761,7 @@ export default class SellYourArt extends Vue {
           this.userAccount,
         );
         return 'no error';
-      } catch (e) {
+      } catch (e:any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         const obj = JSON.parse(e.message.replace('Internal JSON-RPC error.', '')) as { code: number; data: string; message: string };
         switch (obj.message) {

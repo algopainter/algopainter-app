@@ -1,5 +1,5 @@
 <template>
-  <div v-if="iconName = 'gwei'">
+  <div v-if="iconName == 'gwei'">
     <svg
       v-if="collectionName === 'gwei'"
       :width="width" :height="heigth" :viewBox="viewBox" fill="none" xmlns="http://www.w3.org/2000/svg"

@@ -245,7 +245,7 @@ export default class EditProfile extends Vue {
     try {
       const result = await api.get(`users/${this.account}`);
       this.formFields = result.data as IProfile;
-    } catch (e) {
+    } catch (e: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 404) {
         Notify.create({
@@ -346,7 +346,7 @@ export default class EditProfile extends Vue {
         color: 'green',
         icon: 'mdi-check',
       });
-    } catch (e) {
+    } catch (e: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e.response.data.type === 409) {
         Notify.create({

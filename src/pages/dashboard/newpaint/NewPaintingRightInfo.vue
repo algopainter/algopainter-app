@@ -243,13 +243,17 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   }
 
   checkIfImgIsLoaded() {
-    const interval = setInterval(() => {
-      this.isImgLoaded = this.$refs.previewImg.complete;
+    if (this.previewUrlGwei || this.previewUrlExpressions) {
+      const interval = setInterval(() => {
+        this.isImgLoaded = this.$refs.previewImg.complete;
 
-      if (this.isImgLoaded) {
-        clearInterval(interval);
-      }
-    }, 1000);
+        if (this.isImgLoaded) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    } else {
+      this.isImgLoaded = false;
+    }
   }
 
   setGweiSvgProperties() {

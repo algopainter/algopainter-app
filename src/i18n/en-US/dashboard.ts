@@ -631,7 +631,12 @@ export default {
       nameArtistError:'Field artist name is required and must be less than 30 characters',
       nameCollectionError:'Field Collection name is required and must be less than 30 characters',
       description:'Description:',
-      socialMedia: 'Social media:'
+      socialMedia: 'Social media:',
+      enableArtistName: ' Artist name field required',
+      enableNameCollection: ' Collection name field required',
+      enableDescription: ' Description field required',
+      enableCuston: 'Custom URL field required',
+      enableAvatar: 'Imagem field required',
     }
   },
 };

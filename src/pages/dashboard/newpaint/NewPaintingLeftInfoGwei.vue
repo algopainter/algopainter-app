@@ -194,7 +194,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   generatePreview() {
-    debugger;
     this.isError = false;
     this.errorMessage = '';
 

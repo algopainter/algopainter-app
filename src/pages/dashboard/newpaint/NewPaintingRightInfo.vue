@@ -5,23 +5,21 @@
       :src="collectionImagePlaceholder"
       class="img"
     />
-    <div v-if="!previewUrlGwei && !previewUrlExpressions && collectionName === 'gwei'">
-      <q-img
-        v-if="collectionName !== 'gwei'"
-        :src="collectionImagePlaceholder"
-        class="img"
-      />
-      <div v-if="collectionName === 'gwei'">
-        <Icon :collection-name="'gwei'" :width="gweiPlaceholder.width" :heigth="gweiPlaceholder.heigth" :view-box="gweiPlaceholder.viewBox"></Icon>
-      </div>
-    </div>
+    <icon
+      v-else-if="!previewUrlGwei && !previewUrlExpressions && collectionName === 'gwei'"
+      :collection-name="'gwei'"
+      :width="gweiPlaceholder.width"
+      :heigth="gweiPlaceholder.heigth"
+      :view-box="gweiPlaceholder.viewBox"
+    />
     <q-spinner
-      v-else-if="isImgLoading && previewUrl "
+      v-else-if="!isImgLoaded && previewUrl"
       size="50px"
       color="primary"
     />
-    <q-img
+    <img
       v-show="isImgLoaded"
+      ref="previewImg"
       :src="previewUrl"
       class="img"
     />
@@ -147,7 +145,6 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   isPreviewUrlSet: boolean = false;
 
   isImgLoaded: boolean = false;
-  isImgLoading: boolean = true;
 
   artBasicInfo: IArtBasicInfo = {
     name: '',
@@ -225,26 +222,34 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
       })
   }
 
-  imgLoadingEnded() {
-    this.isImgLoading = false;
-    this.isImgLoaded = true;
-  }
+  declare $refs: {
+    previewImg: any;
+  };
 
   @Watch('previewUrlGwei')
   onPreviewUrlGweiChanged() {
     this.isPreviewUrlSet = true;
     this.previewUrl = this.previewUrlGwei;
-    this.isImgLoaded = false;
-    this.isImgLoading = true;
-    setTimeout(() => { this.imgLoadingEnded() }, 10000);
+
+    this.checkIfImgIsLoaded();
   }
 
   @Watch('previewUrlExpressions')
   onPreviewUrlExpressionChanged() {
     this.isPreviewUrlSet = true;
     this.previewUrl = this.previewUrlExpressions;
-    this.isImgLoading = false;
-    this.isImgLoaded = true;
+
+    this.checkIfImgIsLoaded();
+  }
+
+  checkIfImgIsLoaded() {
+    const interval = setInterval(() => {
+      this.isImgLoaded = this.$refs.previewImg.complete;
+
+      if (this.isImgLoaded) {
+        clearInterval(interval);
+      }
+    }, 1000);
   }
 
   setGweiSvgProperties() {

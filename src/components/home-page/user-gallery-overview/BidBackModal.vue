@@ -175,7 +175,7 @@ export default class BidBackModal extends Vue {
     const coin = auctionCoins.find((coin) => {
       return (
         coin.tokenAddress.toLowerCase() ===
-        '0x01a9188076f1231df2215f67b6a63231fe5e293e'
+        process.env.VUE_APP_ALGOP_TOKEN_ADDRESS
       );
     });
 

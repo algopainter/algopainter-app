@@ -8,13 +8,13 @@
       :src="bidsAuctions.item.previewImage"
     />
     <div>
-      <p class="text-bold title">
+      <p :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'text-bold title' : 'row text-bold container-info q-ml-lg text-center']">
         {{ `# ${bidsAuctions.item.index} ${bidsAuctions.item.title}` }}
       </p>
-      <p class="title">
+      <p :class="[$q.screen.lt.md || $q.screen.lt.sm ? ' title' : 'row container-info q-ml-lg text-center']">
         {{ bidsAuctions.item.description }}
       </p>
-      <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center' : 'row ']">
+      <div :class="[$q.screen.lt.sm ? 'row justify-center' : 'row q-gutter-sm q-ml-md text-center']">
         <div
           v-for="(user, i) in bidsAuctions.users"
           :key="i"
@@ -361,6 +361,7 @@ bidCorreting(bids: number) {
   white-space: nowrap;
   text-align: left;
   width: 400px;
+  margin-left: 59px;
   }
 
 @media (max-width: 450px ) {
@@ -389,6 +390,7 @@ bidCorreting(bids: number) {
   white-space: nowrap;
   text-align: left;
   width: 250px;
+  margin-left: 0 ;
   }
   @media(max-width:450px){
     .title {

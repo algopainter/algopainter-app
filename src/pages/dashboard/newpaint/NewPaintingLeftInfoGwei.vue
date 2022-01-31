@@ -1,67 +1,62 @@
 <template>
-  <div v-if="hasAllowance">
-    <div class="title">
-      {{ $t('dashboard.newPainting.parameters') }}
-    </div>
-    <q-input
-      v-model="item.text"
-      :label="$t('dashboard.newPainting.gwei.inspirationalText')"
-      maxlength="64"
-      counter
-    />
-    <div class="algo-radio">
-      <p class="label">{{ $t('dashboard.newPainting.gwei.randomColors') }}</p>
-      <div class="row q-col-gutter-md">
-        <q-radio
-          v-model="item.useRandom"
-          :label="$t('dashboard.newPainting.gwei.yesLabel')"
-          class="option"
-          :val="'true'"
-        />
-        <q-radio
-          v-model="item.useRandom"
-          :label="$t('dashboard.newPainting.gwei.noLabel')"
-          class="option"
-          :val="'false'"
-        />
-      </div>
-    </div>
-    <div v-if="item.useRandom === 'true'" class="algo-slider">
-      <p class="label">
-        {{ $t('dashboard.newPainting.gwei.colorInversionProbability') }}
-      </p>
-      <q-slider
-        v-model="item.probability"
-        color="primary"
-        min="0"
-        max="10"
+  <div class="title">
+    {{ $t('dashboard.newPainting.parameters') }}
+  </div>
+  <q-input
+    v-model="item.text"
+    :label="$t('dashboard.newPainting.gwei.inspirationalText')"
+    maxlength="64"
+    counter
+  />
+  <div class="algo-radio">
+    <p class="label">{{ $t('dashboard.newPainting.gwei.randomColors') }}</p>
+    <div class="row q-col-gutter-md">
+      <q-radio
+        v-model="item.useRandom"
+        :label="$t('dashboard.newPainting.gwei.yesLabel')"
+        class="option"
+        :val="'true'"
+      />
+      <q-radio
+        v-model="item.useRandom"
+        :label="$t('dashboard.newPainting.gwei.noLabel')"
+        class="option"
+        :val="'false'"
       />
     </div>
-    <q-select
-      v-model="item.inspiration"
-      :label="$t('dashboard.newPainting.gwei.inspirations')"
-      :options="inspirationValue"
-    />
-    <q-select
-      v-model="item.wallType"
-      :label="$t('dashboard.newPainting.gwei.exhibition')"
-      :options="exhibitionValue"
-    />
-    <q-select
-      v-model="item.overlay"
-      :label="$t('dashboard.newPainting.gwei.technique')"
-      :options="techniqueValue"
-    />
-    <algo-button
-      :label="$t('dashboard.newPainting.leftInfoBtnName')"
-      :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
+  </div>
+  <div v-if="item.useRandom === 'true'" class="algo-slider">
+    <p class="label">
+      {{ $t('dashboard.newPainting.gwei.colorInversionProbability') }}
+    </p>
+    <q-slider
+      v-model="item.probability"
       color="primary"
-      @click="generatePreview"
+      min="0"
+      max="10"
     />
   </div>
-
-  <div v-if="!hasAllowance">
-  </div>
+  <q-select
+    v-model="item.inspiration"
+    :label="$t('dashboard.newPainting.gwei.inspirations')"
+    :options="inspirationValue"
+  />
+  <q-select
+    v-model="item.wallType"
+    :label="$t('dashboard.newPainting.gwei.exhibition')"
+    :options="exhibitionValue"
+  />
+  <q-select
+    v-model="item.overlay"
+    :label="$t('dashboard.newPainting.gwei.technique')"
+    :options="techniqueValue"
+  />
+  <algo-button
+    :label="$t('dashboard.newPainting.leftInfoBtnName')"
+    :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
+    color="primary"
+    @click="generatePreview"
+  />
   <q-dialog v-model="isMintDialogOpen" persistent>
     <mint-dialog
       :mint-status="mintStatus"

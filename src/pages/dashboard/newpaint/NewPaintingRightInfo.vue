@@ -141,9 +141,9 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   isAwareOfFee: boolean = false;
   expressionsFeePercentage!: number;
 
-  previewUrl!: string | undefined;
-  previewUrlGwei!: string | undefined;
-  previewUrlExpressions!: string | undefined;
+  previewUrl?: string;
+  previewUrlGwei?: string;
+  previewUrlExpressions?: string;
   isPreviewUrlSet: boolean = false;
 
   isImgLoaded: boolean = false;

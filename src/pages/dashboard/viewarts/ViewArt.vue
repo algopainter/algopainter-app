@@ -30,9 +30,8 @@
           :label="$t('dashboard.gallery.newPainting')"
           class="q-ma-md btn-newPainting"
           color="primary"
-          @click="OpenModalArtist()"
+          @click="$router.push('/create-collectible')"
         />
-        <NewPaintingModal v-model="openModal" />
       </div>
     </div>
     <div class="row">
@@ -71,7 +70,7 @@
           color="primary"
           class="q-ma-xs btn-btnCreatepainter"
           :label="$t('dashboard.viewArt.btnCreatepainter')"
-          @click="OpenModalArtist()"
+          @click="$router.push('/create-collectible')"
         />
       </div>
       <div class="col-xs-12 col-sm-5 col-md-5 details">
@@ -80,10 +79,13 @@
             <p class="text-bold text-h5 q-mb-sm">
               {{ $t('dashboard.viewArt.details') }}
             </p>
-            <span class="text-bold text-primary text-h6">
-              {{ $t('dashboard.viewArt.algoPainter') }}
-            </span>
-            <p>{{ image.collectionName }} </p>
+            <div v-if="image.collectionName !== 'PersonalItem'">
+              <span class="text-bold text-primary text-h6">
+                {{ $t('dashboard.viewArt.algoPainter') }}
+              </span>
+              <p>{{ image.collectionName }} </p>
+            </div>
+
             <span class="text-bold text-primary text-h6">
               {{ $t('dashboard.viewArt.owner') }}
             </span>
@@ -169,7 +171,6 @@ import ViewArtSkeleton from './ViewArtSkeleton.vue';
 import { api } from 'src/boot/axios';
 import LikeAnimation from 'components/auctions/auction/LikeAnimation.vue';
 import CollectionArtController from 'src/controllers/collectionArt/CollectionArtController';
-import NewPaintingModal from '../../../components/modal/NewPaintingModal.vue';
 import UserUtils from 'src/helpers/user';
 import { IImageUser } from 'src/models/IImageUser';
 import { IProfile } from 'src/models/IProfile';
@@ -177,7 +178,7 @@ import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 
 @Options({
-  components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton, NewPaintingModal },
+  components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton },
   computed: {
     account: '',
     isConnected: false,
@@ -189,8 +190,6 @@ import { auctionCoins } from 'src/helpers/auctionCoins';
 
 export default class ViewArt extends Vue {
   loading: boolean = true;
-  openModal: boolean = false;
-  selectAccount: string = '';
   options: string = 'None';
   chooseBackground: string = '';
   backgroundChange: boolean = false;
@@ -198,7 +197,7 @@ export default class ViewArt extends Vue {
   likeClicked: boolean = false;
 
   mounted() {
-    void this.getDetailsData();
+    this.getDetailsData().catch(console.error);
   }
 
   parsedInspiration() {
@@ -322,10 +321,6 @@ export default class ViewArt extends Vue {
     this.imageUrl = URL;
   }
 
-  OpenModalArtist() {
-    this.openModal = true;
-  }
-
   collectionArtController: CollectionArtController = new CollectionArtController();
 
   wasLiked: boolean = false;
@@ -364,9 +359,9 @@ export default class ViewArt extends Vue {
     if (!this.likeClicked) {
       this.likeClicked = true;
       if (this.isConnected) {
-        wasLiked ? void this.postFavoriteArt() : void this.deleteFavoriteArt();
+        wasLiked ? this.postFavoriteArt() : this.deleteFavoriteArt();
       } else {
-        void this.$store.dispatch('user/openConnectYourWalletModal');
+        this.$store.dispatch('user/openConnectYourWalletModal').catch(console.error);
         this.likeClicked = false;
       }
     }
@@ -540,7 +535,7 @@ export default class ViewArt extends Vue {
 }
 
 .img{
-  max-height: 650px;
+  max-height: 100%;
   max-width: 650px;
 }
 

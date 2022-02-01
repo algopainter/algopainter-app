@@ -193,7 +193,7 @@
                   name="pirs"
                 >
                   <q-input
-                    v-if="!isCreator"
+                    v-if="hasPirs"
                     inputmode="number"
                     mask="#"
                     filled
@@ -267,7 +267,7 @@
               <div class="col-12">
                 <div class="q-mr-md">
                   <q-field
-                    v-if="isCreator"
+                    v-if="!hasPirs"
                     ref="toggle"
                     :value="isUserInformedThatPirsCanBeOnlySetOnce"
                     :rules="[
@@ -328,7 +328,7 @@
     >
       <create-auction-status-card
         :create-auction-status="createAuctionStatus"
-        :is-creator="isCreator"
+        :has-pirs="hasPirs"
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
@@ -429,6 +429,7 @@ export default class SellYourArt extends Vue {
   personalItemContract = <AlgoPainterPersonalItemProxy>{};
   auctionId!: number;
   isCreator: boolean = false;
+  hasPirs: boolean = false;
   createdPirs!: number | null;
   createdItems!: number;
 
@@ -485,9 +486,11 @@ export default class SellYourArt extends Vue {
       this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.image.nft.index) as string;
       this.createdItems = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
       this.collectionCreatorRoyaltiesRate = this.createdItems / 100;
+      this.hasPirs = await this.bidBackSystem.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
     } else {
       this.createdPirs = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
       this.collectionCreatorRoyaltiesRate = this.createdPirs / 100;
+      this.hasPirs = await this.bidBackSystem.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
     }
   }
 
@@ -547,10 +550,9 @@ export default class SellYourArt extends Vue {
     const { id } = this.$route.params;
 
     this.image = await getImage(id as string);
-
     this.isCreator = !this.image.pirs.investorRate;
 
-    if (!this.isCreator) {
+    if (!this.hasPirs) {
       void this.getInvestorPirsRate();
     }
   }
@@ -683,7 +685,7 @@ export default class SellYourArt extends Vue {
       }
 
       await this.approveContract();
-      if (this.isCreator) {
+      if (!this.hasPirs) {
         await this.setInvestorPirs(this.PIRSRate * 100);
       }
 

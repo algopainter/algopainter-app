@@ -20,12 +20,12 @@
               >
                 <img
                   :src="formData.image"
-                  class="img "
+                  class="img"
                 >
                 <q-btn
                   icon="highlight_off"
                   class="btn"
-                  @click="close"
+                  @click="closeImage"
                 />
               </div>
               <div class="row justify-center">
@@ -36,6 +36,7 @@
                   {{ $t('createCollectible.create.import') }}</label>
                 <input
                   id="imagem"
+                  :key="fileInputKey"
                   type="file"
                   name="imagem"
                   accept=".jpg,.jpeg,.png"
@@ -241,6 +242,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   dataMint: string = ''
   responseMint?: IMintData;
   okBtnDisabled: boolean = true;
+  fileInputKey: number = 0;
 
   formData: FormData = {
     name: '',
@@ -266,7 +268,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     if (newLocal) {
       const file = newLocal[0];
       this.formData.fileName = file.name;
-
       if (file) {
         if (file.size < CreateUpload.FILE_SIZE_LIMIT) {
           if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
@@ -314,6 +315,11 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     this.$emit('close', this.imageData);
   }
 
+  closeImage() {
+    this.formData.image = '';
+    this.fileInputKey++;
+  }
+
   get personalItemContractAddress() {
     return getPersonalItemContractByNetworkId(this.networkInfo.id);
   }
@@ -358,6 +364,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
         message: 'error mint image',
       });
       this.statusData = 'error';
+      this.okBtnDisabled = false;
     }
   }
 
@@ -380,6 +387,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
         }).on('error', () => {
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
+          this.okBtnDisabled = false;
           setTimeout(() => {
             this.okBtnDisabled = false;
           }, 1000);

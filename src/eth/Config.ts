@@ -1,5 +1,7 @@
 import { IWalletConnectProviderOptions } from '@walletconnect/types';
 
+//@TODO - We want the API to find the correct values based on USER network, but to do this we may want to send credentiasl via API headers
+
 export default function getAlgoPainterContractByNetworkId(id: number) : string {
   switch (id) {
     case 56:
@@ -32,65 +34,65 @@ export function getWalletConnectConfig(): IWalletConnectProviderOptions {
 export function getAuctionSystemContractByNetworkId(id: number): string {
   switch (id) {
     case 56:
-      return process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS_56 as string;
+      return process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS_97 as string;
     case 97:
       return process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS_97 as string;
     default:
-      return process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS as string;
+      return process.env.ALGOPAINTER_AUCTION_SYSTEM_CONTRACT_ADDRESS_97 as string;
   }
 }
 
 export function getRewardsSystemContractByNetworkId(id: number): string {
   switch (id) {
     case 56:
-      return process.env.ALGOPAINTER_REWARDS_SYSTEM_56 as string;
+      return process.env.ALGOPAINTER_REWARDS_SYSTEM_97 as string;
     case 97:
       return process.env.ALGOPAINTER_REWARDS_SYSTEM_97 as string;
     default:
-      return process.env.ALGOPAINTER_REWARDS_SYSTEM as string;
+      return process.env.ALGOPAINTER_REWARDS_SYSTEM_97 as string;
   }
 }
 
 export function getBidBackPirsContractByNetworkId(id: number): string {
   switch (id) {
     case 56:
-      return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT_56 as string;
+      return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT_97 as string;
     case 97:
       return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT_97 as string;
     default:
-      return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT as string;
+      return process.env.ALGOPAINTER_BIDBACK_PIRS_CONTRACT_97 as string;
   }
 }
 
 export function getPersonalItemContractByNetworkId(id: number): string {
   switch (id) {
     case 56:
-      return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_56 as string;
+      return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_97 as string;
     case 97:
       return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_97 as string;
     default:
-      return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_ as string;
+      return process.env.ALGOPAINTER_PERSONAL_ITEM_CONTRACT_97 as string;
   }
 }
 
 export function getGweiItemContractByNetworkId(id: number): string {
   switch (id) {
     case 56:
-      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_56 as string;
+      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_97 as string;
     case 97:
       return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_97 as string;
     default:
-      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_ as string;
+      return process.env.ALGOPAINTER_GWEI_ITEM_CONTRACT_97 as string;
   }
 }
 
 export function getExpressionItemContractByNetworkId(id: number): string {
   switch (id) {
     case 56:
-      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_56 as string;
+      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_97 as string;
     case 97:
       return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_97 as string;
     default:
-      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_ as string;
+      return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_97 as string;
   }
 }

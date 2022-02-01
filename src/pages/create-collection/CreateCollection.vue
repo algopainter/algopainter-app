@@ -16,7 +16,7 @@
         :done="step > 1"
       >
         <h6 v-if="$q.screen.lt.sm || $q.screen.lt.md" class="title">{{ $t('dashboard.createCollection.stepOneTitle') }}</h6>
-        <about-the-collection :step="step" @data="storeData" />
+        <about-the-collection :step="step" @data="storeData" @check-form="verifyStepOne" />
       </q-step>
 
       <q-step
@@ -70,6 +70,8 @@ import { Watch } from 'vue-property-decorator';
 export default class CreateCollection extends Vue {
   step: number = 1;
   isStepTwoDisabled = false;
+  isStepOneDisabled = false;
+  teste: boolean = true;
 
   collectionData = {
     aboutTheCollection: {} as unknown,
@@ -88,6 +90,10 @@ export default class CreateCollection extends Vue {
 
   verifyStepTwo(validation: boolean) {
     this.isStepTwoDisabled = validation;
+  }
+
+  verifyStepOne(payload: boolean) {
+    this.isStepTwoDisabled = payload;
   }
 
   storeData(data: any, step: number) {

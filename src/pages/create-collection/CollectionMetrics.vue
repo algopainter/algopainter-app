@@ -642,7 +642,7 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
   @Watch('step')
   onStepChanged() {
-    if (this.step > 2) {
+    if (this.step === 3) {
       if (this.form.priceType === 'fixed') {
         this.form.priceRange[0].to = Number(this.form.nfts);
       }

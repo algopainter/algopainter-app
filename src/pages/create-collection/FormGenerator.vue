@@ -2,14 +2,33 @@
   <h4 class="q-mb-md">Form Preview</h4>
   <q-form class="form-generator">
     <div v-for="(param, i) in params" :key="i">
-      <p class="label">{{ params[i].name }}</p>
+      <p v-if="params[i].fieldType === 'Slider'" class="label">{{ params[i].name }}</p>
       <q-input
         v-if="params[i].fieldType === 'Input Textfield'"
+        v-model="generatedParams[i]"
+        :label="params[i].name"
+        stack-label
         :type="type(i)"
       />
       <q-select
         v-else-if="params[i].fieldType === 'Select'"
+        v-model="generatedParams[i]"
+        :label="params[i].name"
+        stack-label
         :options="params[i].options"
+      />
+      <q-checkbox
+        v-else-if="params[i].fieldType === 'Checkbox'"
+        v-model="generatedParams[i]"
+        :label="params[i].name"
+      />
+      <q-slider
+        v-else-if="params[i].fieldType === 'Slider'"
+        v-model="generatedParams[i]"
+        label
+        :marker-labels="setMarkers(i)"
+        :min="Number(params[i].min)"
+        :max="Number(params[i].max)"
       />
     </div>
   </q-form>
@@ -28,16 +47,31 @@ class Props {
 }
 
 export default class FormGenerator extends Vue.with(Props) {
-  type(i: number) {
-    switch (this.params[i].dataType) {
-      case 'string':
-        return 'String';
-      case 'int number':
-        return 'int number';
-      case 'number':
-        return 'number';
+    generatedParams: (number | string | boolean)[] = [];
+
+    // params[i].fieldType === 'Checkbox' ? generatedParams[i] = false
+    // params[i].fieldType === 'Slider' ? generatedParams[i] = params[i].min
+
+    type(i: number) {
+      switch (this.params[i].dataType) {
+        case 'string':
+          return 'text';
+        case 'number':
+          return 'number';
+      }
     }
-  }
+
+    setMarkers(i: number) {
+      let markers!: [{ value: number, label: string }];
+
+      for (let iteration: number = Number(this.params[i].min); iteration <= Number(this.params[i].max); iteration++) {
+        iteration === Number(this.params[i].min)
+          ? markers = [{ value: iteration, label: iteration.toString() }]
+          : markers.push({ value: iteration, label: iteration.toString() });
+      }
+
+      return markers;
+    }
 }
 </script>
 

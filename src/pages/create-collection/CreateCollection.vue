@@ -33,6 +33,7 @@
         :name="3"
         :title="$t('dashboard.createCollection.stepThreeTitle')"
         icon="auto_graph"
+        :done="step > 3"
       >
         <h6 v-if="$q.screen.lt.sm || $q.screen.lt.md" class="title">{{ $t('dashboard.createCollection.stepThreeTitle') }}</h6>
         <api-parameters :step="step" @data="storeData" />
@@ -93,7 +94,7 @@ export default class CreateCollection extends Vue {
     switch (step) {
       case 1:
         this.collectionData.aboutTheCollection = data;
-        console.log('this.collectionData.collectionMetrics', this.collectionData.aboutTheCollection);
+        console.log('this.collectionData.aboutTheCollection', this.collectionData.aboutTheCollection);
         break;
       case 2:
         this.collectionData.collectionMetrics = data;
@@ -116,9 +117,11 @@ export default class CreateCollection extends Vue {
         this.step++;
         break;
       case 3:
+        this.step++;
+        break;
+      case 4:
         //send this.collectionData to the API
         console.log(this.collectionData);
-        break;
     }
   }
 

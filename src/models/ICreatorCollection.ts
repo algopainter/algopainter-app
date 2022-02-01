@@ -22,5 +22,22 @@ export interface IFormParams {
   name: string;
   dataType: string;
   fieldType: string;
-  options: string[];
+  options: [
+    {
+      label: string;
+      value: string | number;
+    }
+  ];
+  min: string | number;
+  max: string | number;
+  defaultValue: string | number | boolean;
+}
+
+export interface IGeneratedParams {
+  [param: string]: string | number;
+}
+
+export interface ICollectionNFTCreationAPI {
+  url: string;
+  parameters: any //JsonSchema
 }

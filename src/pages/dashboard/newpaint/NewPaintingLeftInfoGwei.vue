@@ -32,8 +32,8 @@
     <q-slider
       v-model="item.probability"
       color="primary"
-      min="0"
-      max="10"
+      :min="0"
+      :max="10"
     />
   </div>
   <q-select

@@ -193,7 +193,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     this.hasAllowance = await this.algoPainterTokenProxy.allowance(this.account, this.gweiContractAddress);
   }
 
-  generatePreview() {
+  async generatePreview() {
     this.isError = false;
     this.errorMessage = '';
 
@@ -209,8 +209,8 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
 
     const previewUrl = (this.baseUrl) ? `${this.baseUrl}?width=300&height=300&ticks=${this.ticks}&text=${this.parsedItem.parsedText}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}` : '';
 
-    this.setItemParameters().catch(console.error);
-    this.setPreviewUrl(previewUrl).catch(console.error);
+    await this.setItemParameters();
+    await this.setPreviewUrl(previewUrl);
   }
 
   async setItemParameters() {
@@ -232,9 +232,9 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   @Watch('isMinting')
-  onIsMintingChanged() {
+  async onIsMintingChanged() {
     if (this.isMinting) {
-      this.mint().catch(console.error);
+      await this.mint();
     }
   }
 
@@ -275,7 +275,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       return;
     }
 
-    this.setModalInitialState().catch(console.error);
+    await this.setModalInitialState();
     this.isMintDialogOpen = true;
     this.mintStatus = MintStatus.GeneratingPreviewFile;
 
@@ -287,7 +287,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       probability: this.parsedItem.parsedProbability,
       place: this.parsedItem.parsedWallType,
       description: this.artBasicInfo.description,
-      amount: this.collectionInfo.batchPriceBlockchain,
+      amount: this.gweiSystem.fromWei(this.collectionInfo.batchPriceBlockchain),
       overlay: this.parsedItem.parsedOverlay,
       overlayOpacity: this.parsedItem.parsedOverlayOpacity,
       mintedBy: this.account,
@@ -299,11 +299,12 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       const ipfsData: {path: string} = await IPFSHelper.addGwei(payload);
       const ipfsPath = ipfsData.path;
       this.tokenURI = 'https://ipfs.io/ipfs/' + ipfsPath;
-      this.setIPFSUrl(this.srcIPFS()).catch(console.error);
+      await this.setIPFSUrl(this.srcIPFS());
       this.mintStatus = MintStatus.CollectingUserConfirmations;
     } catch (e) {
+      console.error(e);
       this.mintStatus = MintStatus.GeneratingRawFileError;
-      this.setModalInitialState().catch(console.error);
+      await this.setModalInitialState();
     }
   }
 
@@ -318,9 +319,9 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   @Watch('userConfirmations')
-  onUserConfirmationsChanged() {
+  async onUserConfirmationsChanged() {
     if (this.userConfirmations) {
-      this.finishMinting().catch(console.error);
+      await this.finishMinting();
     }
   }
 
@@ -335,25 +336,21 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       probability: this.parsedItem.parsedProbability * 10,
       place: Number(this.parsedItem.parsedWallType),
       tokenURI: this.tokenURI,
-      amount: Number(this.collectionInfo.batchPriceBlockchain),
+      amount: this.collectionInfo.batchPriceBlockchain,
     };
 
     try {
-      await this.gweiSystem.mint(newMint, this.account, (receipt: any) => {
-        this.receipt = receipt;
-        if (!this.isConfigured) {
-          this.mintStatus = MintStatus.ItemMinted;
-          this.receipt = null;
-          this.setFormInitialState().catch(console.error);
-        };
-      });
-
+      this.mintStatus = MintStatus.CollectingUserConfirmations;
+      await this.gweiSystem.checkAllowance(newMint.amount, this.account);
       this.mintStatus = MintStatus.MintAwaitingConfirmation;
+      await this.gweiSystem.mint(newMint, this.account);
+      await this.setFormInitialState();
+      this.mintStatus = MintStatus.ItemMinted;
     } catch (e: any) {
       this.isError = true;
       this.receipt = null;
       this.mintStatus = MintStatus.MintError;
-      this.setModalInitialState().catch(console.error);
+      await this.setModalInitialState();
 
       switch (e.code) {
         case 'INVALID_MINIMUM_AMOUNT':

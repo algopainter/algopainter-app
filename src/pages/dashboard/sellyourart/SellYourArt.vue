@@ -493,9 +493,7 @@ export default class SellYourArt extends Vue {
     this.hasPirs = await this.rewardsRates.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
 
     if (this.hasPirs) {
-      this.rewardsRates.getPIRSRatePerImage(this.image.collectionOwner, this.image.nft.index)
-        .then(value => this.imagePirsRate = value / 100)
-        .catch(console.error);
+      this.imagePirsRate = (this.image.pirs.investorRate || 0) / 100;
     }
 
     await this.getAuctionFeeRate();

@@ -4,6 +4,7 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterBidBackPirs from './AlgoPainterBidBackPirs.json';
 import { getBidBackPirsContractByNetworkId } from './Config';
+import { ContractMethod } from './Web3Impl';
 
 export default class AlgoPainterBidBackPirsProxy {
   declare smartContract: {
@@ -18,6 +19,10 @@ export default class AlgoPainterBidBackPirsProxy {
         tokenAddress: string,
         imageId: number
       ): ContractSendMethod;
+      getPIRSRatePerImage(
+        tokenAddress: string,
+        imageId: number
+      ): ContractMethod;
       getCreatorRoyaltiesRate(
         auctionId: number
       ): ContractSendMethod;
@@ -73,6 +78,16 @@ export default class AlgoPainterBidBackPirsProxy {
     ).call();
 
     return response as number;
+  }
+
+  async getPIRSRatePerImage(
+    tokenAddress: string,
+    imageId: number
+  ) {
+    return await this.smartContract.methods.getPIRSRatePerImage(
+      tokenAddress,
+      imageId
+    ).call<number>();
   }
 
   async hasPIRSRateSetPerImage(

@@ -409,7 +409,7 @@ export default class MintDialog extends Vue {
   get fourthStepLabel() {
     switch (this.mintStatus) {
       case MintStatus.CollectingUserConfirmations:
-        return this.$t('dashboard.newPainting.dialog.statuses.collectingUserConfirmations');
+        return this.$t('dashboard.newPainting.dialog.statuses.CollectingUserConfirmations');
       case MintStatus.MintAwaitingInput:
         return this.$t('dashboard.newPainting.dialog.statuses.userConfirmationsCollected');
       case MintStatus.MintAwaitingConfirmation:
@@ -425,6 +425,8 @@ export default class MintDialog extends Vue {
 
   get fifthStepLabel() {
     switch (this.mintStatus) {
+      case MintStatus.CollectingUserConfirmations:
+        return this.$t('dashboard.newPainting.dialog.statuses.allowance');
       case MintStatus.MintAwaitingInput:
         return this.$t('dashboard.newPainting.dialog.statuses.mintAwaitingInput');
       case MintStatus.MintAwaitingConfirmation:

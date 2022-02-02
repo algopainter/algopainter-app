@@ -148,7 +148,10 @@
                 {{ image.creator }}
               </span><br>
               <span>{{ $t('dashboard.viewArt.mint') }}</span>
-              <span class="text-bold">
+              <span v-if="typeof (image.nft.parameters.amount) === 'number'" class="text-bold">
+                {{ image.nft.parameters.amount }} {{ $t('dashboard.viewArt.algop') }}
+              </span>
+              <span v-else class="text-bold">
                 {{ formatHighestBidAmount() }} {{ $t('dashboard.viewArt.algop') }}
               </span><br>
             </div>
@@ -273,7 +276,7 @@ export default class ViewArt extends Vue {
     const coin = auctionCoins.find((coin) => {
       return (
         coin.tokenAddress.toLowerCase() ===
-        '0x01a9188076f1231df2215f67b6a63231fe5e293e'
+        process.env.VUE_APP_ALGOP_TOKEN_ADDRESS
       );
     });
 

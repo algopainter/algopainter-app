@@ -56,7 +56,7 @@
           </div>
         </div>
         <div
-          v-if="isCreator"
+          v-if="!hasPirs"
           class="col-12 step"
         >
           <div class="avatar">
@@ -214,7 +214,7 @@ enum CreatingAuctionStatus {
 })
 export default class CreateAuctionStatusCard extends Vue {
   @Prop({ required: true }) createAuctionStatus!: CreatingAuctionStatus;
-  @Prop({ required: true }) isCreator!: boolean;
+  @Prop({ required: true }) hasPirs!: boolean;
 
   CreatingAuctionStatus = CreatingAuctionStatus;
 
@@ -300,7 +300,7 @@ export default class CreateAuctionStatusCard extends Vue {
           CreatingAuctionStatus.SettingBidBackError &&
         this.createAuctionStatus !==
           CreatingAuctionStatus.SettingBidBackCompleted &&
-        !this.isCreator) ||
+        this.hasPirs) ||
       (this.createAuctionStatus !== CreatingAuctionStatus.AuctionCreated &&
         this.createAuctionStatus !==
           CreatingAuctionStatus.ContractApprovedError &&
@@ -310,7 +310,7 @@ export default class CreateAuctionStatusCard extends Vue {
         this.createAuctionStatus !== CreatingAuctionStatus.SettingPirsError &&
         this.createAuctionStatus !==
           CreatingAuctionStatus.SettingPirsCompleted &&
-        this.isCreator)
+        !this.hasPirs)
     );
   }
 }

@@ -40,7 +40,7 @@ export default class AlgoPainterTokenProxy {
     return response as boolean;
   }
 
-  async allowance(owner: string, spender: string): Promise<boolean> {
+  async allowance(owner: string, spender: string, amount?: number): Promise<boolean> {
     const response: unknown = await this.algoPainter.methods.allowance(
       owner,
       spender,
@@ -48,7 +48,7 @@ export default class AlgoPainterTokenProxy {
 
     const bn = new BigNumber(Number(response));
 
-    return bn.gt(0);
+    return bn.gte(amount || 0);
   }
 
   approve(

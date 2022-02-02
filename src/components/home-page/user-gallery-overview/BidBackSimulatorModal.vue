@@ -491,6 +491,8 @@ export default class BidBackModalSimulator extends Vue {
     this.userBid = [];
     this.loadingTable = true;
 
+    this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfoBidBack.index) / 10000;
+
     const auctionBidBackPrize = blockchainToCurrency(
       this.getAuctionInfoBidBack.highestBid.netAmount,
       this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
@@ -500,8 +502,6 @@ export default class BidBackModalSimulator extends Vue {
     const auctionBids = this.getAuctionInfoBidBack.bids;
     const auctionBidsReversed: IBid[] = [];
     const bidderAccounts: string | string[] = [];
-
-    this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfoBidBack.index) / 10000;
 
     auctionBids.forEach((bid) => {
       auctionBidsReversed.push(bid);
@@ -592,7 +592,6 @@ export default class BidBackModalSimulator extends Vue {
         });
       });
     }
-
     this.loadingTable = false;
   }
 

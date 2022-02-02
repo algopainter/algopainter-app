@@ -447,7 +447,6 @@ export default class SellYourArt extends Vue {
   hashPersonalItem!: string;
 
   imagePirsRate!: number | null;
-  pirPercent!: number | null;
   collectionCreatorRoyaltiesRate: number | null = 0;
 
   async mounted() {
@@ -494,8 +493,8 @@ export default class SellYourArt extends Vue {
     this.hasPirs = await this.rewardsRates.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
 
     if (this.hasPirs) {
-      this.pirPercent = await this.rewardsRates.getPIRSRatePerImage(this.image.collectionOwner, this.image.nft.index);
-      this.pirPercent /= 100;
+      this.imagePirsRate = await this.rewardsRates.getPIRSRatePerImage(this.image.collectionOwner, this.image.nft.index);
+      this.imagePirsRate /= 100;
     }
 
     await this.getAuctionFeeRate();

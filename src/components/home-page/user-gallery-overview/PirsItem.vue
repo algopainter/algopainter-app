@@ -451,7 +451,7 @@ export default class PirsItem extends Vue.with(Props) {
 
   async getCurrentPrizeAmount() {
     try {
-      const totalBidBackStaked = await this.rewardsSystem.getTotalBidBackStakes(
+      const totalBidBackStaked = await this.rewardsSystem.getTotalPirsStakes(
         this.art.index
       );
 
@@ -462,11 +462,13 @@ export default class PirsItem extends Vue.with(Props) {
       const auctionBidBackRate = this.imagePirsRate / 100;
 
       const totalBidBackPrize = auctionBidBackRate * auctionHighestBid;
+      console.log('totalBidBackPrize', totalBidBackPrize)
 
       const userBidBackShare =
         totalBidBackStaked > 0 ? this.algopStaked / totalBidBackStaked : 0;
-
+      console.log('totalBidBackStaked', totalBidBackStaked)
       this.userCurrentPrizeAmount = userBidBackShare * totalBidBackPrize;
+      console.log('userCurrentPrizeAmount', this.userCurrentPrizeAmount)
     } catch (e) {
       console.log('Error - getTotalBidBackStakes - PirsItem');
     }

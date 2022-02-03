@@ -344,8 +344,10 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       await this.gweiSystem.checkAllowance(newMint.amount, this.account);
       this.mintStatus = MintStatus.MintAwaitingConfirmation;
       await this.gweiSystem.mint(newMint, this.account);
-      await this.setFormInitialState();
-      this.mintStatus = MintStatus.ItemMinted;
+      if (!this.isConfigured) {
+        this.mintStatus = MintStatus.ItemMinted;
+        await this.setFormInitialState();
+      }
     } catch (e: any) {
       this.isError = true;
       this.receipt = null;

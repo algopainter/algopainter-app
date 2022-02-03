@@ -278,6 +278,14 @@ export default class MyPaint extends Vue.with(Props) {
         .on('error', () => {
           this.placingBidBackStatus =
             PlacingBidBackStatus.IncreateAllowanceError;
+          this.isCancelDisabled = false;
+          this.isConfirmBtnLoading = false;
+          setTimeout(() => {
+            this.$refs.dialog.hide();
+            this.$emit('hide');
+            this.placingBidBackStatus = null;
+            this.stakeAmount = 0;
+          }, 1000);
         })
         .on('transactionHash', () => {
           this.placingBidBackStatus =

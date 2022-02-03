@@ -248,7 +248,9 @@ export default class PirsModal extends Vue {
       }
 
       const auctionPirsPrize = blockchainToCurrency(
-        this.getAuctionInfoPirs.highestBid.netAmount,
+        this.getAuctionInfoPirs.highestBid
+          ? this.getAuctionInfoPirs.highestBid.netAmount
+          : 0,
         this.coinDetails.decimalPlaces) * this.auctionPirsRate;
 
       if (this.getAuctionInfoPirs.pirshare) {

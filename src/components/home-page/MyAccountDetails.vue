@@ -52,7 +52,7 @@
                 class="text-subtitle2 card-bio q-pa-none"
               >
                 <div
-                  class="text-subtitle2 card-bio q-pa-none"
+                  class="expanded text-subtitle2 card-bio q-pa-none"
                 >
                   {{ sliceBio() }}
                   <a
@@ -318,8 +318,12 @@ export default class AccountDetails extends Vue {
 .text-bio{
   max-width: 100%;
   color: #f4578f;
-  word-break: break-all;
+  word-wrap: break-all;
   color: #BDBDCC;
+}
+
+.expanded {
+  word-wrap: break-word !important;
 }
 
 .read-more{

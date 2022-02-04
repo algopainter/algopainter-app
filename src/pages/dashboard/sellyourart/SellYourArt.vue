@@ -588,11 +588,11 @@ export default class SellYourArt extends Vue {
   endDateOptions(date: string) {
     const dayWrapper = moment().add(30, 'days');
     const dayString = dayWrapper.format('YYYY/MM/DD');
-    return date > this.nowFormatted && date <= dayString;
+    return date >= this.nowFormatted && date <= dayString;
   }
 
   endTimeOptions(date: string) {
-    const now = moment().add(24, 'hours');
+    const now = moment().add(1, 'minutes');
     const currentDate = now.format('MM/DD/YYYY');
 
     return (hour: number, minute: number | null) => {
@@ -603,8 +603,8 @@ export default class SellYourArt extends Vue {
       const currentHour = now.hour();
       const currentMinute = now.minute();
       return !minute
-        ? hour > currentHour
-        : hour !== currentHour || minute > currentMinute;
+        ? hour >= currentHour
+        : hour !== currentHour || minute >= currentMinute;
     };
   }
 

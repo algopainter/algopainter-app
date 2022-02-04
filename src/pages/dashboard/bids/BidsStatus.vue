@@ -49,7 +49,7 @@
         <div class="col q-gutter-sm">
           <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
           <div v-if="hasReturn">
-            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid',{amountRemove: amountToReturn})" class="remove" @click="claimBid" />
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid',{amountRemove: amountToReturn, token: auctionItem.minimumBid.tokenSymbol})" class="remove" @click="claimBid" />
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@
         </div>
         <div class="col q-gutter-sm">
           <div v-if="hasReturn">
-            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.bidWithdraw',{amountRemove: amountToReturn})" class="remove" @click="claimBid" />
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid',{amountRemove: amountToReturn, token: auctionItem.minimumBid.tokenSymbol })" class="remove" @click="claimBid" />
           </div>
         </div>
       </div>

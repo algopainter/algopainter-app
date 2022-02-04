@@ -128,7 +128,7 @@
               <div v-if="image.nft.parameters.useRandom === 'true'">
                 <span>{{ $t('dashboard.viewArt.probability') }}</span>
                 <span class="text-bold">
-                  {{ image.nft.parameters.probability }}
+                  {{ parsedProbability() }}%
                 </span><br>
               </div>
               <span>{{ $t('dashboard.viewArt.inspiration') }}</span>
@@ -152,7 +152,7 @@
                 {{ image.nft.parameters.amount }} {{ $t('dashboard.viewArt.algop') }}
               </span>
               <span v-else class="text-bold">
-                {{ formatHighestBidAmount() }} {{ $t('dashboard.viewArt.algop') }}
+                {{ image.nft.parameters.amount }} {{ $t('dashboard.viewArt.algop') }}
               </span><br>
             </div>
           </div>
@@ -201,6 +201,11 @@ export default class ViewArt extends Vue {
 
   mounted() {
     this.getDetailsData().catch(console.error);
+  }
+
+  parsedProbability() {
+    const prob = parseFloat(String(this.image.nft.parameters.probability));
+    return prob * 100;
   }
 
   parsedInspiration() {

@@ -113,15 +113,12 @@ export default class AlgoPainterGweiItemProxy {
     );
 
     if (!allowance) {
-      return new Promise((resolve, reject) => {
-        this.algop.approve(this.contractAddress, amount, from)
-          .on('error', reject)
-          .on('transactionHash', resolve)
-          .catch(reject);
-      });
+      return await this.algop.approve(this.contractAddress, amount, from)
+        .on('error', console.error)
+        .on('transactionHash', console.log);
     }
 
-    return new Promise((resolve) => {
+    return await new Promise((resolve) => {
       resolve(true);
     });
   }

@@ -30,6 +30,7 @@
               id="imagem"
               type="file"
               name="imagem"
+              accept=".jpg,.jpeg,.png"
               @change="previewImage"
             >
           </div>
@@ -188,6 +189,8 @@ import { IProfile } from 'src/models/IProfile';
   },
 })
 export default class EditProfile extends Vue {
+  static FILE_SIZE_LIMIT = 1638400;
+
   formFields: IProfile = {
     avatar: '/images/do-utilizador (1).png',
   };
@@ -220,18 +223,29 @@ export default class EditProfile extends Vue {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const newLocala = newLocal!;
     const file = newLocala[0];
-    const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve((reader.result || '').toString());
-      reader.onerror = error => reject(error);
-    });
-    const base64 = await toBase64(file);
-    const resized = await resizeImage(base64, 500, 500) as string;
     if (file) {
-      this.formFields.avatar = resized;
-    } else {
-      this.formFields.avatar = '';
+      if (file.size < EditProfile.FILE_SIZE_LIMIT) {
+        console.log('File size', file.size);
+        const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve((reader.result || '').toString());
+          reader.onerror = error => reject(error);
+        });
+        const base64 = await toBase64(file);
+        const resized = await resizeImage(base64, 500, 500) as string;
+        if (file) {
+          this.formFields.avatar = resized;
+        } else {
+          this.formFields.avatar = '';
+        }
+      } else {
+        this.$q.notify({
+          type: 'negative',
+          message: this.$t('dashboard.editProfile.errorFileProfile'),
+        });
+        this.formFields.avatar = '';
+      }
     }
   }
 

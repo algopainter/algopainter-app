@@ -272,6 +272,14 @@ export default class PirsStackModal extends Vue.with(Props) {
         this.account,
       ).on('error', () => {
         this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceError;
+        this.isConfirmBtnLoading = false;
+        this.isCancelDisabled = false;
+        setTimeout(() => {
+          this.$refs.dialog.hide();
+          this.$emit('hide');
+          this.settingPirsStatus = null;
+          this.stakeAmount = 0;
+        }, 1000);
       }).on('transactionHash', () => {
         this.settingPirsStatus = SettingPirsStatus.IncreateAllowanceAwaitingConfirmation;
       });

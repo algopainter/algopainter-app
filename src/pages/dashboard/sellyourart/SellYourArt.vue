@@ -447,7 +447,6 @@ export default class SellYourArt extends Vue {
   hashPersonalItem!: string;
 
   imagePirsRate!: number | null;
-  pirPercent!: number | null;
   collectionCreatorRoyaltiesRate: number | null = 0;
 
   async mounted() {
@@ -494,8 +493,7 @@ export default class SellYourArt extends Vue {
     this.hasPirs = await this.rewardsRates.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
 
     if (this.hasPirs) {
-      this.pirPercent = await this.rewardsRates.getPIRSRatePerImage(this.image.collectionOwner, this.image.nft.index);
-      this.pirPercent /= 100;
+      this.imagePirsRate = (this.image.pirs.investorRate || 0) / 100;
     }
 
     await this.getAuctionFeeRate();
@@ -590,11 +588,11 @@ export default class SellYourArt extends Vue {
   endDateOptions(date: string) {
     const dayWrapper = moment().add(30, 'days');
     const dayString = dayWrapper.format('YYYY/MM/DD');
-    return date > this.nowFormatted && date <= dayString;
+    return date >= this.nowFormatted && date <= dayString;
   }
 
   endTimeOptions(date: string) {
-    const now = moment().add(24, 'hours');
+    const now = moment().add(1, 'minutes');
     const currentDate = now.format('MM/DD/YYYY');
 
     return (hour: number, minute: number | null) => {
@@ -605,8 +603,8 @@ export default class SellYourArt extends Vue {
       const currentHour = now.hour();
       const currentMinute = now.minute();
       return !minute
-        ? hour > currentHour
-        : hour !== currentHour || minute > currentMinute;
+        ? hour >= currentHour
+        : hour !== currentHour || minute >= currentMinute;
     };
   }
 

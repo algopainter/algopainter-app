@@ -437,6 +437,7 @@ export default {
     bio: 'How about talking a little about yourself?',
     chooseFile: 'Choose File',
     sMedia: 'Social media',
+    errorFileProfile: 'image must be less than 200KB',
     sChanges: 'Save changes',
     erroBio: 'Description" must be less than or equal to 1000 characters',
     erroName: 'Field name is required and must be less than 32 characters',
@@ -554,8 +555,7 @@ export default {
     yourBid: 'Your Bid',
     yourLastBid: 'Your Last Bid',
     bidAgain: 'Bid again',
-    bidWithdraw: 'Withdraw my bid {amountRemove} ALGOP',
-    removeBid: 'Withdraw my bid {amountRemove} ALGOP',
+    removeBid: 'Withdraw my bid {amountRemove} {token}',
     of: ',',
   },
   stackModalAlgop: {

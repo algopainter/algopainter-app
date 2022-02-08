@@ -5,7 +5,7 @@ import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterGweiItem from './AlgoPainterGweiItem.json';
 import { getGweiItemContractByNetworkId } from './Config';
 import { INewMintGwei } from 'src/models/INewPaintingGwei';
-import { TransactionConfig } from 'web3-eth';
+import AlgoPainterTokenProxy from './AlgoPainterTokenProxy';
 // import { PromiEvent } from 'web3-core';
 // import { Contract } from 'web3-eth-contract';
 
@@ -32,14 +32,15 @@ export default class AlgoPainterGweiItemProxy {
         text: string,
         useRandom: boolean,
         probability: number,
-        place : number,
-        expectedAmount: number | string,
+        place: number,
+        expectedAmount: string,
         tokenURI: string,
       ): ContractMethod;
     };
   };
 
   contractAddress!: string;
+  algop: AlgoPainterTokenProxy;
 
   constructor(networkInfo: NetworkInfo) {
     this.contractAddress = getGweiItemContractByNetworkId(networkInfo.id);
@@ -48,17 +49,19 @@ export default class AlgoPainterGweiItemProxy {
       AlgoPainterGweiItem as AbiItem[],
       this.contractAddress,
     );
+
+    this.algop = new AlgoPainterTokenProxy(networkInfo);
   }
 
-  async getCurrentAmount(supply: number) : Promise<number> {
+  async getCurrentAmount(supply: number): Promise<number> {
     return await this.smartContract.methods.getCurrentAmount(0, supply).call<number>();
   }
 
-  async totalSupply() : Promise<number> {
+  async totalSupply(): Promise<number> {
     return await this.smartContract.methods.totalSupply().call<number>();
   }
 
-  async getAmountToBurn() : Promise<number> {
+  async getAmountToBurn(): Promise<number> {
     return Number(window.web3.utils.fromWei(await this.smartContract.methods.getAmountToBurn().call<string>(), 'ether'));
   }
 
@@ -67,7 +70,7 @@ export default class AlgoPainterGweiItemProxy {
     text: string,
     useRandom: boolean,
     probability: number,
-  ) : Promise<string> {
+  ): Promise<string> {
     return await this.smartContract.methods.hashData(
       inspiration,
       text,
@@ -78,7 +81,7 @@ export default class AlgoPainterGweiItemProxy {
 
   async getTokenByHash(
     hash: string,
-  ) : Promise<string> {
+  ): Promise<string> {
     return await this.smartContract.methods.getTokenByHash(
       hash,
     ).call<string>();
@@ -86,6 +89,10 @@ export default class AlgoPainterGweiItemProxy {
 
   etherToWei(etherAmount: number) {
     return window.web3.utils.toWei(etherAmount.toString());
+  }
+
+  fromWei(amount: string) {
+    return window.web3.utils.fromWei(amount);
   }
 
   async checkIfAvailable(inspiration: number, text: string, useRandom: boolean, probability: number) {
@@ -98,10 +105,27 @@ export default class AlgoPainterGweiItemProxy {
     return tokenId.toString() === '0';
   }
 
+  async checkAllowance(amount: string, from: string) {
+    const allowance = await this.algop.allowance(
+      from,
+      this.contractAddress,
+      parseFloat(amount)
+    );
+
+    if (!allowance) {
+      return await this.algop.approve(this.contractAddress, amount, from)
+        .on('error', console.error)
+        .on('transactionHash', console.log);
+    }
+
+    return await new Promise((resolve) => {
+      resolve(true);
+    });
+  }
+
   async mint(
     newMint: INewMintGwei,
-    from: string,
-    cb: any,
+    from: string
   ) {
     if (
       !(await this.checkIfAvailable(
@@ -115,61 +139,29 @@ export default class AlgoPainterGweiItemProxy {
         new Error('PAINTING_ALREADY_REGISTERED'),
         { code: 'PAINTING_ALREADY_REGISTERED' }
       );
-    }
-
-    const nonce = window.web3.utils.toHex(
-      await window.web3.eth.getTransactionCount(from)
-    );
-    const to = this.contractAddress;
-
-    const amount = this.etherToWei(newMint.amount);
-
-    const txObject: TransactionConfig = {
-      from,
-      nonce: Number(nonce),
-      value: 0,
-      to,
-      data: this.smartContract.methods
-        .mint(
-          newMint.inspiration,
-          newMint.text,
-          newMint.useRandom,
-          newMint.probability,
-          newMint.place,
-          amount,
-          newMint.tokenURI,
-        )
-        .encodeABI()
     };
 
-    return new Promise((resolve, reject) => {
-      window.web3.eth
-        .sendTransaction(txObject)
-        .on('transactionHash', resolve)
-        .on('confirmation', function(confirmationNumber, receipt) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          cb(null, {
-            receipt,
-            confirmationNumber
-          });
-        })
-        .on('error', reject)
-        .catch(console.error);
-    });
+    return this.smartContract.methods.mint(
+      newMint.inspiration,
+      newMint.text,
+      newMint.useRandom,
+      newMint.probability,
+      newMint.place,
+      newMint.amount,
+      newMint.tokenURI)
+      .send({ from });
   }
 
   async mintCall(
     newMint: INewMintGwei,
-  ) : Promise<string> {
-    const amount = this.etherToWei(newMint.amount);
-
+  ): Promise<string> {
     const resp = await this.smartContract.methods.mint(
       newMint.inspiration,
       newMint.text,
       newMint.useRandom,
       newMint.probability,
       newMint.place,
-      amount,
+      newMint.amount,
       newMint.tokenURI,
     ).call<string>()
 

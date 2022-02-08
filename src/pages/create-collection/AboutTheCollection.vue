@@ -7,18 +7,20 @@
           <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'column reverse wrap justify-center items-center content-center' : '  row justify-between items-start content-between']">
             <div class="col-xs-6 col-sm-12 col-md-7 col-xs-12">
               <q-input
+                ref="artistName"
                 v-model="fields.artistName"
                 :label="$t('dashboard.createCollection.aboutTheCollection.nameArtist')"
-                :rules="[ name => name.length != 0 && name.length < 30]"
+                :rules="[ name => name.length != 0 ]"
                 :error-message="$t('dashboard.createCollection.aboutTheCollection.nameArtistError')"
                 maxlength="30"
                 counter
                 @keyup="checkForm"
               />
               <q-input
+                ref="nameCollection"
                 v-model="fields.nameCollection"
                 :label="$t('dashboard.createCollection.aboutTheCollection.nameCollection')"
-                :rules="[ name => name.length != 0 && name.length < 30]"
+                :rules="[ name => name.length >= 6 && name.length < 30]"
                 :error-message="$t('dashboard.createCollection.aboutTheCollection.nameCollectionError')"
                 maxlength="30"
                 counter
@@ -30,17 +32,21 @@
                 :label="$t('dashboard.createCollection.aboutTheCollection.website')"
               />
               <q-input
+                ref="customProfile"
                 v-model="fields.customProfile"
                 class="input col-sm-12 col-md-6 q-pr-md"
                 :label="$t('dashboard.createCollection.aboutTheCollection.customUrl')"
                 prefix="appv2.algopainter.art/collection/"
+                :rules="[ name => name.length != 0]"
+                :error-message="$t('dashboard.createCollection.aboutTheCollection.custonError')"
                 @keyup="checkForm"
               />
               <q-input
+                ref="description"
                 v-model="fields.description"
                 :label="$t('dashboard.createCollection.aboutTheCollection.description')"
-                :rules="[ val => val.length < 5001]"
-                :error-message=" $t('dashboard.editProfile.erroBio')"
+                :rules="[ val => val.length != 0 && val.length < 500]"
+                :error-message="$t('dashboard.createCollection.aboutTheCollection.descriptionError')"
                 outlined
                 class="responsive-input q-col-gutter-x-md q-mt-md"
                 type="textarea"
@@ -77,6 +83,16 @@
                   accept=".jpg,.jpeg,.png"
                   @change="previewImage"
                 >
+              </div>
+              <div v-if="enableMessage">
+                <q-icon
+                  color="red"
+                  name="mdi-close-circle"
+                  size="sm"
+                />
+                <span class="text-red">
+                  {{ message }}
+                </span>
               </div>
             </div>
           </div>
@@ -141,16 +157,6 @@
               </template>
             </q-input>
           </div>
-          <div v-if="enableMessage">
-            <q-icon
-              color="red"
-              name="mdi-close-circle"
-              size="sm"
-            />
-            <span class="text-red">
-              {{ message }}
-            </span>
-          </div>
         </div>
       </q-form>
     </div>
@@ -158,6 +164,7 @@
 </template>
 
 <script lang="ts">
+import { QInput } from 'quasar';
 import { Vue, prop } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 
@@ -169,6 +176,13 @@ class Props {
 }
 
 export default class AboutTheCollection extends Vue.with(Props) {
+    declare $refs: {
+    artistName: QInput;
+    nameCollection: QInput;
+    customProfile: QInput;
+    description: QInput;
+  };
+
   static FILE_SIZE_LIMIT = 31457280;
   fields = {
     avatar: '/images/do-utilizador (1).png',
@@ -192,6 +206,10 @@ export default class AboutTheCollection extends Vue.with(Props) {
 
   mounted() {
     void this.checkForm()
+    void this.$refs.artistName.validate()
+    void this.$refs.nameCollection.validate()
+    void this.$refs.customProfile.validate()
+    void this.$refs.description.validate()
   }
 
   checkForm() {
@@ -201,20 +219,20 @@ export default class AboutTheCollection extends Vue.with(Props) {
       this.enableMessage = true;
     } else if (this.fields.artistName === '') {
       this.$emit('check-form', true)
-      this.message = this.$t('dashboard.createCollection.aboutTheCollection.enableArtistName')
-      this.enableMessage = true;
+      this.message = ''
+      this.enableMessage = false;
     } else if (this.fields.nameCollection === '') {
       this.$emit('check-form', true)
-      this.message = this.$t('dashboard.createCollection.aboutTheCollection.enableNameCollection')
-      this.enableMessage = true;
+      this.message = ''
+      this.enableMessage = false;
     } else if (this.fields.customProfile === '') {
       this.$emit('check-form', true)
-      this.message = this.$t('dashboard.createCollection.aboutTheCollection.enableCuston')
-      this.enableMessage = true;
+      this.message = ''
+      this.enableMessage = false;
     } else if (this.fields.description === '') {
       this.$emit('check-form', true)
-      this.message = this.$t('dashboard.createCollection.aboutTheCollection.enableDescription')
-      this.enableMessage = true;
+      this.message = ''
+      this.enableMessage = false;
     } else {
       this.$emit('check-form', false)
       this.enableMessage = false;
@@ -261,8 +279,13 @@ export default class AboutTheCollection extends Vue.with(Props) {
 
   @Watch('step')
   onStepChanged() {
+<<<<<<< HEAD
     if (this.step === 2) {
       this.$emit('data', this.fields, this.step - 1)
+=======
+    if (this.step > 1) {
+      this.$emit('form', this.fields, this.step)
+>>>>>>> 9aaf6e80bc7c8abd416e0593ae247538df3769ca
     }
   }
 }

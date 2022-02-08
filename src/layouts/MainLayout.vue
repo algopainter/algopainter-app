@@ -14,7 +14,7 @@
           @pageOptionClicked="pageOptionClicked"
         />
       </q-drawer>
-      <q-page-container class="q-px-md">
+      <q-page-container class="q-pl-md">
         <router-view @favoriteClicked="refreshModal" />
         <connect-your-wallet
           v-if="showConnectYourWalletModal"

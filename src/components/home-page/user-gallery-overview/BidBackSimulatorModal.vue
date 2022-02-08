@@ -151,7 +151,7 @@
         v-model="isUserAwareThatAmountWillBeSummed"
         :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'smaller-checkbox-text' : '']"
         color="green"
-        :label="$t('dashboard.auctions.bidBackModalSimulator.stakeCheckbox', { amount: stakeAmount })"
+        :label="$t('dashboard.auctions.bidBackModalSimulator.stakeCheckbox', { amount: userNewStake })"
       />
       <div class="row justify-center">
         <algo-button
@@ -260,6 +260,8 @@ export default class BidBackModalSimulator extends Vue {
   auctionBidBackRate!: number;
   auctionCurrency!: string;
   hasJustStaked: boolean = false;
+  userCurrentStake: number = 0;
+  userNewStake: number = 0;
 
   isUserAwareThatAmountWillBeSummed: boolean = false;
 
@@ -391,15 +393,15 @@ export default class BidBackModalSimulator extends Vue {
 
     const { decimalPlaces } = this.coinDetails;
 
-    const stakeAmount = currencyToBlockchain(
-      Number(this.stakeAmount),
+    const stake = currencyToBlockchain(
+      this.userNewStake,
       decimalPlaces,
     );
 
-    await this.approveContractTransfer(stakeAmount);
+    await this.approveContractTransfer(stake);
 
     try {
-      await this.rewardsSystem.stakeBidback(this.getAuctionInfoBidBack.index, numberToString(stakeAmount), this.account)
+      await this.rewardsSystem.stakeBidback(this.getAuctionInfoBidBack.index, numberToString(stake), this.account)
         .on('transactionHash', () => {
           this.placingBidBackStatus = PlacingBidBackStatus.IncreateAllowanceAwaitingConfirmation;
         })
@@ -491,6 +493,8 @@ export default class BidBackModalSimulator extends Vue {
     this.userBid = [];
     this.loadingTable = true;
 
+    this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfoBidBack.index) / 10000;
+
     const auctionBidBackPrize = blockchainToCurrency(
       this.getAuctionInfoBidBack.highestBid.netAmount,
       this.coinDetails.decimalPlaces) * this.auctionBidBackRate;
@@ -500,8 +504,6 @@ export default class BidBackModalSimulator extends Vue {
     const auctionBids = this.getAuctionInfoBidBack.bids;
     const auctionBidsReversed: IBid[] = [];
     const bidderAccounts: string | string[] = [];
-
-    this.auctionBidBackRate = await this.bidBackPirsSystem.getBidBackRate(this.getAuctionInfoBidBack.index) / 10000;
 
     auctionBids.forEach((bid) => {
       auctionBidsReversed.push(bid);
@@ -532,7 +534,7 @@ export default class BidBackModalSimulator extends Vue {
           formattedAccount: formattedAccount,
           highestBid: highestBid,
           auctionCurrency: this.auctionCurrency,
-          stakedAlgop: name === 'You' && isASimulation && stakeAmount ? stakeAmount + this.totalBidBackStaked : 0,
+          stakedAlgop: name === 'You' && isASimulation && stakeAmount ? stakeAmount : 0,
           stakedAlgopPercentage: auctionBidsReversed.length === 1 && isASimulation ? 100 : 0,
           bidBackPrize:
             auctionBidsReversed.length === 1 && isASimulation
@@ -547,16 +549,22 @@ export default class BidBackModalSimulator extends Vue {
       return;
     }
 
-    this.totalBidBackStaked = blockchainToCurrency(await this.rewardsSystem.getTotalBidBackStakes(this.getAuctionInfoBidBack.index), this.coinDetails.decimalPlaces);
-
     if (isASimulation && typeof stakeAmount === 'number') {
-      this.totalBidBackStaked = Number(this.totalBidBackStaked) + stakeAmount;
+      console.log('1: totalBidBackStaked', this.totalBidBackStaked);
+      console.log('1: stakeAmount', stakeAmount);
+      this.totalBidBackStaked = blockchainToCurrency(await this.rewardsSystem.getTotalBidBackStakes(this.getAuctionInfoBidBack.index), this.coinDetails.decimalPlaces);
+      this.totalBidBackStaked += stakeAmount;
+      console.log('2: totalBidBackStaked', this.totalBidBackStaked);
       if (this.getAuctionInfoBidBack.bidbackshare) {
         if (this.getAuctionInfoBidBack.bidbackshare[this.account]) {
-          this.totalBidBackStaked = Number(this.totalBidBackStaked) - blockchainToCurrency(this.getAuctionInfoBidBack.bidbackshare[this.account], this.coinDetails.decimalPlaces);
+          this.totalBidBackStaked = Number(this.totalBidBackStaked) - this.userCurrentStake;
         }
       }
+    } else {
+      this.totalBidBackStaked = blockchainToCurrency(await this.rewardsSystem.getTotalBidBackStakes(this.getAuctionInfoBidBack.index), this.coinDetails.decimalPlaces);
     }
+
+    console.log('3: this.totalBidBackStaked', this.totalBidBackStaked);
 
     let isVariableSet = false;
 
@@ -592,7 +600,6 @@ export default class BidBackModalSimulator extends Vue {
         });
       });
     }
-
     this.loadingTable = false;
   }
 
@@ -635,6 +642,8 @@ export default class BidBackModalSimulator extends Vue {
       } else {
         this.isDisabled = false;
       }
+      this.userCurrentStake = blockchainToCurrency(this.getAuctionInfoBidBack.bidbackshare[this.account], this.coinDetails.decimalPlaces);
+      this.userNewStake = Number(this.stakeAmount) - this.userCurrentStake;
       this.setTableInfo().catch(console.error);
     }
   }

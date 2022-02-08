@@ -193,7 +193,7 @@
                   name="pirs"
                 >
                   <q-input
-                    v-if="!isCreator"
+                    v-if="hasPirs"
                     inputmode="number"
                     mask="#"
                     filled
@@ -267,7 +267,7 @@
               <div class="col-12">
                 <div class="q-mr-md">
                   <q-field
-                    v-if="isCreator"
+                    v-if="!hasPirs"
                     ref="toggle"
                     :value="isUserInformedThatPirsCanBeOnlySetOnce"
                     :rules="[
@@ -328,7 +328,7 @@
     >
       <create-auction-status-card
         :create-auction-status="createAuctionStatus"
-        :is-creator="isCreator"
+        :has-pirs="hasPirs"
         @request-close="onCloseStatusDialog"
       />
     </q-dialog>
@@ -415,7 +415,10 @@ export default class SellYourArt extends Vue {
   clone = clone;
 
   auctionSystem!: AlgoPainterAuctionSystemProxy;
+  rewardsRates!: AlgoPainterBidBackPirsProxy;
   artTokenContract!: AlgoPainterItemProxy;
+  personalItemContract!: AlgoPainterPersonalItemProxy;
+
   networkInfo!: NetworkInfo;
   userAccount!: string;
   isConnected!: boolean;
@@ -424,11 +427,9 @@ export default class SellYourArt extends Vue {
   image: IImage | null = null;
   loading: boolean = false;
   loadingCoins: boolean = false;
-  bidBackSystem!: AlgoPainterBidBackPirsProxy;
-  pirsSystem!: AlgoPainterBidBackPirsProxy;
-  personalItemContract = <AlgoPainterPersonalItemProxy>{};
   auctionId!: number;
   isCreator: boolean = false;
+  hasPirs: boolean = false;
   createdPirs!: number | null;
   createdItems!: number;
 
@@ -446,58 +447,56 @@ export default class SellYourArt extends Vue {
   hashPersonalItem!: string;
 
   imagePirsRate!: number | null;
-  pirPercent!: number | null;
   collectionCreatorRoyaltiesRate: number | null = 0;
 
-  mounted() {
-    void this.getCreatorRoyaltiesRate();
-    void this.validatePirs();
-    void this.getAuctionFeeRate();
+  async mounted() {
+    await this.prepareComponent();
   }
 
-  created() {
+  async created() {
     if (!localStorage.isConnected) {
       return this.$router.push('/');
     }
-    void this.getCreatorRoyaltiesRate();
     this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-    this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+    this.rewardsRates = new AlgoPainterBidBackPirsProxy(this.networkInfo);
     this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
-    this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
-    void this.loadImage();
-    void this.loadAvailableTokens();
+  }
+
+  async prepareComponent() {
+    await this.loadImage();
+    await this.loadAvailableTokens();
+    await this.getAuctionRates();
   }
 
   @Watch('isConnected')
-  onIsConnectedChanged() {
+  async onIsConnectedChanged() {
     if (this.isConnected) {
       this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
-      this.bidBackSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.rewardsRates = new AlgoPainterBidBackPirsProxy(this.networkInfo);
       this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
-      this.pirsSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      await this.prepareComponent();
     }
   }
 
-  async getCreatorRoyaltiesRate() {
+  async getAuctionRates() {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
+
     if (this.image.collectionName === 'PersonalItem') {
       this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.image.nft.index) as string;
-      this.createdItems = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
-      this.collectionCreatorRoyaltiesRate = this.createdItems / 100;
+      this.createdItems = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
     } else {
-      this.createdPirs = await this.bidBackSystem.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
-      this.collectionCreatorRoyaltiesRate = this.createdPirs / 100;
+      this.createdPirs = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
     }
-  }
 
-  getInvestorPirsRate() {
-    if (this.image) {
-      this.pirPercent = this.image.pirs.investorRate;
-      if (this.pirPercent !== null) {
-        this.imagePirsRate = this.pirPercent / 100;
-      }
+    this.collectionCreatorRoyaltiesRate = this.createdItems / 100;
+    this.hasPirs = await this.rewardsRates.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
+
+    if (this.hasPirs) {
+      this.imagePirsRate = (this.image.pirs.investorRate || 0) / 100;
     }
+
+    await this.getAuctionFeeRate();
   }
 
   async getAuctionFeeRate() {
@@ -543,18 +542,6 @@ export default class SellYourArt extends Vue {
     return this.selectedCoin.label;
   }
 
-  async validatePirs() {
-    const { id } = this.$route.params;
-
-    this.image = await getImage(id as string);
-
-    this.isCreator = !this.image.pirs.investorRate;
-
-    if (!this.isCreator) {
-      void this.getInvestorPirsRate();
-    }
-  }
-
   get nowFormatted() {
     return moment().format('YYYY/MM/DD');
   }
@@ -574,8 +561,6 @@ export default class SellYourArt extends Vue {
     if (owner.toLowerCase() !== this.userAccount) {
       return this.$router.push('/');
     }
-
-    void this.getCreatorRoyaltiesRate();
 
     this.loading = false;
   }
@@ -603,11 +588,11 @@ export default class SellYourArt extends Vue {
   endDateOptions(date: string) {
     const dayWrapper = moment().add(30, 'days');
     const dayString = dayWrapper.format('YYYY/MM/DD');
-    return date > this.nowFormatted && date <= dayString;
+    return date >= this.nowFormatted && date <= dayString;
   }
 
   endTimeOptions(date: string) {
-    const now = moment().add(24, 'hours');
+    const now = moment().add(1, 'minutes');
     const currentDate = now.format('MM/DD/YYYY');
 
     return (hour: number, minute: number | null) => {
@@ -618,8 +603,8 @@ export default class SellYourArt extends Vue {
       const currentHour = now.hour();
       const currentMinute = now.minute();
       return !minute
-        ? hour > currentHour
-        : hour !== currentHour || minute > currentMinute;
+        ? hour >= currentHour
+        : hour !== currentHour || minute >= currentMinute;
     };
   }
 
@@ -657,7 +642,7 @@ export default class SellYourArt extends Vue {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
     this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingInput;
-    await this.pirsSystem
+    await this.rewardsRates
       .setPIRSRate(
         this.image.collectionOwner,
         this.image.nft.index,
@@ -683,7 +668,7 @@ export default class SellYourArt extends Vue {
       }
 
       await this.approveContract();
-      if (this.isCreator) {
+      if (!this.hasPirs) {
         await this.setInvestorPirs(this.PIRSRate * 100);
       }
 

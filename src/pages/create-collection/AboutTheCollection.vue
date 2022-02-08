@@ -175,7 +175,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
     nameCollection: '',
     artistName: '',
     description: '',
-    owner: '',
     creator: '',
     account: '',
     webSite: '',
@@ -262,13 +261,8 @@ export default class AboutTheCollection extends Vue.with(Props) {
 
   @Watch('step')
   onStepChanged() {
-<<<<<<< HEAD
     if (this.step === 2) {
       this.$emit('data', this.fields, this.step - 1)
-=======
-    if (this.step > 1) {
-      this.$emit('form', this.fields, this.step)
->>>>>>> 921818ea44780ba550ce90e2cb8a5d79f38bc79f
     }
   }
 }

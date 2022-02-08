@@ -12,7 +12,7 @@ function state(): MintStateInterface {
       IPFSUrl: undefined,
       userConfirmations: undefined,
       isMinting: false,
-      errorMessage: undefined,
+      errorMessage: undefined
     },
     expressions: {
       collectionInfo: undefined,
@@ -24,8 +24,12 @@ function state(): MintStateInterface {
       IPFSUrl: undefined,
       userConfirmations: undefined,
       isMinting: false,
-      errorMessage: undefined,
+      errorMessage: undefined
     },
+    formGenerator: {
+      isCollectionExistent: false,
+      collectionParams: undefined
+    }
   };
 }
 

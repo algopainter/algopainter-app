@@ -1,5 +1,5 @@
 <template>
-  <h4 class="q-mb-md">Form Generator</h4>
+  <h4 class="q-mb-md">Form Preview</h4>
   <q-form class="form-generator">
     <div v-for="(param, i) in params" :key="i">
       <p v-if="params[i].fieldType === 'Slider'" class="label">{{ params[i].name }}</p>
@@ -44,19 +44,10 @@ class Props {
     type: Object as PropType<IFormParams[]>,
     required: true,
   });
-
-  defaultValues = prop({
-    type: Object as PropType<(number | string | boolean)[]>,
-    required: true,
-  });
 }
 
 export default class FormPreviewer extends Vue.with(Props) {
     generatedParams: (number | string | boolean)[] = [];
-
-    mounted() {
-      this.generatedParams = this.defaultValues;
-    }
 
     // params[i].fieldType === 'Checkbox' ? generatedParams[i] = false
     // params[i].fieldType === 'Slider' ? generatedParams[i] = params[i].min

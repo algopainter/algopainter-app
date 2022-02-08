@@ -129,7 +129,7 @@
       </q-btn>
     </div>
     <div class="col-6 q-pa-sm">
-      <form-generator :params="params" />
+      <form-previewer :params="params" />
     </div>
   </div>
 </template>
@@ -137,7 +137,7 @@
 <script lang="ts">
 import { Vue, Options, prop } from 'vue-class-component';
 import { IFormParams, ICollectionNFTCreationAPI } from 'src/models/ICreatorCollection'
-import FormGenerator from './FormGenerator.vue';
+import FormPreviewer from './FormPreviewer.vue';
 import FormSelect from './FormSelect.vue';
 import { Watch } from 'vue-property-decorator';
 
@@ -150,7 +150,7 @@ class Props {
 
 @Options({
   components: {
-    FormGenerator,
+    FormPreviewer,
     FormSelect
   },
 })

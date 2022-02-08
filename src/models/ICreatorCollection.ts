@@ -22,12 +22,11 @@ export interface IFormParams {
   name: string;
   dataType: string;
   fieldType: string;
-  options: [
-    {
-      label: string;
-      value: string | number;
-    }
-  ];
+  options: {
+    label: string;
+    value: string | number;
+  }[]
+  ;
   min: string | number;
   max: string | number;
   defaultValue: string | number | boolean;
@@ -40,4 +39,41 @@ export interface IGeneratedParams {
 export interface ICollectionNFTCreationAPI {
   url: string;
   parameters: any //JsonSchema
+}
+
+export interface IAboutTheCollection {
+  account: string,
+  artistName: string,
+  avatar: string,
+  creator: string,
+  customProfile: string,
+  description: string,
+  facebook: string,
+  fileName: string,
+  gmail: string,
+  instagram: string,
+  nameCollection: string,
+  telegram: string,
+  twitter: string,
+  webSite: string
+}
+
+export interface ICollectionMetricsPriceRange {
+  from: number;
+  to: number;
+  amount: number | string;
+  tokenPriceAddress: string;
+  tokenPriceSymbol: string;
+}
+
+export interface ICollectionMetrics {
+  nfts: number;
+  startDT: Date | string;
+  endDT: Date | string;
+  priceType: 'fixed' | 'variable';
+  tokenPriceAddress: string | null | undefined;
+  tokenPriceSymbol: string | null | undefined;
+  priceRange: ICollectionMetricsPriceRange[];
+  creatorPercentage: number;
+  walletAddress: string;
 }

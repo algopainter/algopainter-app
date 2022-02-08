@@ -58,6 +58,13 @@ import AboutTheCollection from './AboutTheCollection.vue';
 import CollectionMetrics from './CollectionMetrics.vue';
 import ApiParameters from './APIParameters.vue';
 import { Watch } from 'vue-property-decorator';
+import { api } from 'src/boot/axios';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
+import { nanoid } from 'nanoid';
+import Web3Helper from 'src/helpers/web3Helper';
+import { isError } from 'src/helpers/utils';
+import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI } from 'src/models/ICreatorCollection';
 
 @Options({
   components: {
@@ -65,18 +72,29 @@ import { Watch } from 'vue-property-decorator';
     CollectionMetrics,
     ApiParameters,
   },
+  computed: {
+    ...mapGetters('user', {
+      userAccount: 'account',
+      networkInfo: 'networkInfo',
+      isConnected: 'isConnected',
+    }),
+  },
 })
 
 export default class CreateCollection extends Vue {
+  isConnected?: boolean;
+  userAccount!: string;
+  networkinfo?: NetworkInfo;
+
   step: number = 1;
   isStepTwoDisabled = false;
   isStepOneDisabled = false;
   teste: boolean = true;
 
   collectionData = {
-    aboutTheCollection: {} as unknown,
-    collectionMetrics: {} as unknown,
-    apiParameters: {} as unknown,
+    aboutTheCollection: {} as IAboutTheCollection,
+    collectionMetrics: {} as ICollectionMetrics,
+    apiParameters: {} as ICollectionNFTCreationAPI,
   }
 
   @Watch('step')
@@ -126,9 +144,63 @@ export default class CreateCollection extends Vue {
         this.step++;
         break;
       case 4:
+        console.log('this.collectionData.apiParameters', this.collectionData.apiParameters);
+        this.postCollection().catch(console.error);
         //send this.collectionData to the API
         console.log(this.collectionData);
     }
+  }
+
+  async postCollection() {
+    try {
+      const data = {
+        title: this.collectionData.aboutTheCollection.nameCollection,
+        description: this.collectionData.aboutTheCollection.description,
+        owner: this.collectionData.aboutTheCollection.artistName,
+        avatar: this.collectionData.aboutTheCollection.avatar,
+        account: this.userAccount,
+        metrics: this.collectionData.collectionMetrics,
+        api: this.collectionData.apiParameters,
+        salt: nanoid(),
+      };
+
+      const web3helper = new Web3Helper();
+      const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
+
+      if (isError(signatureOrError as Error)) {
+        return;
+      }
+
+      const request = {
+        data,
+        signature: signatureOrError,
+        account: this.userAccount,
+        salt: data.salt,
+      };
+
+      const res = await api.post('collections', request);
+
+      console.log('res', res)
+    } catch (e) {
+      this.$q.notify({
+        type: 'negative',
+        message: 'error mint image',
+      });
+    }
+  }
+
+  async post(url: string, data: any) {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    const resData = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return resData;
   }
 
   previous() {

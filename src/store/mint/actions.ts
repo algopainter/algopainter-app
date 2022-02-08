@@ -2,6 +2,7 @@ import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import MintStateInterface from './types';
 import { ICollectionInfo, IArtBasicInfo } from 'src/models/IMint';
+import { api } from 'src/boot/axios';
 
 const actions: ActionTree<MintStateInterface, StateInterface> = {
   collectionInfo(type, value) {
@@ -89,6 +90,30 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_GWEI_ERROR_MESSAGE', errorMessage);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_ERROR_MESSAGE', errorMessage);
+    }
+  },
+
+  async isCollectionExistent(type, value) {
+    const collection = value.collection as string;
+
+    try {
+      await api.get(`users/${collection}/account`);
+
+      this.commit('mint/SET_IS_COLLECTION_EXISTENT', true);
+    } catch (e) {
+      this.commit('mint/SET_IS_COLLECTION_EXISTENT', false);
+    }
+  },
+
+  async collectionParams(type, value) {
+    const collectionCustomUrl: string = value.collectionCustomUrl;
+
+    try {
+      const res = await api.get(`collections?customURL=${collectionCustomUrl}`);
+
+      this.commit('mint/SET_COLLECTION_PARAMS', res); //res.params
+    } catch (e) {
+      console.log('Error message: mint/actions - collectionParams');
     }
   },
 };

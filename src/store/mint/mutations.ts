@@ -50,6 +50,12 @@ const mutation: MutationTree<MintStateInterface> = {
   SET_EXPRESSIONS_ERROR_MESSAGE(state: MintStateInterface, payload) {
     state.expressions.errorMessage = payload;
   },
+  SET_IS_COLLECTION_EXISTENT(state: MintStateInterface, payload) {
+    state.formGenerator.isCollectionExistent = payload;
+  },
+  SET_COLLECTION_PARAMS(state: MintStateInterface, payload) {
+    state.formGenerator.collectionParams = payload;
+  },
 };
 
 export default mutation;

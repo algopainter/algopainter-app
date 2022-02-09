@@ -20,6 +20,7 @@ export interface ICreatorCollection {
 
 export interface IFormParams {
   name: string;
+  label: string;
   dataType: string;
   fieldType: string;
   options: {

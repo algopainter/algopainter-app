@@ -42,7 +42,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   mockedParams() {
     this.params = [
       {
-        name: 'Chemist name',
+        name: 'Chemist',
+        label: 'Chemist name',
         dataType: 'string',
         fieldType: 'Input Textfield',
         options: [
@@ -56,7 +57,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         defaultValue: 'Lavoisier'
       },
       {
-        name: 'Chemical compound',
+        name: 'Compound',
+        label: 'Chemist name',
         dataType: 'string',
         fieldType: 'Select',
         options: [
@@ -78,7 +80,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         defaultValue: 'Sodium Chloride'
       },
       {
-        name: 'Is the compound pure?',
+        name: 'Pure',
+        label: 'Is the compound pure?',
         dataType: 'string',
         fieldType: 'Checkbox',
         options: [
@@ -92,7 +95,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         defaultValue: true
       },
       {
-        name: 'Amount of compound',
+        name: 'Amount',
+        label: 'Amount of compound',
         dataType: 'string',
         fieldType: 'Slider',
         options: [

@@ -36,7 +36,7 @@
         :done="step > 3"
       >
         <h6 v-if="$q.screen.lt.sm || $q.screen.lt.md" class="title">{{ $t('dashboard.createCollection.stepThreeTitle') }}</h6>
-        <api-parameters :step="step" @data="storeData" />
+        <api-parameters :step="step" :check-form="verifyFormThree" @data="storeData" @verify="verifyStepThree" />
       </q-step>
 
       <template #navigation>
@@ -91,6 +91,8 @@ export default class CreateCollection extends Vue {
 
   verifyFormTwo: boolean = false;
   isFormTwoVerified: boolean = false;
+  verifyFormThree: boolean = false;
+  isFormThreeVerified: boolean = false;
 
   collectionData = {
     aboutTheCollection: {} as IAboutTheCollection,
@@ -116,6 +118,11 @@ export default class CreateCollection extends Vue {
   verifyStepTwo(payload: boolean) {
     this.isFormTwoVerified = payload;
     this.verifyFormTwo = false;
+  }
+
+  verifyStepThree(payload: boolean) {
+    this.isFormThreeVerified = payload;
+    this.verifyFormThree = false;
   }
 
   storeData(data: any, step: number) {
@@ -144,22 +151,20 @@ export default class CreateCollection extends Vue {
       case 2:
         this.verifyFormTwo = true;
         setTimeout(() => {
-          console.log('isFormTwoVerified', this.isFormTwoVerified);
           if (this.isFormTwoVerified) {
-            console.log('in');
             this.step++;
             this.verifyFormTwo = false;
           }
-        }, 500)
+        }, 250)
         break;
       case 3:
-        this.step++;
-        break;
-      case 4:
-        console.log('this.collectionData.apiParameters', this.collectionData.apiParameters);
-        this.postCollection().catch(console.error);
-        //send this.collectionData to the API
-        console.log(this.collectionData);
+        this.verifyFormThree = true;
+        setTimeout(() => {
+          if (this.isFormThreeVerified) {
+            this.postCollection().catch(console.error);
+            this.verifyFormThree = false;
+          }
+        }, 250)
     }
   }
 

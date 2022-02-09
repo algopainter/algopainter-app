@@ -2,25 +2,25 @@
   <h4 class="q-mb-md">Form Generator</h4>
   <q-form class="form-generator">
     <div v-for="(param, i) in params" :key="i">
-      <p v-if="params[i].fieldType === 'Slider'" class="label">{{ params[i].name }}</p>
+      <p v-if="params[i].fieldType === 'Slider'" class="label">{{ params[i].label }}</p>
       <q-input
         v-if="params[i].fieldType === 'Input Textfield'"
         v-model="generatedParams[i]"
-        :label="params[i].name"
+        :label="params[i].label"
         stack-label
         :type="type(i)"
       />
       <q-select
         v-else-if="params[i].fieldType === 'Select'"
         v-model="generatedParams[i]"
-        :label="params[i].name"
+        :label="params[i].label"
         stack-label
         :options="params[i].options"
       />
       <q-checkbox
         v-else-if="params[i].fieldType === 'Checkbox'"
         v-model="generatedParams[i]"
-        :label="params[i].name"
+        :label="params[i].label"
       />
       <q-slider
         v-else-if="params[i].fieldType === 'Slider'"

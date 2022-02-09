@@ -240,21 +240,7 @@
     maxlength="42"
     :rules="[ val => validateWalletAddress(val) || walletAddressErrMsg ]"
   />
-  <div v-if="(isError || isPriceRangeError) && isVerifyingTheForm" class="error row q-mt-lg">
-    <div class="col-2 flex">
-      <q-avatar
-        size="60px"
-        color="negative"
-        class="icon self-center"
-        text-color="white"
-      >
-        <q-icon name="mdi-alert-circle" />
-      </q-avatar>
-    </div>
-    <div class="col-10 self-center message">
-      {{ isErrorMsg }}
-    </div>
-  </div>
+  <error v-if="(isError || isPriceRangeError) && isVerifyingTheForm" :error-msg="isErrorMsg" />
 </template>
 
 <script lang="ts">
@@ -265,6 +251,7 @@ import moment from 'moment';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { NetworkInfo } from 'src/store/user/types';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import Error from './Error.vue';
 
 interface ICollectionMetricsPriceRange {
   from: number;
@@ -310,6 +297,9 @@ class Props {
       isConnected: 'isConnected',
     }),
   },
+  components: {
+    Error,
+  }
 })
 export default class CollectionMetrics extends Vue.with(Props) {
   auctionSystem!: AlgoPainterAuctionSystemProxy;
@@ -375,7 +365,6 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
   @Watch('checkForm')
   onCheckFormErrorChanged() {
-    console.log('checkForm', this.checkForm);
     if (this.checkForm) {
       this.$emit('verify', this.verifyForm());
     }
@@ -396,7 +385,6 @@ export default class CollectionMetrics extends Vue.with(Props) {
       this.isErrorMsg = this.$t('dashboard.createCollection.stepTwo.onlyOneRange');
     } else {
       this.isVerifyingTheForm = false;
-      console.log('true');
       return true;
     }
 
@@ -632,7 +620,6 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
   @Watch('step')
   onStepChanged() {
-    console.log('step collectionmetrics', this.step);
     if (this.step === 3) {
       if (this.form.priceType === 'fixed') {
         this.form.priceRange[0].to = Number(this.form.nfts);
@@ -672,46 +659,5 @@ export default class CollectionMetrics extends Vue.with(Props) {
 .variable-card {
   border: 1px $primary solid;
   border-radius: 5px;
-}
-
-.verify-error {
-  color: $negative;
-}
-
-.error {
-  padding: 10px;
-  border: $primary solid 1px;
-  border-radius: 5px;
-  font-weight: bold;
-}
-
-@media (max-width: 1024px) {
-  .error {
-    .icon {
-      font-size: 45px !important;
-    }
-    .message {
-      font-size: 12px;
-    }
-  }
-}
-
-@media (max-width: 360px) {
-  .error {
-    .icon {
-      font-size: 40px !important;
-    }
-  }
-}
-
-@media (max-width: 280px) {
-  .error {
-    .icon {
-      font-size: 28px !important;
-    }
-    .message {
-      font-size: 10px;
-    }
-  }
 }
 </style>

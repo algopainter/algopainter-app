@@ -635,6 +635,11 @@ export default {
       description:'Description:',
       socialMedia: 'Social media:',
       enableAvatar: 'Imagem field required',
+    },
+    stepThree: {
+      previewUrl: '{url}',
+      isPreviewUrlChecked: 'I checked the preview url below and it is generating an art as expected!',
+      previewUrlError: 'Please check the preview url before moving on!',
     }
   },
 };

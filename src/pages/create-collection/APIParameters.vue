@@ -35,6 +35,8 @@
           </div>
           <p class="label">Name</p>
           <q-input v-model="params[i].name" />
+          <p class="label">Label</p>
+          <q-input v-model="params[i].label" />
           <p class="label">Field type</p>
           <q-select
             v-model="params[i].fieldType"
@@ -130,8 +132,17 @@
     </div>
     <div class="col-6 q-pa-sm">
       <form-previewer :params="params" />
+      <div class="q-pa-sm">
+        <q-checkbox
+          v-model="isPreviewUrlChecked"
+          color="primary"
+          :label="$t('dashboard.createCollection.stepThree.isPreviewUrlChecked')"
+        />
+        <p class="text-bold">{{ $t('dashboard.createCollection.stepThree.previewUrl', {url: generatePreviewUrl}) }}</p>
+      </div>
     </div>
   </div>
+  <error v-if="errorMsg !== ''" :error-msg="errorMsg" />
 </template>
 
 <script lang="ts">
@@ -140,10 +151,16 @@ import { IFormParams, ICollectionNFTCreationAPI } from 'src/models/ICreatorColle
 import FormPreviewer from './FormPreviewer.vue';
 import FormSelect from './FormSelect.vue';
 import { Watch } from 'vue-property-decorator';
+import Error from './Error.vue';
 
 class Props {
   step = prop({
     type: Number,
+    required: true,
+  });
+
+  checkForm = prop({
+    type: String,
     required: true,
   });
 }
@@ -151,7 +168,8 @@ class Props {
 @Options({
   components: {
     FormPreviewer,
-    FormSelect
+    FormSelect,
+    Error
   },
 })
 
@@ -167,7 +185,8 @@ export default class APIParameters extends Vue.with(Props) {
 
   params: IFormParams[] = [
     {
-      name: 'Enter a name',
+      name: 'name',
+      label: 'Enter a name',
       dataType: 'string',
       fieldType: 'Input Textfield',
       options: [
@@ -190,10 +209,14 @@ export default class APIParameters extends Vue.with(Props) {
     'Input Textfield', 'Select', 'Checkbox', 'Slider'
   ]
 
+  isPreviewUrlChecked: boolean = false;
+  errorMsg: string = '';
+
   addParam() {
     this.params.push(
       {
-        name: 'Enter a name',
+        name: 'name',
+        label: 'Enter a name',
         dataType: 'string',
         fieldType: 'Input Textfield',
         options: [
@@ -207,6 +230,20 @@ export default class APIParameters extends Vue.with(Props) {
         defaultValue: ''
       }
     )
+  }
+
+  get generatePreviewUrl() {
+    let previewUrl: string = this.collectionInfo.api + '?';
+
+    this.params.forEach((param, i) => {
+      previewUrl += `${param.name}=${param.defaultValue.toString()}`
+
+      if ((i + 1) !== this.params.length) {
+        previewUrl += '/'
+      }
+    })
+
+    return previewUrl;
   }
 
   fieldTypeUpdateDefaultValue(i: number) {
@@ -251,15 +288,27 @@ export default class APIParameters extends Vue.with(Props) {
     this.params.splice(i, 1);
   }
 
-  @Watch('step')
-  onStepChanged() {
-    if (this.step === 4) {
+  verifyForm() {
+    if (!this.isPreviewUrlChecked) {
+      this.errorMsg = this.$t('dashboard.createCollection.stepThree.previewUrlError');
+    } else {
+      this.errorMsg = '';
+      return true;
+    }
+
+    return false;
+  }
+
+  @Watch('checkForm')
+  onCheckFormErrorChanged() {
+    if (this.checkForm) {
       const data: ICollectionNFTCreationAPI = {
         url: this.collectionInfo.api,
         parameters: this.params
       }
 
-      this.$emit('data', data, this.step - 1);
+      this.$emit('data', data, this.step);
+      this.$emit('verify', this.verifyForm());
     }
   }
 }

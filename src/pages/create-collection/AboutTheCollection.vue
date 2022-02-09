@@ -279,13 +279,8 @@ export default class AboutTheCollection extends Vue.with(Props) {
 
   @Watch('step')
   onStepChanged() {
-<<<<<<< HEAD
     if (this.step === 2) {
       this.$emit('data', this.fields, this.step - 1)
-=======
-    if (this.step > 1) {
-      this.$emit('form', this.fields, this.step)
->>>>>>> 9aaf6e80bc7c8abd416e0593ae247538df3769ca
     }
   }
 }

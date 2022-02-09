@@ -26,7 +26,7 @@
         :done="step > 2"
       >
         <h6 v-if="$q.screen.lt.sm || $q.screen.lt.md" class="title">{{ $t('dashboard.createCollection.stepTwoTitle') }}</h6>
-        <collection-metrics :step="step" @data="storeData" @verify="verifyStepTwo" />
+        <collection-metrics :step="step" :check-form="verifyFormTwo" @data="storeData" @verify="verifyStepTwo" />
       </q-step>
 
       <q-step
@@ -87,9 +87,10 @@ export default class CreateCollection extends Vue {
   networkinfo?: NetworkInfo;
 
   step: number = 1;
-  isStepTwoDisabled = false;
-  isStepOneDisabled = false;
-  teste: boolean = true;
+  isStepTwoDisabled: boolean = true;
+
+  verifyFormTwo: boolean = false;
+  isFormTwoVerified: boolean = false;
 
   collectionData = {
     aboutTheCollection: {} as IAboutTheCollection,
@@ -101,17 +102,20 @@ export default class CreateCollection extends Vue {
   onStepChanged() {
     switch (this.step) {
       case 1:
-        this.isStepTwoDisabled = false;
+        this.isStepTwoDisabled = true;
         break;
+      default:
+        this.isStepTwoDisabled = false;
     }
-  }
-
-  verifyStepTwo(validation: boolean) {
-    this.isStepTwoDisabled = validation;
   }
 
   verifyStepOne(payload: boolean) {
     this.isStepTwoDisabled = payload;
+  }
+
+  verifyStepTwo(payload: boolean) {
+    this.isFormTwoVerified = payload;
+    this.verifyFormTwo = false;
   }
 
   storeData(data: any, step: number) {
@@ -138,7 +142,15 @@ export default class CreateCollection extends Vue {
         this.step++;
         break;
       case 2:
-        this.step++;
+        this.verifyFormTwo = true;
+        setTimeout(() => {
+          console.log('isFormTwoVerified', this.isFormTwoVerified);
+          if (this.isFormTwoVerified) {
+            console.log('in');
+            this.step++;
+            this.verifyFormTwo = false;
+          }
+        }, 500)
         break;
       case 3:
         this.step++;

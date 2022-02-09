@@ -255,17 +255,6 @@
       {{ isErrorMsg }}
     </div>
   </div>
-  <div class="verify-form q-mt-md">
-    <q-btn flat @click="verifyForm()">
-      <q-icon
-        name="check_circle"
-        color="grey-4"
-        class="q-mr-sm"
-        size="30px"
-      />
-      {{ $t('dashboard.createCollection.stepTwo.verify') }}
-    </q-btn>
-  </div>
 </template>
 
 <script lang="ts">
@@ -304,6 +293,11 @@ interface IAllowedTokens {
 class Props {
   step = prop({
     type: Number,
+    required: true,
+  });
+
+  checkForm = prop({
+    type: String,
     required: true,
   });
 }
@@ -379,6 +373,14 @@ export default class CollectionMetrics extends Vue.with(Props) {
     }
   }
 
+  @Watch('checkForm')
+  onCheckFormErrorChanged() {
+    console.log('checkForm', this.checkForm);
+    if (this.checkForm) {
+      this.$emit('verify', this.verifyForm());
+    }
+  }
+
   verifyForm() {
     this.isVerifyingTheForm = true;
 
@@ -394,23 +396,11 @@ export default class CollectionMetrics extends Vue.with(Props) {
       this.isErrorMsg = this.$t('dashboard.createCollection.stepTwo.onlyOneRange');
     } else {
       this.isVerifyingTheForm = false;
-      this.$emit('verify', false);
+      console.log('true');
+      return true;
     }
-  }
 
-  @Watch('isPriceRangeError')
-  onIsPriceRangeErrorChanged() {
-    this.$emit('verify', true);
-  }
-
-  @Watch('isError')
-  onIsErrorChanged() {
-    this.$emit('verify', true);
-  }
-
-  @Watch('form.priceType')
-  onFormPriceTypeChanged() {
-    this.$emit('verify', true);
+    return false;
   }
 
   @Watch('form.tokenPriceSymbol')
@@ -642,6 +632,7 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
   @Watch('step')
   onStepChanged() {
+    console.log('step collectionmetrics', this.step);
     if (this.step === 3) {
       if (this.form.priceType === 'fixed') {
         this.form.priceRange[0].to = Number(this.form.nfts);

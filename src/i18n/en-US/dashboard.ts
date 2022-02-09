@@ -614,7 +614,6 @@ export default {
       rangeTooBig: 'This range is bigger than the NFT amount',
       add: 'Add',
       remove: 'Remove',
-      verify: 'Verify form',
       lastToField: "The 'to' field in the last price range must match the NFT amount field'",
       priceRangeErr: 'You need to fix an error regarding the the price ranges before moving on to the next step',
       onlyOneRange: 'The selected pricing schema is variable price but there is only one price range. Change to fixed price in this scenario.',

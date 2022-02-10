@@ -160,21 +160,7 @@
             </q-input>
           </div> -->
         </div>
-        <div v-if="isError && isVerifyingTheForm" class="error row q-mt-lg">
-          <div class="col-2 flex">
-            <q-avatar
-              size="60px"
-              color="negative"
-              class="icon self-center"
-              text-color="white"
-            >
-              <q-icon name="mdi-alert-circle" />
-            </q-avatar>
-          </div>
-          <div class="col-10 self-center message">
-            {{ isErrorMsg }}
-          </div>
-        </div>
+        <error v-if="isError && isVerifyingTheForm" :error-msg="isErrorMsg" />
       </q-form>
     </div>
   </div>
@@ -182,8 +168,9 @@
 
 <script lang="ts">
 import { QInput } from 'quasar';
-import { Vue, prop } from 'vue-class-component';
+import { Vue, prop, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
+import Error from './Error.vue';
 
 class Props {
   step = prop({
@@ -197,6 +184,11 @@ class Props {
   });
 }
 
+@Options({
+  components: {
+    Error,
+  }
+})
 export default class AboutTheCollection extends Vue.with(Props) {
     declare $refs: {
     artistName: QInput;
@@ -387,41 +379,5 @@ input[type='file'] {
 
 .avatar{
   margin-right: 10%;
-}
-.error {
-  padding: 10px;
-  border: $primary solid 1px;
-  border-radius: 5px;
-  font-weight: bold;
-}
-
-@media (max-width: 1024px) {
-  .error {
-    .icon {
-      font-size: 45px !important;
-    }
-    .message {
-      font-size: 12px;
-    }
-  }
-}
-
-@media (max-width: 360px) {
-  .error {
-    .icon {
-      font-size: 40px !important;
-    }
-  }
-}
-
-@media (max-width: 280px) {
-  .error {
-    .icon {
-      font-size: 28px !important;
-    }
-    .message {
-      font-size: 10px;
-    }
-  }
 }
 </style>

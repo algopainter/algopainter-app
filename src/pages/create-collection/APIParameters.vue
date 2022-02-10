@@ -4,9 +4,10 @@
       <q-form class="api-parameters">
         <h4 class="q-mb-md">Collection Info</h4>
         <q-input
-          v-model="collectionInfo.api"
+          v-model.trim="collectionInfo.api"
           label="API"
           stack-label
+          :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
         >
         </q-input>
         <q-select
@@ -34,9 +35,15 @@
             />
           </div>
           <p class="label">Name</p>
-          <q-input v-model="params[i].name" />
+          <q-input
+            v-model.trim="params[i].name"
+            :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
+          />
           <p class="label">Label</p>
-          <q-input v-model="params[i].label" />
+          <q-input
+            v-model.trim="params[i].label"
+            :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
+          />
           <p class="label">Field type</p>
           <q-select
             v-model="params[i].fieldType"
@@ -66,7 +73,7 @@
             class="min-max-field row q-pa-md q-my-md"
           >
             <q-input
-              v-model="params[i].min"
+              v-model.number="params[i].min"
               label="Min"
               class="col-6 q-pr-md"
               mask="#"
@@ -74,7 +81,7 @@
               reverse-fill-mask
             />
             <q-input
-              v-model="params[i].max"
+              v-model.number="params[i].max"
               label="Max"
               class="col-6 q-pl-md"
               mask="#"
@@ -91,8 +98,9 @@
             </p>
             <q-input
               v-if="params[i].fieldType === 'Input Textfield'"
-              v-model="params[i].defaultValue"
+              v-model.trim="params[i].defaultValue"
               label="Default value"
+              :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
             <q-select
               v-else-if="params[i].fieldType === 'Select'"
@@ -142,7 +150,7 @@
       </div>
     </div>
   </div>
-  <error v-if="errorMsg !== ''" :error-msg="errorMsg" />
+  <error v-if="(isError || isEmptyFieldError) && isVerifyingTheForm" :error-msg="errorMsg" />
 </template>
 
 <script lang="ts">
@@ -175,7 +183,7 @@ class Props {
 
 export default class APIParameters extends Vue.with(Props) {
   collectionInfo = {
-    api: '',
+    api: 'https://myapi.app/api/',
     method: 'GET',
   }
 
@@ -197,7 +205,7 @@ export default class APIParameters extends Vue.with(Props) {
       ],
       min: 0,
       max: 10,
-      defaultValue: ''
+      defaultValue: 'default'
     }
   ]
 
@@ -210,7 +218,11 @@ export default class APIParameters extends Vue.with(Props) {
   ]
 
   isPreviewUrlChecked: boolean = false;
+  isError: boolean = false;
+  isEmptyFieldError: boolean = false;
   errorMsg: string = '';
+  emptyFieldErrMsg: string = '';
+  isVerifyingTheForm: boolean = false;
 
   addParam() {
     this.params.push(
@@ -227,7 +239,7 @@ export default class APIParameters extends Vue.with(Props) {
         ],
         min: 0,
         max: 0,
-        defaultValue: ''
+        defaultValue: 'default'
       }
     )
   }
@@ -288,27 +300,54 @@ export default class APIParameters extends Vue.with(Props) {
     this.params.splice(i, 1);
   }
 
-  verifyForm() {
-    if (!this.isPreviewUrlChecked) {
-      this.errorMsg = this.$t('dashboard.createCollection.stepThree.previewUrlError');
+  validateIfEmpty(val: string) {
+    if (val === '') {
+      this.emptyFieldErrMsg = this.$t('dashboard.createCollection.stepThree.fieldRequired');
     } else {
-      this.errorMsg = '';
+      this.isEmptyFieldError = false;
       return true;
     }
 
+    this.isEmptyFieldError = true;
+    return false;
+  }
+
+  // Verificar se existe ao menos 1 parâmetro
+
+  verifyForm() {
+    this.isVerifyingTheForm = true;
+
+    if (this.isEmptyFieldError) {
+      this.errorMsg = this.$t('dashboard.createCollection.stepThree.emptyFieldError');
+    } else if (!this.isPreviewUrlChecked) {
+      console.log('in');
+      this.errorMsg = this.$t('dashboard.createCollection.stepThree.previewUrlError');
+    } else if (this.params.length === 0) {
+      this.errorMsg = this.$t('dashboard.createCollection.stepThree.noParamsError');
+    } else {
+      this.isError = false;
+      this.isVerifyingTheForm = false;
+      return true;
+    }
+
+    this.isError = true;
     return false;
   }
 
   @Watch('checkForm')
   onCheckFormErrorChanged() {
     if (this.checkForm) {
-      const data: ICollectionNFTCreationAPI = {
-        url: this.collectionInfo.api,
-        parameters: this.params
-      }
+      if (this.verifyForm()) {
+        const data: ICollectionNFTCreationAPI = {
+          url: this.collectionInfo.api,
+          parameters: this.params
+        }
 
-      this.$emit('data', data, this.step);
-      this.$emit('verify', this.verifyForm());
+        this.$emit('verify', true);
+        this.$emit('data', data, this.step);
+      } else {
+        this.$emit('verify', false);
+      }
     }
   }
 }

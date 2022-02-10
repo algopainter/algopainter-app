@@ -640,7 +640,10 @@ export default {
     stepThree: {
       previewUrl: '{url}',
       isPreviewUrlChecked: 'I checked the preview url below and it is generating an art as expected!',
+      emptyFieldError: 'Please fill all fields before moving on!',
+      fieldRequired: 'This field must be filled',
       previewUrlError: 'Please check the preview url before moving on!',
+      noParamsError: 'You need at least one parameter before moving on!'
     }
   },
 };

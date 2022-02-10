@@ -235,7 +235,7 @@
     :rules="[ val => validateCreator(val) || creatorErrMsg ]"
   />
   <q-input
-    v-model="form.walletAddress"
+    v-model.trim="form.walletAddress"
     :label="$t('dashboard.createCollection.stepTwo.address')"
     maxlength="42"
     :rules="[ val => validateWalletAddress(val) || walletAddressErrMsg ]"
@@ -502,7 +502,7 @@ export default class CollectionMetrics extends Vue.with(Props) {
       this.isError = true;
       this.walletAddressErrMsg = this.$t('dashboard.createCollection.stepTwo.emptyField');
       return false;
-    } else if (val && val.length < 42) {
+    } else if (val && val.length !== 42) {
       this.isError = true;
       this.walletAddressErrMsg = this.$t('dashboard.createCollection.stepTwo.wrongWallet');
       return false;

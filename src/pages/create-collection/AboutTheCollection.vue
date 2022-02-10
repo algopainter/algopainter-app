@@ -190,7 +190,7 @@ class Props {
   }
 })
 export default class AboutTheCollection extends Vue.with(Props) {
-    declare $refs: {
+  declare $refs: {
     artistName: QInput;
     nameCollection: QInput;
     customProfile: QInput;

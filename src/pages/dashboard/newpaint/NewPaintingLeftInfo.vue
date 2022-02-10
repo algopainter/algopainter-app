@@ -45,6 +45,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'background',
         label: 'Background',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Select',
         options: [
           {
@@ -76,6 +77,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'biological sex',
         label: 'Biological Sex',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Select',
         options: [
           {
@@ -95,6 +97,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'Expressions',
         label: 'Expressions',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Select',
         options: [
           {
@@ -126,6 +129,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'skin',
         label: 'Skin',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Select',
         options: [
           {
@@ -157,6 +161,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'use wiseframe',
         label: 'Use Wiseframe',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Checkbox',
         options: [
           {
@@ -172,6 +177,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'wiseframe hue',
         label: 'Wiseframe Hue',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Slider',
         options: [
           {
@@ -187,6 +193,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'Use Wireframe Blend',
         label: 'Use Wireframe Blend',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Checkbox',
         options: [
           {
@@ -202,6 +209,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'Wireframe Blend style',
         label: 'Wireframe Blend Style',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Select',
         options: [
           {
@@ -241,6 +249,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'innercolor hue',
         label: 'InnerColor Hue',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Slider',
         options: [
           {
@@ -256,6 +265,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'magic',
         label: 'Magic',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Select',
         options: [
           {
@@ -283,6 +293,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'overlay hue',
         label: 'Overlay Hue',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Slider',
         options: [
           {
@@ -298,6 +309,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'use shadow',
         label: 'Use Shadow',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Checkbox',
         options: [
           {
@@ -313,6 +325,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: 'flip',
         label: 'Flip',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Checkbox',
         options: [
           {

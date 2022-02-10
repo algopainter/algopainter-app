@@ -22,6 +22,7 @@ export interface IFormParams {
   name: string;
   label: string;
   dataType: string;
+  maxLength: number;
   fieldType: string;
   options: {
     label: string;

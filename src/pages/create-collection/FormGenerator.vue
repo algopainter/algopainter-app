@@ -8,6 +8,7 @@
         v-model="generatedParams[i]"
         :label="params[i].label"
         stack-label
+        :maxlength="params[i].maxLength"
         :type="type(i)"
       />
       <q-select

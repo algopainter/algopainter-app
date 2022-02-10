@@ -34,33 +34,40 @@
               @click="removeParam(i)"
             />
           </div>
-          <p class="label">Name</p>
           <q-input
             v-model.trim="params[i].name"
+            label="name"
             :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
           />
-          <p class="label">Label</p>
           <q-input
             v-model.trim="params[i].label"
+            label="label"
             :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
           />
-          <p class="label">Field type</p>
           <q-select
             v-model="params[i].fieldType"
+            label="label"
             :options="fieldTypeOptions"
             @update:model-value="fieldTypeUpdateDefaultValue(i)"
           />
           <div
             v-if="params[i].fieldType === 'Input Textfield'"
-            class="data-type-field q-pa-md q-my-md"
+            class="data-type-field row q-pa-md q-my-md"
           >
-            <p class="label">
-              Data type
-            </p>
             <q-select
               v-model="params[i].dataType"
+              label="Data type"
+              class="col-6 q-pr-md"
               :options="dataTypeOptions"
               @update:model-value="dataTypeUpdateDefaultValue(i)"
+            />
+            <q-input
+              v-model.number="params[i].maxLength"
+              label="Max length"
+              class="col-6 q-pr-md"
+              mask="#"
+              fill-mask="0"
+              reverse-fill-mask
             />
           </div>
           <form-select
@@ -79,6 +86,7 @@
               mask="#"
               fill-mask="0"
               reverse-fill-mask
+              :rules="[ val => validateMin(val, i) || minFieldErrMsg ]"
             />
             <q-input
               v-model.number="params[i].max"
@@ -87,6 +95,7 @@
               mask="#"
               fill-mask="0"
               reverse-fill-mask
+              :rules="[ val => validateMax(val, i) || maxFieldErrMsg ]"
             />
           </div>
           <div class="default-value-field">
@@ -150,7 +159,7 @@
       </div>
     </div>
   </div>
-  <error v-if="(isError || isEmptyFieldError) && isVerifyingTheForm" :error-msg="errorMsg" />
+  <error v-if="(isError || isEmptyFieldError || isMinMaxError) && isVerifyingTheForm" :error-msg="errorMsg" />
 </template>
 
 <script lang="ts">
@@ -160,6 +169,7 @@ import FormPreviewer from './FormPreviewer.vue';
 import FormSelect from './FormSelect.vue';
 import { Watch } from 'vue-property-decorator';
 import Error from './Error.vue';
+import { QSelect } from 'quasar';
 
 class Props {
   step = prop({
@@ -182,6 +192,10 @@ class Props {
 })
 
 export default class APIParameters extends Vue.with(Props) {
+  declare $refs: {
+    artistName: QSelect;
+  };
+
   collectionInfo = {
     api: 'https://myapi.app/api/',
     method: 'GET',
@@ -196,6 +210,7 @@ export default class APIParameters extends Vue.with(Props) {
       name: 'name',
       label: 'Enter a name',
       dataType: 'string',
+      maxLength: 64,
       fieldType: 'Input Textfield',
       options: [
         {
@@ -222,6 +237,11 @@ export default class APIParameters extends Vue.with(Props) {
   isEmptyFieldError: boolean = false;
   errorMsg: string = '';
   emptyFieldErrMsg: string = '';
+  minFieldErrMsg: string = '';
+  maxFieldErrMsg: string = '';
+  isMinMaxError: boolean = false;
+  defaultFieldErrMsg: string = '';
+  defaultFieldError: boolean = false;
   isVerifyingTheForm: boolean = false;
 
   addParam() {
@@ -230,6 +250,7 @@ export default class APIParameters extends Vue.with(Props) {
         name: 'name',
         label: 'Enter a name',
         dataType: 'string',
+        maxLength: 64,
         fieldType: 'Input Textfield',
         options: [
           {
@@ -300,6 +321,34 @@ export default class APIParameters extends Vue.with(Props) {
     this.params.splice(i, 1);
   }
 
+  validateMin(val: number, i: number) {
+    if (val > this.params[i].max) {
+      this.minFieldErrMsg = this.$t('dashboard.createCollection.stepThree.minError');
+    } else if (val === this.params[i].max) {
+      this.minFieldErrMsg = this.$t('dashboard.createCollection.stepThree.minMaxError');
+    } else {
+      this.isMinMaxError = false;
+      return true;
+    }
+
+    this.isMinMaxError = true;
+    return false;
+  }
+
+  validateMax(val: number, i: number) {
+    if (val < this.params[i].min) {
+      this.maxFieldErrMsg = this.$t('dashboard.createCollection.stepThree.maxError');
+    } else if (val === this.params[i].min) {
+      this.maxFieldErrMsg = this.$t('dashboard.createCollection.stepThree.minMaxError');
+    } else {
+      this.isMinMaxError = false;
+      return true;
+    }
+
+    this.isMinMaxError = true;
+    return false;
+  }
+
   validateIfEmpty(val: string) {
     if (val === '') {
       this.emptyFieldErrMsg = this.$t('dashboard.createCollection.stepThree.fieldRequired');
@@ -312,8 +361,6 @@ export default class APIParameters extends Vue.with(Props) {
     return false;
   }
 
-  // Verificar se existe ao menos 1 parâmetro
-
   verifyForm() {
     this.isVerifyingTheForm = true;
 
@@ -322,6 +369,8 @@ export default class APIParameters extends Vue.with(Props) {
     } else if (!this.isPreviewUrlChecked) {
       console.log('in');
       this.errorMsg = this.$t('dashboard.createCollection.stepThree.previewUrlError');
+    } else if (this.isMinMaxError) {
+      this.errorMsg = this.$t('dashboard.createCollection.stepThree.minMaxGeneralError');
     } else if (this.params.length === 0) {
       this.errorMsg = this.$t('dashboard.createCollection.stepThree.noParamsError');
     } else {

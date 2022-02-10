@@ -644,7 +644,12 @@ export default {
       emptyFieldError: 'Please fill all fields before moving on!',
       fieldRequired: 'This field must be filled',
       previewUrlError: 'Please check the preview url before moving on!',
-      noParamsError: 'You need at least one parameter before moving on!'
+      noParamsError: 'You need at least one parameter before moving on!',
+      minError: 'Min cannot be greater than max field',
+      minMaxError: 'Min and max fields cannot have the same value',
+      maxError: 'Max cannot be smaller than min field',
+      minMaxGeneralError: 'Please check your min-max fields before moving on!',
+      defaultValueError: 'The default value must match at least one of the options labels'
     }
   },
 };

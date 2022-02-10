@@ -197,6 +197,12 @@ export default class ProfileDropdownButton extends Vue {
       this.accountAddress?.toLowerCase() as string,
     );
     if (result.isFailure) {
+      this.$q.notify({
+        type: 'negative',
+        message: this.$t(
+          'dashboard.createCollection.hasNoProfile'
+        ),
+      });
       await this.$router.push('/edit-profile/' + 'registerCollection');
     } else {
       await this.$router.push('/create-collection');

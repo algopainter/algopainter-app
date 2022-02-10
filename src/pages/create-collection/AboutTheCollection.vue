@@ -229,7 +229,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
 
    @Watch('checkForm')
   onCheckFormErrorChanged() {
-    console.log('checkForm', this.checkForm);
     if (this.checkForm) {
       this.$emit('verifyFormOne', this.validateForm());
     }
@@ -247,7 +246,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
          // this.userOnSale = customValeu.data;
          this.checkName = collectionName.data.length === 0
-         console.log('collectionName', collectionName.data.length === 0)
        });
      } else {
        this.checkName = null
@@ -255,8 +253,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
    }
 
    validateForm() {
-     console.log('entrou em validateForm ')
-
      this.isVerifyingTheForm = true;
      if (this.fields.artistName === '') {
        this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.nameArtistError')
@@ -290,7 +286,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
      console.log(name)
      if (name === '' || this.fields.artistName === '') {
        this.isError = true;
-       //  void this.$refs.artistName.validate();
        return false;
      } else {
        this.isError = false;

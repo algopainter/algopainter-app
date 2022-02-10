@@ -64,6 +64,8 @@ import { NetworkInfo } from 'src/store/user/types';
 import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { isError } from 'src/helpers/utils';
+import UserController from 'src/controllers/user/UserController';
+import { IProfile } from 'src/models/IProfile';
 import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI } from 'src/models/ICreatorCollection';
 
 @Options({
@@ -79,6 +81,8 @@ import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI } fr
       isConnected: 'isConnected',
     }),
   },
+  accountAddress: ['loadUserProfile'],
+
 })
 
 export default class CreateCollection extends Vue {
@@ -95,6 +99,8 @@ export default class CreateCollection extends Vue {
   isFormTwoVerified: boolean = false;
   verifyFormThree: boolean = false;
   isFormThreeVerified: boolean = false;
+  userController: UserController = new UserController();
+  userProfile: IProfile = {};
 
   collectionData = {
     aboutTheCollection: {} as IAboutTheCollection,
@@ -113,126 +119,156 @@ export default class CreateCollection extends Vue {
     }
   }
 
-  verifyStepOne(payload: boolean) {
-    this.isFormOneVerified = payload;
-    this.verifyFormOne = false;
+  mounted() {
+    void this.registerCollection();
   }
 
-  verifyStepTwo(payload: boolean) {
-    this.isFormTwoVerified = payload;
-    this.verifyFormTwo = false;
+  get accountAddress() {
+    return this.$store.state.user.account;
   }
 
-  verifyStepThree(payload: boolean) {
-    this.isFormThreeVerified = payload;
-    this.verifyFormThree = false;
+    @Watch('accountAddress')
+  onPropertyChanged() {
+    void this.registerCollection();
   }
 
-  storeData(data: any, step: number) {
-    switch (step) {
-      case 1:
-        this.collectionData.aboutTheCollection = data;
-        console.log('this.collectionData.aboutTheCollection', this.collectionData.aboutTheCollection);
-        break;
-      case 2:
-        this.collectionData.collectionMetrics = data;
-        console.log('this.collectionData.collectionMetrics', this.collectionData.collectionMetrics);
-        break;
-      case 3:
-        this.collectionData.apiParameters = data;
-        console.log('this.collectionData.apiParameters', this.collectionData.apiParameters);
-        break;
-    }
-  }
-
-  next() {
-    switch (this.step) {
-      case 1:
-        this.verifyFormOne = true;
-        setTimeout(() => {
-          console.log('isFormTwoVerified', this.isFormOneVerified);
-          if (this.isFormOneVerified) {
-            console.log('in');
-            this.step++;
-            this.verifyFormOne = false;
-          }
-        }, 500)
-        break;
-      case 2:
-        this.verifyFormTwo = true;
-        setTimeout(() => {
-          if (this.isFormTwoVerified) {
-            this.step++;
-            this.verifyFormTwo = false;
-          }
-        }, 250)
-        break;
-      case 3:
-        this.verifyFormThree = true;
-        setTimeout(() => {
-          if (this.isFormThreeVerified) {
-            this.postCollection().catch(console.error);
-            this.verifyFormThree = false;
-          }
-        }, 250)
-    }
-  }
-
-  async postCollection() {
-    try {
-      const data = {
-        title: this.collectionData.aboutTheCollection.nameCollection,
-        description: this.collectionData.aboutTheCollection.description,
-        owner: this.collectionData.aboutTheCollection.artistName,
-        avatar: this.collectionData.aboutTheCollection.avatar,
-        account: this.userAccount,
-        metrics: this.collectionData.collectionMetrics,
-        api: this.collectionData.apiParameters,
-        salt: nanoid(),
-      };
-
-      const web3helper = new Web3Helper();
-      const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
-
-      if (isError(signatureOrError as Error)) {
-        return;
+    async registerCollection() {
+      const result = await this.userController.getUserProfile(
+      this.accountAddress?.toLowerCase() as string,
+      );
+      if (result.isFailure) {
+        this.$q.notify({
+          type: 'negative',
+          message: this.$t(
+            'dashboard.createCollection.hasNoProfile'
+          ),
+        });
+        await this.$router.push('/edit-profile/' + 'registerCollection');
+      } else {
+        await this.$router.push('/create-collection');
       }
-
-      const request = {
-        data,
-        signature: signatureOrError,
-        account: this.userAccount,
-        salt: data.salt,
-      };
-
-      const res = await api.post('collections', request);
-
-      console.log('res', res)
-    } catch (e) {
-      this.$q.notify({
-        type: 'negative',
-        message: 'error mint image',
-      });
     }
-  }
 
-  async post(url: string, data: any) {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
+    verifyStepOne(payload: boolean) {
+      this.isFormOneVerified = payload;
+      this.verifyFormOne = false;
+    }
 
-    const resData = await response.json();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return resData;
-  }
+    verifyStepTwo(payload: boolean) {
+      this.isFormTwoVerified = payload;
+      this.verifyFormTwo = false;
+    }
 
-  previous() {
-    this.step--;
-  }
+    verifyStepThree(payload: boolean) {
+      this.isFormThreeVerified = payload;
+      this.verifyFormThree = false;
+    }
+
+    storeData(data: any, step: number) {
+      switch (step) {
+        case 1:
+          this.collectionData.aboutTheCollection = data;
+          console.log('this.collectionData.aboutTheCollection', this.collectionData.aboutTheCollection);
+          break;
+        case 2:
+          this.collectionData.collectionMetrics = data;
+          console.log('this.collectionData.collectionMetrics', this.collectionData.collectionMetrics);
+          break;
+        case 3:
+          this.collectionData.apiParameters = data;
+          console.log('this.collectionData.apiParameters', this.collectionData.apiParameters);
+          break;
+      }
+    }
+
+    next() {
+      switch (this.step) {
+        case 1:
+          this.verifyFormOne = true;
+          setTimeout(() => {
+            console.log('isFormTwoVerified', this.isFormOneVerified);
+            if (this.isFormOneVerified) {
+              console.log('in');
+              this.step++;
+              this.verifyFormOne = false;
+            }
+          }, 500)
+          break;
+        case 2:
+          this.verifyFormTwo = true;
+          setTimeout(() => {
+            if (this.isFormTwoVerified) {
+              this.step++;
+              this.verifyFormTwo = false;
+            }
+          }, 250)
+          break;
+        case 3:
+          this.verifyFormThree = true;
+          setTimeout(() => {
+            if (this.isFormThreeVerified) {
+              this.postCollection().catch(console.error);
+              this.verifyFormThree = false;
+            }
+          }, 250)
+      }
+    }
+
+    async postCollection() {
+      try {
+        const data = {
+          title: this.collectionData.aboutTheCollection.nameCollection,
+          description: this.collectionData.aboutTheCollection.description,
+          owner: this.collectionData.aboutTheCollection.artistName,
+          avatar: this.collectionData.aboutTheCollection.avatar,
+          account: this.userAccount,
+          metrics: this.collectionData.collectionMetrics,
+          api: this.collectionData.apiParameters,
+          salt: nanoid(),
+        };
+
+        const web3helper = new Web3Helper();
+        const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
+
+        if (isError(signatureOrError as Error)) {
+          return;
+        }
+
+        const request = {
+          data,
+          signature: signatureOrError,
+          account: this.userAccount,
+          salt: data.salt,
+        };
+
+        const res = await api.post('collections', request);
+
+        console.log('res', res)
+      } catch (e) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'error mint image',
+        });
+      }
+    }
+
+    async post(url: string, data: any) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const resData = await response.json();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return resData;
+    }
+
+    previous() {
+      this.step--;
+    }
 }
 </script>
 <style lang="scss">

@@ -591,6 +591,7 @@ export default {
     stepOneTitle: 'About the Collection',
     stepTwoTitle: 'Collection Metrics',
     stepThreeTitle: 'API parameters',
+    hasNoProfile: 'To register a collection you need to create a profile.',
     stepTwo: {
       amount: 'NFT amount',
       amountMax: 'You can sell 1000 NFTs per collection at most',

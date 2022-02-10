@@ -56,6 +56,9 @@ const mutation: MutationTree<MintStateInterface> = {
   SET_COLLECTION_PARAMS(state: MintStateInterface, payload) {
     state.formGenerator.collectionParams = payload;
   },
+  SET_COLLECTION_NAME(state: MintStateInterface, payload) {
+    state.formGenerator.collectionName = payload;
+  }
 };
 
 export default mutation;

@@ -29,6 +29,5 @@ export default interface MintStateInterface {
   formGenerator: {
     isCollectionExistent: boolean,
     collectionParams: undefined | IFormParams[]
-    collectionName: undefined | IFormParams[]
   }
 }

@@ -11,14 +11,18 @@
           @click="removeOption(index)"
         />
       </div>
-      <q-input
-        v-model="params[i].options[index].label"
-        label="Label"
-      />
-      <q-input
-        v-model="params[i].options[index].value"
-        label="Value"
-      />
+      <div class="row">
+        <q-input
+          v-model="params[i].options[index].label"
+          label="Label"
+          class="col-6 q-pr-md"
+        />
+        <q-input
+          v-model="params[i].options[index].value"
+          label="Value"
+          class="col-6 q-pl-md"
+        />
+      </div>
     </div>
     <q-btn flat class="q-mr-sm" @click="addOption()">
       <q-icon

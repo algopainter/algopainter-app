@@ -94,39 +94,30 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
   },
 
   async isCollectionExistent(type, value) {
-    const collection = value.collection as string;
+    const collectionName = value.collection as string;
 
     try {
-      await api.get(`users/${collection}/account`);
+      const res = await api.get(`collections?namelc=${collectionName}`);
 
-      this.commit('mint/SET_IS_COLLECTION_EXISTENT', true);
+      res.data.length === 0
+        ? this.commit('mint/SET_IS_COLLECTION_EXISTENT', false)
+        : this.commit('mint/SET_IS_COLLECTION_EXISTENT', true);
     } catch (e) {
-      this.commit('mint/SET_IS_COLLECTION_EXISTENT', false);
+      console.log('Error message: mint/actions - isCollectionExistent');
     }
   },
 
   async collectionParams(type, value) {
-    const collectionCustomUrl: string = value.collectionCustomUrl;
+    const collectionName: string = value.collectionCustomUrl;
 
     try {
-      const res = await api.get(`collections?customURL=${collectionCustomUrl}`);
+      const res = await api.get(`collections?namelc=${collectionName}`);
 
-      this.commit('mint/SET_COLLECTION_PARAMS', res); //res.params
+      this.commit('mint/SET_COLLECTION_PARAMS', res);
     } catch (e) {
       console.log('Error message: mint/actions - collectionParams');
     }
   },
-
-  async collectionName(type, value) {
-    const collectionName : string = value.collectionName;
-
-    try {
-      const res = await api.get(`collections?namelc=${collectionName}`)
-      this.commit('mint/SET_COLLECTION_NAME', res);
-    } catch (e) {
-      console.log('Error message: mint/actions - collectionName');
-    }
-  }
 };
 
 export default actions;

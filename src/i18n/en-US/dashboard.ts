@@ -640,16 +640,21 @@ export default {
     },
     stepThree: {
       previewUrl: '{url}',
-      isPreviewUrlChecked: 'I checked the preview url below and it is generating an art as expected!',
+      previewUrlChecked: 'I checked the preview url below and it is generating an art as expected!',
+      feeChecked: 'I am aware that I will be paying {fee} BNB to register this collection.',
       emptyFieldError: 'Please fill all fields before moving on!',
       fieldRequired: 'This field must be filled',
       previewUrlError: 'Please check the preview url before moving on!',
+      feeError: 'Please confirm that you are aware of the fees!',
+      isPreview: 'Please check the preview url before moving on!',
       noParamsError: 'You need at least one parameter before moving on!',
       minError: 'Min cannot be greater than max field',
       minMaxError: 'Min and max fields cannot have the same value',
       maxError: 'Max cannot be smaller than min field',
       minMaxGeneralError: 'Please check your min-max fields before moving on!',
-      defaultValueError: 'The default value must match at least one of the options labels'
+      defaultValueError: 'The default value must match at least one of the options labels',
+      hasSpecialParams: 'My collection does not take size params in the url',
+      hasSizeInUrl: 'The url should contain a size param instead of width and heigth params'
     }
   },
 };

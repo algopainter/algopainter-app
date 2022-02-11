@@ -31,7 +31,13 @@
       </div>
     </div>
     <div v-if="activeFormId === 'createWithArtist'" class="col q-mt-md">
-      <div class="q-pa-md">
+      <div
+        v-for="(form, index) in formCollection"
+        :key="index"
+      >
+        <collections :form="form" />
+      </div>
+      <!-- <div class="q-pa-md">
         <p class="row justify-center text-h5">
           {{ $t('dashboard.selectAlgoP') }}
         </p>
@@ -61,7 +67,7 @@
             <p class="text-bold text-center">Man With No Name</p>
           </div>
         </div>
-      </div>
+      </div> -->
       <!--
       <div>
         <p class="text-bold text-subtitle2">
@@ -118,6 +124,8 @@ import IaArtist from './IaArtist.vue';
 import Preview from './Preview.vue';
 import Example from './Example.vue';
 import { mapGetters } from 'vuex';
+import { ICreatorCollection } from 'src/models/ICreatorCollection';
+import Collections from './Collections.vue';
 
 interface IAiArtist {
   id: number;
@@ -141,6 +149,7 @@ interface IAiArtist {
     IaArtist,
     Preview,
     Example,
+    Collections
   },
   emits: ['createWithArtistClick', 'eventPreview', 'eventClose'],
   computed: {
@@ -184,55 +193,12 @@ export default class Create extends Vue {
     btnLink: '',
   };
 
-  setCurrentArtist(id: number) {
-    this.currentArtist = this.arts.filter((art) => art.id === id)[0];
-    this.$emit('artistSettled');
-  }
+  formCollection: ICreatorCollection[] = [];
 
-  arts: IAiArtist[] = [
-    {
-      id: 1,
-      img: '/images/Hashly.svg',
-      name: 'Hashly Gwei',
-      exampleImg: '/images/Hashly.Art.svg',
-      title: 'createCollectible.selectAi.titleHashly',
-      textSubtitle: 'createCollectible.selectAi.textHashly1',
-      textBody: 'createCollectible.selectAi.textHashly2',
-      batchPrince: '600',
-      remaining: '580',
-      minted: '420',
-      isOff: true,
-      btnLink: './new-painting',
-    },
-    {
-      id: 2,
-      img: '/images/Angelo.svg',
-      name: 'Angelo Fracthereum',
-      exampleImg: '/images/Angelo.Art.svg',
-      title: 'createCollectible.selectAi.titleAngelo',
-      textSubtitle: 'createCollectible.selectAi.textAngelo1',
-      textBody: '',
-      batchPrince: '-',
-      remaining: '-',
-      minted: '-',
-      isOff: true,
-      btnLink: '',
-    },
-    {
-      id: 3,
-      img: '/images/Claude.svg',
-      name: 'Claude Monero',
-      exampleImg: '/images/Claude.Art.svg',
-      title: 'createCollectible.selectAi.titleClaude',
-      textSubtitle: 'createCollectible.selectAi.textClaude1',
-      textBody: 'createCollectible.selectAi.textClaude2',
-      batchPrince: '-',
-      remaining: '-',
-      minted: '-',
-      isOff: true,
-      btnLink: '',
-    },
-  ];
+  // setCurrentArtist(id: number) {
+  //   this.currentArtist = this.arts.filter((art) => art.id === id)[0];
+  //   this.$emit('artistSettled');
+  // }
 
   activeFormId: string | null = null;
   isNewPaintingModalOpen!: boolean;
@@ -252,17 +218,33 @@ export default class Create extends Vue {
     });
   }
 
-  clickImg(name: string): void {
-    this.detalImg = name;
-    this.arts = this.arts.map((item) => {
-      if (item.name !== name) {
-        item.isOff = true;
-      } else {
-        item.isOff = false;
-      }
-      return item;
+  mounted() {
+    void this.getCollection();
+  }
+
+  getCollection() {
+    void this.$store.dispatch({
+      type: 'mint/collections',
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const collection = this.$store.getters['mint/GET_COLLECTIONS'];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      // this.userOnSale = customValeu.data;
+      this.formCollection = collection.data
     });
   }
+
+  // clickImg(name: string): void {
+  //   this.detalImg = name;
+  //   this.arts = this.arts.map((item) => {
+  //     if (item.name !== name) {
+  //       item.isOff = true;
+  //     } else {
+  //       item.isOff = false;
+  //     }
+  //     return item;
+  //   });
+  // }
 
   eventPreview(play: string | null) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

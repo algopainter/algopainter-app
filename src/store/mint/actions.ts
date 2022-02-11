@@ -126,7 +126,17 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     } catch (e) {
       console.log('Error message: mint/actions - collectionName');
     }
-  }
+  },
+
+  async collections() {
+    try {
+      const res = await api.get('collections?show=true')
+      this.commit('mint/SET_COLLECTIONS', res);
+    } catch (e) {
+      console.log('Error message: mint/actions - collection');
+    }
+  },
+
 };
 
 export default actions;

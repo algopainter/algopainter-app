@@ -29,7 +29,8 @@ function state(): MintStateInterface {
     formGenerator: {
       isCollectionExistent: false,
       collectionParams: undefined,
-      collectionName: undefined
+      collectionName: undefined,
+      collections: undefined,
     }
   };
 }

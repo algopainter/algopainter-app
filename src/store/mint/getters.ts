@@ -63,6 +63,9 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_COLLECTION_NAME(state: MintStateInterface): undefined | IFormParams[] {
     return state.formGenerator.collectionName;
   },
+  GET_COLLECTIONS(state: MintStateInterface): undefined | IFormParams[] {
+    return state.formGenerator.collections;
+  },
 };
 
 export default getters;

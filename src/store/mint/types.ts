@@ -30,5 +30,6 @@ export default interface MintStateInterface {
     isCollectionExistent: boolean,
     collectionParams: undefined | IFormParams[]
     collectionName: undefined | IFormParams[]
+    collections: undefined | IFormParams[]
   }
 }

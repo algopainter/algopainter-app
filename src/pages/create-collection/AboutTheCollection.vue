@@ -24,7 +24,7 @@
                           name => checkName || $t('dashboard.createCollection.aboutTheCollection.nameCollectionUse')]"
                 maxlength="30"
                 counter
-                @keyup="getCollectionnName"
+                @keyup="getCollectionName"
               >
                 <template v-if="checkName !== null" #append>
                   <q-icon
@@ -224,7 +224,7 @@ export default class AboutTheCollection extends Vue.with(Props) {
   checkName: boolean | null = null;
 
   mounted() {
-    void this.getCollectionnName()
+    void this.getCollectionName()
   }
 
    @Watch('checkForm')
@@ -234,18 +234,14 @@ export default class AboutTheCollection extends Vue.with(Props) {
     }
   }
 
-   getCollectionnName() {
+   getCollectionName() {
      if (this.fields.nameCollection !== '') {
        void this.$store.dispatch({
-         type: 'mint/collectionName',
-         collectionName: this.fields.nameCollection,
-
+         type: 'mint/isCollectionExistent',
+         collection: this.fields.nameCollection,
        }).then(() => {
          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-         const collectionName = this.$store.getters['mint/GET_COLLECTION_NAME'];
-         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-         // this.userOnSale = customValeu.data;
-         this.checkName = collectionName.data.length === 0
+         this.checkName = !this.$store.getters['mint/GET_IS_COLLECTION_EXISTENT'];
        });
      } else {
        this.checkName = null
@@ -275,7 +271,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
        this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.enableAvatar')
      } else {
        this.isVerifyingTheForm = false;
-       console.log('true');
        return true;
      }
 
@@ -283,7 +278,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
    }
 
    validArtistName(name: string) {
-     console.log(name)
      if (name === '' || this.fields.artistName === '') {
        this.isError = true;
        return false;

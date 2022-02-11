@@ -39,6 +39,21 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     this.mockedParams();
   }
 
+  async getCollectionParams() {
+    await this.$store
+      .dispatch({
+        type: 'mint/collectionParams',
+        collectionCustomUrl: this.collectionCustomUrl
+      })
+      .then(() => {
+        this.params = this.collectionParams;
+
+        this.params?.forEach((param, i) => {
+          this.defaultValues[i] = param.defaultValue;
+        });
+      })
+  }
+
   mockedParams() {
     this.params = [
       {
@@ -411,21 +426,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     this.params?.forEach((param, i) => {
       this.defaultValues[i] = param.defaultValue;
     });
-  }
-
-  async getCollectionParams() {
-    await this.$store
-      .dispatch({
-        type: 'mint/collectionParams',
-        collectionCustomUrl: this.collectionCustomUrl
-      })
-      .then(() => {
-        this.params = this.collectionParams;
-
-        this.params?.forEach((param, i) => {
-          this.defaultValues[i] = param.defaultValue;
-        });
-      })
   }
 }
 

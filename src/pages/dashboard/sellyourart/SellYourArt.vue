@@ -486,7 +486,7 @@ export default class SellYourArt extends Vue {
       this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.image.nft.index) as string;
       this.createdItems = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
     } else {
-      this.createdPirs = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
+      this.createdItems = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
     }
 
     this.collectionCreatorRoyaltiesRate = this.createdItems / 100;

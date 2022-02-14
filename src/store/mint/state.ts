@@ -31,7 +31,10 @@ function state(): MintStateInterface {
       IPFSUrl: undefined,
       userConfirmations: undefined,
       isMinting: false,
-      errorMessage: undefined
+      errorMessage: undefined,
+      collectionParams: undefined,
+      collectionName: undefined,
+      collections: undefined,
     }
   };
 }

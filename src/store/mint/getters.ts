@@ -4,6 +4,7 @@ import MintStateInterface from './types';
 import { ICollectionInfo, IArtBasicInfo } from 'src/models/IMint';
 import { IGweiParsedItemParameters } from 'src/models/INewPaintingGwei';
 import { ICollection } from 'src/models/ICollection';
+import { IFormParams } from 'src/models/ICreatorCollection';
 
 const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_GWEI_COLLECTION_INFO(state: MintStateInterface): ICollectionInfo | undefined {
@@ -62,6 +63,12 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   },
   GET_PREVIEW_URL(state: MintStateInterface): undefined | string {
     return state.formGenerator.previewUrl;
+  },
+  GET_COLLECTION_NAME(state: MintStateInterface): undefined | IFormParams[] {
+    return state.formGenerator.collectionName;
+  },
+  GET_COLLECTIONS(state: MintStateInterface): undefined | IFormParams[] {
+    return state.formGenerator.collections;
   },
 };
 

@@ -6,6 +6,7 @@ export interface ICreatorCollection {
   creator: string; //user account
   avatar: string | null | undefined;
   account: string;
+  namelc: string;
   bio?: string;
   type?: string;
   instagram?: string | null;

@@ -592,6 +592,21 @@ export default {
     stepTwoTitle: 'Collection Metrics',
     stepThreeTitle: 'API parameters',
     hasNoProfile: 'To register a collection you need to create a profile.',
+    aboutTheCollection: {
+      about: 'About',
+      nameArtist: 'Artist name:',
+      nameCollection: 'Collection name:',
+      website:'Website or Portfolio:',
+      customUrl: 'Custom URL:',
+      nameArtistError:'Artist name field required.',
+      nameCollectionError:'Field Collection name is required and must be Minimum than 6 characters.',
+      descriptionError:'Description field required.',
+      custonError:'Custom URL field required.',
+      description:'Description:',
+      socialMedia: 'Social media:',
+      enableAvatar: 'Image field required',
+      nameCollectionUse: 'Collection name already in use',
+    },
     stepTwo: {
       amount: 'NFT amount',
       amountMax: 'You can sell 1000 NFTs per collection at most',
@@ -622,21 +637,7 @@ export default {
       emptyField: 'This field needs to be filled',
       wrongWallet: 'Fill all 42 digits',
       emptyNfts: 'You must sell at least one NFT in this collection',
-    },
-    aboutTheCollection: {
-      about: 'About',
-      nameArtist: 'Artist name:',
-      nameCollection: 'Collection name:',
-      website:'Website or Portfolio:',
-      customUrl: 'Custom URL:',
-      nameArtistError:'Artist name field required.',
-      nameCollectionError:'Field Collection name is required and must be Minimum than 6 characters.',
-      descriptionError:'Description field required.',
-      custonError:'Custom URL field required.',
-      description:'Description:',
-      socialMedia: 'Social media:',
-      enableAvatar: 'Image field required',
-      nameCollectionUse: 'Collection name already in use',
+      priceErrorLimitMsg: 'You can set up up to 20 to price ranges, no more than that.'
     },
     stepThree: {
       previewUrl: '{url}',
@@ -654,7 +655,9 @@ export default {
       minMaxGeneralError: 'Please check your min-max fields before moving on!',
       defaultValueError: 'The default value must match at least one of the options labels',
       hasSpecialParams: 'My collection does not take size params in the url',
-      hasSizeInUrl: 'The url should contain a size param instead of width and heigth params'
+      hasSizeInUrl: 'The url should contain a size param instead of width and heigth params',
+      previewForm: 'Preview form',
+      goBack: 'return'
     }
   },
 };

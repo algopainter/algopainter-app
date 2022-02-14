@@ -1,61 +1,63 @@
 <template>
-  <div class="start-date">
-    <p class="label">{{ $t('dashboard.createCollection.stepTwo.startDT') }}</p>
-    <q-input
-      v-model="form.startDT"
-      :rules="[ val => timeValidator() || dateErrorMsg ]"
-    >
-      <template #append>
-        <q-icon
-          name="event"
-          class="cursor-pointer"
-        >
-          <q-popup-proxy
-            ref="dateRef"
-            transition-show="scale"
-            transition-hide="scale"
+  <div class="row">
+    <div class="start-date col-6 q-pr-md">
+      <p class="label">{{ $t('dashboard.createCollection.stepTwo.startDT') }}</p>
+      <q-input
+        v-model="form.startDT"
+        :rules="[ val => timeValidator() || dateErrorMsg ]"
+      >
+        <template #append>
+          <q-icon
+            name="event"
+            class="cursor-pointer"
           >
-            <q-date
-              v-model="form.startDT"
-              mask="MM/DD/YYYY HH:mm"
-            />
-            <q-time
-              v-model="form.startDT"
-              mask="MM/DD/YYYY HH:mm"
-            />
-          </q-popup-proxy>
-        </q-icon>
-      </template>
-    </q-input>
-  </div>
-  <div class="end-date">
-    <p class="label">{{ $t('dashboard.createCollection.stepTwo.endDT') }}</p>
-    <q-input
-      v-model="form.endDT"
-      :rules="[ val => timeValidator() || dateErrorMsg]"
-    >
-      <template #append>
-        <q-icon
-          name="event"
-          class="cursor-pointer"
-        >
-          <q-popup-proxy
-            ref="dateRef"
-            transition-show="scale"
-            transition-hide="scale"
+            <q-popup-proxy
+              ref="dateRef"
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-date
+                v-model="form.startDT"
+                mask="MM/DD/YYYY HH:mm"
+              />
+              <q-time
+                v-model="form.startDT"
+                mask="MM/DD/YYYY HH:mm"
+              />
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+    </div>
+    <div class="end-date col-6 q-pl-md">
+      <p class="label">{{ $t('dashboard.createCollection.stepTwo.endDT') }}</p>
+      <q-input
+        v-model="form.endDT"
+        :rules="[ val => timeValidator() || dateErrorMsg]"
+      >
+        <template #append>
+          <q-icon
+            name="event"
+            class="cursor-pointer"
           >
-            <q-date
-              v-model="form.endDT"
-              mask="MM/DD/YYYY HH:mm"
-            />
-            <q-time
-              v-model="form.endDT"
-              mask="MM/DD/YYYY HH:mm"
-            />
-          </q-popup-proxy>
-        </q-icon>
-      </template>
-    </q-input>
+            <q-popup-proxy
+              ref="dateRef"
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-date
+                v-model="form.endDT"
+                mask="MM/DD/YYYY HH:mm"
+              />
+              <q-time
+                v-model="form.endDT"
+                mask="MM/DD/YYYY HH:mm"
+              />
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+    </div>
   </div>
   <q-input
     v-model="form.nfts"
@@ -142,14 +144,14 @@
         <div class="row">
           <q-input
             v-model="form.priceRange[index].from"
-            class="col-6 q-px-md"
             :label="$t('dashboard.createCollection.stepTwo.from')"
+            class="col-6 q-px-md"
             readonly
           />
           <q-input
             v-model="form.priceRange[index].to"
-            class="col-6 q-px-md"
             :label="$t('dashboard.createCollection.stepTwo.to')"
+            class="col-6 q-px-md"
             :readonly="(index + 1) < form.priceRange.length"
             mask="#"
             fill-mask="0"
@@ -159,8 +161,8 @@
         </div>
         <q-input
           v-model="form.priceRange[index].amount"
-          class="q-px-md"
           :label="$t('dashboard.createCollection.stepTwo.price')"
+          class="col-6 q-px-md"
           mask="#.####"
           fill-mask="0"
           reverse-fill-mask
@@ -205,6 +207,22 @@
           </q-btn-dropdown>
         </q-input>
       </div>
+      <error
+        v-if="isPriceRangeLimitMsgShown"
+        :error-msg="$t('dashboard.createCollection.stepTwo.priceErrorLimitMsg')"
+        :wrapping-margin="'q-my-md'"
+      >
+        <template #icon>
+          <q-avatar
+            size="60px"
+            color="warning"
+            class="icon self-center"
+            text-color="white"
+          >
+            <q-icon name="mdi-alert" />
+          </q-avatar>
+        </template>
+      </error>
       <q-btn flat :disable="isAddDisabled()" class="q-mr-sm" @click="addPriceRange()">
         <q-icon
           name="add_circle"
@@ -225,21 +243,25 @@
       </q-btn>
     </div>
   </div>
-  <q-input
-    v-model="form.creatorPercentage"
-    :label="$t('dashboard.createCollection.stepTwo.creator')"
-    suffix="%"
-    mask="#"
-    fill-mask="0"
-    reverse-fill-mask
-    :rules="[ val => validateCreator(val) || creatorErrMsg ]"
-  />
-  <q-input
-    v-model.trim="form.walletAddress"
-    :label="$t('dashboard.createCollection.stepTwo.address')"
-    maxlength="42"
-    :rules="[ val => validateWalletAddress(val) || walletAddressErrMsg ]"
-  />
+  <div class="row q-pt-lg">
+    <q-input
+      v-model="form.creatorPercentage"
+      :label="$t('dashboard.createCollection.stepTwo.creator')"
+      class="col-6 q-pr-md"
+      suffix="%"
+      mask="#"
+      fill-mask="0"
+      reverse-fill-mask
+      :rules="[ val => validateCreator(val) || creatorErrMsg ]"
+    />
+    <q-input
+      v-model.trim="form.walletAddress"
+      :label="$t('dashboard.createCollection.stepTwo.address')"
+      class="col-6 q-pl-md"
+      maxlength="42"
+      :rules="[ val => validateWalletAddress(val) || walletAddressErrMsg ]"
+    />
+  </div>
   <error v-if="(isError || isPriceRangeError) && isVerifyingTheForm" :error-msg="isErrorMsg" />
 </template>
 
@@ -344,6 +366,7 @@ export default class CollectionMetrics extends Vue.with(Props) {
   creatorErrMsg: string = '';
   walletAddressErrMsg: string = '';
   nftsErrMsg: string = '';
+  isPriceRangeLimitMsgShown: boolean = false;
 
   created() {
     if (this.isConnected) {
@@ -400,6 +423,10 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   addPriceRange() {
+    if (this.form.priceRange.length === 19) {
+      this.isPriceRangeLimitMsgShown = true;
+    }
+
     const lastTo = this.toRangeArr[this.toRangeArr.length - 1];
 
     this.form.priceRange.push({
@@ -417,6 +444,10 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   removePriceRange() {
+    if (this.form.priceRange.length === 20) {
+      this.isPriceRangeLimitMsgShown = false;
+    }
+
     this.isPriceRangeError = false;
     this.form.priceRange.pop();
     this.fromRangeArr.pop();
@@ -514,7 +545,7 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   isAddDisabled() {
-    return this.toRangeArr[this.toRangeArr.length - 1] >= this.form.nfts || this.isPriceRangeError;
+    return this.toRangeArr[this.toRangeArr.length - 1] >= this.form.nfts || this.isPriceRangeError || this.form.priceRange.length === 20;
   }
 
   timeValidator() {

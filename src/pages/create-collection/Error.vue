@@ -1,19 +1,23 @@
 <template>
-  <div class="error row q-mt-lg">
-    <div class="col-2 flex">
-      <q-avatar
-        size="60px"
-        color="negative"
-        class="icon self-center"
-        text-color="white"
-      >
-        <q-icon name="mdi-alert-circle" />
-      </q-avatar>
+  <slot>
+    <div :class="[wrappingMargin ? 'error row q-my-md' :'error row q-mt-lg']">
+      <div class="col-2 flex">
+        <slot name="icon">
+          <q-avatar
+            size="60px"
+            color="negative"
+            class="icon self-center"
+            text-color="white"
+          >
+            <q-icon name="mdi-alert-circle" />
+          </q-avatar>
+        </slot>
+      </div>
+      <div class="col-10 self-center message">
+        {{ errorMsg }}
+      </div>
     </div>
-    <div class="col-10 self-center message">
-      {{ errorMsg }}
-    </div>
-  </div>
+  </slot>
 </template>
 
 <script>
@@ -22,7 +26,12 @@ import { Vue, prop } from 'vue-class-component';
 class Props {
   errorMsg = prop({
     type: String,
-    required: true,
+    required: true
+  });
+
+  wrappingMargin = prop({
+    type: String,
+    required: false
   });
 }
 

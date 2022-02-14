@@ -1,6 +1,9 @@
 <template>
   <div class="row">
-    <div class="col-6 q-pa-sm">
+    <div
+      v-if="!isPreviewingForm"
+      :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'q-pa-sm' : 'col-6 q-pa-sm']"
+    >
       <q-form class="api-parameters">
         <h4 class="q-mb-md">Collection Info</h4>
         <q-input
@@ -211,40 +214,57 @@
             />
           </div>
         </div>
+        <div class="q-pt-md">
+          <q-checkbox
+            v-model="isFeeChecked"
+            color="primary"
+            :label="$t('dashboard.createCollection.stepThree.feeChecked', {fee: '0.1'})"
+          />
+          <q-checkbox
+            v-model="isPreviewUrlChecked"
+            color="primary"
+            :label="$t('dashboard.createCollection.stepThree.previewUrlChecked')"
+          />
+        </div>
+        <q-input
+          v-model="generatePreviewUrl"
+          readonly
+        >
+        </q-input>
       </q-form>
       <q-btn
         flat
-        class="q-mr-sm"
+        class="q-mt-sm"
         @click="addParam()"
       >
         <q-icon
           name="add_circle"
           color="grey-4"
-          class="q-mr-sm"
           size="30px"
         />
         Add parameter
       </q-btn>
-      <div class="q-pt-md">
-        <q-checkbox
-          v-model="isFeeChecked"
-          color="primary"
-          :label="$t('dashboard.createCollection.stepThree.feeChecked', {fee: '0.1'})"
-        />
-        <q-checkbox
-          v-model="isPreviewUrlChecked"
-          color="primary"
-          :label="$t('dashboard.createCollection.stepThree.previewUrlChecked')"
-        />
-        <div class="q-pt-md">
-          <p class="text-bold text-center">{{ $t('dashboard.createCollection.stepThree.previewUrl', {url: generatePreviewUrl}) }}</p>
-        </div>
-      </div>
     </div>
-    <div class="col-6 q-pa-sm">
+    <div
+      v-if="isPreviewingForm || !isSmallDevice"
+      :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'q-pa-sm' : 'col-6 q-pa-sm']"
+    >
       <form-previewer :params="params" />
     </div>
   </div>
+  <q-page-sticky
+    v-if="isSmallDevice"
+    position="bottom-right"
+    :offset="[18, 18]"
+  >
+    <q-btn
+      fab
+      icon="preview"
+      color="primary"
+      :label="[isPreviewingForm ? $t('dashboard.createCollection.stepThree.goBack') : $t('dashboard.createCollection.stepThree.previewForm')]"
+      @click="isPreviewingForm = !isPreviewingForm"
+    />
+  </q-page-sticky>
   <error v-if="(isError || isEmptyFieldError || isMinMaxError) && isVerifyingTheForm" :error-msg="errorMsg" />
 </template>
 
@@ -336,6 +356,34 @@ export default class APIParameters extends Vue.with(Props) {
   defaultFieldErrMsg: string = '';
   defaultFieldError: boolean = false;
   isVerifyingTheForm: boolean = false;
+  isPreviewingForm: boolean = false;
+  windowWidth: number = window.innerWidth;
+  isSmallDevice!: boolean;
+
+  created() {
+    this.isSmallDevice = (this.windowWidth < 1024);
+  }
+
+  mounted() {
+    this.$nextTick(() => {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      window.addEventListener('resize', this.updateWindowWidth);
+    }).catch(console.error);
+  }
+
+  beforeDestroy() {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    window.removeEventListener('resize', this.updateWindowWidth);
+  }
+
+  updateWindowWidth() {
+    this.windowWidth = window.innerWidth;
+  }
+
+  @Watch('windowWidth')
+  onWindowWidthChanged() {
+    this.isSmallDevice = (this.windowWidth < 1024);
+  }
 
   addParam() {
     this.params.push(
@@ -389,8 +437,9 @@ export default class APIParameters extends Vue.with(Props) {
         previewUrl += '&'
       }
     })
+    const searchRegExp = /\s/g;
 
-    return previewUrl.replace(' ', '%20');
+    return previewUrl.replace(searchRegExp, '%20');
   }
 
   fieldTypeUpdateDefaultValue(i: number) {
@@ -549,6 +598,11 @@ export default class APIParameters extends Vue.with(Props) {
   .data-type-field {
     border: 1px $primary solid;
     border-radius: 5px;
+  }
+
+  a {
+    text-decoration: none;
+    color: #333;
   }
 
 </style>

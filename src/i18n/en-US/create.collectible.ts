@@ -16,6 +16,11 @@ export default {
     errorTypeImage: 'file type not allowed, allowed types are PNG, JPEG, JPG.',
     btnCreate: 'Create item',
     requiredField: 'Required field',
+    collections: {
+      batchPrice: 'BATCH PRICE ($ {coin})',
+      remaining: 'REMAINING',
+      minted: 'MINTED'
+    },
     fields: {
       uploadLabel: 'Upload File',
       titleLabel: 'Title',

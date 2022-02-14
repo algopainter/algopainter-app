@@ -83,6 +83,7 @@ import AlgoPainterExpressionsProxy from 'src/eth/AlgoPainterExpressionsItemProxy
 import { NetworkInfo } from 'src/store/user/types';
 import { IGweiParsedItemParameters } from 'src/models/INewPaintingGwei';
 import Icon from './icon.vue';
+import { ICollection } from 'src/models/ICollection';
 
 class Props {
   collectionName = prop({
@@ -110,8 +111,10 @@ class Props {
       itemParametersExpressions: 'GET_EXPRESSIONS_ITEM_PARAMETERS',
       previewUrlGwei: 'GET_GWEI_PREVIEW_URL',
       previewUrlExpressions: 'GET_EXPRESSIONS_PREVIEW_URL',
+      previewUrlGeneric: 'GET_PREVIEW_URL',
       errorMessageGwei: 'GET_GWEI_ERROR_MESSAGE',
       errorMessageExpressions: 'GET_EXPRESSIONS_ERROR_MESSAGE',
+      collectionData: 'GET_COLLECTION_DATA',
     }),
   }
 })
@@ -134,6 +137,7 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   isError: boolean = false;
   errorMessage!: string;
 
+  collectionData!: ICollection;
   collectionImagePlaceholder!: string;
 
   isAwareOfFee: boolean = false;
@@ -142,8 +146,8 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   previewUrl?: string;
   previewUrlGwei?: string;
   previewUrlExpressions?: string;
+  previewUrlGeneric?: string;
   isPreviewUrlSet: boolean = false;
-
   isImgLoaded: boolean = false;
 
   artBasicInfo: IArtBasicInfo = {
@@ -162,7 +166,17 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   }
 
   mounted() {
-    this.collectionImagePlaceholder = (this.collectionName === 'gwei') ? 'img/hashly-gwei.svg' : 'img/manwithnoname.jpeg';
+    switch (this.collectionName) {
+      case 'gwei':
+        this.collectionImagePlaceholder = 'img/hashly-gwei.svg';
+        break;
+      case 'expressions':
+        this.collectionImagePlaceholder = 'img/manwithnoname.jpeg';
+        break;
+      default:
+        this.collectionImagePlaceholder = this.collectionData.avatar;
+    }
+
     this.setGweiSvgProperties();
   }
 
@@ -238,6 +252,14 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   onPreviewUrlExpressionChanged() {
     this.isPreviewUrlSet = true;
     this.previewUrl = this.previewUrlExpressions;
+
+    this.checkIfImgIsLoaded();
+  }
+
+  @Watch('previewUrlGeneric')
+  onPreviewUrlGenericChanged() {
+    this.isPreviewUrlSet = true;
+    this.previewUrl = this.previewUrlGeneric;
 
     this.checkIfImgIsLoaded();
   }

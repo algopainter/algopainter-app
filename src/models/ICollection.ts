@@ -1,10 +1,16 @@
+import { IFormParams, IFormCollectionInfo, IFormFixedParams } from './ICreatorCollection';
 export interface ICollection {
-  account: string;
-  avatar: string;
-  customURL: string;
+  _id: string;
   description: string;
   owner: string;
-  show: boolean;
   title: string;
-  _id: string;
+  avatar: string;
+  account: string;
+  customURL: string;
+  show: boolean;
+  namelc: string;
+  params: IFormParams[];
+  collectionInfo: IFormCollectionInfo;
+  fixedParams: IFormFixedParams[];
+  index: number;
 }

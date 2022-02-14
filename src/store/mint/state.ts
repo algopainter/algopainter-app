@@ -6,8 +6,6 @@ function state(): MintStateInterface {
       collectionInfo: undefined,
       itemParameters: undefined,
       previewUrl: undefined,
-      isPreviewing: false,
-      hasPreviewed: false,
       artBasicInfo: undefined,
       IPFSUrl: undefined,
       userConfirmations: undefined,
@@ -18,8 +16,6 @@ function state(): MintStateInterface {
       collectionInfo: undefined,
       itemParameters: undefined,
       previewUrl: undefined,
-      isPreviewing: false,
-      hasPreviewed: false,
       artBasicInfo: undefined,
       IPFSUrl: undefined,
       userConfirmations: undefined,
@@ -28,7 +24,14 @@ function state(): MintStateInterface {
     },
     formGenerator: {
       isCollectionExistent: false,
-      collectionParams: undefined
+      collectionData: undefined,
+      collectionInfo: undefined,
+      previewUrl: undefined,
+      artBasicInfo: undefined,
+      IPFSUrl: undefined,
+      userConfirmations: undefined,
+      isMinting: false,
+      errorMessage: undefined
     }
   };
 }

@@ -68,6 +68,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: i18n.global.t('dashboard.newPainting.title'),
         },
+        /*
         beforeEnter: (to, from, next) => {
           void myStore.dispatch({
             type: 'mint/isCollectionExistent',
@@ -77,6 +78,7 @@ const routes: RouteRecordRaw[] = [
             isCollectionExistent ? next() : next({ name: '404' });
           });
         },
+        */
       },
       {
         name: 'auction',

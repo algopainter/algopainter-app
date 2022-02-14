@@ -34,6 +34,19 @@ export interface IFormParams {
   defaultValue: string | number | boolean;
 }
 
+export interface IFormFixedParams {
+  name: string;
+  value: string;
+}
+
+export interface IFormCollectionInfo {
+  api: string;
+  isSpecialParamsChecked: boolean;
+  isSizeInUrlChecked: boolean;
+  width: string | number;
+  height: string | number;
+}
+
 export interface IGeneratedParams {
   [param: string]: string | number;
 }

@@ -32,13 +32,20 @@
         :max="Number(params[i].max)"
       />
     </div>
+    <algo-button
+      :label="$t('dashboard.newPainting.leftInfoBtnName')"
+      :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
+      color="primary"
+      @click.prevent="$emit('generatePreview', generatedParams)"
+    />
   </q-form>
 </template>
 
 <script lang="ts">
-import { Vue, prop } from 'vue-class-component';
+import { Options, Vue, prop } from 'vue-class-component';
 import { PropType } from 'vue';
 import { IFormParams } from 'src/models/ICreatorCollection'
+import AlgoButton from 'components/common/Button.vue';
 
 class Props {
   params = prop({
@@ -52,15 +59,18 @@ class Props {
   });
 }
 
+@Options({
+  components: {
+    AlgoButton
+  }
+})
 export default class FormPreviewer extends Vue.with(Props) {
     generatedParams: (number | string | boolean)[] = [];
 
     mounted() {
       this.generatedParams = this.defaultValues;
+      console.log('this.generatedParams', this.generatedParams);
     }
-
-    // params[i].fieldType === 'Checkbox' ? generatedParams[i] = false
-    // params[i].fieldType === 'Slider' ? generatedParams[i] = params[i].min
 
     type(i: number) {
       switch (this.params[i].dataType) {

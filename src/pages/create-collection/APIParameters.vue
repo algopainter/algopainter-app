@@ -270,7 +270,7 @@
 
 <script lang="ts">
 import { Vue, Options, prop } from 'vue-class-component';
-import { IFormParams, ICollectionNFTCreationAPI } from 'src/models/ICreatorCollection'
+import { IFormParams, ICollectionNFTCreationAPI, IFormFixedParams, IFormCollectionInfo } from 'src/models/ICreatorCollection';
 import FormPreviewer from './FormPreviewer.vue';
 import FormSelect from './FormSelect.vue';
 import { Watch } from 'vue-property-decorator';
@@ -302,7 +302,7 @@ export default class APIParameters extends Vue.with(Props) {
     artistName: QSelect;
   };
 
-  collectionInfo = {
+  collectionInfo: IFormCollectionInfo = {
     api: 'https://myapi.app/api/',
     isSpecialParamsChecked: false,
     isSizeInUrlChecked: false,
@@ -310,7 +310,7 @@ export default class APIParameters extends Vue.with(Props) {
     height: 400
   }
 
-  fixedParams = [
+  fixedParams: IFormFixedParams[] = [
     {
       name: 'fixed name',
       value: 'fixed value'

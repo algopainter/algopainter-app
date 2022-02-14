@@ -24,6 +24,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_GWEI_PREVIEW_URL', previewUrl);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_PREVIEW_URL', previewUrl);
+    } else {
+      this.commit('mint/SET_PREVIEW_URL', previewUrl);
     }
   },
 
@@ -107,15 +109,15 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     }
   },
 
-  async collectionParams(type, value) {
+  async collectionData(type, value) {
     const collectionName: string = value.collectionCustomUrl;
 
     try {
       const res = await api.get(`collections?namelc=${collectionName}`);
 
-      this.commit('mint/SET_COLLECTION_PARAMS', res);
+      this.commit('mint/SET_COLLECTION_DATA', res);
     } catch (e) {
-      console.log('Error message: mint/actions - collectionParams');
+      console.log('Error message: mint/actions - collectionData');
     }
   },
 };

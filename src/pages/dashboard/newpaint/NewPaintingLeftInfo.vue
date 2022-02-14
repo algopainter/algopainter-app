@@ -3,14 +3,16 @@
     v-if="params || defaultValues"
     :params="params"
     :default-values="defaultValues"
+    @generate-preview="GeneratePreview"
   />
 </template>
 
 <script lang="ts">
 import { Options, Vue, prop } from 'vue-class-component';
 import { mapGetters } from 'vuex';
-import FormGenerator from 'src/pages/create-collection/FormGenerator.vue'
-import { IFormParams } from 'src/models/ICreatorCollection'
+import FormGenerator from 'src/pages/create-collection/FormGenerator.vue';
+import { IFormParams } from 'src/models/ICreatorCollection';
+import { ICollection } from 'src/models/ICollection';
 
 class Props {
   collectionCustomUrl = prop({
@@ -25,32 +27,78 @@ class Props {
   },
   computed: {
     ...mapGetters('mint', {
-      collectionParams: 'GET_COLLECTION_PARAMS',
+      collectionData: 'GET_COLLECTION_DATA',
     }),
   }
 })
 export default class NewPaintingLeftInfo extends Vue.with(Props) {
-  collectionParams?: IFormParams[];
+  collectionData!: ICollection;
   params?: IFormParams[];
   defaultValues: (number | string | boolean)[] = [];
 
+  isErr: boolean = false;
+  errMsg: string = '';
+  isConfigured: boolean = false;
+
   created() {
-    // this.getCollectionParams().catch(console.error);
+    // this.getCollectionData().catch(console.error);
     this.mockedParams();
   }
 
-  async getCollectionParams() {
+  async getCollectionData() {
     await this.$store
       .dispatch({
-        type: 'mint/collectionParams',
+        type: 'mint/collectionData',
         collectionCustomUrl: this.collectionCustomUrl
       })
       .then(() => {
-        this.params = this.collectionParams;
+        this.params = this.collectionData?.params;
 
         this.params?.forEach((param, i) => {
           this.defaultValues[i] = param.defaultValue;
         });
+      })
+  }
+
+  GeneratePreview(generatedParams: (number | string | boolean)[]) {
+    this.isErr = false;
+    this.errMsg = '';
+
+    this.setPreviewUrl(this.previewUrl(generatedParams)).catch(console.error);
+  }
+
+  previewUrl(generatedParams: (number | string | boolean)[]) {
+    let previewUrl: string = this.collectionData.collectionInfo.api + '?';
+
+    if (!this.collectionData.collectionInfo.isSpecialParamsChecked) {
+      if (this.collectionData.collectionInfo.isSizeInUrlChecked) {
+        previewUrl += `size=${this.collectionData.collectionInfo.width}x${this.collectionData.collectionInfo.height}&`;
+      } else {
+        previewUrl += `width=${this.collectionData.collectionInfo.width}&height=${this.collectionData.collectionInfo.height}&`;
+      }
+    }
+
+    this.collectionData.fixedParams.forEach((param) => {
+      previewUrl += `${param.name}=${param.value.toString()}&`
+    })
+
+    this.collectionData.params.forEach((param, i) => {
+      previewUrl += `${param.name}=${generatedParams[i].toString()}`
+
+      if ((i + 1) !== this.collectionData.params.length) {
+        previewUrl += '&'
+      }
+    })
+    const searchRegExp = /\s/g;
+
+    return previewUrl.replace(searchRegExp, '%20');
+  }
+
+  async setPreviewUrl(previewUrl: string) {
+    await this.$store
+      .dispatch({
+        type: 'mint/previewUrl',
+        previewUrl: previewUrl
       })
   }
 

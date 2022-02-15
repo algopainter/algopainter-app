@@ -10,6 +10,7 @@
         stack-label
         :maxlength="params[i].maxLength"
         :type="type(i)"
+        :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
       />
       <q-select
         v-else-if="params[i].fieldType === 'Select'"
@@ -35,6 +36,7 @@
     <algo-button
       :label="$t('dashboard.newPainting.leftInfoBtnName')"
       :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
+      :disable="isEmptyFieldError"
       color="primary"
       @click.prevent="$emit('generatePreview', generatedParams)"
     />
@@ -46,6 +48,7 @@ import { Options, Vue, prop } from 'vue-class-component';
 import { PropType } from 'vue';
 import { IFormParams } from 'src/models/ICreatorCollection'
 import AlgoButton from 'components/common/Button.vue';
+import { Watch } from 'vue-property-decorator';
 
 class Props {
   params = prop({
@@ -57,6 +60,11 @@ class Props {
     type: Object as PropType<(number | string | boolean)[]>,
     required: true,
   });
+
+  clearForm = prop({
+    type: Boolean,
+    required: true,
+  });
 }
 
 @Options({
@@ -66,10 +74,22 @@ class Props {
 })
 export default class FormPreviewer extends Vue.with(Props) {
     generatedParams: (number | string | boolean)[] = [];
+    emptyFieldErrMsg: string = '';
+    isEmptyFieldError: boolean = false;
 
     mounted() {
+      this.setDefaultValues();
+    }
+
+    setDefaultValues() {
       this.generatedParams = this.defaultValues;
-      console.log('this.generatedParams', this.generatedParams);
+    }
+
+    @Watch('clearForm')
+    onClearFormChanged() {
+      if (this.clearForm) {
+        this.setDefaultValues();
+      }
     }
 
     type(i: number) {
@@ -91,6 +111,18 @@ export default class FormPreviewer extends Vue.with(Props) {
       }
 
       return markers;
+    }
+
+    validateIfEmpty(val: string) {
+      if (val === '') {
+        this.emptyFieldErrMsg = this.$t('dashboard.createCollection.stepThree.fieldRequired');
+      } else {
+        this.isEmptyFieldError = false;
+        return true;
+      }
+
+      this.isEmptyFieldError = true;
+      return false;
     }
 }
 </script>

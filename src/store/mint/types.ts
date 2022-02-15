@@ -24,6 +24,9 @@ export default interface MintStateInterface {
     errorMessage: string | undefined
   },
   formGenerator: {
+    collectionParams: undefined | IFormParams[],
+    collectionName: undefined | IFormParams[],
+    collections: undefined | IFormParams[]
     isCollectionExistent: boolean,
     collectionData: undefined | ICollection,
     collectionInfo: ICollectionInfo | undefined,
@@ -33,8 +36,5 @@ export default interface MintStateInterface {
     userConfirmations: boolean | undefined,
     isMinting: boolean,
     errorMessage: string | undefined,
-    collectionParams: undefined | IFormParams[],
-    collectionName: undefined | IFormParams[],
-    collections: undefined | IFormParams[]
   }
 }

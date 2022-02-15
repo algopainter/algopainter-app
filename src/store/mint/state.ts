@@ -23,6 +23,9 @@ function state(): MintStateInterface {
       errorMessage: undefined
     },
     formGenerator: {
+      collectionParams: undefined,
+      collectionName: undefined,
+      collections: undefined,
       isCollectionExistent: false,
       collectionData: undefined,
       collectionInfo: undefined,
@@ -32,9 +35,6 @@ function state(): MintStateInterface {
       userConfirmations: undefined,
       isMinting: false,
       errorMessage: undefined,
-      collectionParams: undefined,
-      collectionName: undefined,
-      collections: undefined,
     }
   };
 }

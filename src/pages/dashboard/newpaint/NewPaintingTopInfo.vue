@@ -50,7 +50,7 @@ class Props {
 }
 @Options({
   components: {
-    AlgoButton, 
+    AlgoButton,
   },
   computed: {
     ...mapGetters(
@@ -80,20 +80,31 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
 
   created() {
     if (this.isConnected) {
-      this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
-      this.collectionSystem = (this.collectionName === 'gwei')
-        ? new AlgoPainterGweiItemProxy(this.networkInfo)
-        : new AlgoPainterExpressionsProxy(this.networkInfo);
+      this.setProxy();
     }
   }
 
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
-      this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
-      this.collectionSystem = (this.collectionName === 'gwei')
-        ? new AlgoPainterGweiItemProxy(this.networkInfo)
-        : new AlgoPainterExpressionsProxy(this.networkInfo);
+      this.setProxy();
+    }
+  }
+
+  setProxy() {
+    this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
+
+    switch (this.collectionName) {
+      case 'gwei':
+        this.collectionSystem = new AlgoPainterGweiItemProxy(this.networkInfo);
+        break;
+      case 'expressions':
+        this.collectionSystem = new AlgoPainterExpressionsProxy(this.networkInfo);
+        /*
+        break;
+      default:
+        this.collectionSystem = newAlgoPainterGenericProxy(this.networkInfo);
+        */
     }
   }
 

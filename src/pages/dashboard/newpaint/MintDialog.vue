@@ -281,11 +281,12 @@ import { MintStatus } from 'src/models/IMint';
       'user', [
         'networkInfo',
         'account',
-        'isConnected',
+        'isConnected'
       ]),
     ...mapGetters('mint', {
       ipfsUrlGwei: 'GET_GWEI_IPFS_URL',
       ipfsUrlExpressions: 'GET_EXPRESSIONS_IPFS_URL',
+      ipfsUrlGeneric: 'GET_IPFS_URL'
     }),
   }
 })
@@ -295,9 +296,10 @@ export default class MintDialog extends Vue {
 
   MintStatus = MintStatus;
 
+  isIpfsUrlSet: boolean = false;
   ipfsUrlGwei!: string;
   ipfsUrlExpressions!: string;
-  isIpfsUrlSet: boolean = false;
+  ipfsUrlGeneric!: string;
 
   isAwareOfFee: boolean = false;
   hasCheckedRawFile: boolean = false;
@@ -313,12 +315,17 @@ export default class MintDialog extends Vue {
     this.isIpfsUrlSet = true;
   }
 
+  @Watch('ipfsUrlGeneric')
+  onIpfsUrlGenericChanged() {
+    this.isIpfsUrlSet = true;
+  }
+
   async updateMintingStatus() {
     await this.$store
       .dispatch({
         type: 'mint/mintingStatus',
         isMinting: false,
-        collectionName: this.collectionName,
+        collectionName: this.collectionName
       })
   }
 
@@ -327,7 +334,7 @@ export default class MintDialog extends Vue {
       .dispatch({
         type: 'mint/userConfirmations',
         userConfirmations: true,
-        collectionName: this.collectionName,
+        collectionName: this.collectionName
       })
   }
 

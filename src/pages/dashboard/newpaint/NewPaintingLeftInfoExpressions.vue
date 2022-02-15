@@ -389,7 +389,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('INVALID_AMOUNT') >= 0) {
-          this.$t('dashboard.newPainting.mintErrors.invalidAmount');
+          this.errorMessage = this.$t('dashboard.newPainting.mintErrors.invalidAmount');
           return;
         }
 
@@ -454,7 +454,6 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
       this.mintStatus = MintStatus.CollectingUserConfirmations;
     } catch (e) {
-      console.log(e);
       this.setModalInitialState().catch(console.error);
     }
   }

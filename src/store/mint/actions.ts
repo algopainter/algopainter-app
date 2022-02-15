@@ -13,6 +13,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_GWEI_COLLECTION_INFO', collectionInfo);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_COLLECTION_INFO', collectionInfo);
+    } else {
+      this.commit('mint/SET_COLLECTION_INFO', collectionInfo);
     }
   },
 
@@ -48,6 +50,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_GWEI_BASIC_INFO', artBasicInfo);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_BASIC_INFO', artBasicInfo);
+    } else {
+      this.commit('mint/SET_BASIC_INFO', artBasicInfo);
     }
   },
 
@@ -59,6 +63,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_GWEI_IPFS_URL', IPFSUrl);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_IPFS_URL', IPFSUrl);
+    } else {
+      this.commit('mint/SET_IPFS_URL', IPFSUrl);
     }
   },
 
@@ -70,6 +76,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_GWEI_USER_CONFIRMATIONS', userConfirmations);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_USER_CONFIRMATIONS', userConfirmations);
+    } else {
+      this.commit('mint/SET_USER_CONFIRMATIONS', userConfirmations);
     }
   },
 
@@ -81,6 +89,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_GWEI_IS_MINTING', isMinting);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_IS_MINTING', isMinting);
+    } else {
+      this.commit('mint/SET_IS_MINTING', isMinting);
     }
   },
 
@@ -92,6 +102,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_GWEI_ERROR_MESSAGE', errorMessage);
     } else if (collectionName === 'expressions') {
       this.commit('mint/SET_EXPRESSIONS_ERROR_MESSAGE', errorMessage);
+    } else {
+      this.commit('mint/SET_ERROR_MESSAGE', errorMessage);
     }
   },
 

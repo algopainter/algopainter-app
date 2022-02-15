@@ -43,3 +43,16 @@ export enum MintStatus{
   MintError,
   ItemMinted,
 }
+
+export interface IGenericPayload {
+  name: string,
+  description: string,
+  image: string,
+  previewImage: string,
+  collection: {
+    id: number,
+    name: string,
+  },
+  parameters: (number | string | boolean)[],
+  mintedBy: string,
+}

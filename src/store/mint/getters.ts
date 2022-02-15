@@ -55,21 +55,39 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_EXPRESSIONS_ERROR_MESSAGE(state: MintStateInterface): string | undefined {
     return state.expressions.errorMessage;
   },
+  GET_COLLECTION_NAME(state: MintStateInterface): IFormParams[] | undefined {
+    return state.formGenerator.collectionName;
+  },
+  GET_COLLECTIONS(state: MintStateInterface): IFormParams[] | undefined {
+    return state.formGenerator.collections;
+  },
   GET_IS_COLLECTION_EXISTENT(state: MintStateInterface): boolean {
     return state.formGenerator.isCollectionExistent;
   },
-  GET_COLLECTION_DATA(state: MintStateInterface): undefined | ICollection {
+  GET_COLLECTION_DATA(state: MintStateInterface): ICollection | undefined {
     return state.formGenerator.collectionData;
   },
-  GET_PREVIEW_URL(state: MintStateInterface): undefined | string {
+  GET_PREVIEW_URL(state: MintStateInterface): string | undefined {
     return state.formGenerator.previewUrl;
   },
-  GET_COLLECTION_NAME(state: MintStateInterface): undefined | IFormParams[] {
-    return state.formGenerator.collectionName;
+  GET_BASIC_INFO(state: MintStateInterface): IArtBasicInfo | undefined {
+    return state.formGenerator.artBasicInfo;
   },
-  GET_COLLECTIONS(state: MintStateInterface): undefined | IFormParams[] {
-    return state.formGenerator.collections;
+  GET_IPFS_URL(state: MintStateInterface): string | undefined {
+    return state.formGenerator.IPFSUrl;
   },
+  GET_IS_MINTING(state: MintStateInterface): boolean | undefined {
+    return state.formGenerator.isMinting;
+  },
+  GET_USER_CONFIRMATIONS(state: MintStateInterface): boolean | undefined {
+    return state.formGenerator.userConfirmations;
+  },
+  GET_ERROR_MESSAGE(state: MintStateInterface): string | undefined {
+    return state.formGenerator.errorMessage;
+  },
+  GET_COLLECTION_INFO(state: MintStateInterface): ICollectionInfo | undefined {
+    return state.formGenerator.collectionInfo;
+  }
 };
 
 export default getters;

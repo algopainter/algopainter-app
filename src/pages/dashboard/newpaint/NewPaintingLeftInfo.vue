@@ -3,8 +3,20 @@
     v-if="params || defaultValues"
     :params="params"
     :default-values="defaultValues"
+    :clear-form="clearForm"
     @generate-preview="GeneratePreview"
   />
+  <q-dialog
+    v-if="collectionData"
+    v-model="isMintDialogOpen"
+    persistent
+  >
+    <mint-dialog
+      :mint-status="mintStatus"
+      :collection-name="collectionData.title"
+      @request-close="onCloseStatusDialog"
+    />
+  </q-dialog>
 </template>
 
 <script lang="ts">
@@ -13,6 +25,11 @@ import { mapGetters } from 'vuex';
 import FormGenerator from 'src/pages/create-collection/FormGenerator.vue';
 import { IFormParams } from 'src/models/ICreatorCollection';
 import { ICollection } from 'src/models/ICollection';
+import { NetworkInfo } from 'src/store/user/types';
+import { ICollectionInfo, IArtBasicInfo, MintStatus, IGenericPayload } from 'src/models/IMint';
+import { Ref, Watch } from 'vue-property-decorator';
+import { QDialog } from 'quasar';
+import PinningServiceHelper from 'src/helpers/PinningServiceHelper';
 
 class Props {
   collectionCustomUrl = prop({
@@ -26,23 +43,95 @@ class Props {
     FormGenerator
   },
   computed: {
-    ...mapGetters('mint', {
-      collectionData: 'GET_COLLECTION_DATA',
-    }),
+    ...mapGetters(
+      'user', [
+        'networkInfo',
+        'account',
+        'isConnected'
+      ]),
+    ...mapGetters(
+      'mint', {
+        collectionData: 'GET_COLLECTION_DATA',
+        collectionInfo: 'GET_COLLECTION_INFO',
+        artBasicInfo: 'GET_BASIC_INFO',
+        userConfirmations: 'GET_USER_CONFIRMATIONS',
+        isMinting: 'GET_IS_MINTING'
+      }),
   }
 })
 export default class NewPaintingLeftInfo extends Vue.with(Props) {
+  isConnected!: boolean;
+  networkInfo!: NetworkInfo;
+  account!: string;
+  // genericSystem!: AlgoPainterGenericProxy;
+
+  collectionInfo!: ICollectionInfo;
+  artBasicInfo!: IArtBasicInfo;
+  userConfirmations!: boolean;
+  isMinting!: boolean;
+
+  mintStatus: MintStatus | null = null;
+  isMintDialogOpen: boolean = false;
+  @Ref() dialogRef!: QDialog;
+
   collectionData!: ICollection;
   params?: IFormParams[];
   defaultValues: (number | string | boolean)[] = [];
+  generatedParams!: (number | string | boolean)[];
+  descriptorIPFSHash!: string;
 
   isErr: boolean = false;
   errMsg: string = '';
   isConfigured: boolean = false;
+  clearForm: boolean = false;
 
   created() {
-    // this.getCollectionData().catch(console.error);
+    /*
+    this.getCollectionData().catch(console.error);
+    if (this.isConnected) {
+      this.genericSystem = new AlgoPainterGenericProxy(this.networkInfo);
+    }
+    */
     this.mockedParams();
+  }
+
+  /*
+  @Watch('isConnected')
+  onIsConnectedChanged() {
+    if (this.isConnected) {
+      this.genericSystem = new AlgoPainterGenericProxy(this.networkInfo);
+    }
+  }
+  */
+
+  mounted() {
+    this.checkIfConfigured();
+  }
+
+  checkIfConfigured() {
+    if (!this.isConfigured) {
+      this.setFormInitialState().catch(console.error);
+    }
+  }
+
+  async setFormInitialState() {
+    this.isConfigured = true;
+    this.isErr = false;
+    this.errMsg = '';
+
+    this.clearForm = true;
+
+    await this.$store
+      .dispatch({
+        type: 'mint/artBasicInfo',
+        artBasicInfo: undefined
+      })
+
+    await this.$store
+      .dispatch({
+        type: 'mint/IPFSUrl',
+        IPFSUrl: undefined
+      })
   }
 
   async getCollectionData() {
@@ -63,14 +152,16 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   GeneratePreview(generatedParams: (number | string | boolean)[]) {
     this.isErr = false;
     this.errMsg = '';
+    this.clearForm = false;
+    this.generatedParams = generatedParams;
 
     this.setPreviewUrl(this.previewUrl(generatedParams)).catch(console.error);
   }
 
-  previewUrl(generatedParams: (number | string | boolean)[]) {
+  previewUrl(generatedParams: (number | string | boolean)[], noSize = false) {
     let previewUrl: string = this.collectionData.collectionInfo.api + '?';
 
-    if (!this.collectionData.collectionInfo.isSpecialParamsChecked) {
+    if (!this.collectionData.collectionInfo.isSpecialParamsChecked && !noSize) {
       if (this.collectionData.collectionInfo.isSizeInUrlChecked) {
         previewUrl += `size=${this.collectionData.collectionInfo.width}x${this.collectionData.collectionInfo.height}&`;
       } else {
@@ -99,6 +190,198 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       .dispatch({
         type: 'mint/previewUrl',
         previewUrl: previewUrl
+      })
+  }
+
+  @Watch('isMinting')
+  onIsMintingChanged() {
+    if (this.isMinting) {
+      this.mint().catch(console.error);
+    }
+  }
+
+  async mint() {
+    try {
+      this.restoreDefault().catch(console.error);
+
+      // await this.genericSystem.callMint(this.generatedParams, this.collectionInfo.batchPriceBlockchain, '', this.account);
+    } catch (e: any) {
+      this.restoreDefault().catch(console.error);
+
+      this.isErr = true;
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      if (e.message && e.message.indexOf('ALREADY_REGISTERED') >= 0) {
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.alreadyMinted');
+        return;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      if (e.message && e.message.indexOf('PRICE_HAS_CHANGED') >= 0) {
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.priceChanged');
+        return;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      if (e.message && e.message.indexOf('INVALID_AMOUNT') >= 0) {
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.invalidAmount');
+        return;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
+      return;
+    }
+
+    try {
+      this.isMintDialogOpen = true;
+      let previewIPFSHash: string | undefined = '';
+      let rawIPFSHash: string | undefined = '';
+
+      this.mintStatus = MintStatus.GeneratingPreviewFile;
+
+      const previewPiningResult = await PinningServiceHelper.pinFile('Generic - Preview', 1, this.previewUrl(this.generatedParams, false));
+
+      previewIPFSHash = previewPiningResult.ipfsHash;
+
+      if (!previewIPFSHash) {
+        this.restoreDefault().catch(console.error);
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
+        return;
+      }
+
+      this.mintStatus = MintStatus.GeneratingRawFile;
+
+      const rawPiningResult = await PinningServiceHelper.pinFile('Generic - Preview', 1, this.previewUrl(this.generatedParams, true));
+      rawIPFSHash = rawPiningResult.ipfsHash;
+
+      if (!rawIPFSHash) {
+        this.restoreDefault().catch(console.error);
+        this.mintStatus = MintStatus.GeneratingRawFileError;
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
+        return;
+      }
+
+      this.mintStatus = MintStatus.GeneratingDescriptorFile;
+
+      const payload: IGenericPayload = {
+        name: this.artBasicInfo.name,
+        description: this.artBasicInfo.description,
+        image: `https://ipfs.io/ipfs/${rawIPFSHash}`,
+        previewImage: `https://ipfs.io/ipfs/${previewIPFSHash}`,
+        collection: {
+          id: this.collectionData.index,
+          name: this.collectionData.title,
+        },
+        parameters: this.generatedParams,
+        mintedBy: this.account,
+      };
+
+      const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
+      this.descriptorIPFSHash = (descriptorPinningResult.ipfsHash) ? descriptorPinningResult.ipfsHash : '';
+
+      if (!this.descriptorIPFSHash) {
+        this.restoreDefault().catch(console.error);
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
+        return;
+      }
+
+      this.setIPFSUrl(`https://ipfs.io/ipfs/${rawIPFSHash}`).catch(console.error);
+
+      this.mintStatus = MintStatus.CollectingUserConfirmations;
+    } catch (e) {
+      this.restoreDefault().catch(console.error);
+    }
+  }
+
+  @Watch('errMsg')
+  async onErrMsgChanged() {
+    await this.$store
+      .dispatch({
+        type: 'mint/errorMessage',
+        errorMessage: this.errMsg
+      })
+  }
+
+  async setIPFSUrl(IPFSUrl: string) {
+    await this.$store
+      .dispatch({
+        type: 'mint/IPFSUrl',
+        IPFSUrl: IPFSUrl
+      })
+  }
+
+  @Watch('userConfirmations')
+  onUserConfirmationsChanged() {
+    if (this.userConfirmations) {
+      this.finishMinting();
+    }
+  }
+
+  finishMinting() {
+    try {
+      this.isConfigured = false;
+      this.mintStatus = MintStatus.MintAwaitingInput;
+
+      /*
+      const result = this.genericSystem.mint(this.generatedParams, this.collectionInfo.batchPriceBlockchain, this.descriptorIPFSHash, this.account);
+
+      result.on('error', (error: any) => {
+        this.restoreDefault().catch(console.error);
+        this.mintStatus = MintStatus.MintError;
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: error });
+      }).catch(console.error);
+
+      result.on('transactionHash', () => {
+        this.mintStatus = MintStatus.MintAwaitingConfirmation;
+      }).catch(console.error);
+
+      result.on('confirmation', () => {
+        if (!this.isConfigured) {
+          this.mintStatus = MintStatus.ItemMinted;
+          this.setFormInitialState().catch(console.error);
+        };
+      }).catch(console.error);
+      */
+    } catch (e: any) {
+      this.mintStatus = MintStatus.MintError;
+      this.restoreDefault().catch(console.error);
+      this.isErr = true;
+
+      if (e.code === 4001) {
+        this.isErr = false;
+      } else {
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
+      }
+    }
+  }
+
+  onCloseStatusDialog() {
+    this.isMintDialogOpen = false;
+
+    if (this.mintStatus === MintStatus.ItemMinted) {
+      this.dialogRef.hide();
+    }
+  }
+
+  async restoreDefault() {
+    this.mintStatus = MintStatus.GeneratingPreviewFile;
+    this.isErr = false;
+    this.descriptorIPFSHash = '';
+
+    await this.$store
+      .dispatch({
+        type: 'mint/mintingStatus',
+        isMinting: false
+      })
+    await this.$store
+      .dispatch({
+        type: 'mint/userConfirmations',
+        userConfirmations: false
       })
   }
 
@@ -399,6 +682,22 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         min: 0,
         max: 9,
         defaultValue: false
+      },
+      {
+        name: 'Food',
+        label: 'food',
+        dataType: 'string',
+        maxLength: 64,
+        fieldType: 'Input Textfield',
+        options: [
+          {
+            label: 'option label',
+            value: 'option value'
+          }
+        ],
+        min: 0,
+        max: 9,
+        defaultValue: 'rice'
       },
       /*{
         name: 'Chemist',

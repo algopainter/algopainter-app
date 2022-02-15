@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { IExpressionsPayload } from 'src/models/INewPaintingExpressions';
+import { IGenericPayload } from 'src/models/IMint';
 
 export default class PinningServiceHelper {
   static async pinFile(name: string, collection: number, path: string) {
@@ -12,7 +13,7 @@ export default class PinningServiceHelper {
     return response.data as {error?: string, ipfsHash?: string};
   }
 
-  static async pinJSON(data: IExpressionsPayload) {
+  static async pinJSON(data: IExpressionsPayload | IGenericPayload) {
     const response = (process.env.VUE_APP_MS_IPFS_PINNER) ? await axios.post(process.env.VUE_APP_MS_IPFS_PINNER, data) : { data: '' };
 
     return response.data as {error?: string, ipfsHash?: string};

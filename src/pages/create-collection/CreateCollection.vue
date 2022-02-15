@@ -49,6 +49,7 @@
         </q-stepper-navigation>
       </template>
     </q-stepper>
+    <CollectionModal v-model="openModalCreate" />
   </div>
 </template>
 
@@ -67,12 +68,14 @@ import { isError } from 'src/helpers/utils';
 import UserController from 'src/controllers/user/UserController';
 import { IProfile } from 'src/models/IProfile';
 import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI } from 'src/models/ICreatorCollection';
+import CollectionModal from 'src/components/modal/CollectionModal.vue'
 
 @Options({
   components: {
     AboutTheCollection,
     CollectionMetrics,
     ApiParameters,
+    CollectionModal
   },
   computed: {
     ...mapGetters('user', {
@@ -92,6 +95,7 @@ export default class CreateCollection extends Vue {
 
   step: number = 1;
   isStepTwoDisabled: boolean = false;
+  openModalCreate: boolean = false;
 
   verifyFormOne: boolean = false;
   verifyFormTwo: boolean = false;
@@ -209,6 +213,7 @@ export default class CreateCollection extends Vue {
             if (this.isFormThreeVerified) {
               this.postCollection().catch(console.error);
               this.verifyFormThree = false;
+              this.openModalCreate = true;
             }
           }, 250)
       }

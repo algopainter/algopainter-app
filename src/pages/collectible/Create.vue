@@ -32,10 +32,10 @@
     </div>
     <div v-if="activeFormId === 'createWithArtist'" class="col q-mt-md">
       <div
-        v-for="(form, index) in formCollection"
+        v-for="(collection, index) in formCollection"
         :key="index"
       >
-        <collections :form="form" />
+        <collections :collection="collection" />
       </div>
       <!-- <div class="q-pa-md">
         <p class="row justify-center text-h5">

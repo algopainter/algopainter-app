@@ -68,7 +68,7 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
     return state.formGenerator.collectionData;
   },
   GET_PREVIEW_URL(state: MintStateInterface): string | undefined {
-    return state.formGenerator.previewUrl;
+    return state.formGenerator.previewUrl as string;
   },
   GET_BASIC_INFO(state: MintStateInterface): IArtBasicInfo | undefined {
     return state.formGenerator.artBasicInfo;

@@ -83,6 +83,19 @@
               </q-item-section>
             </q-item>
             <q-separator />
+            <q-item class="q-pl-none">
+              <q-item-section>
+                <div class="flex">
+                  <div
+                    class="text-bold cursor-pointer"
+                    @click="report"
+                  >
+                    {{ $t('dashboard.reportCollection') }}
+                  </div>
+                </div>
+              </q-item-section>
+            </q-item>
+            <q-separator />
             <q-item class="q-pa-none q-pt-md">
               <q-item-section>
                 <algo-button
@@ -207,6 +220,10 @@ export default class ProfileDropdownButton extends Vue {
     } else {
       await this.$router.push('/create-collection');
     }
+  }
+
+  async report() {
+    await this.$router.push('/report-collection')
   }
 }
 </script>

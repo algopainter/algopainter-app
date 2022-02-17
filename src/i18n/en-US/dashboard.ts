@@ -9,6 +9,7 @@ export default {
   buyToken: 'Buy {token}',
   editProfileTerm: 'Edit profile',
   registerCollection: 'Register algorithmic collection',
+  reportCollection: 'Report Collection',
   balance: 'Balance',
   algop: '$ALGOP',
   selectAlgoP: 'Select an AlgoPainter',
@@ -585,6 +586,11 @@ export default {
     error: 'An error occurred while unstaking',
     confirmWallet: 'Awaiting for the blockchain confirmation',
     stakeSucess: 'The unstake was done successfully.',
+  },
+
+  report: {
+    title: 'Report Collection',
+    fixedReport: 'Fixed report for 90 days'
   },
   createCollection: {
     title: 'Collection Registration',

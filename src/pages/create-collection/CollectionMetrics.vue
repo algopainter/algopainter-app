@@ -1,4 +1,5 @@
 <template>
+  <h5 class="text-bold">Metrics</h5>
   <div class="row">
     <div class="start-date col-6 q-pr-md">
       <p class="label">{{ $t('dashboard.createCollection.stepTwo.startDT') }}</p>

@@ -53,8 +53,9 @@ export interface IGeneratedParams {
 }
 
 export interface ICollectionNFTCreationAPI {
-  url: string;
-  parameters: any //JsonSchema
+  collectionInfo: IFormCollectionInfo;
+  fixedParams: IFormFixedParams[];
+  parameters: IFormParams[];
 }
 
 export interface IAboutTheCollection {
@@ -92,4 +93,10 @@ export interface ICollectionMetrics {
   priceRange: ICollectionMetricsPriceRange[];
   creatorPercentage: number;
   walletAddress: string;
+}
+
+export interface IcollectionData {
+  aboutTheCollection: IAboutTheCollection,
+  collectionMetrics: ICollectionMetrics,
+  apiParameters: ICollectionNFTCreationAPI
 }

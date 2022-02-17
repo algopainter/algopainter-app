@@ -5,7 +5,7 @@
       :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'q-pa-sm' : 'col-6 q-pa-sm']"
     >
       <q-form class="api-parameters">
-        <h4 class="q-mb-md">Collection Info</h4>
+        <h5 class="text-bold">Collection Information</h5>
         <q-input
           v-model.trim="collectionInfo.api"
           label="API"
@@ -46,7 +46,7 @@
             />
           </div>
         </div>
-        <h4 class="q-mb-md">Fixed Parameters</h4>
+        <h5 class="text-bold">Fixed Parameters</h5>
         <div
           v-for="(param, i) in fixedParams"
           :key="i"
@@ -92,7 +92,7 @@
           />
           Add fixed parameter
         </q-btn>
-        <h4 class="q-mb-md">Collection Parameters</h4>
+        <h5 class="text-bold">Collection Parameters</h5>
         <div
           v-for="(param, i) in params"
           :key="i"
@@ -214,40 +214,34 @@
             />
           </div>
         </div>
-        <div class="q-pt-md">
-          <q-checkbox
-            v-model="isFeeChecked"
-            color="primary"
-            :label="$t('dashboard.createCollection.stepThree.feeChecked', {fee: '0.1'})"
+        <q-btn
+          flat
+          class="q-mt-sm"
+          @click="addParam()"
+        >
+          <q-icon
+            name="add_circle"
+            color="grey-4"
+            size="30px"
           />
-          <q-checkbox
-            v-model="isPreviewUrlChecked"
-            color="primary"
-            :label="$t('dashboard.createCollection.stepThree.previewUrlChecked')"
-          />
-        </div>
+          Add parameter
+        </q-btn>
+        <q-checkbox
+          v-model="isPreviewUrlChecked"
+          :label="$t('dashboard.createCollection.stepThree.previewUrlChecked')"
+          class="q-pt-md"
+          color="primary"
+        />
         <q-input
           v-model="generatePreviewUrl"
           readonly
         >
         </q-input>
       </q-form>
-      <q-btn
-        flat
-        class="q-mt-sm"
-        @click="addParam()"
-      >
-        <q-icon
-          name="add_circle"
-          color="grey-4"
-          size="30px"
-        />
-        Add parameter
-      </q-btn>
     </div>
     <div
       v-if="isPreviewingForm || !isSmallDevice"
-      :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'q-pa-sm' : 'col-6 q-pa-sm']"
+      :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'q-pa-sm full-width' : 'col-6 q-pa-sm']"
     >
       <form-previewer :params="params" />
     </div>
@@ -345,7 +339,6 @@ export default class APIParameters extends Vue.with(Props) {
   ]
 
   isPreviewUrlChecked: boolean = false;
-  isFeeChecked: boolean = false;
   isError: boolean = false;
   isEmptyFieldError: boolean = false;
   errorMsg: string = '';
@@ -533,8 +526,6 @@ export default class APIParameters extends Vue.with(Props) {
 
     if (this.isEmptyFieldError) {
       this.errorMsg = this.$t('dashboard.createCollection.stepThree.emptyFieldError');
-    } else if (!this.isFeeChecked) {
-      this.errorMsg = this.$t('dashboard.createCollection.stepThree.feeError');
     } else if (!this.isPreviewUrlChecked) {
       this.errorMsg = this.$t('dashboard.createCollection.stepThree.previewUrlError');
     } else if (this.isMinMaxError) {
@@ -556,7 +547,8 @@ export default class APIParameters extends Vue.with(Props) {
     if (this.checkForm) {
       if (this.verifyForm()) {
         const data: ICollectionNFTCreationAPI = {
-          url: this.collectionInfo.api,
+          collectionInfo: this.collectionInfo,
+          fixedParams: this.fixedParams,
           parameters: this.params
         }
 

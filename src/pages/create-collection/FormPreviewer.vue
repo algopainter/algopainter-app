@@ -1,5 +1,5 @@
 <template>
-  <h4 class="q-mb-md">Form Preview</h4>
+  <h5 class="text-bold">Form Preview</h5>
   <q-form class="form-generator">
     <div v-for="(param, i) in params" :key="i">
       <p v-if="params[i].fieldType === 'Slider'" class="label">{{ params[i].label }}</p>

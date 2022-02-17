@@ -591,6 +591,7 @@ export default {
     stepOneTitle: 'About the Collection',
     stepTwoTitle: 'Collection Metrics',
     stepThreeTitle: 'API parameters',
+    stepFourTitle: 'Summary',
     hasNoProfile: 'To register a collection you need to create a profile.',
     aboutTheCollection: {
       about: 'About',
@@ -618,6 +619,7 @@ export default {
       dateMax: 'The maximum period to sell your collection is 90 days from the starting day',
       scheme: 'Pricing scheme',
       fixed: 'Fixed price',
+      token: 'Collection token',
       variable: 'Variable price',
       price: 'Price',
       creator: 'Creator royalties',
@@ -642,11 +644,9 @@ export default {
     stepThree: {
       previewUrl: '{url}',
       previewUrlChecked: 'I checked the preview url below and it is generating an art as expected!',
-      feeChecked: 'I am aware that I will be paying {fee} BNB to register this collection.',
       emptyFieldError: 'Please fill all fields before moving on!',
       fieldRequired: 'This field must be filled',
       previewUrlError: 'Please check the preview url before moving on!',
-      feeError: 'Please confirm that you are aware of the fees!',
       isPreview: 'Please check the preview url before moving on!',
       noParamsError: 'You need at least one parameter before moving on!',
       minError: 'Min cannot be greater than max field',
@@ -657,7 +657,16 @@ export default {
       hasSpecialParams: 'My collection does not take size params in the url',
       hasSizeInUrl: 'The url should contain a size param instead of width and heigth params',
       previewForm: 'Preview form',
+      url: 'Url',
       goBack: 'return'
+    },
+    stepFour: {
+      summary: 'Summary',
+      verify: 'Confirm that all field are correct',
+      feeChecked: 'I am aware that I will be paying {fee} BNB to register this collection.',
+      feeError: 'Please confirm that you are aware of the fee!',
+      formChecked: 'I checked the form and everything is correct.',
+      formError: 'Please confirm that the information in the form is correct!'
     }
   },
 };

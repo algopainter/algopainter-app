@@ -15,7 +15,6 @@
         icon="assignment"
         :done="step > 1"
       >
-        <h6 v-if="$q.screen.lt.sm || $q.screen.lt.md" class="title">{{ $t('dashboard.createCollection.stepOneTitle') }}</h6>
         <about-the-collection :step="step" :check-form="verifyFormOne" @data="storeData" @verifyFormOne="verifyStepOne" />
       </q-step>
 
@@ -25,7 +24,6 @@
         icon="multiline_chart"
         :done="step > 2"
       >
-        <h6 v-if="$q.screen.lt.sm || $q.screen.lt.md" class="title">{{ $t('dashboard.createCollection.stepTwoTitle') }}</h6>
         <collection-metrics :step="step" :check-form="verifyFormTwo" @data="storeData" @verify="verifyStepTwo" />
       </q-step>
 
@@ -35,13 +33,21 @@
         icon="auto_graph"
         :done="step > 3"
       >
-        <h6 v-if="$q.screen.lt.sm || $q.screen.lt.md" class="title">{{ $t('dashboard.createCollection.stepThreeTitle') }}</h6>
         <api-parameters :step="step" :check-form="verifyFormThree" @data="storeData" @verify="verifyStepThree" />
+      </q-step>
+
+      <q-step
+        :name="4"
+        :title="$t('dashboard.createCollection.stepFourTitle')"
+        icon="summarize"
+        :done="step > 4"
+      >
+        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" @data="storeData" @verify="verifyStepFour" />
       </q-step>
 
       <template #navigation>
         <q-stepper-navigation>
-          <q-btn color="primary" :disable="isStepTwoDisabled" :label="step === 3 ? 'Finish' : 'Continue'" @click="next()" />
+          <q-btn color="primary" :disable="isStepTwoDisabled" :label="step === 4 ? 'Finish' : 'Continue'" @click="next()" />
           <q-btn
             v-if="step > 1" flat color="primary" label="Back" class="q-ml-sm"
             @click="previous()"
@@ -49,7 +55,7 @@
         </q-stepper-navigation>
       </template>
     </q-stepper>
-    <CollectionModal v-model="openModalCreate" />
+    <collection-modal v-model="openModalCreate" />
   </div>
 </template>
 
@@ -58,6 +64,7 @@ import { Vue, Options } from 'vue-class-component';
 import AboutTheCollection from './AboutTheCollection.vue';
 import CollectionMetrics from './CollectionMetrics.vue';
 import ApiParameters from './APIParameters.vue';
+import CollectionSummary from './CollectionSummary.vue';
 import { Watch } from 'vue-property-decorator';
 import { api } from 'src/boot/axios';
 import { mapGetters } from 'vuex';
@@ -67,7 +74,7 @@ import Web3Helper from 'src/helpers/web3Helper';
 import { isError } from 'src/helpers/utils';
 import UserController from 'src/controllers/user/UserController';
 import { IProfile } from 'src/models/IProfile';
-import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI } from 'src/models/ICreatorCollection';
+import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI, IcollectionData } from 'src/models/ICreatorCollection';
 import CollectionModal from 'src/components/modal/CollectionModal.vue'
 
 @Options({
@@ -75,7 +82,8 @@ import CollectionModal from 'src/components/modal/CollectionModal.vue'
     AboutTheCollection,
     CollectionMetrics,
     ApiParameters,
-    CollectionModal
+    CollectionModal,
+    CollectionSummary
   },
   computed: {
     ...mapGetters('user', {
@@ -85,7 +93,6 @@ import CollectionModal from 'src/components/modal/CollectionModal.vue'
     }),
   },
   accountAddress: ['loadUserProfile'],
-
 })
 
 export default class CreateCollection extends Vue {
@@ -99,17 +106,23 @@ export default class CreateCollection extends Vue {
 
   verifyFormOne: boolean = false;
   verifyFormTwo: boolean = false;
+  verifyFormThree: boolean = false;
+  verifyFormFour: boolean = false;
   isFormOneVerified: boolean = false;
   isFormTwoVerified: boolean = false;
-  verifyFormThree: boolean = false;
   isFormThreeVerified: boolean = false;
+  isFormFourVerified: boolean = false;
   userController: UserController = new UserController();
   userProfile: IProfile = {};
 
-  collectionData = {
+  collectionData: IcollectionData = {
     aboutTheCollection: {} as IAboutTheCollection,
     collectionMetrics: {} as ICollectionMetrics,
     apiParameters: {} as ICollectionNFTCreationAPI,
+  }
+
+  mounted() {
+    void this.registerCollection();
   }
 
   @Watch('step')
@@ -121,10 +134,6 @@ export default class CreateCollection extends Vue {
       default:
         this.isStepTwoDisabled = false;
     }
-  }
-
-  mounted() {
-    void this.registerCollection();
   }
 
   get accountAddress() {
@@ -168,6 +177,11 @@ export default class CreateCollection extends Vue {
       this.verifyFormThree = false;
     }
 
+    verifyStepFour(payload: boolean) {
+      this.isFormFourVerified = payload;
+      this.verifyFormFour = false;
+    }
+
     storeData(data: any, step: number) {
       switch (step) {
         case 1:
@@ -190,13 +204,11 @@ export default class CreateCollection extends Vue {
         case 1:
           this.verifyFormOne = true;
           setTimeout(() => {
-            console.log('isFormTwoVerified', this.isFormOneVerified);
             if (this.isFormOneVerified) {
-              console.log('in');
               this.step++;
               this.verifyFormOne = false;
             }
-          }, 500)
+          }, 250)
           break;
         case 2:
           this.verifyFormTwo = true;
@@ -211,8 +223,17 @@ export default class CreateCollection extends Vue {
           this.verifyFormThree = true;
           setTimeout(() => {
             if (this.isFormThreeVerified) {
-              this.postCollection().catch(console.error);
+              this.step++;
               this.verifyFormThree = false;
+            }
+          }, 250)
+          break;
+        case 4:
+          this.verifyFormFour = true;
+          setTimeout(() => {
+            if (this.isFormFourVerified) {
+              this.postCollection().catch(console.error);
+              this.verifyFormFour = false;
               this.openModalCreate = true;
             }
           }, 250)
@@ -246,9 +267,7 @@ export default class CreateCollection extends Vue {
           salt: data.salt,
         };
 
-        const res = await api.post('collections', request);
-
-        console.log('res', res)
+        await api.post('collections', request);
       } catch (e) {
         this.$q.notify({
           type: 'negative',

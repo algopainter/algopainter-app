@@ -155,6 +155,13 @@ const routes: RouteRecordRaw[] = [
           title: i18n.global.t('dashboard.createCollection.title'),
         },
       },
+      {
+        path:'report-collection',
+        component: () => import('src/pages/dashboard/report-collection/ReportCollection.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.report.title'),
+        }
+      }
     ],
   },
 

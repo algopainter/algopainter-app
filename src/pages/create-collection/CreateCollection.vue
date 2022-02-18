@@ -55,7 +55,9 @@
         </q-stepper-navigation>
       </template>
     </q-stepper>
-    <collection-modal v-model="openModalCreate" />
+    <div class="flex">
+      <collection-modal v-model="openModalCreate" :status-data="statusData" :statusblock="statusblock" />
+    </div>
   </div>
 </template>
 
@@ -99,7 +101,8 @@ export default class CreateCollection extends Vue {
   isConnected?: boolean;
   userAccount!: string;
   networkinfo?: NetworkInfo;
-
+  statusData : string = '';
+  statusblock: string = '';
   step: number = 1;
   isStepTwoDisabled: boolean = false;
   openModalCreate: boolean = false;
@@ -241,6 +244,8 @@ export default class CreateCollection extends Vue {
     }
 
     async postCollection() {
+      this.statusData = 'aproved';
+      this.statusblock = 'aproved';
       try {
         const data = {
           title: this.collectionData.aboutTheCollection.nameCollection,
@@ -268,7 +273,11 @@ export default class CreateCollection extends Vue {
         };
 
         await api.post('collections', request);
+        this.statusData = 'confirme';
       } catch (e) {
+        this.statusData = 'error';
+        void this.createCollection()
+        // this.statusblock = 'error';
         this.$q.notify({
           type: 'negative',
           message: 'error mint image',
@@ -292,6 +301,22 @@ export default class CreateCollection extends Vue {
 
     previous() {
       this.step--;
+    }
+
+    createCollection() {
+      const wantToReject = false;
+      const timeToProcess = 3000;
+      const returnData : Record<string, string | number | boolean> = {
+        success: true
+      };
+      const mockPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (wantToReject) { reject(new Error('Promise rejected.')); }
+          resolve(returnData);
+          this.statusblock = 'error';
+          console.log('mockPromise', mockPromise);
+        }, timeToProcess);
+      });
     }
 }
 </script>

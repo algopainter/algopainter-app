@@ -73,4 +73,18 @@ export default {
       mintImageAvailable: 'YAY! Your artwork has been successfully minted.',
     }
   },
+  collectionModal:{
+    title: 'Create Collection',
+    approveSignature: 'Upload',
+    confirmeSignature: 'Upload complete! Thank you.',
+    errorSignature: 'The upload failed, try again'
+  },
+  createCollection:{
+    title: 'Create Collection',
+    approveContractApproved: 'Verifying if the contract is already approved.',
+    approveContractInput: 'Awaiting confirmation.',
+    approveContractError: 'Error in contract approval. Please try again.',
+    approveContractConfirmation: 'Contract successfully approved!',
+
+  }
 };

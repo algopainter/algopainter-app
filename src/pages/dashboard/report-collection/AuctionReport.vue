@@ -121,4 +121,5 @@ export default class AuctionReport extends Vue {
     background-color: #F4538D
     font-weight: bold
     text-align: center
+    color: white
 </style>

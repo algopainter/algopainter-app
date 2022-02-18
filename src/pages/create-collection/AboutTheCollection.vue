@@ -345,7 +345,7 @@ export default class AboutTheCollection extends Vue.with(Props) {
    }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .img{
   width: 210px;
   height: 210px;

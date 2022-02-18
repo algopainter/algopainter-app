@@ -105,5 +105,6 @@ columns = [
     background-color: #F4538D
     font-weight: bold
     text-align: center
+    color: white
 
 </style>

@@ -75,9 +75,9 @@ export default {
   },
   collectionModal:{
     title: 'Create Collection',
-    approveSignature: 'Signature',
-    confirmeSignature: 'Signature confirmation',
-    errorSignature: 'Error signature'
+    approveSignature: 'Upload',
+    confirmeSignature: 'Upload complete! Thank you.',
+    errorSignature: 'The upload failed, try again'
   },
   createCollection:{
     title: 'Create Collection',

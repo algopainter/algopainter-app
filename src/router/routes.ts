@@ -161,6 +161,13 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: i18n.global.t('dashboard.report.title'),
         }
+      },
+      {
+        path:'report-earnings',
+        component: () => import('src/components/home-page/ReportEarnings.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.reportEarnings.title'),
+        }
       }
     ],
   },

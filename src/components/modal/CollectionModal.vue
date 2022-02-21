@@ -37,7 +37,7 @@
             </div>
             <div class="label">
               <div class="title">
-                {{ $t('createCollectible.collectionModal.approveSignature') }}
+                {{ $t('createCollectible.createCollection.title') }}
               </div>
               <div>
                 {{ firstStepLabel }}
@@ -73,7 +73,7 @@
             </div>
             <div class="label">
               <div class="title">
-                {{ $t('createCollectible.createCollection.title') }}
+                {{ $t('createCollectible.collectionModal.approveSignature') }}
               </div>
               <div>
                 {{ scondStepLabel }}
@@ -120,13 +120,13 @@ export default class CollectionModal extends Vue.with(Props) {
     switch (this.statusData) {
       case 'aproved':
         return this.$t(
-          'createCollectible.collectionModal.approveSignature',
+          'createCollectible.createCollection.approveContractInput',
         );
       case 'confirme':
-        return this.$t('createCollectible.collectionModal.confirmeSignature');
+        return this.$t('createCollectible.createCollection.approveContractConfirmation');
       case 'error':
         return this.$t(
-          'createCollectible.collectionModal.errorSignature',
+          'createCollectible.createCollection.approveContractError',
         );
       default:
         return this.$t(
@@ -139,13 +139,13 @@ export default class CollectionModal extends Vue.with(Props) {
     switch (this.statusblock) {
       case 'aproved':
         return this.$t(
-          'createCollectible.createCollection.approveContractInput',
+          'createCollectible.collectionModal.approveSignature',
         );
       case 'confirme':
-        return this.$t('createCollectible.createCollection.approveContractConfirmation');
+        return this.$t('createCollectible.collectionModal.confirmeSignature');
       case 'error':
         return this.$t(
-          'createCollectible.createCollection.approveContractError',
+          'createCollectible.collectionModal.errorSignature',
         );
       default:
         return this.$t(

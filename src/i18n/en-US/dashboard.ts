@@ -82,6 +82,7 @@ export default {
     title: 'Gallery',
     publicTitle: 'Public profile',
     editAccount: 'Edit account',
+    earningsReport: 'Earnings Report',
     sendNewArt: 'Send New Art',
     items: 'Items',
     buyAlgop: 'Buy $ALGOP  ',
@@ -645,6 +646,9 @@ export default {
   report: {
     title: 'Report Collection',
     fixedReport: 'Fixed report for 90 days'
+  },
+  reportEarnings: {
+    title: 'Report Earnings',
   },
   createCollection: {
     title: 'Collection Registration',

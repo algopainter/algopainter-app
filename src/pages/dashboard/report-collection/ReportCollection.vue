@@ -25,7 +25,7 @@ interface itensReport {
 })
 
 export default class ReportCollection extends Vue {
-currentOptions: string = '';
+currentOptions?: string ;
 get options(): itensReport[] {
   return [
     {

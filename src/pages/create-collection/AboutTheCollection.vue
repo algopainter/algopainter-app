@@ -350,6 +350,7 @@ export default class AboutTheCollection extends Vue.with(Props) {
   width: 210px;
   height: 210px;
   border-radius: 50%;
+  // background-position: center
 }
 input[type='file'] {
   display: none;

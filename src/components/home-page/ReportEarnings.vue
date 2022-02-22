@@ -1,15 +1,21 @@
 <template>
-  <div class="q-pa-md row justify-center">
-    <q-table
-      :rows="collectionReport"
-      :columns="columns"
-      row-key="name"
-      class="table-auction-report"
-      hide-bottom
-      separator="vertical"
-      flat
-      bordered
-    />
+  <div>
+    <div v-if="haveEarnings" class="q-pa-md row justify-center">
+      <p>{{ $t('dashboard.reportEarnings.textEarnings') }}</p>
+      <q-table
+        :rows="collectionReport"
+        :columns="columns"
+        row-key="name"
+        class="table-auction-report"
+        hide-bottom
+        separator="vertical"
+        flat
+        bordered
+      />
+    </div>
+    <div v-else>
+      <p>{{ $t('dashboard.reportEarnings.noHaveEarnings') }}</p>
+    </div>
   </div>
 </template>
 
@@ -19,7 +25,8 @@ import moment from 'moment';
 import { IReportEarnings } from 'src/models/IReportEarnings';
 
 export default class ReportEarnings extends Vue {
- dataform: string = ''
+ dataform: string = '';
+ haveEarnings: boolean = false;
 
   collectionReport: IReportEarnings[]= [
     {

@@ -1,10 +1,16 @@
 <template>
   <div>
-    <q-btn v-for="option in options" :key="option" color="primary" class="btn-option" @click="currentOptions = option.to">
-      {{ option.label }}
-    </q-btn>
-    <p>{{ $t('dashboard.report.fixedReport') }}</p>
-    <component :is="currentOptions" class="row justify-center"></component>
+    <div v-if="havecollection">
+      <p>{{ $t('dashboard.report.textReport') }}</p>
+      <q-btn v-for="option in options" :key="option" color="primary" class="btn-option" @click="currentOptions = option.to">
+        {{ option.label }}
+      </q-btn>
+      <p>{{ $t('dashboard.report.fixedReport') }}</p>
+      <component :is="currentOptions" class="row justify-center"></component>
+    </div>
+    <div v-else>
+      <p>{{ $t('dashboard.report.noHaveCollection') }}</p>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -25,7 +31,8 @@ interface itensReport {
 })
 
 export default class ReportCollection extends Vue {
-currentOptions?: string ;
+currentOptions: string = '' ;
+havecollection: boolean = true;
 get options(): itensReport[] {
   return [
     {

@@ -645,10 +645,14 @@ export default {
 
   report: {
     title: 'Report Collection',
-    fixedReport: 'Fixed report for 90 days'
+    fixedReport: 'Fixed report for 90 days',
+    textReport: 'In this tab, you can track your earnings by minted images from your collection or by creator royalties from the auctioned arts.',
+    noHaveCollection:'You do not have earnings to track yet. How about promoting your collections and auctions?'
   },
   reportEarnings: {
     title: 'Report Earnings',
+    textEarnings: 'In this tab you can track your Auction, BidBack, PIRS earnings.',
+    noHaveEarnings: 'You have no earnings to track yet. Participate in an auction for BidBack and PIRS earnings, or create your own NFT and open the auction.'
   },
   createCollection: {
     title: 'Collection Registration',

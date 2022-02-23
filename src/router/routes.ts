@@ -5,14 +5,8 @@ import { myStore } from 'src/store';
 
 const routes: RouteRecordRaw[] = [
   {
-    name: 'landingPage',
-    path: '/landingpage',
-    component: () => import('pages/landing-page/LandingPage.vue'),
-  },
-  {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    redirect: { name: 'landingPage' },
     children: [
       {
         name: 'homePage',

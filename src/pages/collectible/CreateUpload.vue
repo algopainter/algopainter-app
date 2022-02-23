@@ -373,38 +373,34 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   }
 
   async mint() {
-    try {
-      if (this.responseMint) {
-        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
-        await this.personalItemContract.mint(
-          this.responseMint.data.name,
-          this.responseMint.data.rawImageHash,
-          this.responseMint.data.creatorRoyalty,
-          this.responseMint.tokenURI,
-          this.account,
-          this.mintValue
-        ).on('transactionHash', () => {
-          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
-        }).on('error', () => {
-          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
-          this.okBtnDisabled = false;
-          setTimeout(() => {
-            this.okBtnDisabled = false;
-          }, 1000);
-        }).catch(e => {
-          console.error(e);
-        });
-        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
+    if (this.responseMint) {
+      this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
+      await this.personalItemContract.mint(
+        this.responseMint.data.name,
+        this.responseMint.data.rawImageHash,
+        this.responseMint.data.creatorRoyalty,
+        this.responseMint.tokenURI,
+        this.account,
+        this.mintValue
+      ).on('transactionHash', () => {
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
+      }).on('error', () => {
+        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
+        this.okBtnDisabled = false;
         setTimeout(() => {
-          this.OpenModal = false;
           this.okBtnDisabled = false;
-          void this.$router.push('/my-gallery')
-        }, 3000);
-      } else {
-        throw new Error('NFT Mint information is missing.');
-      }
-    } catch (e) {
-      console.log('error mint', e);
+        }, 1000);
+      }).catch(e => {
+        console.error(e);
+      });
+      this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
+      setTimeout(() => {
+        this.OpenModal = false;
+        this.okBtnDisabled = false;
+        void this.$router.push('/my-gallery')
+      }, 3000);
+    } else {
+      throw new Error('NFT Mint information is missing.');
     }
   }
 

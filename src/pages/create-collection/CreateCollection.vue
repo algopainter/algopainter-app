@@ -56,7 +56,7 @@
       </template>
     </q-stepper>
     <div class="flex">
-      <collection-modal v-model="openModalCreate" :status-data="statusData" :statusblock="statusblock" />
+      <collection-modal v-model="openModalCreate" :status-data="statusData" :artist-collection-status="artistCollectionStatus" />
     </div>
   </div>
 </template>
@@ -78,6 +78,9 @@ import UserController from 'src/controllers/user/UserController';
 import { IProfile } from 'src/models/IProfile';
 import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI, IcollectionData } from 'src/models/ICreatorCollection';
 import CollectionModal from 'src/components/modal/CollectionModal.vue'
+import AlgoPainterArtistCollection, { PriceType, ArtistCollectionStatus } from 'src/eth/AlgoPainterArtistCollectionProxy'
+import moment from 'moment';
+import { toWei } from 'web3-utils'
 
 @Options({
   components: {
@@ -98,9 +101,12 @@ import CollectionModal from 'src/components/modal/CollectionModal.vue'
 })
 
 export default class CreateCollection extends Vue {
+  PriceType = PriceType;
   isConnected?: boolean;
   userAccount!: string;
   networkinfo?: NetworkInfo;
+  artistCollection = <AlgoPainterArtistCollection>{};
+  artistCollectionStatus: ArtistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
   statusData : string = '';
   statusblock: string = '';
   step: number = 1;
@@ -115,6 +121,7 @@ export default class CreateCollection extends Vue {
   isFormTwoVerified: boolean = false;
   isFormThreeVerified: boolean = false;
   isFormFourVerified: boolean = false;
+  networkInfo!: NetworkInfo;
   userController: UserController = new UserController();
   userProfile: IProfile = {};
 
@@ -122,6 +129,12 @@ export default class CreateCollection extends Vue {
     aboutTheCollection: {} as IAboutTheCollection,
     collectionMetrics: {} as ICollectionMetrics,
     apiParameters: {} as ICollectionNFTCreationAPI,
+  }
+
+  convertido: Date | string = '';
+
+  created() {
+    this.artistCollection = new AlgoPainterArtistCollection(this.networkInfo);
   }
 
   mounted() {
@@ -235,7 +248,8 @@ export default class CreateCollection extends Vue {
           this.verifyFormFour = true;
           setTimeout(() => {
             if (this.isFormFourVerified) {
-              this.postCollection().catch(console.error);
+              void this.createCollection()
+              // this.postCollection().catch(console.error);
               this.verifyFormFour = false;
               this.openModalCreate = true;
             }
@@ -303,20 +317,52 @@ export default class CreateCollection extends Vue {
       this.step--;
     }
 
-    createCollection() {
-      const wantToReject = false;
-      const timeToProcess = 3000;
-      const returnData : Record<string, string | number | boolean> = {
-        success: true
-      };
-      const mockPromise = new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (wantToReject) { reject(new Error('Promise rejected.')); }
-          resolve(returnData);
-          this.statusblock = 'error';
-          console.log('mockPromise', mockPromise);
-        }, timeToProcess);
-      });
+    priceType(type:string) {
+      if (type === 'fixed') {
+        return this.PriceType.Fixed
+      } else {
+        return this.PriceType.Variable
+      }
+    }
+
+    async createCollection() {
+      const priceblock: any[] = [];
+      const priceRange = this.collectionData.collectionMetrics.priceRange;
+      // eslint-disable-next-line array-callback-return
+      priceRange.map(price => {
+        priceblock.push(price.from);
+        priceblock.push(price.to);
+        priceblock.push(price.amount);
+      })
+      const startPrice = Number(priceblock[2])
+      const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
+      const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
+      const times = [startDT, endDT]
+      try {
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await this.artistCollection.createCollection(
+          this.collectionData.collectionMetrics.walletAddress,
+          times,
+          this.collectionData.aboutTheCollection.nameCollection,
+          this.collectionData.collectionMetrics.creatorPercentage,
+          startPrice,
+          this.collectionData.collectionMetrics.tokenPriceAddress as string,
+          this.priceType(this.collectionData.collectionMetrics.priceType),
+          this.collectionData.apiParameters.parameters.length,
+          priceblock,
+          this.collectionData.collectionMetrics.nfts,
+          toWei(await this.artistCollection.getCollectionPrice(), 'ether'),
+          this.userAccount
+        ).on('transactionHash', () => {
+          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation
+        }).on('error', () => {
+          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
+        })
+      } catch (err) {
+        console.log(err);
+      }
+      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated
     }
 }
 </script>

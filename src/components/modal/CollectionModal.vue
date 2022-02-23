@@ -12,14 +12,23 @@
           <div class="col-12 step">
             <div class="avatar">
               <q-avatar
-                v-if="statusData === 'aproved'"
+                v-if="artistCollectionStatus === ArtistCollectionStatus.ArtistCollectionAwaitingInput"
+                size="60px"
+                color="warning"
+                text-color="white"
+              >
+                <q-icon name="mdi-alert" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="artistCollectionStatus === ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation"
                 size="60px"
                 color="primary"
+                text-color="white"
               >
                 <q-spinner color="white" />
               </q-avatar>
               <q-avatar
-                v-else-if="statusData === 'error'"
+                v-else-if="artistCollectionStatus === ArtistCollectionStatus.ArtistCollectionError"
                 size="60px"
                 color="negative"
                 text-color="white"
@@ -27,7 +36,7 @@
                 <q-icon name="mdi-alert-circle" />
               </q-avatar>
               <q-avatar
-                v-else
+                v-else-if="artistCollectionStatus === ArtistCollectionStatus.ArtistCollectionCreated"
                 size="60px"
                 color="positive"
                 text-color="white"
@@ -97,7 +106,19 @@
 <script lang="ts">
 import { Vue, prop, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
+import { Prop } from 'vue-property-decorator';
 
+export enum ArtistCollectionStatus {
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  IncreateAllowanceCompleted,
+  ArtistCollectionAwaitingInput,
+  ArtistCollectionAwaitingConfirmation,
+  ArtistCollectionError,
+  ArtistCollectionCreated,
+}
 class Props {
 statusData = prop({
   type: String,
@@ -116,15 +137,17 @@ statusblock = prop({
   },
 })
 export default class CollectionModal extends Vue.with(Props) {
+  @Prop({ required: true }) artistCollectionStatus!: ArtistCollectionStatus
+  ArtistCollectionStatus = ArtistCollectionStatus;
   get firstStepLabel() {
-    switch (this.statusData) {
-      case 'aproved':
+    switch (this.artistCollectionStatus) {
+      case ArtistCollectionStatus.ArtistCollectionAwaitingInput:
         return this.$t(
           'createCollectible.createCollection.approveContractInput',
         );
-      case 'confirme':
+      case ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation:
         return this.$t('createCollectible.createCollection.approveContractConfirmation');
-      case 'error':
+      case ArtistCollectionStatus.ArtistCollectionError:
         return this.$t(
           'createCollectible.createCollection.approveContractError',
         );

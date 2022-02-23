@@ -38,13 +38,13 @@
       </div>
       <div class="row">
         <q-input
-          :model-value="collectionData.collectionMetrics.startDT"
+          :model-value="startDT"
           :label="$t('dashboard.createCollection.stepTwo.startDT')"
           class="col-6 q-pr-md"
           readonly
         />
         <q-input
-          :model-value="collectionData.collectionMetrics.endDT"
+          :model-value="endDT"
           :label="$t('dashboard.createCollection.stepTwo.endDT')"
           class="col-6 q-pl-md"
           readonly
@@ -206,10 +206,12 @@ export default class CollectionSummary extends Vue.with(Props) {
   errorMsg: string = '';
   isVerifyingTheForm: boolean = false;
   isPreviewingForm: boolean = false;
+  startDT: Date | string = '';
+  endDT?: Date | string;
 
   mounted() {
-    this.collectionData.collectionMetrics.startDT = moment(this.collectionData.collectionMetrics.startDT).format('MMMM Do YYYY, h:mm:ss a')
-    this.collectionData.collectionMetrics.endDT = moment(this.collectionData.collectionMetrics.endDT).format('MMMM Do YYYY, h:mm:ss a')
+    this.startDT = moment(this.collectionData.collectionMetrics.startDT).format('MMMM Do YYYY, h:mm:ss a')
+    this.endDT = moment(this.collectionData.collectionMetrics.endDT).format('MMMM Do YYYY, h:mm:ss a')
   }
 
   get generatePreviewUrl() {

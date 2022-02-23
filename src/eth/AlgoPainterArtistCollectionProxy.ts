@@ -1,10 +1,13 @@
-import { NetworkInfo } from "src/store/user/types";
-import { ContractMethod } from "./Web3Impl";
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { NetworkInfo } from 'src/store/user/types';
+import { ContractMethod } from './Web3Impl';
 import { AbiItem, toWei, fromWei, padLeft, asciiToHex } from 'web3-utils';
+import { ContractSendMethod } from 'web3-eth-contract';
 
 import AlgoPainterArtistCollectionABI from './AlgoPainterArtistCollection.json';
 import AlgoPainterArtistCollectionItemABI from './AlgoPainterArtistCollectionItem.json';
-import { getArtistCollectionAddress, getArtistCollectionItemAddress } from "./Config";
+import { getArtistCollectionAddress, getArtistCollectionItemAddress } from './Config';
 
 export enum PriceType {
   Fixed = 0,
@@ -43,7 +46,7 @@ export default class AlgoPainterArtistCollection {
         paramsCount: string, // 7
         prices: string[], // [ 1, 100, 1000, 101, 200, 2000 ]
         nfts: string // 1000
-      ): ContractMethod;
+      ): ContractSendMethod;
     };
   };
 
@@ -75,7 +78,8 @@ export default class AlgoPainterArtistCollection {
   }
 
   async getCollectionPrice() : Promise<string> {
-    const result = this.instance.methods.collectionPrice().call<any>();
+    const result = await this.instance.methods.collectionPrice().call<any>();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return fromWei(result.toString());
   }
 
@@ -85,10 +89,11 @@ export default class AlgoPainterArtistCollection {
 
   async getCountCollections(): Promise<string> {
     const result = await this.instance.methods.getAllowedTokens().call<any>();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return result.toString();
   }
 
-  async createCollection(
+  createCollection(
     walletAddress: string,
     timeRange: number[],
     name: string,
@@ -99,7 +104,8 @@ export default class AlgoPainterArtistCollection {
     paramsCount: number,
     prices: string[],
     nfts: number,
-    from: string
+    collectionPrice: string,
+    from: string,
   ) {
     return this.instance.methods.createCollection(
       walletAddress,
@@ -111,8 +117,8 @@ export default class AlgoPainterArtistCollection {
       priceType,
       paramsCount.toString(),
       prices,
-      nfts.toString()
-    ).send({ from, value: toWei(await this.getCollectionPrice()) });
+      nfts.toString(),
+    ).send({ from, value: collectionPrice });
   }
 
   async createCollectionCall(
@@ -190,4 +196,16 @@ export default class AlgoPainterArtistCollection {
       expectedValue
     ).call({ from });
   }
+}
+
+export enum ArtistCollectionStatus {
+  CheckingAllowance,
+  IncreateAllowanceAwaitingInput,
+  IncreateAllowanceAwaitingConfirmation,
+  IncreateAllowanceError,
+  IncreateAllowanceCompleted,
+  ArtistCollectionAwaitingInput,
+  ArtistCollectionAwaitingConfirmation,
+  ArtistCollectionError,
+  ArtistCollectionCreated,
 }

@@ -83,7 +83,7 @@ import AlgoPainterExpressionsProxy from 'src/eth/AlgoPainterExpressionsItemProxy
 import { NetworkInfo } from 'src/store/user/types';
 import { IGweiParsedItemParameters } from 'src/models/INewPaintingGwei';
 import Icon from './icon.vue';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 
 class Props {
   collectionName = prop({

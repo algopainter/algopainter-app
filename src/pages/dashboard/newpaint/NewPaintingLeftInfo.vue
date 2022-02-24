@@ -1,7 +1,7 @@
 <template>
   <form-generator
-    v-if="params || defaultValues"
-    :params="params"
+    v-if="params"
+    :form-params="formParams"
     :default-values="defaultValues"
     :clear-form="clearForm"
     @generate-preview="GeneratePreview"
@@ -24,16 +24,18 @@ import { Options, Vue, prop } from 'vue-class-component';
 import { mapGetters } from 'vuex';
 import FormGenerator from 'src/pages/create-collection/FormGenerator.vue';
 import { IFormParams } from 'src/models/ICreatorCollection';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import { NetworkInfo } from 'src/store/user/types';
 import { ICollectionInfo, IArtBasicInfo, MintStatus, IGenericPayload } from 'src/models/IMint';
 import { Ref, Watch } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import PinningServiceHelper from 'src/helpers/PinningServiceHelper';
+import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
+import { PropType } from 'vue';
 
 class Props {
-  collectionCustomUrl = prop({
-    type: String,
+  formParams = prop({
+    type: Object as PropType<IFormParams[]>,
     required: true,
   });
 }
@@ -63,7 +65,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   isConnected!: boolean;
   networkInfo!: NetworkInfo;
   account!: string;
-  // genericSystem!: AlgoPainterGenericProxy;
+  algoPainterArtistCollection!: AlgoPainterArtistCollection;
 
   collectionInfo!: ICollectionInfo;
   artBasicInfo!: IArtBasicInfo;
@@ -75,7 +77,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   @Ref() dialogRef!: QDialog;
 
   collectionData!: ICollection;
-  params?: IFormParams[];
+  params: IFormParams[] = [];
   defaultValues: (number | string | boolean)[] = [];
   generatedParams!: (number | string | boolean)[];
   descriptorIPFSHash!: string;
@@ -86,23 +88,18 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   clearForm: boolean = false;
 
   created() {
-    /*
-    this.getCollectionData().catch(console.error);
     if (this.isConnected) {
-      this.genericSystem = new AlgoPainterGenericProxy(this.networkInfo);
+      this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
     }
-    */
-    this.mockedParams();
+    // this.mockedParams();
   }
 
-  /*
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
-      this.genericSystem = new AlgoPainterGenericProxy(this.networkInfo);
+      this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
     }
   }
-  */
 
   mounted() {
     this.checkIfConfigured();
@@ -134,22 +131,16 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       })
   }
 
-  async getCollectionData() {
-    await this.$store
-      .dispatch({
-        type: 'mint/collectionData',
-        collectionCustomUrl: this.collectionCustomUrl
-      })
-      .then(() => {
-        this.params = this.collectionData?.params;
+  get paramsDefaultValues() {
+    this.params.forEach((param, i) => {
+      this.defaultValues[i] = param.defaultValue;
+    });
 
-        this.params?.forEach((param, i) => {
-          this.defaultValues[i] = param.defaultValue;
-        });
-      })
+    return this.defaultValues;
   }
 
   GeneratePreview(generatedParams: (number | string | boolean)[]) {
+    console.log('generatedParams', generatedParams);
     this.isErr = false;
     this.errMsg = '';
     this.clearForm = false;

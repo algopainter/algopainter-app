@@ -1,6 +1,6 @@
 import { ICollectionInfo, IArtBasicInfo } from 'src/models/IMint';
 import { IGweiParsedItemParameters } from 'src/models/INewPaintingGwei';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import { IFormParams } from 'src/models/ICreatorCollection';
 export default interface MintStateInterface {
   gwei: {

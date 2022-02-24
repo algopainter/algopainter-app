@@ -1,36 +1,36 @@
 <template>
   <h4 class="q-mb-md">Form Generator</h4>
   <q-form class="form-generator">
-    <div v-for="(param, i) in params" :key="i">
-      <p v-if="params[i].fieldType === 'Slider'" class="label">{{ params[i].label }}</p>
+    <div v-for="(param, i) in formParams" :key="i">
+      <p v-if="formParams[i].fieldType === 'Slider'" class="label">{{ formParams[i].label }}</p>
       <q-input
-        v-if="params[i].fieldType === 'Input Textfield'"
+        v-if="formParams[i].fieldType === 'Input Textfield'"
         v-model="generatedParams[i]"
-        :label="params[i].label"
+        :label="formParams[i].label"
         stack-label
-        :maxlength="params[i].maxLength"
+        :maxlength="formParams[i].maxLength"
         :type="type(i)"
         :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
       />
       <q-select
-        v-else-if="params[i].fieldType === 'Select'"
+        v-else-if="formParams[i].fieldType === 'Select'"
         v-model="generatedParams[i]"
-        :label="params[i].label"
+        :label="formParams[i].label"
         stack-label
-        :options="params[i].options"
+        :options="formParams[i].options"
       />
       <q-checkbox
-        v-else-if="params[i].fieldType === 'Checkbox'"
+        v-else-if="formParams[i].fieldType === 'Checkbox'"
         v-model="generatedParams[i]"
-        :label="params[i].label"
+        :label="formParams[i].label"
       />
       <q-slider
-        v-else-if="params[i].fieldType === 'Slider'"
+        v-else-if="formParams[i].fieldType === 'Slider'"
         v-model="generatedParams[i]"
         label
         :marker-labels="setMarkers(i)"
-        :min="Number(params[i].min)"
-        :max="Number(params[i].max)"
+        :min="Number(formParams[i].min)"
+        :max="Number(formParams[i].max)"
       />
     </div>
     <algo-button
@@ -51,7 +51,7 @@ import AlgoButton from 'components/common/Button.vue';
 import { Watch } from 'vue-property-decorator';
 
 class Props {
-  params = prop({
+  formParams = prop({
     type: Object as PropType<IFormParams[]>,
     required: true,
   });
@@ -93,7 +93,7 @@ export default class FormPreviewer extends Vue.with(Props) {
     }
 
     type(i: number) {
-      switch (this.params[i].dataType) {
+      switch (this.formParams[i].dataType) {
         case 'string':
           return 'text';
         case 'number':
@@ -104,8 +104,8 @@ export default class FormPreviewer extends Vue.with(Props) {
     setMarkers(i: number) {
       let markers!: [{ value: number, label: string }];
 
-      for (let iteration: number = Number(this.params[i].min); iteration <= Number(this.params[i].max); iteration++) {
-        iteration === Number(this.params[i].min)
+      for (let iteration: number = Number(this.formParams[i].min); iteration <= Number(this.formParams[i].max); iteration++) {
+        iteration === Number(this.formParams[i].min)
           ? markers = [{ value: iteration, label: iteration.toString() }]
           : markers.push({ value: iteration, label: iteration.toString() });
       }

@@ -1,8 +1,9 @@
 <template>
-  <new-painting-top-info
+  <!-- <new-painting-top-info
     :collection-name="collectionCustomUrl"
     :collection-token="collectionToken"
-  />
+    :collection-id="collectionId"
+  /> -->
   <div
     id="new-painting"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? '' : 'row']"
@@ -20,15 +21,15 @@
       />
       <new-painting-left-info
         v-else
-        :collection-custom-url="collectionCustomUrl"
+        :form-params="formParams"
       />
     </div>
     <div
       :class="'col-5 new-painting-right-info'"
     >
-      <new-painting-right-info
+      <!-- <new-painting-right-info
         :collection-name="collectionCustomUrl"
-      />
+      /> -->
     </div>
   </div>
 </template>
@@ -40,6 +41,8 @@ import NewPaintingLeftInfoExpressions from './NewPaintingLeftInfoExpressions.vue
 import NewPaintingLeftInfoGwei from './NewPaintingLeftInfoGwei.vue';
 import NewPaintingRightInfo from './NewPaintingRightInfo.vue';
 import NewPaintingLeftInfo from './NewPaintingLeftInfo.vue';
+import ICollection from 'src/models/ICollection';
+import { IFormParams } from 'src/models/ICreatorCollection';
 
 @Options({
   components: {
@@ -53,9 +56,13 @@ import NewPaintingLeftInfo from './NewPaintingLeftInfo.vue';
 export default class NewPainting extends Vue {
   collectionCustomUrl !: string | string[];
   collectionToken?: string;
+  collectionInfo!: ICollection;
+  formParams: IFormParams[] = [];
+  collectionId!: string;
 
-  created() {
+  async created() {
     this.getCollectionCustomUrl();
+    await this.getCollectionData();
   }
 
   getCollectionCustomUrl() {
@@ -63,7 +70,21 @@ export default class NewPainting extends Vue {
     this.collectionCustomUrl = collection;
     this.collectionToken = (this.collectionCustomUrl === 'gwei') ? 'ALGOP' : 'BNB';
   }
+
+  async getCollectionData() {
+    await this.$store
+      .dispatch({
+        type: 'mint/collectionData',
+        collectionCustomUrl: this.collectionCustomUrl
+      }).then(() => {
+        const res = this.$store.getters['mint/GET_COLLECTION_DATA'] as ICollection;
+
+        this.formParams = res.api.parameters;
+        this.collectionId = res.blockchainId;
+      });
+  }
 }
+
 </script>
 
 <style lang="scss" scoped>

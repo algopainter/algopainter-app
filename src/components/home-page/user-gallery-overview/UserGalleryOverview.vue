@@ -235,7 +235,7 @@ import AlgoButton from 'components/common/Button.vue';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import { IMyGallery } from 'src/models/IMyGallery';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';

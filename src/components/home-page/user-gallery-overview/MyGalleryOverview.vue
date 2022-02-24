@@ -348,7 +348,7 @@ import { Watch } from 'vue-property-decorator';
 import AlgoButton from 'components/common/Button.vue';
 import IGalleryTab from 'src/models/IGalleryTab';
 import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import GallerySelect from './GallerySelect.vue';

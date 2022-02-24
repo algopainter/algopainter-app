@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import { IImage } from 'src/models/IImage';
 import BaseController from '../BaseController';
 import Collections from 'src/data/Collections.json';

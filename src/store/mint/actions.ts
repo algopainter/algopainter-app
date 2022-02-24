@@ -127,7 +127,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     try {
       const res = await api.get(`collections?namelc=${collectionName}`);
 
-      this.commit('mint/SET_COLLECTION_DATA', res);
+      this.commit('mint/SET_COLLECTION_DATA', res.data[0]);
     } catch (e) {
       console.log('Error message: mint/actions - collectionData');
     }

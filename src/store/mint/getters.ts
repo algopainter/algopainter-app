@@ -3,7 +3,7 @@ import { StateInterface } from '..';
 import MintStateInterface from './types';
 import { ICollectionInfo, IArtBasicInfo } from 'src/models/IMint';
 import { IGweiParsedItemParameters } from 'src/models/INewPaintingGwei';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import { IFormParams } from 'src/models/ICreatorCollection';
 
 const getters: GetterTree<MintStateInterface, StateInterface> = {
@@ -65,7 +65,7 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
     return state.formGenerator.isCollectionExistent;
   },
   GET_COLLECTION_DATA(state: MintStateInterface): ICollection | undefined {
-    return state.formGenerator.collectionData;
+    return state.formGenerator.collectionData as ICollection;
   },
   GET_PREVIEW_URL(state: MintStateInterface): string | undefined {
     return state.formGenerator.previewUrl as string;

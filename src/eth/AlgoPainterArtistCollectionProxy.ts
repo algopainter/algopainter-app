@@ -149,7 +149,9 @@ export default class AlgoPainterArtistCollection {
   }
 
   async getCollectionTokens(collectionId: string): Promise<string[]> {
+    console.log('getCollectionTokens', collectionId);
     const result = await this.instanceItem.methods.getCollectionTokens(collectionId).call<any[]>();
+    console.log('result', result);
     return result.map(a => a.toString());
   }
 

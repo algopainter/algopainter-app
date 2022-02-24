@@ -381,18 +381,18 @@ export default class CollectionMetrics extends Vue.with(Props) {
   priceAmountErrMsg: string = '';
   isPriceRangeLimitMsgShown: boolean = false;
 
-  created() {
+  async created() {
     if (this.isConnected) {
       this.artistCollection = new AlgoPainterArtistCollection(this.networkInfo);
-      this.loadAvailableTokens().catch(console.error);
+      await this.loadAvailableTokens();
     }
   }
 
   @Watch('isConnected')
-  onIsConnectedChanged() {
+  async onIsConnectedChanged() {
     if (this.isConnected) {
       this.artistCollection = new AlgoPainterArtistCollection(this.networkInfo);
-      void this.loadAvailableTokens().catch(console.error);
+      await this.loadAvailableTokens();
     }
   }
 

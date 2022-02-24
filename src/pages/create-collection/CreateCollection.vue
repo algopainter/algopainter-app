@@ -56,7 +56,7 @@
       </template>
     </q-stepper>
     <div class="flex">
-      <collection-modal v-model="openModalCreate" :status-data="statusData" :artist-collection-status="artistCollectionStatus" />
+      <collection-modal v-model="openModalCreate" :status-data="statusData" :artist-collection-status="artistCollectionStatus" :ok-btn-disabled="okBtnDisabled" />
     </div>
   </div>
 </template>
@@ -107,7 +107,7 @@ export default class CreateCollection extends Vue {
   networkinfo?: NetworkInfo;
   artistCollection = <AlgoPainterArtistCollection>{};
   artistCollectionStatus: ArtistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
-  statusData : string = '';
+  statusData : string = 'Awaiting';
   statusblock: string = '';
   step: number = 1;
   isStepTwoDisabled: boolean = false;
@@ -121,6 +121,9 @@ export default class CreateCollection extends Vue {
   isFormTwoVerified: boolean = false;
   isFormThreeVerified: boolean = false;
   isFormFourVerified: boolean = false;
+  okBtnDisabled: boolean = true;
+  collectionId!: string;
+  hasCollection: boolean = false;
   networkInfo!: NetworkInfo;
   userController: UserController = new UserController();
   userProfile: IProfile = {};
@@ -259,15 +262,10 @@ export default class CreateCollection extends Vue {
 
     async postCollection() {
       this.statusData = 'aproved';
-      this.statusblock = 'aproved';
       try {
         const data = {
-          title: this.collectionData.aboutTheCollection.nameCollection,
           description: this.collectionData.aboutTheCollection.description,
-          owner: this.collectionData.aboutTheCollection.artistName,
           avatar: this.collectionData.aboutTheCollection.avatar,
-          account: this.userAccount,
-          metrics: this.collectionData.collectionMetrics,
           api: this.collectionData.apiParameters,
           salt: nanoid(),
         };
@@ -286,32 +284,31 @@ export default class CreateCollection extends Vue {
           salt: data.salt,
         };
 
-        await api.post('collections', request);
+        await api.patch(`collections/${this.collectionId}`, request);
         this.statusData = 'confirme';
+        this.okBtnDisabled = false;
       } catch (e) {
         this.statusData = 'error';
-        void this.createCollection()
-        // this.statusblock = 'error';
         this.$q.notify({
           type: 'negative',
-          message: 'error mint image',
+          message: 'Error no Upload',
         });
       }
     }
 
-    async post(url: string, data: any) {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    // async post(url: string, data: any) {
+    //   const response = await fetch(url, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-type': 'application/json'
+    //     },
+    //     body: JSON.stringify(data)
+    //   });
 
-      const resData = await response.json();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return resData;
-    }
+    //   const resData = await response.json();
+    //   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    //   return resData;
+    // }
 
     previous() {
       this.step--;
@@ -347,22 +344,35 @@ export default class CreateCollection extends Vue {
           this.collectionData.aboutTheCollection.nameCollection,
           this.collectionData.collectionMetrics.creatorPercentage,
           startPrice,
-          this.collectionData.collectionMetrics.tokenPriceAddress as string,
-          this.priceType(this.collectionData.collectionMetrics.priceType),
-          this.collectionData.apiParameters.parameters.length,
-          priceblock,
-          this.collectionData.collectionMetrics.nfts,
-          toWei(await this.artistCollection.getCollectionPrice(), 'ether'),
-          this.userAccount
+        this.collectionData.collectionMetrics.tokenPriceAddress as string,
+        this.priceType(this.collectionData.collectionMetrics.priceType),
+        this.collectionData.apiParameters.parameters.length,
+        priceblock,
+        this.collectionData.collectionMetrics.nfts,
+        toWei(await this.artistCollection.getCollectionPrice(), 'ether'),
+        this.userAccount
         ).on('transactionHash', () => {
           this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation
+        }).on('receipt', (receipt): void => {
+          if (receipt.events) {
+            this.collectionId = receipt.events.CollectionCreated.returnValues.index
+            console.log('collection id', this.collectionId)
+          }
         }).on('error', () => {
           this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
+          this.okBtnDisabled = false;
         })
       } catch (err) {
         console.log(err);
       }
       this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated
+      while (this.hasCollection === false) {
+        const teste = await api.get(`collections?blockchainId=${this.collectionId}`);
+        this.hasCollection = teste.data.length !== 0;
+      }
+      if (this.hasCollection) {
+        void this.postCollection()
+      }
     }
 }
 </script>

@@ -76,6 +76,7 @@ export default {
   collectionModal:{
     title: 'Create Collection',
     approveSignature: 'Upload',
+    Awaiting: 'Upload',
     confirmeSignature: 'Upload complete! Thank you.',
     errorSignature: 'The upload failed, try again'
   },
@@ -84,7 +85,7 @@ export default {
     approveContractApproved: 'Verifying if the contract is already approved.',
     approveContractInput: 'Awaiting confirmation.',
     approveContractError: 'Error in contract approval. Please try again.',
-    approveContractConfirmation: 'Contract successfully approved!',
+    approveContractConfirmation: 'Awaiting confirmation.',
 
   }
 };

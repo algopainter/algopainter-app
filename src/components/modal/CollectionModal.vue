@@ -56,7 +56,15 @@
           <div class="col-12 step">
             <div class="avatar">
               <q-avatar
-                v-if="statusblock === 'aproved'"
+                v-if="statusData === 'Awaiting'"
+                size="60px"
+                color="warning"
+                text-color="white"
+              >
+                <q-icon name="mdi-alert" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="statusData === 'aproved'"
                 size="60px"
                 color="primary"
                 text-color="white"
@@ -64,7 +72,7 @@
                 <q-spinner color="white" />
               </q-avatar>
               <q-avatar
-                v-else-if="statusblock === 'error'"
+                v-else-if="statusData === 'error'"
                 size="60px"
                 color="negative"
                 text-color="white"
@@ -95,6 +103,7 @@
         <algo-button
           v-close-popup
           class="btn"
+          :disabled="okBtnDisabled"
           :label="$t('dashboard.auctionPage.okButton')"
           color="primary"
         />
@@ -129,6 +138,11 @@ statusblock = prop({
   type: String,
   required: true,
 })
+
+okBtnDisabled = prop({
+  type: Boolean,
+  required: true,
+})
 }
 
 @Options({
@@ -159,7 +173,11 @@ export default class CollectionModal extends Vue.with(Props) {
   }
 
   get scondStepLabel() {
-    switch (this.statusblock) {
+    switch (this.statusData) {
+      case 'Awaiting':
+        return this.$t(
+          'createCollectible.collectionModal.Awaiting',
+        );
       case 'aproved':
         return this.$t(
           'createCollectible.collectionModal.approveSignature',

@@ -83,7 +83,7 @@
               </q-item-section>
             </q-item>
             <q-separator />
-            <q-item class="q-pl-none">
+            <q-item v-if="collectionOwner" class="q-pl-none">
               <q-item-section>
                 <div class="flex">
                   <div
@@ -125,6 +125,7 @@ import UserUtils from 'src/helpers/user';
 import UserController from 'src/controllers/user/UserController';
 import { IProfile } from 'src/models/IProfile';
 import { Watch } from 'vue-property-decorator';
+import { api } from 'src/boot/axios';
 
 @Options({
   components: {
@@ -143,6 +144,7 @@ export default class ProfileDropdownButton extends Vue {
   userProfile: IProfile = {};
 
   userController: UserController = new UserController();
+  collectionOwner: boolean = false;
 
   get accountAddress() {
     return this.$store.state.user.account;
@@ -155,6 +157,7 @@ export default class ProfileDropdownButton extends Vue {
   mounted() {
     void this.loadUserProfile();
     void this.setAccountBalance();
+    void this.reportCollection()
   }
 
   get isConnected() {
@@ -166,12 +169,14 @@ export default class ProfileDropdownButton extends Vue {
   onIsConnectedChanged() {
     if (this.isConnected) {
       void this.setAccountBalance();
+      void this.reportCollection()
     }
   }
 
   @Watch('accountAddress')
   onPropertyChanged() {
     void this.loadUserProfile();
+    void this.reportCollection()
   }
 
   async setAccountBalance() {
@@ -224,6 +229,16 @@ export default class ProfileDropdownButton extends Vue {
 
   async report() {
     await this.$router.push('/report-collection')
+  }
+
+  async reportCollection() {
+    const accountAddress = this.accountAddress?.toLowerCase() as string;
+    const result = await api.get(`collections?owner=${accountAddress}`);
+    if (result.data.length > 0) {
+      this.collectionOwner = true;
+    } else {
+      this.collectionOwner = false;
+    }
   }
 }
 </script>

@@ -88,6 +88,9 @@
           :key="range.from"
           class="q-pa-md q-my-md variable-card"
         >
+          <p class="label">
+            {{ $t('dashboard.createCollection.stepTwo.priceRangeCounter', {num: i + 1}) }}
+          </p>
           <div class="row">
             <q-input
               :model-value="collectionData.collectionMetrics.priceRange[i].from"
@@ -278,4 +281,11 @@ export default class CollectionSummary extends Vue.with(Props) {
     height: 210px;
     border-radius: 50%;
   }
+
+  .label {
+    font-weight: 400;
+    margin: 0 0 10px 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
 </style>

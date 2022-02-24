@@ -18,60 +18,6 @@ export default {
   commingSoon: 'For now, there are no auctions available. Stay tuned they will soon show up here!',
   sellerSoon: 'Nothing around here yet, but we will see the top sellers here soon!',
   buyerSoon: 'Nothing around here yet, but we will see the top buyers here soon!',
-  landingPage: {
-    screenOne: {
-      logo: 'AlgoPainter',
-      btn1Title: 'Create Account',
-      title: 'AlgoPainter helps artists to create, distribute and sell NFTs on scale in a simple.',
-      subtitle: 'A platform where artists can upload their own generative art and have other people create unique NFTs using algorithms based on it.',
-      text: 'It’s like having your own NFT-creating, revenue generating machine that works 24 hours on your behalf.',
-      btn2Title: 'Create an amazing art'
-    },
-    screenTwo: {
-      title: 'How does it work?',
-      textLeftOne: 'If you’re an artist, there’s a possibility that you are unsure on how to thrive on the NFT market. It’s not hard to find several artists that only got the recognition and awards they’ve deserved well after their death.',
-      textLeftTwo: 'Of course, you don’t want to wait that long and the NFT market seems to be the perfect way to keep creating, sell your artwork and scale it around the world.',
-      textLeftThree: 'The big problem is that although anyone can upload their NFTs on marketplaces, it’s no guarantee that the NFT will find a buyer. For most artists, they still can’t pass a certain point of price and they struggle on how to get their work known and increase its value.',
-      textRightOne: 'It’s like having your own NFT-creating, revenue generating machine that works 24 hours on your behalf.',
-      textRightTwo: 'This is amazing for you because it means that not only, you’ll be able to create a unique NFT at scale (while maintaining your artistic touch) but it will allow you to earn PIRS (Perpetual Inclusive Royalty System) by letting other people (regular people, not artists or coders) to create their own NFT based on your algorithm.',
-      textRightThree: 'It’s like having your own NFT-creating machine that works 24 hours.',
-      textRightFour: 'Do you want to see how this works? ',
-      highlight: 'AlgoPainter helps artists to create, distribute and sell NFTs on scale in a simple way by providing a platform where artists can upload their own generative art and have other people create unique NFTs using algorithms based on it.',
-      btn: 'Be a great artist'
-    },
-    screenThree: {
-      title: 'Welcome to AlgoPainter',
-      highlight: 'AlgoPainter is great for artists',
-      listItemOne: 'Each NFT created is unique',
-      listItemTwo: 'You can upload your own algorithm',
-      listItemThree: 'Earn PIRS, a Royalties system that will help you monetize your work in a secure and sustainable way',
-      btn: 'Start creating now'
-    },
-    screenFour: {
-
-    },
-    screenFive: {
-
-    },
-    screenSix: {
-
-    },
-    screenSeven: {
-
-    },
-    screenEigth: {
-
-    },
-    screenNine: {
-
-    },
-    screenTen: {
-
-    },
-    screenEleven: {
-
-    }
-  },
   header: {
     auctionNotificator: {
       pirsBtn: '({pirsCounter}) PIRS',
@@ -707,7 +653,11 @@ export default {
       emptyField: 'This field needs to be filled',
       wrongWallet: 'Fill all 42 digits',
       emptyNfts: 'You must sell at least one NFT in this collection',
-      priceErrorLimitMsg: 'You can set up up to 20 to price ranges, no more than that.'
+      priceErrorLimitMsg: 'You can set up up to 20 to price ranges, no more than that.',
+      priceAmountErrMsg: 'The price must be greater than 0',
+      addBtnDisabledMsg: 'You cannot add a new price range if the previous range covers the last NFT of your collection.',
+      removeBtnDisabledMsg: 'You cannot have less than one price range.',
+      priceRangeCounter: 'Price range Nº {num}:'
     },
     stepThree: {
       previewUrl: '{url}',

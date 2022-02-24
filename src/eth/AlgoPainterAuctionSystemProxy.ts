@@ -73,8 +73,11 @@ export default class AlgoPainterAuctionSystemProxy {
   }
 
   async getAllowedTokens(): Promise<string[]> {
+    console.log('getAllowedTokens');
     const response: unknown = await this.smartContract.methods
       .getAllowedTokens().call();
+
+    console.log('response', response);
 
     return response as string[];
   }

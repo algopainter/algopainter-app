@@ -4,8 +4,10 @@
     <div class="start-date col-6 q-pr-md">
       <p class="label">{{ $t('dashboard.createCollection.stepTwo.startDT') }}</p>
       <q-input
+        ref="startDT"
         v-model="form.startDT"
-        :rules="[ val => timeValidator() || dateErrorMsg ]"
+        :rules="[ val => startDtValidator() || dateErrorMsg ]"
+        readonly
       >
         <template #append>
           <q-icon
@@ -13,7 +15,6 @@
             class="cursor-pointer"
           >
             <q-popup-proxy
-              ref="dateRef"
               transition-show="scale"
               transition-hide="scale"
             >
@@ -33,8 +34,10 @@
     <div class="end-date col-6 q-pl-md">
       <p class="label">{{ $t('dashboard.createCollection.stepTwo.endDT') }}</p>
       <q-input
+        ref="endDT"
         v-model="form.endDT"
-        :rules="[ val => timeValidator() || dateErrorMsg]"
+        :rules="[ val => endDtValidator() || dateErrorMsg]"
+        readonly
       >
         <template #append>
           <q-icon
@@ -42,7 +45,6 @@
             class="cursor-pointer"
           >
             <q-popup-proxy
-              ref="dateRef"
               transition-show="scale"
               transition-hide="scale"
             >
@@ -61,6 +63,7 @@
     </div>
   </div>
   <q-input
+    ref="nfts"
     v-model="form.nfts"
     class="nft-amount"
     :label="$t('dashboard.createCollection.stepTwo.amount')"
@@ -91,11 +94,13 @@
   <div class="price">
     <div v-if="form.priceType === 'fixed'" class="fixed-price">
       <q-input
-        v-model="form.priceRange[0].amount"
+        ref="amount"
+        v-model.number="form.priceRange[0].amount"
         :label="$t('dashboard.createCollection.stepTwo.price')"
         mask="#.####"
         fill-mask="0"
         reverse-fill-mask
+        :rules="[ val => validateAmount(val) || priceAmountErrMsg]"
       >
         <q-btn-dropdown
           color="primary"
@@ -142,6 +147,9 @@
         :key="index"
         class="q-pa-md q-my-md variable-card"
       >
+        <p class="label q-pl-md">
+          {{ $t('dashboard.createCollection.stepTwo.priceRangeCounter', {num: index + 1}) }}
+        </p>
         <div class="row">
           <q-input
             v-model="form.priceRange[index].from"
@@ -150,6 +158,7 @@
             readonly
           />
           <q-input
+            ref="to"
             v-model="form.priceRange[index].to"
             :label="$t('dashboard.createCollection.stepTwo.to')"
             class="col-6 q-px-md"
@@ -161,12 +170,14 @@
           />
         </div>
         <q-input
+          ref="amount"
           v-model="form.priceRange[index].amount"
           :label="$t('dashboard.createCollection.stepTwo.price')"
           class="col-6 q-px-md"
           mask="#.####"
           fill-mask="0"
           reverse-fill-mask
+          :rules="[ val => validateAmount(val) || priceAmountErrMsg]"
         >
           <q-btn-dropdown
             v-if="index === 0"
@@ -224,28 +235,39 @@
           </q-avatar>
         </template>
       </error>
-      <q-btn flat :disable="isAddDisabled()" class="q-mr-sm" @click="addPriceRange()">
-        <q-icon
-          name="add_circle"
-          color="grey-4"
-          class="q-mr-sm"
-          size="30px"
-        />
-        {{ $t('dashboard.createCollection.stepTwo.add') }}
-      </q-btn>
-      <q-btn flat :disable="isRemoveDisabled" @click="removePriceRange()">
-        <q-icon
-          name="remove_circle"
-          color="grey-4"
-          class="q-mr-sm"
-          size="30px"
-        />
-        {{ $t('dashboard.createCollection.stepTwo.remove') }}
-      </q-btn>
+      <div class="row">
+        <div class="q-mr-sm">
+          <q-btn flat :disable="isAddDisabled()" class="q-mr-sm" @click="addPriceRange()">
+            <q-icon
+              name="add_circle"
+              color="grey-4"
+              size="30px"
+            />
+            {{ $t('dashboard.createCollection.stepTwo.add') }}
+          </q-btn>
+          <q-tooltip v-if="isAddDisabled()">
+            {{ $t('dashboard.createCollection.stepTwo.addBtnDisabledMsg') }}
+          </q-tooltip>
+        </div>
+        <div class="q-ml-sm">
+          <q-btn flat :disable="isRemoveDisabled" @click="removePriceRange()">
+            <q-icon
+              name="remove_circle"
+              color="grey-4"
+              size="30px"
+            />
+            {{ $t('dashboard.createCollection.stepTwo.remove') }}
+          </q-btn>
+          <q-tooltip v-if="isRemoveDisabled">
+            {{ $t('dashboard.createCollection.stepTwo.removeBtnDisabledMsg') }}
+          </q-tooltip>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row q-pt-lg">
     <q-input
+      ref="creatorPercentage"
       v-model="form.creatorPercentage"
       :label="$t('dashboard.createCollection.stepTwo.creator')"
       class="col-6 q-pr-md"
@@ -256,6 +278,7 @@
       :rules="[ val => validateCreator(val) || creatorErrMsg ]"
     />
     <q-input
+      ref="walletAddress"
       v-model.trim="form.walletAddress"
       :label="$t('dashboard.createCollection.stepTwo.address')"
       class="col-6 q-pl-md"
@@ -263,7 +286,7 @@
       :rules="[ val => validateWalletAddress(val) || walletAddressErrMsg ]"
     />
   </div>
-  <error v-if="(isError || isPriceRangeError) && isVerifyingTheForm" :error-msg="isErrorMsg" />
+  <error v-if="(isError || isPriceRangeError || isStartDtErr || isEndDtErr) && isVerifyingTheForm" :error-msg="isErrorMsg" />
 </template>
 
 <script lang="ts">
@@ -273,32 +296,10 @@ import { Watch } from 'vue-property-decorator';
 import moment from 'moment';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import { NetworkInfo } from 'src/store/user/types';
-import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
+import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy'
 import Error from './Error.vue';
-
-interface ICollectionMetricsPriceRange {
-  from: number;
-  to: number;
-  amount: number | string;
-  tokenPriceAddress: string;
-  tokenPriceSymbol: string;
-}
-
-interface ICollectionMetrics {
-  nfts: number;
-  startDT: Date | string;
-  endDT: Date | string;
-  priceType: 'fixed' | 'variable';
-  tokenPriceAddress: string | null | undefined;
-  tokenPriceSymbol: string | null | undefined;
-  priceRange: ICollectionMetricsPriceRange[];
-  creatorPercentage: number;
-  walletAddress: string;
-}
-
-interface IAllowedTokens {
-  [key: string]: boolean;
-}
+import { ICollectionMetricsPriceRange, ICollectionMetrics, IAllowedTokens } from 'src/models/ICreatorCollection';
+import { QInput } from 'quasar';
 
 class Props {
   step = prop({
@@ -315,7 +316,6 @@ class Props {
 @Options({
   computed: {
     ...mapGetters('user', {
-      userAccount: 'account',
       networkInfo: 'networkInfo',
       isConnected: 'isConnected',
     }),
@@ -325,15 +325,24 @@ class Props {
   }
 })
 export default class CollectionMetrics extends Vue.with(Props) {
-  auctionSystem!: AlgoPainterAuctionSystemProxy;
+  artistCollection = <AlgoPainterArtistCollection>{};
   networkInfo!: NetworkInfo;
-  userAccount!: string;
   isConnected!: boolean;
 
+  declare $refs: {
+    nfts: QInput;
+    startDT: QInput;
+    endDT: QInput;
+    amount: QInput;
+    creatorPercentage: QInput;
+    walletAddress: QInput;
+    to: QInput;
+  };
+
   form: ICollectionMetrics = {
-    nfts: 500,
-    startDT: moment().add(24, 'hour').format('MM/DD/YYYY HH:mm'),
-    endDT: moment().add(2184, 'hour').format('MM/DD/YYYY HH:mm'),
+    nfts: 0,
+    startDT: '',
+    endDT: '',
     priceType: 'fixed',
     tokenPriceAddress: process.env.VUE_APP_ALGOP_TOKEN_ADDRESS,
     tokenPriceSymbol: 'ALGOP',
@@ -341,16 +350,18 @@ export default class CollectionMetrics extends Vue.with(Props) {
       {
         from: 1,
         to: 500,
-        amount: '600.0000',
+        amount: '',
         tokenPriceAddress: process.env.VUE_APP_ALGOP_TOKEN_ADDRESS || '',
         tokenPriceSymbol: 'ALGOP'
       }
     ],
-    creatorPercentage: 1,
+    creatorPercentage: 0,
     walletAddress: '',
   }
 
   dateErrorMsg: string = '';
+  isEndDtErr: boolean = false;
+  isStartDtErr: boolean = false;
   isError: boolean = false;
   isErrorMsg: string = '';
 
@@ -367,23 +378,21 @@ export default class CollectionMetrics extends Vue.with(Props) {
   creatorErrMsg: string = '';
   walletAddressErrMsg: string = '';
   nftsErrMsg: string = '';
+  priceAmountErrMsg: string = '';
   isPriceRangeLimitMsgShown: boolean = false;
 
   created() {
     if (this.isConnected) {
-      this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+      this.artistCollection = new AlgoPainterArtistCollection(this.networkInfo);
+      this.loadAvailableTokens().catch(console.error);
     }
-    void this.loadAvailableTokens();
-  }
-
-  mounted() {
-    this.form.walletAddress = this.userAccount;
   }
 
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
-      this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+      this.artistCollection = new AlgoPainterArtistCollection(this.networkInfo);
+      void this.loadAvailableTokens().catch(console.error);
     }
   }
 
@@ -397,7 +406,16 @@ export default class CollectionMetrics extends Vue.with(Props) {
   verifyForm() {
     this.isVerifyingTheForm = true;
 
-    if (this.isPriceRangeError) {
+    if (
+      !this.$refs.startDT.validate() ||
+      !this.$refs.endDT.validate() ||
+      !this.$refs.nfts.validate() ||
+      !this.$refs.amount.validate() ||
+      !this.$refs.creatorPercentage.validate() ||
+      !this.$refs.walletAddress.validate()
+    ) {
+      this.isErrorMsg = this.$t('dashboard.createCollection.stepTwo.isErr');
+    } else if (this.isPriceRangeError) {
       this.isErrorMsg = this.$t('dashboard.createCollection.stepTwo.priceRangeErr');
     } else if (this.isError) {
       this.isErrorMsg = this.$t('dashboard.createCollection.stepTwo.isErr');
@@ -424,6 +442,10 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   addPriceRange() {
+    if (!this.$refs.amount.validate() || !this.$refs.to.validate()) {
+      return;
+    }
+
     if (this.form.priceRange.length === 19) {
       this.isPriceRangeLimitMsgShown = true;
     }
@@ -432,14 +454,14 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
     this.form.priceRange.push({
       from: lastTo + 1,
-      to: Number(this.form.nfts),
-      amount: this.form.priceRange[0].amount,
+      to: 0,
+      amount: 0,
       tokenPriceAddress: this.form.priceRange[0].tokenPriceAddress,
       tokenPriceSymbol: this.form.priceRange[0].tokenPriceSymbol
     })
 
     this.fromRangeArr.push(lastTo + 1);
-    this.toRangeArr.push(Number(this.form.nfts));
+    this.toRangeArr.push(0);
 
     this.isRemoveDisabled = (this.form.priceRange.length === 1);
   }
@@ -463,8 +485,8 @@ export default class CollectionMetrics extends Vue.with(Props) {
     this.form.priceRange = [
       {
         from: 1,
-        to: 500,
-        amount: '600.0000',
+        to: this.form.nfts,
+        amount: this.form.priceRange[0].amount,
         tokenPriceAddress: this.form.tokenPriceAddress || '',
         tokenPriceSymbol: this.form.tokenPriceSymbol || ''
       }
@@ -472,10 +494,11 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   setFirstPriceRange() {
+    this.isAddDisabled();
     this.isPriceRangeError = false;
     this.fromRangeArr = [1];
-    this.toRangeArr = [this.form.nfts];
-    this.form.priceRange[0].to = this.form.nfts;
+    this.toRangeArr = [];
+    this.form.priceRange[0].to = 0;
     this.form.priceRange[0].tokenPriceAddress = this.form.tokenPriceAddress || '';
     this.form.priceRange[0].tokenPriceSymbol = this.form.tokenPriceSymbol || '';
   }
@@ -498,6 +521,10 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   validateNfts(val: string | number) {
+    if (this.form.priceType === 'variable') {
+      void this.$refs.to.validate();
+    }
+
     if (Number(val) === 0) {
       this.isError = true;
       this.nftsErrMsg = this.$t('dashboard.createCollection.stepTwo.emptyNfts');
@@ -510,6 +537,18 @@ export default class CollectionMetrics extends Vue.with(Props) {
       this.isError = true;
       this.nftsErrMsg = this.$t('dashboard.createCollection.stepTwo.amountMax');
       return false;
+    }
+  }
+
+  validateAmount(val: number) {
+    if (val <= 0) {
+      this.isError = true;
+      this.priceAmountErrMsg = this.$t('dashboard.createCollection.stepTwo.priceAmountErrMsg');
+      return false;
+    } else {
+      this.isError = false;
+      this.priceAmountErrMsg = '';
+      return true;
     }
   }
 
@@ -546,39 +585,74 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   isAddDisabled() {
-    return this.toRangeArr[this.toRangeArr.length - 1] >= this.form.nfts || this.isPriceRangeError || this.form.priceRange.length === 20;
+    return this.form.nfts === 0 || this.toRangeArr[this.toRangeArr.length - 1] >= this.form.nfts || this.isPriceRangeError || this.form.priceRange.length === 20;
   }
 
-  timeValidator() {
+  startDtValidator() {
     const diffMinutes = moment(this.form.startDT).diff(moment(this.form.endDT), 'minute');
     const diffHour = moment(this.form.startDT).diff(moment(this.form.endDT), 'hour');
     const diffTodayMinutes = moment(this.form.startDT).diff(moment(), 'minute');
 
-    if (diffTodayMinutes < 0) {
+    if (!this.form.startDT) {
+      this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.emptyField');
+      this.isStartDtErr = true;
+      return false;
+    } else if (diffTodayMinutes < 0) {
       this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.dateB42day');
-      this.isError = true;
+      this.isStartDtErr = true;
       return false;
-    }
-
-    if (diffMinutes >= 1) {
+    } else if (diffMinutes >= 1) {
       this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.datePast');
-      this.isError = true;
+      this.isStartDtErr = true;
       return false;
-    }
-
-    if (diffMinutes > -1440) {
+    } else if (diffMinutes > -1440) {
       this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.dateMin');
-      this.isError = true;
+      this.isStartDtErr = true;
       return false;
-    }
-
-    if (diffHour < -2184) {
+    } else if (diffHour < -2184) {
       this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.dateMax');
-      this.isError = true;
+      this.isStartDtErr = true;
       return false;
     }
 
-    this.isError = false;
+    if (this.isEndDtErr) {
+      void this.$refs.endDT.validate();
+    }
+    this.isStartDtErr = false;
+    return true;
+  }
+
+  endDtValidator() {
+    const diffMinutes = moment(this.form.startDT).diff(moment(this.form.endDT), 'minute');
+    const diffHour = moment(this.form.startDT).diff(moment(this.form.endDT), 'hour');
+    const diffTodayMinutes = moment(this.form.startDT).diff(moment(), 'minute');
+
+    if (!this.form.endDT) {
+      this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.emptyField');
+      this.isEndDtErr = true;
+      return false;
+    } else if (diffTodayMinutes < 0) {
+      this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.dateB42day');
+      this.isEndDtErr = true;
+      return false;
+    } else if (diffMinutes >= 1) {
+      this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.datePast');
+      this.isEndDtErr = true;
+      return false;
+    } else if (diffMinutes > -1440) {
+      this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.dateMin');
+      this.isEndDtErr = true;
+      return false;
+    } else if (diffHour < -2184) {
+      this.dateErrorMsg = this.$t('dashboard.createCollection.stepTwo.dateMax');
+      this.isEndDtErr = true;
+      return false;
+    }
+
+    if (this.isStartDtErr) {
+      void this.$refs.startDT.validate(true);
+    }
+    this.isEndDtErr = false;
     return true;
   }
 
@@ -586,7 +660,11 @@ export default class CollectionMetrics extends Vue.with(Props) {
     try {
       this.loadingCoins = true;
 
-      const tokens = await this.auctionSystem.getAllowedTokens();
+      console.log('loadAvailableTokens');
+
+      const tokens = await this.artistCollection.getCollectionAllowedTokens();
+
+      console.log('tokens', tokens);
 
       this.allowedTokens = tokens.reduce((curr, token) => {
         return { ...curr, [token.toLowerCase()]: true };
@@ -664,32 +742,33 @@ export default class CollectionMetrics extends Vue.with(Props) {
 </script>
 
 <style scoped lang="scss">
-.start-date,
-.end-date {
-  .label {
-    margin: 0px;
-    position: relative;
-    top: 15px;
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.6);
-    font-weight: 400;
+  .start-date,
+  .end-date {
+    .label {
+      margin: 0px;
+      position: relative;
+      top: 15px;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: 400;
+    }
   }
-}
 
-.algo-radio {
-  margin-top: 1rem;
+  .algo-radio {
+    margin-top: 1rem;
+    .option {
+      padding: 0px;
+    }
+  }
+
   .label {
     font-weight: 400;
     margin: 0 0 10px 0;
     color: rgba(0, 0, 0, 0.6);
   }
-  .option {
-    padding: 0px;
-  }
-}
 
-.variable-card {
-  border: 1px $primary solid;
-  border-radius: 5px;
-}
+  .variable-card {
+    border: 1px $primary solid;
+    border-radius: 5px;
+  }
 </style>

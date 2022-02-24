@@ -100,3 +100,7 @@ export interface IcollectionData {
   collectionMetrics: ICollectionMetrics,
   apiParameters: ICollectionNFTCreationAPI
 }
+
+export interface IAllowedTokens {
+  [key: string]: boolean;
+}

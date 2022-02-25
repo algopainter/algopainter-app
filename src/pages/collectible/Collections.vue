@@ -63,6 +63,9 @@ export default class Collections extends Vue.with(Props) {
 .img{
     display: flex;
     justify-content: center;
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
 }
 .description{
     width: 500px;

@@ -137,7 +137,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
     this.mintedImagesAmount = (this.isArtistCollection(this.collectionSystem))
       ? typeof this.collectionId !== 'undefined'
         ? Number(await this.collectionSystem.getRemainingTokens(this.collectionId))
-        : 0
+        : -1
       : await this.collectionSystem.totalSupply();
 
     // preciso do total de imagens da colecao aqui
@@ -150,7 +150,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
     this.currentAmount = (this.isArtistCollection(this.collectionSystem))
       ? typeof this.collectionId !== 'undefined'
         ? Number(await this.collectionSystem.getMintValue(this.collectionId))
-        : 0
+        : -1
       : await this.collectionSystem.getCurrentAmount(this.mintedImagesAmount);
 
     const batchPrice = blockchainToCurrency(

@@ -1,5 +1,5 @@
 <template>
-  <!-- <new-painting-top-info
+  <new-painting-top-info
     :collection-name="collectionCustomUrl"
     :collection-token="collectionToken"
     :collection-id="collectionId"

@@ -90,9 +90,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     if (this.isConnected) {
       this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
     }
-    this.mockedParams();
-    this.mockedCollectionData();
-    setTimeout(() => { this.mint().catch(console.error) }, 5000);
+    // setTimeout(() => { this.mint().catch(console.error) }, 5000);
   }
 
   @Watch('isConnected')

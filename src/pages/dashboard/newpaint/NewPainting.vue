@@ -1,9 +1,9 @@
 <template>
-  <!-- <new-painting-top-info
+  <new-painting-top-info
     :collection-name="collectionCustomUrl"
     :collection-token="collectionToken"
     :collection-id="collectionId"
-  /> -->
+  />
   <div
     id="new-painting"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? '' : 'row']"

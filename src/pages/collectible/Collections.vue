@@ -49,7 +49,8 @@ export default class Collections extends Vue.with(Props) {
   img: string= '/images/gwei.png'
 
   goApp(name: string) {
-    this.$router.push(`/create-collectible/new-painting/${name}`).catch(console.error);
+    const nameCollection = name.replace(/\0/g, '')
+    this.$router.push(`/create-collectible/new-painting/${nameCollection}`).catch(console.error);
   }
 }
 </script>

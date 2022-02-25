@@ -87,7 +87,7 @@ export interface ICollectionMetrics {
   nfts: number;
   startDT: Date | string;
   endDT: Date | string;
-  priceType: 'fixed' | 'variable';
+  priceType: string;
   tokenPriceAddress: string | null | undefined;
   tokenPriceSymbol: string | null | undefined;
   priceRange: ICollectionMetricsPriceRange[];

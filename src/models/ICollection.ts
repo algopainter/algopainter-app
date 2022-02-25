@@ -1,4 +1,4 @@
-import { IFormParams, IFormCollectionInfo, IFormFixedParams, ICollectionMetrics, ICollectionNFTCreationAPI } from './ICreatorCollection';
+import { ICollectionMetrics, ICollectionNFTCreationAPI } from './ICreatorCollection';
 export default interface ICollection {
   _id: string;
   blockchainId: string;
@@ -12,8 +12,4 @@ export default interface ICollection {
   namelc: string;
   metrics: ICollectionMetrics;
   api: ICollectionNFTCreationAPI;
-  params: IFormParams[];
-  collectionInfo: IFormCollectionInfo;
-  fixedParams: IFormFixedParams[];
-  index: number;
 }

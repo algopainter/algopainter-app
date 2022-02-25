@@ -38,7 +38,7 @@
       :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
       :disable="isEmptyFieldError"
       color="primary"
-      @click.prevent="$emit('generatePreview', generatedParams)"
+      @click.prevent="parseGeneratedParams()"
     />
   </q-form>
 </template>
@@ -73,7 +73,8 @@ class Props {
   }
 })
 export default class FormPreviewer extends Vue.with(Props) {
-    generatedParams: (number | string | boolean)[] = [];
+    generatedParams: (number | string | boolean | {label: string, value: string | number})[] = [];
+    parsedGeneratedParams: string[] = [];
     emptyFieldErrMsg: string = '';
     isEmptyFieldError: boolean = false;
 
@@ -99,6 +100,18 @@ export default class FormPreviewer extends Vue.with(Props) {
         case 'number':
           return 'number';
       }
+    }
+
+    parseGeneratedParams() {
+      this.generatedParams.forEach((param, i) => {
+        if (typeof param === 'object') {
+          this.parsedGeneratedParams[i] = param.value.toString();
+        } else {
+          this.parsedGeneratedParams[i] = param.toString();
+        }
+      })
+
+      this.$emit('generatePreview', this.parsedGeneratedParams);
     }
 
     setMarkers(i: number) {

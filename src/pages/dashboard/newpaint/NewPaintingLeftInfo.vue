@@ -1,7 +1,6 @@
 <template>
   <form-generator
-    v-if="params"
-    :form-params="formParams"
+    :form-params="params"
     :default-values="defaultValues"
     :clear-form="clearForm"
     @generate-preview="GeneratePreview"
@@ -53,7 +52,7 @@ class Props {
       ]),
     ...mapGetters(
       'mint', {
-        collectionData: 'GET_COLLECTION_DATA',
+        // collectionData: 'GET_COLLECTION_DATA',
         collectionInfo: 'GET_COLLECTION_INFO',
         artBasicInfo: 'GET_BASIC_INFO',
         userConfirmations: 'GET_USER_CONFIRMATIONS',
@@ -78,8 +77,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
 
   collectionData!: ICollection;
   params: IFormParams[] = [];
-  defaultValues: (number | string | boolean)[] = [];
-  generatedParams!: (number | string | boolean)[];
+  defaultValues: (number | string | boolean | {label: string, value: string | number})[] = [];
+  parsedGeneratedParams!: string[];
   descriptorIPFSHash!: string;
 
   isErr: boolean = false;
@@ -91,7 +90,9 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     if (this.isConnected) {
       this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
     }
-    // this.mockedParams();
+    this.mockedParams();
+    this.mockedCollectionData();
+    setTimeout(() => { this.mint().catch(console.error) }, 5000);
   }
 
   @Watch('isConnected')
@@ -139,39 +140,41 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     return this.defaultValues;
   }
 
-  GeneratePreview(generatedParams: (number | string | boolean)[]) {
-    console.log('generatedParams', generatedParams);
+  GeneratePreview(parsedGeneratedParams: string[]) {
+    console.log('parsedGeneratedParams', parsedGeneratedParams);
     this.isErr = false;
     this.errMsg = '';
     this.clearForm = false;
-    this.generatedParams = generatedParams;
+    this.parsedGeneratedParams = parsedGeneratedParams;
 
-    this.setPreviewUrl(this.previewUrl(generatedParams)).catch(console.error);
+    this.setPreviewUrl(this.previewUrl(parsedGeneratedParams)).catch(console.error);
   }
 
-  previewUrl(generatedParams: (number | string | boolean)[], noSize = false) {
-    let previewUrl: string = this.collectionData.collectionInfo.api + '?';
+  previewUrl(parsedGeneratedParams: (number | string | boolean)[], noSize = false) {
+    let previewUrl: string = this.collectionData.api.collectionInfo.api + '?';
 
-    if (!this.collectionData.collectionInfo.isSpecialParamsChecked && !noSize) {
-      if (this.collectionData.collectionInfo.isSizeInUrlChecked) {
-        previewUrl += `size=${this.collectionData.collectionInfo.width}x${this.collectionData.collectionInfo.height}&`;
+    if (!this.collectionData.api.collectionInfo.isSpecialParamsChecked && !noSize) {
+      if (this.collectionData.api.collectionInfo.isSizeInUrlChecked) {
+        previewUrl += `size=${this.collectionData.api.collectionInfo.width}x${this.collectionData.api.collectionInfo.height}&`;
       } else {
-        previewUrl += `width=${this.collectionData.collectionInfo.width}&height=${this.collectionData.collectionInfo.height}&`;
+        previewUrl += `width=${this.collectionData.api.collectionInfo.width}&height=${this.collectionData.api.collectionInfo.height}&`;
       }
     }
 
-    this.collectionData.fixedParams.forEach((param) => {
+    this.collectionData.api.fixedParams.forEach((param) => {
       previewUrl += `${param.name}=${param.value.toString()}&`
     })
 
-    this.collectionData.params.forEach((param, i) => {
-      previewUrl += `${param.name}=${generatedParams[i].toString()}`
+    this.collectionData.api.parameters.forEach((param, i) => {
+      previewUrl += `${param.name}=${parsedGeneratedParams[i].toString()}`
 
-      if ((i + 1) !== this.collectionData.params.length) {
+      if ((i + 1) !== this.collectionData.api.parameters.length) {
         previewUrl += '&'
       }
     })
     const searchRegExp = /\s/g;
+
+    console.log('previewUrl', previewUrl.replace(searchRegExp, '%20'));
 
     return previewUrl.replace(searchRegExp, '%20');
   }
@@ -195,7 +198,21 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     try {
       this.restoreDefault().catch(console.error);
 
-      // await this.genericSystem.callMint(this.generatedParams, this.collectionInfo.batchPriceBlockchain, '', this.account);
+      // Substituir expressions - preview dentro do pinning service helper
+      const previewPiningResult = await PinningServiceHelper.pinFile('Expressions - Preview', 1, this.previewUrl(this.parsedGeneratedParams, false));
+      const previewIPFSHash = previewPiningResult.ipfsHash;
+      console.log('previewIPFSHash', previewIPFSHash);
+
+      await this.algoPainterArtistCollection.mintCall(
+        this.collectionData.title,
+        this.collectionData.blockchainId,
+        this.parsedGeneratedParams,
+        previewIPFSHash || '',
+        // Na linha de baixo tem que colocar uma info puxada do newpaintingtopinfo
+        this.collectionData.metrics.priceRange[0].amount.toString(),
+        // Pra fazer call não precisa do from
+        this.account
+      );
     } catch (e: any) {
       this.restoreDefault().catch(console.error);
 
@@ -221,71 +238,71 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
 
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
-      return;
+      // return;
     }
 
-    try {
-      this.isMintDialogOpen = true;
-      let previewIPFSHash: string | undefined = '';
-      let rawIPFSHash: string | undefined = '';
+    // try {
+    //   this.isMintDialogOpen = true;
+    //   let previewIPFSHash: string | undefined = '';
+    //   let rawIPFSHash: string | undefined = '';
 
-      this.mintStatus = MintStatus.GeneratingPreviewFile;
+    //   this.mintStatus = MintStatus.GeneratingPreviewFile;
 
-      const previewPiningResult = await PinningServiceHelper.pinFile('Generic - Preview', 1, this.previewUrl(this.generatedParams, false));
+    //   const previewPiningResult = await PinningServiceHelper.pinFile('Generic - Preview', 1, this.previewUrl(this.parsedGeneratedParams, false));
 
-      previewIPFSHash = previewPiningResult.ipfsHash;
+    //   previewIPFSHash = previewPiningResult.ipfsHash;
 
-      if (!previewIPFSHash) {
-        this.restoreDefault().catch(console.error);
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
-        return;
-      }
+    //   if (!previewIPFSHash) {
+    //     this.restoreDefault().catch(console.error);
+    //     this.isErr = true;
+    //     this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
+    //     return;
+    //   }
 
-      this.mintStatus = MintStatus.GeneratingRawFile;
+    //   this.mintStatus = MintStatus.GeneratingRawFile;
 
-      const rawPiningResult = await PinningServiceHelper.pinFile('Generic - Preview', 1, this.previewUrl(this.generatedParams, true));
-      rawIPFSHash = rawPiningResult.ipfsHash;
+    //   const rawPiningResult = await PinningServiceHelper.pinFile('Generic - Preview', 1, this.previewUrl(this.parsedGeneratedParams, true));
+    //   rawIPFSHash = rawPiningResult.ipfsHash;
 
-      if (!rawIPFSHash) {
-        this.restoreDefault().catch(console.error);
-        this.mintStatus = MintStatus.GeneratingRawFileError;
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
-        return;
-      }
+    //   if (!rawIPFSHash) {
+    //     this.restoreDefault().catch(console.error);
+    //     this.mintStatus = MintStatus.GeneratingRawFileError;
+    //     this.isErr = true;
+    //     this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
+    //     return;
+    //   }
 
-      this.mintStatus = MintStatus.GeneratingDescriptorFile;
+    //   this.mintStatus = MintStatus.GeneratingDescriptorFile;
 
-      const payload: IGenericPayload = {
-        name: this.artBasicInfo.name,
-        description: this.artBasicInfo.description,
-        image: `https://ipfs.io/ipfs/${rawIPFSHash}`,
-        previewImage: `https://ipfs.io/ipfs/${previewIPFSHash}`,
-        collection: {
-          id: this.collectionData.index,
-          name: this.collectionData.title,
-        },
-        parameters: this.generatedParams,
-        mintedBy: this.account,
-      };
+    //   // const payload: IGenericPayload = {
+    //   //   name: this.artBasicInfo.name,
+    //   //   description: this.artBasicInfo.description,
+    //   //   image: `https://ipfs.io/ipfs/${rawIPFSHash}`,
+    //   //   previewImage: `https://ipfs.io/ipfs/${previewIPFSHash}`,
+    //   //   collection: {
+    //   //     id: this.collectionData.index,
+    //   //     name: this.collectionData.title,
+    //   //   },
+    //   //   parameters: this.parsedGeneratedParams,
+    //   //   mintedBy: this.account,
+    //   // };
 
-      const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
-      this.descriptorIPFSHash = (descriptorPinningResult.ipfsHash) ? descriptorPinningResult.ipfsHash : '';
+    //   // const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
+    //   // this.descriptorIPFSHash = (descriptorPinningResult.ipfsHash) ? descriptorPinningResult.ipfsHash : '';
 
-      if (!this.descriptorIPFSHash) {
-        this.restoreDefault().catch(console.error);
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
-        return;
-      }
+    //   if (!this.descriptorIPFSHash) {
+    //     this.restoreDefault().catch(console.error);
+    //     this.isErr = true;
+    //     this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
+    //     return;
+    //   }
 
-      this.setIPFSUrl(`https://ipfs.io/ipfs/${rawIPFSHash}`).catch(console.error);
+    //   this.setIPFSUrl(`https://ipfs.io/ipfs/${rawIPFSHash}`).catch(console.error);
 
-      this.mintStatus = MintStatus.CollectingUserConfirmations;
-    } catch (e) {
-      this.restoreDefault().catch(console.error);
-    }
+    //   this.mintStatus = MintStatus.CollectingUserConfirmations;
+    // } catch (e) {
+    //   this.restoreDefault().catch(console.error);
+    // }
   }
 
   @Watch('errMsg')
@@ -318,7 +335,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       this.mintStatus = MintStatus.MintAwaitingInput;
 
       /*
-      const result = this.genericSystem.mint(this.generatedParams, this.collectionInfo.batchPriceBlockchain, this.descriptorIPFSHash, this.account);
+      const result = this.genericSystem.mint(this.parsedGeneratedParams, this.collectionInfo.batchPriceBlockchain, this.descriptorIPFSHash, this.account);
 
       result.on('error', (error: any) => {
         this.restoreDefault().catch(console.error);
@@ -376,6 +393,68 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       })
   }
 
+  mockedCollectionData() {
+    this.collectionData = {
+      _id: 'dasdasdasdas',
+      blockchainId: '1',
+      description: 'Sometimes people call me Kakashi, but I am much better than him!',
+      owner: 'Latino',
+      title: 'EXPRESShow',
+      avatar: 'hash',
+      account: '0xA62CE1F85461D67c874ef625F0E488C57Af2335d',
+      customURL: 'EXPRESShow',
+      show: true,
+      namelc: 'expresshow',
+      metrics: this.mockedMetrics(),
+      api: {
+        collectionInfo: this.mockedCollectionInfo(),
+        fixedParams: this.mockedFixedParams(),
+        parameters: this.mockedParams()
+      },
+    }
+  }
+
+  mockedMetrics() {
+    return {
+      nfts: 1000,
+      startDT: '2022-02-24T13:02:00.000Z',
+      endDT: '2022-03-08T13:02:00.000Z',
+      priceType: 'fixed',
+      tokenPriceAddress: '0x01a9188076f1231df2215f67b6a63231fe5e293e',
+      tokenPriceSymbol: 'ALGOP',
+      priceRange: [
+        {
+          from: 1,
+          to: 1000,
+          amount: '600',
+          tokenPriceAddress: '0x01a9188076f1231df2215f67b6a63231fe5e293e',
+          tokenPriceSymbol: 'ALGOP'
+        }
+      ],
+      creatorPercentage: 3000,
+      walletAddress: '0xA62CE1F85461D67c874ef625F0E488C57Af2335d'
+    }
+  }
+
+  mockedCollectionInfo() {
+    return {
+      api: 'https://expressions.algopainter.art/',
+      isSpecialParamsChecked: false,
+      isSizeInUrlChecked: true,
+      width: 400,
+      height: 400
+    }
+  }
+
+  mockedFixedParams() {
+    return [
+      {
+        name: 'shadowHue',
+        value: '0'
+      }
+    ]
+  }
+
   mockedParams() {
     this.params = [
       {
@@ -408,62 +487,62 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         ],
         min: 0,
         max: 10,
-        defaultValue: 'Bitcoin'
+        defaultValue: '1'
       },
       {
-        name: 'biological sex',
+        name: 'gender',
         label: 'Biological Sex',
         dataType: 'string',
         maxLength: 64,
         fieldType: 'Select',
         options: [
           {
-            value: '0',
+            value: 'F',
             label: 'Female',
           },
           {
-            value: '1',
+            value: 'M',
             label: 'Male',
           },
         ],
         min: 0,
         max: 10,
-        defaultValue: 'Female'
+        defaultValue: 'F'
       },
       {
-        name: 'Expressions',
+        name: 'expression',
         label: 'Expressions',
         dataType: 'string',
         maxLength: 64,
         fieldType: 'Select',
         options: [
           {
-            value: '0',
+            value: 'serious',
             label: 'Neutral',
           },
           {
-            value: '1',
+            value: 'happy',
             label: 'Happy',
           },
           {
-            value: '2',
+            value: 'angry',
             label: 'Angry',
           },
           {
-            value: '3',
+            value: 'disgust',
             label: 'Disgusted',
           },
           {
-            value: '4',
+            value: 'surprise',
             label: 'Impressed',
           },
         ],
         min: 0,
         max: 10,
-        defaultValue: 'Angry'
+        defaultValue: 'angry'
       },
       {
-        name: 'skin',
+        name: 'expressionTemplate',
         label: 'Skin',
         dataType: 'string',
         maxLength: 64,
@@ -492,11 +571,11 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         ],
         min: 0,
         max: 10,
-        defaultValue: 'Space Code'
+        defaultValue: '1'
       },
       {
-        name: 'use wiseframe',
-        label: 'Use Wiseframe',
+        name: 'useWireframe',
+        label: 'Use Wireframe',
         dataType: 'string',
         maxLength: 64,
         fieldType: 'Checkbox',
@@ -511,8 +590,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         defaultValue: true
       },
       {
-        name: 'wiseframe hue',
-        label: 'Wiseframe Hue',
+        name: 'wireframeHue',
+        label: 'Wireframe Hue',
         dataType: 'string',
         maxLength: 64,
         fieldType: 'Slider',
@@ -527,7 +606,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         defaultValue: 0
       },
       {
-        name: 'Use Wireframe Blend',
+        name: 'useWireframeBlend',
         label: 'Use Wireframe Blend',
         dataType: 'string',
         maxLength: 64,
@@ -543,47 +622,47 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         defaultValue: true
       },
       {
-        name: 'Wireframe Blend style',
+        name: 'wireframeBlendStyle',
         label: 'Wireframe Blend Style',
         dataType: 'string',
         maxLength: 64,
         fieldType: 'Select',
         options: [
           {
-            value: '0',
+            value: 'BLEND_ADD',
             label: 'Add',
           },
           {
-            value: '1',
+            value: 'BLEND_DARKEN',
             label: 'Darken',
           },
           {
-            value: '2',
+            value: 'BLEND_DIFFERENCE',
             label: 'Difference',
           },
           {
-            value: '3',
+            value: 'BLEND_EXCLUSION',
             label: 'Exclusion',
           },
           {
-            value: '4',
+            value: 'BLEND_HARDLIGHT',
             label: 'Hardlight',
           },
           {
-            value: '5',
+            value: 'BLEND_LIGHTEN',
             label: 'Lighten',
           },
           {
-            value: '7',
+            value: 'BLEND_MULTIPLY',
             label: 'Multiply',
           },
         ],
         min: 0,
         max: 10,
-        defaultValue: 'Add'
+        defaultValue: 'BLEND_ADD'
       },
       {
-        name: 'innercolor hue',
+        name: 'innerColorHue',
         label: 'InnerColor Hue',
         dataType: 'string',
         maxLength: 64,
@@ -599,7 +678,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         defaultValue: 0
       },
       {
-        name: 'magic',
+        name: 'overlay',
         label: 'Magic',
         dataType: 'string',
         maxLength: 64,
@@ -624,10 +703,10 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         ],
         min: 0,
         max: 10,
-        defaultValue: 'Fractal Perception'
+        defaultValue: '1'
       },
       {
-        name: 'overlay hue',
+        name: 'overlayHue',
         label: 'Overlay Hue',
         dataType: 'string',
         maxLength: 64,
@@ -643,7 +722,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         defaultValue: 0
       },
       {
-        name: 'use shadow',
+        name: 'useShadow',
         label: 'Use Shadow',
         dataType: 'string',
         maxLength: 64,
@@ -674,96 +753,24 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         max: 9,
         defaultValue: false
       },
-      {
-        name: 'Food',
-        label: 'food',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Input Textfield',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 9,
-        defaultValue: 'rice'
-      },
-      /*{
-        name: 'Chemist',
-        label: 'Chemist name',
-        dataType: 'string',
-        fieldType: 'Input Textfield',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: 'Lavoisier'
-      },
-      {
-        name: 'Compound',
-        label: 'Chemist name',
-        dataType: 'string',
-        fieldType: 'Select',
-        options: [
-          {
-            label: 'Acid',
-            value: '0'
-          },
-          {
-            label: 'Ionic',
-            value: '1'
-          },
-          {
-            label: 'Sodium Chloride',
-            value: '2'
-          }
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: 'Sodium Chloride'
-      },
-      {
-        name: 'Pure',
-        label: 'Is the compound pure?',
-        dataType: 'string',
-        fieldType: 'Checkbox',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: true
-      },
-      {
-        name: 'Amount',
-        label: 'Amount of compound',
-        dataType: 'string',
-        fieldType: 'Slider',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 1,
-        max: 10,
-        defaultValue: 5
-      },
-      */
     ]
 
-    this.params?.forEach((param, i) => {
-      this.defaultValues[i] = param.defaultValue;
+    this.params.forEach((param, i) => {
+      if (param.fieldType === 'Select') {
+        param.options.forEach((option) => {
+          if (option.value === param.defaultValue) {
+            this.defaultValues[i] = {
+              label: option.label,
+              value: param.defaultValue
+            }
+          }
+        })
+      } else {
+        this.defaultValues[i] = param.defaultValue;
+      }
     });
+
+    return this.params;
   }
 }
 

@@ -141,7 +141,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   }
 
   GeneratePreview(parsedGeneratedParams: string[]) {
-    console.log('parsedGeneratedParams', parsedGeneratedParams);
     this.isErr = false;
     this.errMsg = '';
     this.clearForm = false;

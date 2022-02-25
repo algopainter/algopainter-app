@@ -3,6 +3,7 @@
     :collection-name="collectionCustomUrl"
     :collection-token="collectionToken"
     :collection-id="collectionId"
+    :collection-max-images-amount="collectionMaxImagesAmount"
   /> -->
   <div
     id="new-painting"
@@ -59,16 +60,21 @@ export default class NewPainting extends Vue {
   collectionInfo!: ICollection;
   formParams: IFormParams[] = [];
   collectionId!: string;
+  collectionMaxImagesAmount!: number;
 
-  async created() {
+  created() {
     this.getCollectionCustomUrl();
-    await this.getCollectionData();
   }
 
   getCollectionCustomUrl() {
     const { collection } = this.$route.params;
     this.collectionCustomUrl = collection;
-    this.collectionToken = (this.collectionCustomUrl === 'gwei') ? 'ALGOP' : 'BNB';
+
+    if (this.collectionCustomUrl !== 'gwei' && 'expressions') {
+      this.getCollectionData().catch(console.error);
+    } else {
+      this.collectionToken = (this.collectionCustomUrl === 'gwei') ? 'ALGOP' : 'BNB';
+    }
   }
 
   async getCollectionData() {
@@ -79,8 +85,10 @@ export default class NewPainting extends Vue {
       }).then(() => {
         const res = this.$store.getters['mint/GET_COLLECTION_DATA'] as ICollection;
 
+        this.collectionToken = (res.metrics.tokenPriceSymbol) ? res.metrics.tokenPriceSymbol : 'ALGOP';
         this.formParams = res.api.parameters;
         this.collectionId = res.blockchainId;
+        this.collectionMaxImagesAmount = res.metrics.nfts;
       });
   }
 }

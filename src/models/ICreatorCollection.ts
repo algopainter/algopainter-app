@@ -32,7 +32,7 @@ export interface IFormParams {
   ;
   min: string | number;
   max: string | number;
-  defaultValue: string | number | boolean;
+  defaultValue: string | number | boolean | {label: string; value: string | number};
 }
 
 export interface IFormFixedParams {

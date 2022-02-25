@@ -25,7 +25,7 @@ import FormGenerator from 'src/pages/create-collection/FormGenerator.vue';
 import { IFormParams } from 'src/models/ICreatorCollection';
 import ICollection from 'src/models/ICollection';
 import { NetworkInfo } from 'src/store/user/types';
-import { ICollectionInfo, IArtBasicInfo, MintStatus, IGenericPayload } from 'src/models/IMint';
+import { ICollectionInfo, IArtBasicInfo, MintStatus } from 'src/models/IMint';
 import { Ref, Watch } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import PinningServiceHelper from 'src/helpers/PinningServiceHelper';

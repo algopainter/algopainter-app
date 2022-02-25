@@ -410,6 +410,7 @@ export default class APIParameters extends Vue.with(Props) {
 
   get generatePreviewUrl() {
     let previewUrl: string = this.collectionInfo.api + '?';
+    console.log('this.params', this.params);
 
     if (!this.collectionInfo.isSpecialParamsChecked) {
       if (this.collectionInfo.isSizeInUrlChecked) {
@@ -424,7 +425,7 @@ export default class APIParameters extends Vue.with(Props) {
     })
 
     this.params.forEach((param, i) => {
-      previewUrl += `${param.name}=${param.defaultValue.toString()}`
+      previewUrl += (typeof param.defaultValue === 'object') ? `${param.name}=${param.defaultValue.value.toString()}` : `${param.name}=${param.defaultValue.toString()}`;
 
       if ((i + 1) !== this.params.length) {
         previewUrl += '&'

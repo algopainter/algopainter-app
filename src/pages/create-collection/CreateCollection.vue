@@ -335,15 +335,14 @@ export default class CreateCollection extends Vue {
       const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
       const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
       const times = [startDT, endDT]
-      try {
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        await this.artistCollection.createCollection(
-          this.collectionData.collectionMetrics.walletAddress,
-          times,
-          this.collectionData.aboutTheCollection.nameCollection,
-          this.collectionData.collectionMetrics.creatorPercentage,
-          startPrice,
+      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      await this.artistCollection.createCollection(
+        this.collectionData.collectionMetrics.walletAddress,
+        times,
+        this.collectionData.aboutTheCollection.nameCollection,
+        this.collectionData.collectionMetrics.creatorPercentage,
+        startPrice,
         this.collectionData.collectionMetrics.tokenPriceAddress as string,
         this.priceType(this.collectionData.collectionMetrics.priceType),
         this.collectionData.apiParameters.parameters.length,
@@ -351,20 +350,19 @@ export default class CreateCollection extends Vue {
         this.collectionData.collectionMetrics.nfts,
         toWei(await this.artistCollection.getCollectionPrice(), 'ether'),
         this.userAccount
-        ).on('transactionHash', () => {
-          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation
-        }).on('receipt', (receipt): void => {
-          if (receipt.events) {
-            this.collectionId = receipt.events.CollectionCreated.returnValues.index
-            console.log('collection id', this.collectionId)
-          }
-        }).on('error', () => {
-          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
-          this.okBtnDisabled = false;
-        })
-      } catch (err) {
-        console.log(err);
-      }
+      ).on('transactionHash', (a) => {
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation
+      }).on('receipt', (receipt): void => {
+        if (receipt.events) {
+          this.collectionId = receipt.events.CollectionCreated.returnValues.index
+          console.log('collection id', this.collectionId)
+        }
+      }).on('error', (error) => {
+        console.log(error)
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
+        this.okBtnDisabled = false;
+      })
+
       this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated
       while (this.hasCollection === false) {
         const teste = await api.get(`collections?blockchainId=${this.collectionId}`);

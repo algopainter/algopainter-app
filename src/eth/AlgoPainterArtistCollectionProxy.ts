@@ -162,7 +162,7 @@ export default class AlgoPainterArtistCollection {
 
   async getMintValue(collectionId: string): Promise<string> {
     const result = await this.instanceItem.methods.getMintValue(collectionId).call<any>();
-    return fromWei(result.toString()); //1000000000000 => 100
+    return result.toString();
   }
 
   async mint(

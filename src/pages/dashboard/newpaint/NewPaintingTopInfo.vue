@@ -118,16 +118,16 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
     }
   }
 
-  mounted() {
-    if (!this.isArtistCollection(this.collectionSystem)) {
-      this.getRemainingImages().catch(console.error);
+  async mounted() {
+    if (this.isArtistCollection(this.collectionSystem)) {
+      await this.getRemainingImages();
     }
   }
 
   @Watch('collectionId')
-  onCollectionIdChanged() {
+  async onCollectionIdChanged() {
     if (this.isArtistCollection(this.collectionSystem)) {
-      this.getRemainingImages().catch(console.error);
+      await this.getRemainingImages();
     }
   }
 

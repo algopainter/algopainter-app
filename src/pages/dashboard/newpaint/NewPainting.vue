@@ -1,5 +1,6 @@
 <template>
   <new-painting-top-info
+    v-if="collectionToken"
     :collection-name="collectionCustomUrl"
     :collection-token="collectionToken"
     :collection-id="collectionId"

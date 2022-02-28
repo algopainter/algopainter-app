@@ -357,6 +357,7 @@ import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 import PirsItem from './PirsItem.vue';
 import { mapGetters } from 'vuex';
+import CollectionController from 'src/controllers/collection/CollectionController';
 
 enum GalleryTabsEnum {
   GalleryTab,
@@ -604,11 +605,19 @@ export default class MyGalleryOverview extends Vue {
       .then(() => {
         const collectionFilter = this.filterCollectionOptions.data;
 
-        collectionFilter.forEach((item: ICollection) => {
-          if (item.title !== 'Personal Item') {
-            this.collectionFilter.push({ label: item.title });
+        // collectionFilter.forEach((item: ICollection) => {
+        //   if (item.title !== 'Personal Item') {
+        //     this.collectionFilter.push({ label: item.title });
+        //   }
+        // });
+        collectionFilter.map(async(item: ICollection) => {
+          const images = await new CollectionController().getCollectionsImages(
+            item._id
+          );
+          if (images.length > 0) {
+            this.collectionFilter.push({ label: item.title })
           }
-        });
+        })
 
         this.getCollectionsLoading = false;
       });

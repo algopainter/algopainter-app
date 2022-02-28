@@ -10,7 +10,7 @@
         {{ collection.description }}
       </p>
       <div>
-        <collections-description :collection="collection.namelc" />
+        <collections-description :collection-name="collection.namelc" :collection-id="collection.blockchainId" :collection="collection" />
       </div>
       <div>
       </div>
@@ -28,13 +28,13 @@
 <script lang="ts">
 import { Vue, prop, Options } from 'vue-class-component';
 import { PropType } from 'vue';
-import { ICreatorCollection } from 'src/models/ICreatorCollection';
+import ICollection from 'src/models/ICollection';
 import AlgoButton from 'components/common/Button.vue';
 import CollectionsDescription from './CollectionsDescription.vue'
 
 class Props {
   collection = prop({
-    type: Object as PropType<ICreatorCollection>,
+    type: Object as PropType<ICollection>,
     required: true,
   });
 }

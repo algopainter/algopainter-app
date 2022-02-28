@@ -51,12 +51,12 @@ class Props {
 
   collectionId = prop({
     type: String,
-    required: false,
+    required: true,
   });
 
   collectionMaxImagesAmount = prop({
     type: Number,
-    required: false,
+    required: true,
   });
 }
 @Options({
@@ -119,38 +119,24 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   }
 
   async mounted() {
-    if (this.isArtistCollection(this.collectionSystem)) {
-      await this.getRemainingImages();
-    }
-  }
-
-  @Watch('collectionId')
-  async onCollectionIdChanged() {
-    if (this.isArtistCollection(this.collectionSystem)) {
-      await this.getRemainingImages();
-    }
+    await this.getRemainingImages();
   }
 
   async getRemainingImages() {
     this.loading = true;
 
     this.mintedImagesAmount = (this.isArtistCollection(this.collectionSystem))
-      ? typeof this.collectionId !== 'undefined'
-        ? Number(await this.collectionSystem.getRemainingTokens(this.collectionId))
-        : -1
+      ? Number(await this.collectionSystem.getRemainingTokens(this.collectionId))
       : await this.collectionSystem.totalSupply();
 
-    // preciso do total de imagens da colecao aqui
-    this.remainingImages = (this.isExpressions(this.collectionSystem)) ? 750 - this.mintedImagesAmount : 1000 - this.mintedImagesAmount;
+    this.remainingImages = this.collectionMaxImagesAmount - this.mintedImagesAmount;
 
     this.getBatchPrice().catch(console.error);
   }
 
   async getBatchPrice() {
     this.currentAmount = (this.isArtistCollection(this.collectionSystem))
-      ? typeof this.collectionId !== 'undefined'
-        ? Number(await this.collectionSystem.getMintValue(this.collectionId))
-        : -1
+      ? Number(await this.collectionSystem.getMintValue(this.collectionId))
       : await this.collectionSystem.getCurrentAmount(this.mintedImagesAmount);
 
     const batchPrice = blockchainToCurrency(
@@ -162,16 +148,15 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    if (this.isGwei(this.collectionSystem)) {
-      this.getTokensToBurn().catch(console.error);
-    } else {
-      this.setCollectionInfo().catch(console.error);
-    }
+    this.isGwei(this.collectionSystem)
+      ? this.getTokensToBurn().catch(console.error)
+      : this.setCollectionInfo().catch(console.error);
   }
 
   async getTokensToBurn() {
     const tokensToBurn = await this.gweiSystem.getAmountToBurn();
     this.tokensToBurn = tokensToBurn.toFixed(2);
+
     this.setCollectionInfo(tokensToBurn).catch(console.error);
   }
 

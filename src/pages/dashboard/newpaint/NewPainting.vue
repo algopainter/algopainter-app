@@ -5,7 +5,7 @@
     :collection-token="collectionToken"
     :collection-id="collectionId"
     :collection-max-images-amount="collectionMaxImagesAmount"
-  /> -->
+  />
   <div
     id="new-painting"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? '' : 'row']"
@@ -60,7 +60,7 @@ export default class NewPainting extends Vue {
   collectionToken?: string;
   collectionInfo!: ICollection;
   formParams: IFormParams[] = [];
-  collectionId!: string;
+  collectionId!: number;
   collectionMaxImagesAmount!: number;
 
   created() {
@@ -71,26 +71,28 @@ export default class NewPainting extends Vue {
     const { collection } = this.$route.params;
     this.collectionCustomUrl = collection;
 
-    if (this.collectionCustomUrl !== 'gwei' && 'expressions') {
+    if (this.collectionCustomUrl !== 'gwei' && this.collectionCustomUrl !== 'expressions') {
       this.getCollectionData().catch(console.error);
     } else {
-      this.collectionToken = (this.collectionCustomUrl === 'gwei') ? 'ALGOP' : 'BNB';
+      this.collectionToken = (this.collectionCustomUrl === 'gwei')
+        ? 'ALGOP'
+        : 'BNB';
+
+      this.collectionMaxImagesAmount = (this.collectionCustomUrl === 'gwei')
+        ? 1000
+        : 750;
+
+      this.collectionId = -1;
     }
   }
 
   async getCollectionData() {
-    await this.$store
-      .dispatch({
-        type: 'mint/collectionData',
-        collectionCustomUrl: this.collectionCustomUrl
-      }).then(() => {
-        const res = this.$store.getters['mint/GET_COLLECTION_DATA'] as ICollection;
+    const res = await this.$store.getters['mint/GET_COLLECTION_DATA'];
 
-        this.collectionToken = (res.metrics.tokenPriceSymbol) ? res.metrics.tokenPriceSymbol : 'ALGOP';
-        this.formParams = res.api.parameters;
-        this.collectionId = res.blockchainId;
-        this.collectionMaxImagesAmount = res.metrics.nfts;
-      });
+    this.collectionToken = res.metrics.tokenPriceSymbol;
+    this.formParams = res.api.parameters;
+    this.collectionId = res.blockchainId;
+    this.collectionMaxImagesAmount = res.metrics.nfts;
   }
 }
 

@@ -124,7 +124,7 @@ import IaArtist from './IaArtist.vue';
 import Preview from './Preview.vue';
 import Example from './Example.vue';
 import { mapGetters } from 'vuex';
-import { ICreatorCollection } from 'src/models/ICreatorCollection';
+import ICollection from 'src/models/ICollection';
 import Collections from './Collections.vue';
 
 interface IAiArtist {
@@ -193,7 +193,7 @@ export default class Create extends Vue {
     btnLink: '',
   };
 
-  formCollection: ICreatorCollection[] = [];
+  formCollection: ICollection[] = [];
 
   // setCurrentArtist(id: number) {
   //   this.currentArtist = this.arts.filter((art) => art.id === id)[0];
@@ -231,6 +231,7 @@ export default class Create extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       // this.userOnSale = customValeu.data;
       this.formCollection = collection.data
+      console.log('this.formCollection', this.formCollection)
     });
   }
 

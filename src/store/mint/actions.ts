@@ -125,7 +125,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName: string = value.collectionCustomUrl;
 
     try {
-      const res = await api.get(`collections?namelc=${collectionName}`);
+      const res = await api.get(`collections?namelc=$${collectionName}`);
 
       this.commit('mint/SET_COLLECTION_DATA', res.data[0]);
     } catch (e) {

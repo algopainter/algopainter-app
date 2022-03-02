@@ -53,6 +53,7 @@ export default class AlgoPainterArtistCollection {
   declare instanceItem: {
     methods: {
       getCollectionTokens(collectionId: string): ContractMethod;
+      mintFee(): ContractMethod;
       getRemainingTokens(collectionId: string): ContractMethod;
       getMintValue(collectionId: string): ContractMethod;
       mint(
@@ -81,6 +82,10 @@ export default class AlgoPainterArtistCollection {
     const result = await this.instance.methods.collectionPrice().call<any>();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return fromWei(result.toString());
+  }
+
+  async getMintFee(): Promise<number> {
+    return await this.instanceItem.methods.mintFee().call<number>();
   }
 
   async getCollectionAllowedTokens(): Promise<string[]> {
@@ -173,6 +178,7 @@ export default class AlgoPainterArtistCollection {
     expectedValue: string,
     from: string,
   ) {
+    console.log('mint');
     return this.instanceItem.methods.mint(
       name,
       collectionId,
@@ -187,8 +193,7 @@ export default class AlgoPainterArtistCollection {
     collectionId: string,
     params: string[],
     tokenURI: string,
-    expectedValue: string,
-    from: string,
+    expectedValue: string
   ) {
     return this.instanceItem.methods.mint(
       name,
@@ -196,7 +201,7 @@ export default class AlgoPainterArtistCollection {
       params,
       tokenURI,
       expectedValue
-    ).call({ from });
+    ).call();
   }
 }
 

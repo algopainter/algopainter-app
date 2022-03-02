@@ -1,7 +1,7 @@
 import { ICollectionMetrics, ICollectionNFTCreationAPI } from './ICreatorCollection';
 export default interface ICollection {
   _id: string;
-  blockchainId: string;
+  blockchainId: number;
   description: string;
   owner: string;
   title: string;

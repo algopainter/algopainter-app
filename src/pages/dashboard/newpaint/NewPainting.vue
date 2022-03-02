@@ -24,14 +24,16 @@
       <new-painting-left-info
         v-else
         :form-params="formParams"
+        :default-values="defaultValues"
       />
     </div>
     <div
       :class="'col-5 new-painting-right-info'"
     >
-      <!-- <new-painting-right-info
+      <new-painting-right-info
         :collection-name="collectionCustomUrl"
-      /> -->
+        :collection-avatar="collectionAvatar"
+      />
     </div>
   </div>
 </template>
@@ -57,11 +59,13 @@ import { IFormParams } from 'src/models/ICreatorCollection';
 })
 export default class NewPainting extends Vue {
   collectionCustomUrl !: string | string[];
-  collectionToken?: string;
+  collectionToken!: string;
   collectionInfo!: ICollection;
   formParams: IFormParams[] = [];
+  defaultValues: (number | string | boolean | {label: string, value: string | number})[] = [];
   collectionId!: number;
   collectionMaxImagesAmount!: number;
+  collectionAvatar!: string;
 
   created() {
     this.getCollectionCustomUrl();
@@ -87,12 +91,21 @@ export default class NewPainting extends Vue {
   }
 
   async getCollectionData() {
-    const res = await this.$store.getters['mint/GET_COLLECTION_DATA'];
+    const res = await this.$store.getters['mint/GET_COLLECTION_DATA'] as ICollection;
 
-    this.collectionToken = res.metrics.tokenPriceSymbol;
+    this.collectionToken = res.metrics.tokenPriceSymbol
+      ? res.metrics.tokenPriceSymbol
+      : 'ALGOP';
+
     this.formParams = res.api.parameters;
+
+    this.formParams.forEach((param, i) => {
+      this.defaultValues[i] = param.defaultValue;
+    });
+
     this.collectionId = res.blockchainId;
     this.collectionMaxImagesAmount = res.metrics.nfts;
+    this.collectionAvatar = res.avatar;
   }
 }
 

@@ -253,6 +253,10 @@ export default class HomePageGallery extends Vue {
   border: 2px solid #f4538d;
 }
 
+.header{
+    width: 250px;
+  }
+
 body.screen--xs {
   .header {
     display: flex;
@@ -262,7 +266,7 @@ body.screen--xs {
 }
 body.screen--md{
   .header{
-    max-width: 250px;
+    width: 250px;
   }
 }
 .limit-text{

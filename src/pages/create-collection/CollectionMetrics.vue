@@ -7,6 +7,7 @@
         ref="startDT"
         v-model="form.startDT"
         :rules="[ val => startDtValidator() || dateErrorMsg ]"
+        :disable="isEndDtErr"
         readonly
       >
         <template #append>
@@ -38,6 +39,7 @@
         v-model="form.endDT"
         :rules="[ val => endDtValidator() || dateErrorMsg]"
         readonly
+        :disable="isStartDtErr"
       >
         <template #append>
           <q-icon

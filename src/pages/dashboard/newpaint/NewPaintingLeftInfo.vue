@@ -1,6 +1,6 @@
 <template>
   <form-generator
-    :form-params="params"
+    :form-params="formParams"
     :default-values="defaultValues"
     :clear-form="clearForm"
     @generate-preview="GeneratePreview"
@@ -37,6 +37,11 @@ class Props {
     type: Object as PropType<IFormParams[]>,
     required: true,
   });
+
+  defaultValues = prop({
+    type: Object as PropType<number | string | boolean | {label: string, value: string | number}[]>,
+    required: true,
+  });
 }
 
 @Options({
@@ -52,7 +57,7 @@ class Props {
       ]),
     ...mapGetters(
       'mint', {
-        // collectionData: 'GET_COLLECTION_DATA',
+        collectionData: 'GET_COLLECTION_DATA',
         collectionInfo: 'GET_COLLECTION_INFO',
         artBasicInfo: 'GET_BASIC_INFO',
         userConfirmations: 'GET_USER_CONFIRMATIONS',
@@ -77,7 +82,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
 
   collectionData!: ICollection;
   params: IFormParams[] = [];
-  defaultValues: (number | string | boolean | {label: string, value: string | number})[] = [];
   parsedGeneratedParams!: string[];
   descriptorIPFSHash!: string;
 
@@ -90,7 +94,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     if (this.isConnected) {
       this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
     }
-    // setTimeout(() => { this.mint().catch(console.error) }, 5000);
   }
 
   @Watch('isConnected')
@@ -130,14 +133,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       })
   }
 
-  get paramsDefaultValues() {
-    this.params.forEach((param, i) => {
-      this.defaultValues[i] = param.defaultValue;
-    });
-
-    return this.defaultValues;
-  }
-
   GeneratePreview(parsedGeneratedParams: string[]) {
     this.isErr = false;
     this.errMsg = '';
@@ -148,7 +143,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   }
 
   previewUrl(parsedGeneratedParams: (number | string | boolean)[], noSize = false) {
-    let previewUrl: string = this.collectionData.api.collectionInfo.api + '?';
+    let previewUrl = `${this.collectionData.api.collectionInfo.api}?`;
 
     if (!this.collectionData.api.collectionInfo.isSpecialParamsChecked && !noSize) {
       if (this.collectionData.api.collectionInfo.isSizeInUrlChecked) {
@@ -170,8 +165,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       }
     })
     const searchRegExp = /\s/g;
-
-    console.log('previewUrl', previewUrl.replace(searchRegExp, '%20'));
 
     return previewUrl.replace(searchRegExp, '%20');
   }
@@ -198,18 +191,17 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       // Substituir expressions - preview dentro do pinning service helper
       const previewPiningResult = await PinningServiceHelper.pinFile('Expressions - Preview', 1, this.previewUrl(this.parsedGeneratedParams, false));
       const previewIPFSHash = previewPiningResult.ipfsHash;
-      console.log('previewIPFSHash', previewIPFSHash);
 
-      await this.algoPainterArtistCollection.mintCall(
-        this.collectionData.title,
-        this.collectionData.blockchainId,
+      const mint = await this.algoPainterArtistCollection.mint(
+        this.artBasicInfo.name,
+        this.collectionData.blockchainId.toString(),
         this.parsedGeneratedParams,
         previewIPFSHash || '',
-        // Na linha de baixo tem que colocar uma info puxada do newpaintingtopinfo
-        this.collectionData.metrics.priceRange[0].amount.toString(),
-        // Pra fazer call não precisa do from
-        this.account
+        this.collectionInfo.batchPriceBlockchain,
+        this.accounts
       );
+
+      console.log('mintCallRes', mint);
     } catch (e: any) {
       this.restoreDefault().catch(console.error);
 
@@ -390,6 +382,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       })
   }
 
+  /*
   mockedCollectionData() {
     this.collectionData = {
       _id: 'dasdasdasdas',
@@ -768,7 +761,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     });
 
     return this.params;
-  }
+    */
 }
-
 </script>

@@ -1,7 +1,12 @@
 <template>
   <div class="img-container">
+    <img
+      v-if="!previewUrlGeneric && collectionAvatar"
+      :src="collectionAvatar"
+      class="img"
+    >
     <q-img
-      v-if="!previewUrlGwei && !previewUrlExpressions && collectionName !== 'gwei'"
+      v-else-if="!previewUrlGwei && !previewUrlExpressions && collectionName === 'expressions'"
       :src="collectionImagePlaceholder"
       class="img"
     />
@@ -84,11 +89,18 @@ import { NetworkInfo } from 'src/store/user/types';
 import { IGweiParsedItemParameters } from 'src/models/INewPaintingGwei';
 import Icon from './icon.vue';
 import ICollection from 'src/models/ICollection';
+import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
 
 class Props {
   collectionName = prop({
+
     type: String,
     required: true,
+  });
+
+  collectionAvatar = prop({
+    type: String,
+    required: false
   });
 }
 
@@ -107,6 +119,7 @@ class Props {
     ...mapGetters('mint', {
       collectionInfoGwei: 'GET_GWEI_COLLECTION_INFO',
       collectionInfoExpressions: 'GET_EXPRESSIONS_COLLECTION_INFO',
+      collectionInfoGeneric: 'GET_COLLECTION_INFO',
       itemParametersGwei: 'GET_GWEI_ITEM_PARAMETERS',
       itemParametersExpressions: 'GET_EXPRESSIONS_ITEM_PARAMETERS',
       previewUrlGwei: 'GET_GWEI_PREVIEW_URL',
@@ -120,6 +133,8 @@ class Props {
 })
 export default class NewPaintingRightInfo extends Vue.with(Props) {
   expressionsSystem!: AlgoPainterExpressionsProxy;
+  algoPainterArtistCollection!: AlgoPainterArtistCollection;
+  collectionSystem!: AlgoPainterExpressionsProxy | AlgoPainterArtistCollection;
 
   isConnected!: boolean;
   networkInfo!: NetworkInfo;
@@ -127,6 +142,7 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 
   collectionInfoGwei!: ICollectionInfo;
   collectionInfoExpressions!: ICollectionInfo;
+  collectionInfoGeneric!: ICollectionInfo;
   checkboxFeeLabel!: string;
   isCollectionInfoSet: boolean = false;
 
@@ -162,22 +178,15 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   }
 
   created() {
-    this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo);
+    this.collectionSystem = (this.collectionName === 'expressions')
+      ? new AlgoPainterExpressionsProxy(this.networkInfo)
+      : new AlgoPainterArtistCollection(this.networkInfo);
   }
 
   mounted() {
-    switch (this.collectionName) {
-      case 'gwei':
-        this.collectionImagePlaceholder = 'img/hashly-gwei.svg';
-        break;
-      case 'expressions':
-        this.collectionImagePlaceholder = 'img/manwithnoname.jpeg';
-        break;
-      default:
-        this.collectionImagePlaceholder = this.collectionData.avatar;
-    }
-
-    this.setGweiSvgProperties();
+    this.collectionName === 'expressions'
+      ? this.collectionImagePlaceholder = 'src/assets/images/manwithnoname.jpeg'
+      : this.setGweiSvgProperties();
   }
 
   @Watch('collectionInfoGwei')
@@ -186,18 +195,34 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
       feeAmount: this.collectionInfoGwei.batchPriceCurrency,
       collectionCurrency: this.collectionInfoGwei.collectionToken,
     })
+
     this.isCollectionInfoSet = true;
   }
 
   @Watch('collectionInfoExpressions')
   async onCollectionInfoExpressionsChanged() {
-    await this.getServiceFee().catch(console.error);
-    this.checkboxFeeLabel = this.$t('dashboard.newPainting.expressions.artMintingFee', {
-      feeAmount: this.collectionInfoExpressions.batchPriceCurrency,
-      collectionCurrency: this.collectionInfoExpressions.collectionToken,
-      feePercentage: this.expressionsFeePercentage
-    })
-    this.isCollectionInfoSet = true;
+    if (this.isExpressions(this.collectionSystem)) {
+      this.checkboxFeeLabel = this.$t('dashboard.newPainting.expressions.artMintingFee', {
+        feeAmount: this.collectionInfoExpressions.batchPriceCurrency,
+        collectionCurrency: this.collectionInfoExpressions.collectionToken,
+        feePercentage: await this.collectionSystem.getServiceFee() / 100
+      })
+
+      this.isCollectionInfoSet = true;
+    }
+  }
+
+  @Watch('collectionInfoGeneric')
+  async onCollectionInfoGenericChanged() {
+    if (!this.isExpressions(this.collectionSystem)) {
+      this.checkboxFeeLabel = this.$t('dashboard.newPainting.expressions.artMintingFee', {
+        feeAmount: this.collectionInfoGeneric.batchPriceCurrency,
+        collectionCurrency: this.collectionInfoGeneric.collectionToken,
+        feePercentage: await this.collectionSystem.getMintFee() / 100
+      })
+
+      this.isCollectionInfoSet = true;
+    }
   }
 
   @Watch('itemParametersGwei')
@@ -215,10 +240,6 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   onErrorMessageExpressionsChanged() {
     this.errorMessage = this.errorMessageExpressions;
     this.isError = (this.errorMessageExpressions !== '');
-  }
-
-  async getServiceFee() {
-    this.expressionsFeePercentage = await this.expressionsSystem.getServiceFee() / 100;
   }
 
   async mint() {
@@ -258,6 +279,7 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 
   @Watch('previewUrlGeneric')
   onPreviewUrlGenericChanged() {
+    console.log('previewUrlGeneric', this.previewUrlGeneric);
     this.isPreviewUrlSet = true;
     this.previewUrl = this.previewUrlGeneric;
 
@@ -265,7 +287,7 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   }
 
   checkIfImgIsLoaded() {
-    if (this.previewUrlGwei || this.previewUrlExpressions) {
+    if (this.previewUrlGwei || this.previewUrlExpressions || this.previewUrlGeneric) {
       const interval = setInterval(() => {
         this.isImgLoaded = this.$refs.previewImg.complete;
 
@@ -276,6 +298,10 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
     } else {
       this.isImgLoaded = false;
     }
+  }
+
+  isExpressions(instance: any) : instance is AlgoPainterExpressionsProxy {
+    return instance instanceof AlgoPainterExpressionsProxy;
   }
 
   setGweiSvgProperties() {

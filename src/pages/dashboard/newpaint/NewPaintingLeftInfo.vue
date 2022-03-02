@@ -198,7 +198,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         this.parsedGeneratedParams,
         previewIPFSHash || '',
         this.collectionInfo.batchPriceBlockchain,
-        this.accounts
+        this.account
       );
 
       console.log('mintCallRes', mint);

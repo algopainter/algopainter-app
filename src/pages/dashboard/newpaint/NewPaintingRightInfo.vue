@@ -185,7 +185,7 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 
   mounted() {
     this.collectionName === 'expressions'
-      ? this.collectionImagePlaceholder = '/images/manwithnoname.png'
+      ? this.collectionImagePlaceholder = '/images/manwithnoname.jpeg'
       : this.setGweiSvgProperties();
   }
 

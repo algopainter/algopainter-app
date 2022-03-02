@@ -17,12 +17,19 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
         ? ''
         : collectionName;
     try {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=false`);
-      const userItems: string = res.data.count;
-      const images: [] = res.data;
-      this.commit('collections/SET_USER_ITEMS', userItems);
-      this.commit('collections/SET_IMAGES', images);
+      if (currentCollection === 'Personal Item') {
+        const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection.replace(/\s/g, '')}&onSale=false`);
+        const userItems: string = res.data.count;
+        const images: [] = res.data;
+        this.commit('collections/SET_USER_ITEMS', userItems);
+        this.commit('collections/SET_IMAGES', images);
+      } else {
+        const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=false`);
+        const userItems: string = res.data.count;
+        const images: [] = res.data;
+        this.commit('collections/SET_USER_ITEMS', userItems);
+        this.commit('collections/SET_IMAGES', images);
+      }
     } catch (e) {
       console.log('error message - getUserItems');
     }

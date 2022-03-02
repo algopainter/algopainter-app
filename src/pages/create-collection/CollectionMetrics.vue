@@ -7,6 +7,7 @@
         ref="startDT"
         v-model="form.startDT"
         :rules="[ val => startDtValidator() || dateErrorMsg ]"
+        :disable="isEndDtErr"
         readonly
       >
         <template #append>
@@ -38,6 +39,7 @@
         v-model="form.endDT"
         :rules="[ val => endDtValidator() || dateErrorMsg]"
         readonly
+        :disable="isStartDtErr"
       >
         <template #append>
           <q-icon
@@ -94,7 +96,7 @@
   <div class="price">
     <div v-if="form.priceType === 'fixed'" class="fixed-price">
       <q-input
-        ref="amount"
+        ref="amountFixed"
         v-model.number="form.priceRange[0].amount"
         :label="$t('dashboard.createCollection.stepTwo.price')"
         mask="#.####"
@@ -170,7 +172,7 @@
           />
         </div>
         <q-input
-          ref="amount"
+          ref="amountVariable"
           v-model="form.priceRange[index].amount"
           :label="$t('dashboard.createCollection.stepTwo.price')"
           class="col-6 q-px-md"
@@ -333,10 +335,11 @@ export default class CollectionMetrics extends Vue.with(Props) {
     nfts: QInput;
     startDT: QInput;
     endDT: QInput;
-    amount: QInput;
+    amountFixed: QInput;
+    amountVariable: any;
     creatorPercentage: QInput;
     walletAddress: QInput;
-    to: QInput;
+    to: any;
   };
 
   form: ICollectionMetrics = {
@@ -410,7 +413,9 @@ export default class CollectionMetrics extends Vue.with(Props) {
       !this.$refs.startDT.validate() ||
       !this.$refs.endDT.validate() ||
       !this.$refs.nfts.validate() ||
-      !this.$refs.amount.validate() ||
+      (this.form.priceType === 'fixed' && !this.$refs.amountFixed.validate()) ||
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      (this.form.priceType === 'variable' && !this.$refs.amountVariable[this.form.priceRange.length - 1].validate()) ||
       !this.$refs.creatorPercentage.validate() ||
       !this.$refs.walletAddress.validate()
     ) {
@@ -442,7 +447,8 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   addPriceRange() {
-    if (!this.$refs.amount.validate() || !this.$refs.to.validate()) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    if (this.form.priceType === 'variable' && (!this.$refs.amountVariable[this.form.priceRange.length - 1].validate() || !this.$refs.to[this.form.priceRange.length - 1].validate())) {
       return;
     }
 
@@ -522,7 +528,8 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
   validateNfts(val: string | number) {
     if (this.form.priceType === 'variable') {
-      void this.$refs.to.validate();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      void this.$refs.to[this.form.priceRange.length - 1].validate();
     }
 
     if (Number(val) === 0) {
@@ -660,11 +667,7 @@ export default class CollectionMetrics extends Vue.with(Props) {
     try {
       this.loadingCoins = true;
 
-      console.log('loadAvailableTokens');
-
       const tokens = await this.artistCollection.getCollectionAllowedTokens();
-
-      console.log('tokens', tokens);
 
       this.allowedTokens = tokens.reduce((curr, token) => {
         return { ...curr, [token.toLowerCase()]: true };

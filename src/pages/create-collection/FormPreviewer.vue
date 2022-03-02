@@ -27,7 +27,6 @@
         v-else-if="params[i].fieldType === 'Slider'"
         v-model="generatedParams[i]"
         label
-        :marker-labels="setMarkers(i)"
         :min="Number(params[i].min)"
         :max="Number(params[i].max)"
       />
@@ -62,17 +61,17 @@ export default class FormPreviewer extends Vue.with(Props) {
       }
     }
 
-    setMarkers(i: number) {
-      let markers!: [{ value: number, label: string }];
+  // setMarkers(i: number) {
+  //   let markers!: [{ value: number, label: string }];
 
-      for (let iteration: number = Number(this.params[i].min); iteration <= Number(this.params[i].max); iteration++) {
-        iteration === Number(this.params[i].min)
-          ? markers = [{ value: iteration, label: iteration.toString() }]
-          : markers.push({ value: iteration, label: iteration.toString() });
-      }
+  //   for (let iteration: number = Number(this.params[i].min); iteration <= Number(this.params[i].max); iteration++) {
+  //     iteration === Number(this.params[i].min)
+  //       ? markers = [{ value: iteration, label: iteration.toString() }]
+  //       : markers.push({ value: iteration, label: iteration.toString() });
+  //   }
 
-      return markers;
-    }
+  //   return markers;
+  // }
 }
 </script>
 

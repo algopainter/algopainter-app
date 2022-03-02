@@ -205,15 +205,12 @@ export default class CreateCollection extends Vue {
       switch (step) {
         case 1:
           this.collectionData.aboutTheCollection = data;
-          console.log('this.collectionData.aboutTheCollection', this.collectionData.aboutTheCollection);
           break;
         case 2:
           this.collectionData.collectionMetrics = data;
-          console.log('this.collectionData.collectionMetrics', this.collectionData.collectionMetrics);
           break;
         case 3:
           this.collectionData.apiParameters = data;
-          console.log('this.collectionData.apiParameters', this.collectionData.apiParameters);
           break;
       }
     }
@@ -355,10 +352,8 @@ export default class CreateCollection extends Vue {
       }).on('receipt', (receipt): void => {
         if (receipt.events) {
           this.collectionId = receipt.events.CollectionCreated.returnValues.index
-          console.log('collection id', this.collectionId)
         }
-      }).on('error', (error) => {
-        console.log(error)
+      }).on('error', (e) => {
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
         this.okBtnDisabled = false;
       })

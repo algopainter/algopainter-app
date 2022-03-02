@@ -17,7 +17,7 @@ export default {
     btnCreate: 'Create item',
     requiredField: 'Required field',
     collections: {
-      batchPrice: 'BATCH PRICE ($ {coin})',
+      batchPrice: 'BATCH PRICE({coin})',
       remaining: 'REMAINING',
       minted: 'MINTED'
     },

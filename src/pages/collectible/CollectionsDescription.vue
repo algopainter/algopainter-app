@@ -1,33 +1,33 @@
 <template>
   <div class="row justify-center">
-    <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'column items-center q-pb-sm q-gutter-md' : 'row justify-between q-gutter-xl']">
-      <div class="info-collections  separator q-px-md">
-        <p>
+    <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'column items-center q-pb-sm q-gutter-md' : 'row justify-evenly q-gutter-sm']">
+      <div class="info-collections   q-pt-sm">
+        <p class="text">
           {{ $t('createCollectible.create.collections.batchPrice',{ coin: tokem }) }}
         </p>
-        <p v-if="!loading" class="text-center">
+        <p v-if="!loading" class="text-center amount">
           {{ batchPrice }}
         </p>
         <p v-else class="row justify-center">
           <q-spinner size="40px" color="primary" />
         </p>
       </div>
-      <div class="info-collections  separator q-px-md">
-        <p>
+      <div class="info-collections   q-pt-sm ">
+        <p class="text">
           {{ $t('createCollectible.create.collections.remaining') }}
         </p>
-        <p v-if="!loading" class="text-center">
+        <p v-if="!loading" class="text-center amount">
           {{ remainingImages }}
         </p>
         <p v-else class="row justify-center">
           <q-spinner size="40px" color="primary" />
         </p>
       </div>
-      <div class="info-collections q-px-md">
-        <p>
+      <div class="info-collections q-pt-sm">
+        <p class="text">
           {{ $t('createCollectible.create.collections.minted') }}
         </p>
-        <p v-if="!loading" class="text-center">
+        <p v-if="!loading" class="text-center amount">
           {{ mintedImagesAmount }}
         </p>
         <p v-else class="row justify-center">
@@ -279,7 +279,7 @@ export default class CollectionsDescription extends Vue.with(Props) {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .container-avatar{
     width: 200px;
      display: block;
@@ -300,6 +300,18 @@ export default class CollectionsDescription extends Vue.with(Props) {
     border: 1px solid #f4538d;
     display: block;
     border-radius: 5px;
+    width: 160px;
     justify-content: center;
+    /* padding:8px 8px; */
+
+}
+.text{
+  /* font-size: 12px; */
+  text-align: center;
+  color: #A5A5A5;
+}
+.amount{
+  color: $secondary;
+  font-weight: bold;
 }
 </style>

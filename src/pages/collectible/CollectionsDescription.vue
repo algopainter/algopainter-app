@@ -157,7 +157,6 @@ export default class CollectionsDescription extends Vue.with(Props) {
       this.tokem = 'ALGOP'
     } else if (!this.collection.metrics && this.collection.namelc === 'expressions') {
       this.tokem = 'BNB'
-      console.log('token', this.tokem)
     } else if (this.collection.metrics) {
       this.tokem = this.collection.metrics.tokenPriceSymbol
     }
@@ -177,7 +176,7 @@ export default class CollectionsDescription extends Vue.with(Props) {
         this.mintedImagesAmount = (this.isArtistCollection(this.collectionSystem))
           ? Number(await this.collectionSystem.getRemainingTokens(this.collectionId))
           : -1;
-        this.remainingImages = this.mintedImagesAmount
+        this.remainingImages = this.collection.metrics.nfts - this.mintedImagesAmount
       } else if (this.collectionName === 'gwei') {
         this.mintedImagesAmount = await this.gweiSystem.totalSupply();
         this.remainingImages = 1000 - this.mintedImagesAmount
@@ -185,7 +184,7 @@ export default class CollectionsDescription extends Vue.with(Props) {
         this.mintedImagesAmount = await this.collectionSystemExpressions.totalSupply();
         this.remainingImages = 750 - this.mintedImagesAmount
       } else {
-        this.remainingImages = this.mintedImagesAmount
+        this.remainingImages = this.collection.metrics.nfts - this.mintedImagesAmount;
       }
 
       this.getBatchPrice().catch(console.error);

@@ -13,14 +13,18 @@
       </div>
       <div class="row">
         <q-input
+          ref="optionsLabel"
           v-model="params[i].options[index].label"
-          label="Label"
+          label="Label:"
           class="col-6 q-pr-md"
+          :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
         />
         <q-input
+          ref="optionsValue"
           v-model="params[i].options[index].value"
-          label="Value"
+          label="Value:"
           class="col-6 q-pl-md"
+          :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
         />
       </div>
     </div>
@@ -39,7 +43,9 @@
 <script lang="ts">
 import { Vue, prop } from 'vue-class-component';
 import { PropType } from 'vue';
-import { IFormParams } from 'src/models/ICreatorCollection'
+import { IFormParams } from 'src/models/ICreatorCollection';
+import { Watch } from 'vue-property-decorator';
+import { QInput } from 'quasar';
 
 class Props {
   params = prop({
@@ -51,20 +57,60 @@ class Props {
     type: Number,
     required: true,
   });
+
+  checkForm = prop({
+    type: Boolean,
+    required: true,
+  });
 }
 
 export default class FormSelect extends Vue.with(Props) {
+  emptyFieldErrMsg!: string;
+  isEmptyFieldError: boolean = false;
+
+  declare $refs: {
+    optionsLabel: QInput[];
+    optionsValue: QInput[];
+  };
+
   addOption() {
     this.params[this.i].options.push(
       {
-        label: 'option label',
-        value: 'option value'
+        label: '',
+        value: ''
       }
     )
   }
 
   removeOption(index: number) {
     this.params[this.i].options.splice(index, 1);
+  }
+
+  validateIfEmpty(val: string) {
+    if (val === '') {
+      this.emptyFieldErrMsg = this.$t('dashboard.createCollection.stepThree.fieldRequired');
+    } else {
+      this.isEmptyFieldError = false;
+      return true;
+    }
+
+    this.isEmptyFieldError = true;
+    return false;
+  }
+
+  @Watch('checkForm')
+  onCheckFormChanged() {
+    if (this.checkForm) {
+      if (this.$refs.optionsLabel.every(option => {
+        return option.validate();
+      }) && this.$refs.optionsValue.every(option => {
+        return option.validate();
+      })) {
+        this.$emit('verify', true);
+      } else {
+        this.$emit('verify', false);
+      }
+    }
   }
 }
 </script>

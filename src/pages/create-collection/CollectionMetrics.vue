@@ -336,10 +336,10 @@ export default class CollectionMetrics extends Vue.with(Props) {
     startDT: QInput;
     endDT: QInput;
     amountFixed: QInput;
-    amountVariable: any;
+    amountVariable: QInput[];
     creatorPercentage: QInput;
     walletAddress: QInput;
-    to: any;
+    to: QInput[];
   };
 
   form: ICollectionMetrics = {
@@ -414,7 +414,6 @@ export default class CollectionMetrics extends Vue.with(Props) {
       !this.$refs.endDT.validate() ||
       !this.$refs.nfts.validate() ||
       (this.form.priceType === 'fixed' && !this.$refs.amountFixed.validate()) ||
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       (this.form.priceType === 'variable' && !this.$refs.amountVariable[this.form.priceRange.length - 1].validate()) ||
       !this.$refs.creatorPercentage.validate() ||
       !this.$refs.walletAddress.validate()
@@ -447,7 +446,6 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   addPriceRange() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     if (this.form.priceType === 'variable' && (!this.$refs.amountVariable[this.form.priceRange.length - 1].validate() || !this.$refs.to[this.form.priceRange.length - 1].validate())) {
       return;
     }
@@ -528,7 +526,6 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
   validateNfts(val: string | number) {
     if (this.form.priceType === 'variable') {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       void this.$refs.to[this.form.priceRange.length - 1].validate();
     }
 

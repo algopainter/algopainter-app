@@ -16,7 +16,7 @@
           readonly
         />
         <q-input
-          :model-value="collectionData.aboutTheCollection.artistName"
+          :model-value="collectionData.aboutTheCollection.nameCollection"
           :label="$t('dashboard.createCollection.aboutTheCollection.nameCollection')"
           class="col-6 q-pl-md"
           readonly
@@ -117,6 +117,7 @@
             :model-value="collectionData.collectionMetrics.creatorPercentage / 100"
             :label="$t('dashboard.createCollection.stepTwo.creator')"
             class="col-6 q-pr-md"
+            suffix="%"
             readonly
           />
           <q-input
@@ -233,7 +234,7 @@ export default class CollectionSummary extends Vue.with(Props) {
     })
 
     this.collectionData.apiParameters.parameters.forEach((param, i) => {
-      previewUrl += `${param.name}=${param.defaultValue.toString()}`
+      previewUrl += (typeof param.defaultValue === 'object') ? `${param.name}=${param.defaultValue.value.toString()}` : `${param.name}=${param.defaultValue.toString()}`;
 
       if ((i + 1) !== this.collectionData.apiParameters.parameters.length) {
         previewUrl += '&'

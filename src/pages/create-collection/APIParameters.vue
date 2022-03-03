@@ -7,8 +7,10 @@
       <q-form class="api-parameters">
         <h5 class="text-bold">Collection Information</h5>
         <q-input
+          ref="collectionAPI"
           v-model.trim="collectionInfo.api"
-          label="API"
+          placeholder="https://myapi.app/api/"
+          label="API:"
           class="col-6 q-pr-md"
           stack-label
           :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
@@ -29,20 +31,26 @@
           />
           <div class="row">
             <q-input
+              ref="collectionWidth"
               v-model.number="collectionInfo.width"
               label="Preview image width"
+              placeholder="400"
               class="col-6 q-pr-md"
               mask="#"
               fill-mask="0"
               reverse-fill-mask
+              :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
             <q-input
-              v-model.number="collectionInfo.width"
+              ref="collectionHeight"
+              v-model.number="collectionInfo.height"
+              placeholder="400"
               label="Preview image height"
               class="col-6 q-pl-md"
               mask="#"
               fill-mask="0"
               reverse-fill-mask
+              :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
           </div>
         </div>
@@ -66,15 +74,19 @@
           </div>
           <div class="row">
             <q-input
+              ref="fixedParamsName"
               v-model.trim="fixedParams[i].name"
-              label="name"
+              placeholder="fixed name"
+              label="name:"
               class="col-6 q-pr-md"
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
             <q-input
+              ref="fixedParamsValue"
               v-model.trim="fixedParams[i].value"
+              placeholder="fixed value"
               class="col-6 q-pl-md"
-              label="value"
+              label="value:"
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
           </div>
@@ -112,21 +124,25 @@
           </div>
           <div class="row">
             <q-input
+              ref="paramsName"
               v-model.trim="params[i].name"
-              label="name"
+              placeholder="name"
+              label="name:"
               class="col-6 q-pr-md"
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
             <q-input
+              ref="paramsLabel"
               v-model.trim="params[i].label"
+              placeholder="value"
               class="col-6 q-pl-md"
-              label="label"
+              label="label:"
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
           </div>
           <q-select
             v-model="params[i].fieldType"
-            label="Field type"
+            label="Field type:"
             :options="fieldTypeOptions"
             @update:model-value="fieldTypeUpdateDefaultValue(i)"
           />
@@ -136,32 +152,39 @@
           >
             <q-select
               v-model="params[i].dataType"
-              label="Data type"
+              label="Data type:"
               class="col-6 q-pr-md"
               :options="dataTypeOptions"
               @update:model-value="dataTypeUpdateDefaultValue(i)"
             />
             <q-input
+              ref="paramsMaxLength"
               v-model.number="params[i].maxLength"
-              label="Max length"
+              placeholder="64"
+              label="Max length:"
               class="col-6 q-pl-md"
               mask="#"
               fill-mask="0"
               reverse-fill-mask
+              :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
           </div>
           <form-select
             v-if="params[i].fieldType === 'Select'"
             :params="params"
             :i="i"
+            :check-form="verifyFormSelect"
+            @verify="checkIfFormSelectIsVerified"
           />
           <div
             v-if="params[i].fieldType === 'Slider'"
             class="min-max-field row q-pa-md q-my-md"
           >
             <q-input
+              ref="paramsMin"
               v-model.number="params[i].min"
-              label="Min"
+              placeholder="0"
+              label="Min:"
               class="col-6 q-pr-md"
               mask="#"
               fill-mask="0"
@@ -169,8 +192,10 @@
               :rules="[ val => validateMin(val, i) || minFieldErrMsg ]"
             />
             <q-input
+              ref="paramsMax"
               v-model.number="params[i].max"
-              label="Max"
+              placeholder="10"
+              label="Max:"
               class="col-6 q-pl-md"
               mask="#"
               fill-mask="0"
@@ -187,28 +212,31 @@
             </p>
             <q-input
               v-if="params[i].fieldType === 'Input Textfield'"
+              ref="paramsDefault"
               v-model.trim="params[i].defaultValue"
-              label="Default value"
+              placeholder="default value"
+              label="Default value:"
               stack-label
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
             <q-select
               v-else-if="params[i].fieldType === 'Select'"
+              ref="paramsQSelectDefault"
               v-model="params[i].defaultValue"
-              label="Default value"
+              label="Default value:"
               stack-label
               :options="params[i].options"
+              :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
             <q-checkbox
               v-else-if="params[i].fieldType === 'Checkbox'"
               v-model="params[i].defaultValue"
-              label="Default value"
+              label="Default value:"
             />
             <q-slider
               v-else-if="params[i].fieldType === 'Slider'"
               v-model="params[i].defaultValue"
               label
-              :marker-labels="setMarkers(i)"
               :min="Number(params[i].min)"
               :max="Number(params[i].max)"
             />
@@ -235,8 +263,7 @@
         <q-input
           v-model="generatePreviewUrl"
           readonly
-        >
-        </q-input>
+        />
       </q-form>
     </div>
     <div
@@ -269,7 +296,7 @@ import FormPreviewer from './FormPreviewer.vue';
 import FormSelect from './FormSelect.vue';
 import { Watch } from 'vue-property-decorator';
 import Error from './Error.vue';
-import { QSelect } from 'quasar';
+import { QInput, QSelect } from 'quasar';
 
 class Props {
   step = prop({
@@ -293,40 +320,46 @@ class Props {
 
 export default class APIParameters extends Vue.with(Props) {
   declare $refs: {
-    artistName: QSelect;
+    collectionAPI: QInput;
+    collectionWidth: QInput;
+    collectionHeight: QInput;
+    fixedParamsName: QInput[];
+    fixedParamsValue: QInput[];
+    paramsName: QInput[];
+    paramsLabel: QInput[];
+    paramsMaxLength: QInput[];
+    paramsMin: QInput[];
+    paramsMax: QInput[];
+    paramsDefault: QInput[];
+    paramsQSelectDefault: QSelect[];
   };
 
   collectionInfo: IFormCollectionInfo = {
-    api: 'https://myapi.app/api/',
-    isSpecialParamsChecked: false,
+    api: '',
+    isSpecialParamsChecked: true,
     isSizeInUrlChecked: false,
-    width: 400,
-    height: 400
+    width: 0,
+    height: 0
   }
 
-  fixedParams: IFormFixedParams[] = [
-    {
-      name: 'fixed name',
-      value: 'fixed value'
-    }
-  ]
+  fixedParams: IFormFixedParams[] = [];
 
   params: IFormParams[] = [
     {
-      name: 'name',
-      label: 'Enter a name',
+      name: '',
+      label: '',
       dataType: 'string',
-      maxLength: 64,
+      maxLength: 0,
       fieldType: 'Input Textfield',
       options: [
         {
-          label: 'option label',
-          value: 'option value'
+          label: '',
+          value: ''
         }
       ],
       min: 0,
-      max: 10,
-      defaultValue: 'default'
+      max: 0,
+      defaultValue: ''
     }
   ]
 
@@ -352,6 +385,8 @@ export default class APIParameters extends Vue.with(Props) {
   isPreviewingForm: boolean = false;
   windowWidth: number = window.innerWidth;
   isSmallDevice!: boolean;
+  verifyFormSelect: boolean = false;
+  isFormSelectVerified: boolean = false;
 
   created() {
     this.isSmallDevice = (this.windowWidth < 1024);
@@ -381,20 +416,20 @@ export default class APIParameters extends Vue.with(Props) {
   addParam() {
     this.params.push(
       {
-        name: 'name',
-        label: 'Enter a name',
+        name: '',
+        label: '',
         dataType: 'string',
-        maxLength: 64,
+        maxLength: 0,
         fieldType: 'Input Textfield',
         options: [
           {
-            label: 'option label',
-            value: 'option value'
+            label: '',
+            value: ''
           }
         ],
         min: 0,
         max: 0,
-        defaultValue: 'default'
+        defaultValue: ''
       }
     )
   }
@@ -402,15 +437,14 @@ export default class APIParameters extends Vue.with(Props) {
   addFixedParam() {
     this.fixedParams.push(
       {
-        name: 'fixed name',
-        value: 'fixed value'
+        name: '',
+        value: ''
       }
     )
   }
 
   get generatePreviewUrl() {
     let previewUrl: string = this.collectionInfo.api + '?';
-    console.log('this.params', this.params);
 
     if (!this.collectionInfo.isSpecialParamsChecked) {
       if (this.collectionInfo.isSizeInUrlChecked) {
@@ -462,17 +496,17 @@ export default class APIParameters extends Vue.with(Props) {
     }
   }
 
-  setMarkers(i: number) {
-    let markers!: [{ value: number, label: string }];
+  // setMarkers(i: number) {
+  //   let markers!: [{ value: number, label: string }];
 
-    for (let iteration: number = Number(this.params[i].min); iteration <= Number(this.params[i].max); iteration++) {
-      iteration === Number(this.params[i].min)
-        ? markers = [{ value: iteration, label: iteration.toString() }]
-        : markers.push({ value: iteration, label: iteration.toString() });
-    }
+  //   for (let iteration: number = Number(this.params[i].min); iteration <= Number(this.params[i].max); iteration++) {
+  //     iteration === Number(this.params[i].min)
+  //       ? markers = [{ value: iteration, label: iteration.toString() }]
+  //       : markers.push({ value: iteration, label: iteration.toString() });
+  //   }
 
-    return markers;
-  }
+  //   return markers;
+  // }
 
   removeParam(i: number) {
     this.params.splice(i, 1);
@@ -522,17 +556,57 @@ export default class APIParameters extends Vue.with(Props) {
     return false;
   }
 
+  checkIfFormSelectIsVerified(check:boolean) {
+    this.isFormSelectVerified = check;
+    this.verifyFormSelect = false;
+  }
+
   verifyForm() {
     this.isVerifyingTheForm = true;
 
-    if (this.isEmptyFieldError) {
+    if (this.params.some(param => {
+      return param.fieldType === 'Select';
+    })) {
+      this.verifyFormSelect = true;
+    }
+
+    if (this.params.length === 0) {
+      this.errorMsg = this.$t('dashboard.createCollection.stepThree.noParamsError');
+    } else if (
+      !this.$refs.collectionAPI.validate() ||
+      (!this.collectionInfo.isSpecialParamsChecked && !this.$refs.collectionWidth.validate()) ||
+      (!this.collectionInfo.isSpecialParamsChecked && !this.$refs.collectionHeight.validate()) ||
+      (this.$refs.fixedParamsName && !this.$refs.fixedParamsName.every(field => {
+        return field.validate();
+      })) ||
+      (this.$refs.fixedParamsName && !this.$refs.fixedParamsValue.every(field => {
+        return field.validate();
+      })) ||
+      !this.$refs.paramsName.every(field => {
+        return field.validate();
+      }) ||
+      !this.$refs.paramsLabel.every(field => {
+        return field.validate();
+      }) ||
+      !this.$refs.paramsDefault.every(field => {
+        return field.validate();
+      }) ||
+      (this.$refs.paramsMaxLength && !this.$refs.paramsMaxLength.every(field => {
+        return field.validate();
+      })) ||
+      (this.$refs.paramsMin && !this.$refs.paramsMin.every(field => {
+        return field.validate();
+      })) ||
+      (this.$refs.paramsMax && !this.$refs.paramsMax.every(field => {
+        return field.validate();
+      })) ||
+      (this.verifyFormSelect && !this.isFormSelectVerified)
+    ) {
       this.errorMsg = this.$t('dashboard.createCollection.stepThree.emptyFieldError');
     } else if (!this.isPreviewUrlChecked) {
       this.errorMsg = this.$t('dashboard.createCollection.stepThree.previewUrlError');
     } else if (this.isMinMaxError) {
       this.errorMsg = this.$t('dashboard.createCollection.stepThree.minMaxGeneralError');
-    } else if (this.params.length === 0) {
-      this.errorMsg = this.$t('dashboard.createCollection.stepThree.noParamsError');
     } else {
       this.isError = false;
       this.isVerifyingTheForm = false;

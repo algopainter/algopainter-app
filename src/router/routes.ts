@@ -169,6 +169,10 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: i18n.global.t('dashboard.reportEarnings.title'),
         }
+      },
+      {
+        path:'validate-collection',
+        component: () => import('src/pages/dashboard/validate-collection/ValidateCollection.vue')
       }
     ],
   },

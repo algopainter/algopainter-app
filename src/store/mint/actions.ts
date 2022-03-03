@@ -153,6 +153,15 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     }
   },
 
+  async collectionsVerifica() {
+    try {
+      const res = await api.get('collections?show=true')
+      this.commit('mint/SET_COLLECTIONS_VERIFICAR', res);
+    } catch (e) {
+      console.log('Error message: mint/actions - collection');
+    }
+  },
+
 };
 
 export default actions;

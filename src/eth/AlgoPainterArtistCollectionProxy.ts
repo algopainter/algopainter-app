@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { NetworkInfo } from 'src/store/user/types';
 import { ContractMethod } from './Web3Impl';
-import { AbiItem, toWei, fromWei, padLeft, asciiToHex } from 'web3-utils';
+import { AbiItem, toWei, fromWei, padLeft, asciiToHex, keccak256 } from 'web3-utils';
 import { ContractSendMethod } from 'web3-eth-contract';
 
 import AlgoPainterArtistCollectionABI from './AlgoPainterArtistCollection.json';
@@ -182,7 +182,7 @@ export default class AlgoPainterArtistCollection {
     return this.instanceItem.methods.mint(
       name,
       collectionId,
-      params,
+      params.map(a => keccak256(a)),
       tokenURI,
       expectedValue
     ).send({ from });
@@ -198,7 +198,7 @@ export default class AlgoPainterArtistCollection {
     return this.instanceItem.methods.mint(
       name,
       collectionId,
-      params,
+      params.map(a => keccak256(a)),
       tokenURI,
       expectedValue
     ).call();

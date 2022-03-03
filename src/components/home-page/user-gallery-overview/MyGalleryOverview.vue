@@ -611,10 +611,14 @@ export default class MyGalleryOverview extends Vue {
         //   }
         // });
         collectionFilter.map(async(item: ICollection) => {
-          const images = await new CollectionController().getCollectionsImages(
-            item._id
-          );
-          if (images.length > 0) {
+          if (item.show === true) {
+            const images = await new CollectionController().getCollectionsImages(
+              item._id
+            );
+            if (images.length > 0) {
+              this.collectionFilter.push({ label: item.title })
+            }
+          } else if (item.title === 'Personal Item') {
             this.collectionFilter.push({ label: item.title })
           }
         })

@@ -27,7 +27,7 @@ function state(): MintStateInterface {
       collectionParams: undefined,
       collectionName: undefined,
       collections: undefined,
-      collectionsVerifica: undefined,
+      collectionsVerify: undefined,
       isCollectionExistent: false,
       collectionData: undefined,
       collectionInfo: undefined,

@@ -35,7 +35,7 @@
         v-for="(collection, index) in formCollection"
         :key="index"
       >
-        <collections :collection="collection" />
+        <collections :collection="collection" :descriptions="descriptions" />
       </div>
       <!-- <div class="q-pa-md">
         <p class="row justify-center text-h5">
@@ -160,6 +160,7 @@ interface IAiArtist {
 })
 export default class Create extends Vue {
   imageData: string | null = null;
+  descriptions: boolean = true;
   imageButtons: IImageButton[] = [
     {
       id: 'importFile',

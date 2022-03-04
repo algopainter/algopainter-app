@@ -16,6 +16,8 @@ export default {
     errorTypeImage: 'file type not allowed, allowed types are PNG, JPEG, JPG.',
     btnCreate: 'Create item',
     requiredField: 'Required field',
+    dateStart: 'Start date',
+    dateEnd: 'End date',
     collections: {
       batchPrice: 'BATCH PRICE({coin})',
       remaining: 'REMAINING',

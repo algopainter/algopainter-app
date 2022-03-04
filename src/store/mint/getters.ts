@@ -61,7 +61,7 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_COLLECTIONS(state: MintStateInterface): IFormParams[] | undefined {
     return state.formGenerator.collections;
   },
-  GET_COLLECTIONS_VERIFICAR(state: MintStateInterface): IFormParams[] | undefined {
+  GET_COLLECTIONS_VERIFY(state: MintStateInterface): IFormParams[] | undefined {
     return state.formGenerator.collections;
   },
   GET_IS_COLLECTION_EXISTENT(state: MintStateInterface): boolean {
@@ -92,6 +92,7 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
     return state.formGenerator.collectionInfo;
   },
   GET_IS_PINNING_PREVIEW_URL(state: MintStateInterface): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return state.formGenerator.isPinningPreviewUrl;
   },
   GET_UPDATE_TOP_INFO(state: MintStateInterface): boolean {

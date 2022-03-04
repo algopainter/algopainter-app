@@ -3,11 +3,12 @@
 import { NetworkInfo } from 'src/store/user/types';
 import { ContractMethod } from './Web3Impl';
 import { AbiItem, toWei, fromWei, padLeft, asciiToHex, keccak256 } from 'web3-utils';
-import { ContractSendMethod } from 'web3-eth-contract';
+import { ContractSendMethod, Contract } from 'web3-eth-contract';
 
 import AlgoPainterArtistCollectionABI from './AlgoPainterArtistCollection.json';
 import AlgoPainterArtistCollectionItemABI from './AlgoPainterArtistCollectionItem.json';
 import { getArtistCollectionAddress, getArtistCollectionItemAddress } from './Config';
+import { PromiEvent } from 'web3-core';
 
 export enum PriceType {
   Fixed = 0,
@@ -170,15 +171,14 @@ export default class AlgoPainterArtistCollection {
     return result.toString();
   }
 
-  async mint(
+  mint(
     name: string,
     collectionId: string,
     params: string[],
     tokenURI: string,
     expectedValue: string,
     from: string,
-  ) {
-    console.log('mint');
+  ) : PromiEvent<Contract> {
     return this.instanceItem.methods.mint(
       name,
       collectionId,

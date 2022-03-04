@@ -149,10 +149,17 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       const res = await api.get('collections?show=true')
       this.commit('mint/SET_COLLECTIONS', res);
     } catch (e) {
-      console.log('Error message: mint/actions - collection');
+      console.log('Error message: mint/actions - collections');
     }
   },
 
+  isPinningPreviewUrl(type, value) {
+    this.commit('mint/SET_IS_PINNING_PREVIEW_URL', value.isPinningPreviewUrl);
+  },
+
+  updateTopInfo() {
+    this.commit('mint/SET_UPDATE_TOP_INFO');
+  }
 };
 
 export default actions;

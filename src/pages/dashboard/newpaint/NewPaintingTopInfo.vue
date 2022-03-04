@@ -70,6 +70,10 @@ class Props {
         'account',
         'isConnected',
       ]),
+    ...mapGetters(
+      'mint', {
+        updateTopInfo: 'GET_UPDATE_TOP_INFO'
+      }),
   }
 })
 export default class NewPaintingTopInfo extends Vue.with(Props) {
@@ -89,6 +93,7 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   currentAmount!: number;
 
   loading: boolean = true;
+  updateTopInfo!: boolean;
 
   created() {
     if (this.isConnected) {
@@ -100,6 +105,14 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   onIsConnectedChanged() {
     if (this.isConnected) {
       this.setProxy();
+    }
+  }
+
+  @Watch('updateTopInfo')
+  async onUpdateTopInfoChanged() {
+    if (this.isConnected) {
+      this.setProxy();
+      await this.getRemainingImages();
     }
   }
 
@@ -125,11 +138,11 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   async getRemainingImages() {
     this.loading = true;
 
-    this.mintedImagesAmount = (this.isArtistCollection(this.collectionSystem))
+    this.remainingImages = (this.isArtistCollection(this.collectionSystem))
       ? Number(await this.collectionSystem.getRemainingTokens(this.collectionId))
       : await this.collectionSystem.totalSupply();
 
-    this.remainingImages = this.collectionMaxImagesAmount - this.mintedImagesAmount;
+    this.mintedImagesAmount = this.collectionMaxImagesAmount - this.remainingImages;
 
     this.getBatchPrice().catch(console.error);
   }

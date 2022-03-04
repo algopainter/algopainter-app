@@ -139,7 +139,7 @@ class Props {
 @Options({
   components: {
     AlgoButton,
-    MintDialog,
+    MintDialog
   },
   computed: {
     ...mapGetters(
@@ -506,6 +506,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       result.on('confirmation', () => {
         if (!this.isConfigured) {
           this.mintStatus = MintStatus.ItemMinted;
+          this.updateTopInfo().catch(console.error);
           this.setFormInitialState().catch(console.error);
         };
       }).catch(console.error);
@@ -521,6 +522,13 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
       }
     }
+  }
+
+  async updateTopInfo() {
+    await this.$store
+      .dispatch({
+        type: 'mint/updateTopInfo'
+      })
   }
 
   onCloseStatusDialog() {

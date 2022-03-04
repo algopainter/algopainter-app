@@ -56,6 +56,7 @@
     <algo-button
       :label="$t('dashboard.newPainting.rightInfoBtnName')"
       :disable="!isAwareOfFee || !artBasicInfo.name || !artBasicInfo.description || !isPreviewUrlSet || isError"
+      :loading="isPinningPreviewUrl"
       class="full-width q-mt-lg"
       color="primary"
       @click="mint"
@@ -128,6 +129,7 @@ class Props {
       errorMessageGwei: 'GET_GWEI_ERROR_MESSAGE',
       errorMessageExpressions: 'GET_EXPRESSIONS_ERROR_MESSAGE',
       collectionData: 'GET_COLLECTION_DATA',
+      isPinningPreviewUrl: 'GET_IS_PINNING_PREVIEW_URL'
     }),
   }
 })
@@ -155,6 +157,7 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 
   collectionData!: ICollection;
   collectionImagePlaceholder!: string;
+  isPinningPreviewUrl!: boolean;
 
   isAwareOfFee: boolean = false;
   expressionsFeePercentage!: number;
@@ -279,7 +282,6 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 
   @Watch('previewUrlGeneric')
   onPreviewUrlGenericChanged() {
-    console.log('previewUrlGeneric', this.previewUrlGeneric);
     this.isPreviewUrlSet = true;
     this.previewUrl = this.previewUrlGeneric;
 

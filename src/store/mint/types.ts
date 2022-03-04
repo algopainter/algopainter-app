@@ -3,6 +3,7 @@ import { IGweiParsedItemParameters } from 'src/models/INewPaintingGwei';
 import ICollection from 'src/models/ICollection';
 import { IFormParams } from 'src/models/ICreatorCollection';
 export default interface MintStateInterface {
+  updateTopInfo: boolean,
   gwei: {
     collectionInfo: ICollectionInfo | undefined,
     itemParameters: IGweiParsedItemParameters | undefined,
@@ -36,5 +37,6 @@ export default interface MintStateInterface {
     userConfirmations: boolean | undefined,
     isMinting: boolean,
     errorMessage: string | undefined,
+    isPinningPreviewUrl: boolean,
   }
 }

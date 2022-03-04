@@ -100,6 +100,7 @@ export default {
       minimumAmount: 'Your payment must be greater than or equal to the minimum amount',
       unexpected: 'An unexpected error has occurred, please try again! \n\n {errorMsg}',
       generating: 'An error has occured while generating {type} file!',
+      nameNotUnique: 'The name you chose for your art is not unique'
     },
     batchPrice: 'Batch price ({coin})',
     remaining: 'Remaining',

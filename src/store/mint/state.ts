@@ -2,6 +2,7 @@ import MintStateInterface from './types';
 
 function state(): MintStateInterface {
   return {
+    updateTopInfo: false,
     gwei: {
       collectionInfo: undefined,
       itemParameters: undefined,
@@ -35,6 +36,7 @@ function state(): MintStateInterface {
       userConfirmations: undefined,
       isMinting: false,
       errorMessage: undefined,
+      isPinningPreviewUrl: false,
     }
   };
 }

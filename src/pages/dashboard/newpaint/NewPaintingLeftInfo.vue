@@ -6,7 +6,6 @@
     @generate-preview="GeneratePreview"
   />
   <q-dialog
-    v-if="collectionData"
     v-model="isMintDialogOpen"
     persistent
   >
@@ -25,12 +24,15 @@ import FormGenerator from 'src/pages/create-collection/FormGenerator.vue';
 import { IFormParams } from 'src/models/ICreatorCollection';
 import ICollection from 'src/models/ICollection';
 import { NetworkInfo } from 'src/store/user/types';
-import { ICollectionInfo, IArtBasicInfo, MintStatus } from 'src/models/IMint';
+import { ICollectionInfo, IArtBasicInfo, MintStatus, IGenericPayload } from 'src/models/IMint';
 import { Ref, Watch } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import PinningServiceHelper from 'src/helpers/PinningServiceHelper';
 import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
 import { PropType } from 'vue';
+import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
+import { getArtistCollectionItemAddress } from 'src/eth/Config';
+import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
 
 class Props {
   formParams = prop({
@@ -46,7 +48,8 @@ class Props {
 
 @Options({
   components: {
-    FormGenerator
+    FormGenerator,
+    MintDialog
   },
   computed: {
     ...mapGetters(
@@ -70,6 +73,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   networkInfo!: NetworkInfo;
   account!: string;
   algoPainterArtistCollection!: AlgoPainterArtistCollection;
+  algoPainterTokenProxy!: AlgoPainterTokenProxy;
+  isPinningPreviewUrl: boolean = false;
 
   collectionInfo!: ICollectionInfo;
   artBasicInfo!: IArtBasicInfo;
@@ -93,6 +98,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   created() {
     if (this.isConnected) {
       this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
     }
   }
 
@@ -100,6 +106,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   onIsConnectedChanged() {
     if (this.isConnected) {
       this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
     }
   }
 
@@ -116,6 +123,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   async setFormInitialState() {
     this.isConfigured = true;
     this.isErr = false;
+    this.isPinningPreviewUrl = false;
     this.errMsg = '';
 
     this.clearForm = true;
@@ -184,24 +192,80 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     }
   }
 
+  get artistCollectionItemContractAddress() {
+    return getArtistCollectionItemAddress(this.networkInfo.id);
+  }
+
   async mint() {
     try {
       this.restoreDefault().catch(console.error);
+
+      this.isPinningPreviewUrl = true;
 
       // Substituir expressions - preview dentro do pinning service helper
       const previewPiningResult = await PinningServiceHelper.pinFile('Expressions - Preview', 1, this.previewUrl(this.parsedGeneratedParams, false));
       const previewIPFSHash = previewPiningResult.ipfsHash;
 
-      const mint = await this.algoPainterArtistCollection.mint(
-        this.artBasicInfo.name,
-        this.collectionData.blockchainId.toString(),
-        this.parsedGeneratedParams,
-        previewIPFSHash || '',
-        this.collectionInfo.batchPriceBlockchain,
-        this.account
-      );
+      this.mintStatus = MintStatus.GeneratingPreviewFile;
 
-      console.log('mintCallRes', mint);
+      if (!previewIPFSHash) {
+        this.restoreDefault().catch(console.error);
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
+        return;
+      }
+
+      const allowance = await this.algoPainterTokenProxy.allowance(this.account, this.artistCollectionItemContractAddress, Number(this.collectionInfo.batchPriceBlockchain));
+
+      if (!allowance) {
+        await this.algoPainterTokenProxy.approve(this.artistCollectionItemContractAddress, this.collectionInfo.batchPriceBlockchain.toString(), this.account)
+      }
+
+      this.isMintDialogOpen = true;
+      this.mintStatus = MintStatus.GeneratingRawFile;
+
+      const rawPiningResult = await PinningServiceHelper.pinFile('Expressions - Preview', 1, this.previewUrl(this.parsedGeneratedParams, true));
+      const rawIPFSHash = rawPiningResult.ipfsHash;
+
+      if (!rawIPFSHash) {
+        this.restoreDefault().catch(console.error);
+        this.mintStatus = MintStatus.GeneratingRawFileError;
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
+        return;
+      }
+
+      this.mintStatus = MintStatus.GeneratingDescriptorFile;
+
+      const payload: IGenericPayload = {
+        name: this.artBasicInfo.name,
+        collectionId: this.collectionData.blockchainId.toString(),
+        params: this.parsedGeneratedParams,
+        tokenURI: rawIPFSHash,
+        expectedValue: this.collectionInfo.batchPriceBlockchain.toString()
+      };
+
+      const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
+      this.descriptorIPFSHash = (descriptorPinningResult.ipfsHash) ? descriptorPinningResult.ipfsHash : '';
+
+      if (!this.descriptorIPFSHash) {
+        this.restoreDefault().catch(console.error);
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
+        return;
+      }
+
+      this.setIPFSUrl(`https://ipfs.io/ipfs/${rawIPFSHash}`).catch(console.error);
+
+      this.mintStatus = MintStatus.CollectingUserConfirmations;
+
+      // await this.algoPainterArtistCollection.mintCall(
+      //   this.artBasicInfo.name,
+      //   this.collectionData.blockchainId.toString(),
+      //   this.parsedGeneratedParams,
+      //   previewIPFSHash || '',
+      //   this.collectionInfo.batchPriceBlockchain.toString()
+      // );
     } catch (e: any) {
       this.restoreDefault().catch(console.error);
 
@@ -225,73 +289,16 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         return;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      if (e.message && e.message.indexOf('NAME_NOT_UNIQUE') >= 0) {
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.nameNotUnique');
+        return;
+      }
+
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
       // return;
     }
-
-    // try {
-    //   this.isMintDialogOpen = true;
-    //   let previewIPFSHash: string | undefined = '';
-    //   let rawIPFSHash: string | undefined = '';
-
-    //   this.mintStatus = MintStatus.GeneratingPreviewFile;
-
-    //   const previewPiningResult = await PinningServiceHelper.pinFile('Generic - Preview', 1, this.previewUrl(this.parsedGeneratedParams, false));
-
-    //   previewIPFSHash = previewPiningResult.ipfsHash;
-
-    //   if (!previewIPFSHash) {
-    //     this.restoreDefault().catch(console.error);
-    //     this.isErr = true;
-    //     this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
-    //     return;
-    //   }
-
-    //   this.mintStatus = MintStatus.GeneratingRawFile;
-
-    //   const rawPiningResult = await PinningServiceHelper.pinFile('Generic - Preview', 1, this.previewUrl(this.parsedGeneratedParams, true));
-    //   rawIPFSHash = rawPiningResult.ipfsHash;
-
-    //   if (!rawIPFSHash) {
-    //     this.restoreDefault().catch(console.error);
-    //     this.mintStatus = MintStatus.GeneratingRawFileError;
-    //     this.isErr = true;
-    //     this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
-    //     return;
-    //   }
-
-    //   this.mintStatus = MintStatus.GeneratingDescriptorFile;
-
-    //   // const payload: IGenericPayload = {
-    //   //   name: this.artBasicInfo.name,
-    //   //   description: this.artBasicInfo.description,
-    //   //   image: `https://ipfs.io/ipfs/${rawIPFSHash}`,
-    //   //   previewImage: `https://ipfs.io/ipfs/${previewIPFSHash}`,
-    //   //   collection: {
-    //   //     id: this.collectionData.index,
-    //   //     name: this.collectionData.title,
-    //   //   },
-    //   //   parameters: this.parsedGeneratedParams,
-    //   //   mintedBy: this.account,
-    //   // };
-
-    //   // const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
-    //   // this.descriptorIPFSHash = (descriptorPinningResult.ipfsHash) ? descriptorPinningResult.ipfsHash : '';
-
-    //   if (!this.descriptorIPFSHash) {
-    //     this.restoreDefault().catch(console.error);
-    //     this.isErr = true;
-    //     this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
-    //     return;
-    //   }
-
-    //   this.setIPFSUrl(`https://ipfs.io/ipfs/${rawIPFSHash}`).catch(console.error);
-
-    //   this.mintStatus = MintStatus.CollectingUserConfirmations;
-    // } catch (e) {
-    //   this.restoreDefault().catch(console.error);
-    // }
   }
 
   @Watch('errMsg')
@@ -300,6 +307,15 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       .dispatch({
         type: 'mint/errorMessage',
         errorMessage: this.errMsg
+      })
+  }
+
+  @Watch('isPinningPreviewUrl')
+  async onIsPinningPreviewUrlChanged() {
+    await this.$store
+      .dispatch({
+        type: 'mint/isPinningPreviewUrl',
+        isPinningPreviewUrl: this.isPinningPreviewUrl
       })
   }
 
@@ -323,8 +339,14 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       this.isConfigured = false;
       this.mintStatus = MintStatus.MintAwaitingInput;
 
-      /*
-      const result = this.genericSystem.mint(this.parsedGeneratedParams, this.collectionInfo.batchPriceBlockchain, this.descriptorIPFSHash, this.account);
+      const result = this.algoPainterArtistCollection.mint(
+        this.artBasicInfo.name,
+        this.collectionData.blockchainId.toString(),
+        this.parsedGeneratedParams,
+        this.descriptorIPFSHash,
+        this.collectionInfo.batchPriceBlockchain.toString(),
+        this.account
+      );
 
       result.on('error', (error: any) => {
         this.restoreDefault().catch(console.error);
@@ -340,10 +362,10 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       result.on('confirmation', () => {
         if (!this.isConfigured) {
           this.mintStatus = MintStatus.ItemMinted;
+          this.updateTopInfo().catch(console.error);
           this.setFormInitialState().catch(console.error);
         };
       }).catch(console.error);
-      */
     } catch (e: any) {
       this.mintStatus = MintStatus.MintError;
       this.restoreDefault().catch(console.error);
@@ -355,6 +377,13 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
       }
     }
+  }
+
+  async updateTopInfo() {
+    await this.$store
+      .dispatch({
+        type: 'mint/updateTopInfo'
+      })
   }
 
   onCloseStatusDialog() {
@@ -369,6 +398,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     this.mintStatus = MintStatus.GeneratingPreviewFile;
     this.isErr = false;
     this.descriptorIPFSHash = '';
+    this.isPinningPreviewUrl = false;
 
     await this.$store
       .dispatch({
@@ -381,386 +411,5 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         userConfirmations: false
       })
   }
-
-  /*
-  mockedCollectionData() {
-    this.collectionData = {
-      _id: 'dasdasdasdas',
-      blockchainId: '1',
-      description: 'Sometimes people call me Kakashi, but I am much better than him!',
-      owner: 'Latino',
-      title: 'EXPRESShow',
-      avatar: 'hash',
-      account: '0xA62CE1F85461D67c874ef625F0E488C57Af2335d',
-      customURL: 'EXPRESShow',
-      show: true,
-      namelc: 'expresshow',
-      metrics: this.mockedMetrics(),
-      api: {
-        collectionInfo: this.mockedCollectionInfo(),
-        fixedParams: this.mockedFixedParams(),
-        parameters: this.mockedParams()
-      },
-    }
-  }
-
-  mockedMetrics() {
-    return {
-      nfts: 1000,
-      startDT: '2022-02-24T13:02:00.000Z',
-      endDT: '2022-03-08T13:02:00.000Z',
-      priceType: 'fixed',
-      tokenPriceAddress: '0x01a9188076f1231df2215f67b6a63231fe5e293e',
-      tokenPriceSymbol: 'ALGOP',
-      priceRange: [
-        {
-          from: 1,
-          to: 1000,
-          amount: '600',
-          tokenPriceAddress: '0x01a9188076f1231df2215f67b6a63231fe5e293e',
-          tokenPriceSymbol: 'ALGOP'
-        }
-      ],
-      creatorPercentage: 3000,
-      walletAddress: '0xA62CE1F85461D67c874ef625F0E488C57Af2335d'
-    }
-  }
-
-  mockedCollectionInfo() {
-    return {
-      api: 'https://expressions.algopainter.art/',
-      isSpecialParamsChecked: false,
-      isSizeInUrlChecked: true,
-      width: 400,
-      height: 400
-    }
-  }
-
-  mockedFixedParams() {
-    return [
-      {
-        name: 'shadowHue',
-        value: '0'
-      }
-    ]
-  }
-
-  mockedParams() {
-    this.params = [
-      {
-        name: 'background',
-        label: 'Background',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Select',
-        options: [
-          {
-            value: '1',
-            label: 'Bitcoin',
-          },
-          {
-            value: '2',
-            label: 'Block Saturation',
-          },
-          {
-            value: '3',
-            label: 'Inner Circuit',
-          },
-          {
-            value: '4',
-            label: 'High Voltage',
-          },
-          {
-            value: '5',
-            label: 'Mars',
-          },
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: '1'
-      },
-      {
-        name: 'gender',
-        label: 'Biological Sex',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Select',
-        options: [
-          {
-            value: 'F',
-            label: 'Female',
-          },
-          {
-            value: 'M',
-            label: 'Male',
-          },
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: 'F'
-      },
-      {
-        name: 'expression',
-        label: 'Expressions',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Select',
-        options: [
-          {
-            value: 'serious',
-            label: 'Neutral',
-          },
-          {
-            value: 'happy',
-            label: 'Happy',
-          },
-          {
-            value: 'angry',
-            label: 'Angry',
-          },
-          {
-            value: 'disgust',
-            label: 'Disgusted',
-          },
-          {
-            value: 'surprise',
-            label: 'Impressed',
-          },
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: 'angry'
-      },
-      {
-        name: 'expressionTemplate',
-        label: 'Skin',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Select',
-        options: [
-          {
-            value: '1',
-            label: 'Space Code',
-          },
-          {
-            value: '2',
-            label: 'Deep Tracking',
-          },
-          {
-            value: '3',
-            label: 'Nebula Metrics',
-          },
-          {
-            value: '4',
-            label: 'Plasma',
-          },
-          {
-            value: '5',
-            label: 'Galaxy Node',
-          },
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: '1'
-      },
-      {
-        name: 'useWireframe',
-        label: 'Use Wireframe',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Checkbox',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: true
-      },
-      {
-        name: 'wireframeHue',
-        label: 'Wireframe Hue',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Slider',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 9,
-        defaultValue: 0
-      },
-      {
-        name: 'useWireframeBlend',
-        label: 'Use Wireframe Blend',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Checkbox',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: true
-      },
-      {
-        name: 'wireframeBlendStyle',
-        label: 'Wireframe Blend Style',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Select',
-        options: [
-          {
-            value: 'BLEND_ADD',
-            label: 'Add',
-          },
-          {
-            value: 'BLEND_DARKEN',
-            label: 'Darken',
-          },
-          {
-            value: 'BLEND_DIFFERENCE',
-            label: 'Difference',
-          },
-          {
-            value: 'BLEND_EXCLUSION',
-            label: 'Exclusion',
-          },
-          {
-            value: 'BLEND_HARDLIGHT',
-            label: 'Hardlight',
-          },
-          {
-            value: 'BLEND_LIGHTEN',
-            label: 'Lighten',
-          },
-          {
-            value: 'BLEND_MULTIPLY',
-            label: 'Multiply',
-          },
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: 'BLEND_ADD'
-      },
-      {
-        name: 'innerColorHue',
-        label: 'InnerColor Hue',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Slider',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 9,
-        defaultValue: 0
-      },
-      {
-        name: 'overlay',
-        label: 'Magic',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Select',
-        options: [
-          {
-            value: '1',
-            label: 'Fractal Perception',
-          },
-          {
-            value: '2',
-            label: 'Soul Link',
-          },
-          {
-            value: '3',
-            label: 'Magnetic Fields',
-          },
-          {
-            value: '4',
-            label: 'Z-Mesh',
-          },
-        ],
-        min: 0,
-        max: 10,
-        defaultValue: '1'
-      },
-      {
-        name: 'overlayHue',
-        label: 'Overlay Hue',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Slider',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 9,
-        defaultValue: 0
-      },
-      {
-        name: 'useShadow',
-        label: 'Use Shadow',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Checkbox',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 9,
-        defaultValue: false
-      },
-      {
-        name: 'flip',
-        label: 'Flip',
-        dataType: 'string',
-        maxLength: 64,
-        fieldType: 'Checkbox',
-        options: [
-          {
-            label: 'option label',
-            value: 'option value'
-          }
-        ],
-        min: 0,
-        max: 9,
-        defaultValue: false
-      },
-    ]
-
-    this.params.forEach((param, i) => {
-      if (param.fieldType === 'Select') {
-        param.options.forEach((option) => {
-          if (option.value === param.defaultValue) {
-            this.defaultValues[i] = {
-              label: option.label,
-              value: param.defaultValue
-            }
-          }
-        })
-      } else {
-        this.defaultValues[i] = param.defaultValue;
-      }
-    });
-
-    return this.params;
-    */
 }
 </script>

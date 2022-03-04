@@ -82,6 +82,12 @@ const mutation: MutationTree<MintStateInterface> = {
   },
   SET_COLLECTION_INFO(state: MintStateInterface, payload) {
     state.formGenerator.collectionInfo = payload;
+  },
+  SET_IS_PINNING_PREVIEW_URL(state: MintStateInterface, payload) {
+    state.formGenerator.isPinningPreviewUrl = payload;
+  },
+  SET_UPDATE_TOP_INFO(state: MintStateInterface) {
+    state.updateTopInfo = !state.updateTopInfo;
   }
 };
 

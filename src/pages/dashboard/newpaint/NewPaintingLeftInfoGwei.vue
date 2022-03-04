@@ -346,6 +346,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       await this.gweiSystem.mint(newMint, this.account);
       if (!this.isConfigured) {
         this.mintStatus = MintStatus.ItemMinted;
+        this.updateTopInfo().catch(console.error);
         await this.setFormInitialState();
       }
     } catch (e: any) {
@@ -369,6 +370,13 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
           this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.code });
       }
     }
+  }
+
+  async updateTopInfo() {
+    await this.$store
+      .dispatch({
+        type: 'mint/updateTopInfo'
+      })
   }
 
   async setFormInitialState() {

@@ -87,7 +87,13 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   },
   GET_COLLECTION_INFO(state: MintStateInterface): ICollectionInfo | undefined {
     return state.formGenerator.collectionInfo;
-  }
+  },
+  GET_IS_PINNING_PREVIEW_URL(state: MintStateInterface): boolean {
+    return state.formGenerator.isPinningPreviewUrl;
+  },
+  GET_UPDATE_TOP_INFO(state: MintStateInterface): boolean {
+    return state.updateTopInfo;
+  },
 };
 
 export default getters;

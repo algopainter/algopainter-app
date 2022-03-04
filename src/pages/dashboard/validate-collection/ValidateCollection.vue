@@ -30,9 +30,6 @@ import AlgoButton from 'components/common/Button.vue';
 })
 
 export default class ValidateCollection extends Vue {
-    wallaet1: string | undefined = process.env.VUE_APP_WALLET1?.toLowerCase();
-    wallaet2: string | undefined = process.env.VUE_APP_WALLET2?.toLowerCase();
-
     descriptions: boolean = false;
 
     formCollection: ICollection[] = [];

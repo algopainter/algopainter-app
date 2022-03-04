@@ -173,10 +173,10 @@ export default class CollectionsDescription extends Vue.with(Props) {
     async getRemainingImages() {
       this.loading = true;
       if (this.collectionId !== undefined) {
-        this.mintedImagesAmount = (this.isArtistCollection(this.collectionSystem))
+        this.remainingImages = (this.isArtistCollection(this.collectionSystem))
           ? Number(await this.collectionSystem.getRemainingTokens(this.collectionId))
           : -1;
-        this.remainingImages = this.collection.metrics.nfts - this.mintedImagesAmount
+        this.mintedImagesAmount = this.collection.metrics.nfts - this.remainingImages
       } else if (this.collectionName === 'gwei') {
         this.mintedImagesAmount = await this.gweiSystem.totalSupply();
         this.remainingImages = 1000 - this.mintedImagesAmount
@@ -184,7 +184,7 @@ export default class CollectionsDescription extends Vue.with(Props) {
         this.mintedImagesAmount = await this.collectionSystemExpressions.totalSupply();
         this.remainingImages = 750 - this.mintedImagesAmount
       } else {
-        this.remainingImages = this.collection.metrics.nfts - this.mintedImagesAmount;
+        this.mintedImagesAmount = this.collection.metrics.nfts - this.remainingImages
       }
 
       this.getBatchPrice().catch(console.error);

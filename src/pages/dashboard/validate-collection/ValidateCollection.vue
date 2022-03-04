@@ -4,7 +4,7 @@
       v-for="(collection, index) in formCollection"
       :key="index"
     >
-      <Collections :collection="collection" />
+      <Collections :collection="collection" :descriptions="descriptions" />
     </div>
   </div>
 </template>
@@ -30,8 +30,7 @@ import AlgoButton from 'components/common/Button.vue';
 })
 
 export default class ValidateCollection extends Vue {
-    wallaet1: string | undefined = process.env.VUE_APP_WALLET1?.toLowerCase();
-    wallaet2: string | undefined = process.env.VUE_APP_WALLET2?.toLowerCase();
+    descriptions: boolean = false;
 
     formCollection: ICollection[] = [];
 
@@ -41,7 +40,7 @@ export default class ValidateCollection extends Vue {
     }
 
     mounted() {
-      void this.verificador()
+      // void this.verificador()
       void this.getCollection();
     }
 
@@ -50,23 +49,23 @@ export default class ValidateCollection extends Vue {
       this.$router.push(`/create-collectible/new-painting/${nameCollection}`).catch(console.error);
     }
 
-    async verificador(): Promise<void> {
-      const accountCurrent = this.account
-      if (accountCurrent !== this.wallaet1 && accountCurrent !== this.wallaet2) {
-        this.$q.notify({
-          type: 'negative',
-          message: 'access denied',
-        });
-        await this.$router.push('/')
-      }
-    }
+    // async verificador(): Promise<void> {
+    //   const accountCurrent = this.account
+    //   // if (accountCurrent !== this.wallaet1 && accountCurrent !== this.wallaet2) {
+    //   //   this.$q.notify({
+    //   //     type: 'negative',
+    //   //     message: 'access denied',
+    //   //   });
+    //   //   await this.$router.push('/')
+    //   // }
+    // }
 
     getCollection() {
       void this.$store.dispatch({
-        type: 'mint/collectionsVerifica',
+        type: 'mint/collectionsVerify',
       }).then(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        const collection = this.$store.getters['mint/GET_COLLECTIONS_VERIFICAR'];
+        const collection = this.$store.getters['mint/GET_COLLECTIONS_VERIFY'];
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         // this.userOnSale = customValeu.data;
         this.formCollection = collection.data

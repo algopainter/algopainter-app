@@ -161,10 +161,10 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     this.commit('mint/SET_UPDATE_TOP_INFO');
   },
 
-  async collectionsVerifica() {
+  async collectionsVerify() {
     try {
-      const res = await api.get('collections?show=true')
-      this.commit('mint/SET_COLLECTIONS_VERIFICAR', res);
+      const res = await api.get('collections?show=false')
+      this.commit('mint/SET_COLLECTIONS_VERIFY', res);
     } catch (e) {
       console.log('Error message: mint/actions - collectionsVerifica');
     }

@@ -289,12 +289,20 @@ export default class PreviewValidate extends Vue.with(Props) {
           account: userAccount,
           salt: data.salt,
         };
-        await api.put(`collection/${this.formCollection.blockchainId}/approve`, request)
-        const status = await api.put(`collection/${this.formCollection.blockchainId}/approve`, request);
+        const status = await api.put(`collections/${this.formCollection.blockchainId}/approve`, request);
         if (status.status === 200) {
-          console.log('Sucessoo!', status)
+          this.$q.notify({
+            type: 'positive',
+            message: 'Success Approve!',
+          });
+          setTimeout(() => {
+            void this.$router.push('/validate-collection')
+          }, 1000)
         } else {
-          console.log('FAlhou!')
+          this.$q.notify({
+            type: 'negative',
+            message: 'error Approve',
+          });
         }
       } catch (e) {
         this.$q.notify({

@@ -622,6 +622,7 @@ export default {
       socialMedia: 'Social media:',
       enableAvatar: 'Image field required',
       nameCollectionUse: 'Collection name already in use',
+      nameWebSite: 'WebSite or Portfolio already in use',
     },
     stepTwo: {
       amount: 'NFT amount:',

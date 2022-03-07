@@ -34,10 +34,7 @@ import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import { getArtistCollectionItemAddress } from 'src/eth/Config';
 import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
 import { api } from 'src/boot/axios';
-import { nanoid } from 'nanoid';
-import Web3Helper from 'src/helpers/web3Helper';
-import { isError } from 'src/helpers/utils';
-import { keccak256 } from 'web3-utils';
+import { randomHex } from 'web3-utils';
 
 class Props {
   formParams = prop({
@@ -93,7 +90,10 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   collectionData!: ICollection;
   params: IFormParams[] = [];
   parsedGeneratedParams!: string[];
-  descriptorIPFSHash!: string;
+  previewHash: string = '';
+  rawHash: string = '';
+  descriptorIPFSHash: string = '';
+  srcImage: string = '';
 
   isErr: boolean = false;
   errMsg: string = '';
@@ -201,29 +201,29 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     return getArtistCollectionItemAddress(this.networkInfo.id);
   }
 
-  async generateBase64(file: string) {
-    const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve((reader.result || '').toString());
-      reader.onerror = error => reject(error);
+  async toDataUrl(url: string) : Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      try {
+        const xhr = new XMLHttpRequest();
+        xhr.timeout = 999999;
+        xhr.onload = () => {
+          const reader = new FileReader();
+          reader.onloadend = function() {
+            if (reader.result) {
+              resolve(reader.result.toString());
+            } else {
+              resolve('');
+            }
+          }
+          reader.readAsDataURL(xhr.response);
+        };
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.send();
+      } catch (e) {
+        reject(e);
+      }
     });
-
-    const myBlob = new Blob([file], { type : 'image/png' });
-    const base64 = await toBase64(myBlob);
-
-    return base64;
-  }
-
-  parsedParamskeccak256() {
-    const parsedParamsKeccak = this.parsedGeneratedParams.map(a => keccak256(a));
-    let oneKeccakHash: string = '';
-
-    parsedParamsKeccak.forEach(param => {
-      oneKeccakHash += param.toString();
-    })
-
-    return oneKeccakHash + '.png';
   }
 
   async mint() {
@@ -232,15 +232,20 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
 
       this.isPinningPreviewUrl = true;
 
+      const previewImage = this.previewUrl(this.parsedGeneratedParams, false);
+
+      this.srcImage = await this.toDataUrl(previewImage);
+
       const previewPayload = {
         name: this.artBasicInfo.name,
         description: this.artBasicInfo.description,
         mintedBy: this.account,
-        image: this.generateBase64(this.previewUrl(this.parsedGeneratedParams, false)),
-        fileName: this.parsedParamskeccak256()
+        image: this.srcImage,
+        fileName: randomHex(32) + '.png'
       }
 
       const previewPiningResult = await api.post('images/pintoipfs/FILE', previewPayload);
+      this.previewHash = previewPiningResult.data.ipfsHash;
 
       if (previewPiningResult.status !== 200) {
         this.restoreDefault().catch(console.error);
@@ -248,8 +253,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
         return;
       }
-
-      console.log('previewPiningResult', previewPiningResult)
 
       this.mintStatus = MintStatus.GeneratingPreviewFile;
 
@@ -274,13 +277,12 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: this.artBasicInfo.name,
         description: this.artBasicInfo.description,
         mintedBy: this.account,
-        image: this.generateBase64(this.previewUrl(this.parsedGeneratedParams, true)),
-        fileName: this.parsedParamskeccak256()
+        image: await this.toDataUrl(this.previewUrl(this.parsedGeneratedParams, true)),
+        fileName: randomHex(32) + '.png'
       }
 
       const rawPiningResult = await api.post('images/pintoipfs/FILE', rawPayload);
-
-      console.log('rawPiningResult', rawPiningResult)
+      this.rawHash = rawPiningResult.data.ipfsHash;
 
       if (rawPiningResult.status !== 200) {
         this.restoreDefault().catch(console.error);
@@ -298,34 +300,14 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         creatorRoyalty: this.collectionData.metrics.creatorPercentage,
         params: this.parsedGeneratedParams,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        image: `https://ipfs.io/ipfs/${previewPiningResult}`,
+        image: `https://ipfs.io/ipfs/${this.previewHash}`,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        previewImage: `https://ipfs.io/ipfs/${rawPiningResult}`,
+        previewImage: `https://ipfs.io/ipfs/${this.rawHash}`,
         mintedBy: this.account
       };
 
-      const data = {
-        ...payload,
-        salt: nanoid(),
-      };
-      const web3helper = new Web3Helper();
-      const userAccount = this.$store.getters['user/account'] as string;
-      const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
-
-      if (isError(signatureOrError as Error)) {
-        return;
-      }
-
-      const request = {
-        data,
-        signature: signatureOrError,
-        account: userAccount,
-        salt: data.salt,
-      };
-
-      this.descriptorIPFSHash = await api.post('images/pintoipfs/JSON', request);
-
-      console.log('this.descriptorIPFSHash', this.descriptorIPFSHash)
+      const descriptorPinningResult = await api.post('images/pintoipfs/JSON', payload);
+      this.descriptorIPFSHash = descriptorPinningResult.data.ipfsHash;
 
       if (!this.descriptorIPFSHash) {
         this.restoreDefault().catch(console.error);
@@ -402,42 +384,39 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   @Watch('userConfirmations')
   onUserConfirmationsChanged() {
     if (this.userConfirmations) {
-      this.finishMinting();
+      this.finishMinting().catch(console.error);
     }
   }
 
-  finishMinting() {
+  async finishMinting() {
     try {
       this.isConfigured = false;
       this.mintStatus = MintStatus.MintAwaitingInput;
 
-      const result = this.algoPainterArtistCollection.mint(
+      await this.algoPainterArtistCollection.mint(
         this.artBasicInfo.name,
         this.collectionData.blockchainId.toString(),
         this.parsedGeneratedParams,
         this.descriptorIPFSHash,
         this.collectionInfo.batchPriceBlockchain.toString(),
         this.account
-      );
-
-      result.on('error', (error: any) => {
-        this.restoreDefault().catch(console.error);
-        this.mintStatus = MintStatus.MintError;
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: error });
-      }).catch(console.error);
-
-      result.on('transactionHash', () => {
-        this.mintStatus = MintStatus.MintAwaitingConfirmation;
-      }).catch(console.error);
-
-      result.on('confirmation', () => {
-        if (!this.isConfigured) {
-          this.mintStatus = MintStatus.ItemMinted;
-          this.updateTopInfo().catch(console.error);
-          this.setFormInitialState().catch(console.error);
-        };
-      }).catch(console.error);
+      )
+        .on('error', (error: any) => {
+          this.restoreDefault().catch(console.error);
+          this.mintStatus = MintStatus.MintError;
+          this.isErr = true;
+          this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: error });
+        })
+        .on('transactionHash', () => {
+          this.mintStatus = MintStatus.MintAwaitingConfirmation;
+        })
+        .on('confirmation', () => {
+          if (!this.isConfigured) {
+            this.mintStatus = MintStatus.ItemMinted;
+            this.updateTopInfo().catch(console.error);
+            this.setFormInitialState().catch(console.error);
+          };
+        })
     } catch (e: any) {
       this.mintStatus = MintStatus.MintError;
       this.restoreDefault().catch(console.error);

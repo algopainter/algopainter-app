@@ -348,7 +348,7 @@ export default class CreateCollection extends Vue {
         toWei(await this.artistCollection.getCollectionPrice(), 'ether'),
         this.userAccount
       ).on('transactionHash', (a) => {
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
       }).on('receipt', (receipt): void => {
         if (receipt.events) {
           this.collectionId = receipt.events.CollectionCreated.returnValues.index

@@ -26,13 +26,6 @@
           </p>
           {{ endDT }}
         </div>
-        <div>
-          <algo-button
-            type="submit"
-            color="green"
-            label="Approve"
-          />
-        </div>
       </div>
       <div>
       </div>
@@ -50,6 +43,7 @@
         type="submit"
         color="primary"
         label="Verify"
+        @click="verify(collection._id)"
       />
     </div>
   </div>
@@ -109,6 +103,10 @@ export default class Collections extends Vue.with(Props) {
 
   mounted() {
     void this.formatDate()
+  }
+
+  verify(id: string) {
+    this.$emit('check', id)
   }
 
   formatDate() {

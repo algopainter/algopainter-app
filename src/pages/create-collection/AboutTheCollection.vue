@@ -40,8 +40,11 @@
                 </template>
               </q-input>
               <q-input
+                ref="webSite"
                 v-model="fields.webSite"
                 class="input col-sm-12 col-md-6 q-pr-md"
+                :rules="[ val => val.length != 0]"
+                :error-message="$t('dashboard.createCollection.aboutTheCollection.nameWebSite')"
                 :label="$t('dashboard.createCollection.aboutTheCollection.website')"
               />
               <!-- <q-input
@@ -193,6 +196,7 @@ export default class AboutTheCollection extends Vue.with(Props) {
   declare $refs: {
     artistName: QInput;
     nameCollection: QInput;
+    webSite: QInput;
     customProfile: QInput;
     description: QInput;
   };
@@ -262,6 +266,10 @@ export default class AboutTheCollection extends Vue.with(Props) {
        this.isError = true;
        this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.nameCollectionUse')
        void this.$refs.nameCollection.validate()
+     } else if (this.fields.webSite === '') {
+       this.isError = true;
+       this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.nameWebSite')
+       void this.$refs.webSite.validate()
      } else if (this.fields.description === '') {
        this.isError = true;
        this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.descriptionError')

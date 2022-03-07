@@ -64,6 +64,9 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_COLLECTIONS_VERIFY(state: MintStateInterface): IFormParams[] | undefined {
     return state.formGenerator.collections;
   },
+  GET_VERIFY_PREVIEW(state: MintStateInterface): IFormParams[] | undefined {
+    return state.formGenerator.collections;
+  },
   GET_IS_COLLECTION_EXISTENT(state: MintStateInterface): boolean {
     return state.formGenerator.isCollectionExistent;
   },

@@ -1,11 +1,14 @@
 <template>
-  <div class="q-pa-md">
+  <div v-if="checkar" class="q-pa-md">
     <div
       v-for="(collection, index) in formCollection"
       :key="index"
     >
-      <Collections :collection="collection" :descriptions="descriptions" />
+      <Collections :collection="collection" :descriptions="descriptions" @check="check" />
     </div>
+  </div>
+  <div v-else>
+    <PreviewValidate :id="idCo" @close="close" />
   </div>
 </template>
 
@@ -15,11 +18,13 @@ import { mapGetters } from 'vuex';
 import Collections from '../../collectible/Collections.vue'
 import ICollection from 'src/models/ICollection';
 import AlgoButton from 'components/common/Button.vue';
+import PreviewValidate from './PreviewValidate.vue';
 
 @Options({
   components: {
     Collections,
-    AlgoButton
+    AlgoButton,
+    PreviewValidate
   },
   computed: {
     ...mapGetters('user', {
@@ -31,8 +36,20 @@ import AlgoButton from 'components/common/Button.vue';
 
 export default class ValidateCollection extends Vue {
     descriptions: boolean = false;
+    checkar: boolean = true;
+    idCo!: string;
+
+    check(id: string) {
+      this.checkar = false;
+      this.idCo = id
+    }
+
+    close() {
+      this.checkar = true
+    }
 
     formCollection: ICollection[] = [];
+    formPreview: ICollection[] = [];
 
     get account() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
@@ -40,7 +57,6 @@ export default class ValidateCollection extends Vue {
     }
 
     mounted() {
-      // void this.verificador()
       void this.getCollection();
     }
 
@@ -48,17 +64,6 @@ export default class ValidateCollection extends Vue {
       const nameCollection = name.replace(/\0/g, '')
       this.$router.push(`/create-collectible/new-painting/${nameCollection}`).catch(console.error);
     }
-
-    // async verificador(): Promise<void> {
-    //   const accountCurrent = this.account
-    //   // if (accountCurrent !== this.wallaet1 && accountCurrent !== this.wallaet2) {
-    //   //   this.$q.notify({
-    //   //     type: 'negative',
-    //   //     message: 'access denied',
-    //   //   });
-    //   //   await this.$router.push('/')
-    //   // }
-    // }
 
     getCollection() {
       void this.$store.dispatch({

@@ -59,6 +59,9 @@ const mutation: MutationTree<MintStateInterface> = {
   SET_COLLECTIONS_VERIFY(state: MintStateInterface, payload) {
     state.formGenerator.collections = payload;
   },
+  SET_VERIFY_PREVIEW(state: MintStateInterface, payload) {
+    state.formGenerator.collections = payload;
+  },
   SET_IS_COLLECTION_EXISTENT(state: MintStateInterface, payload) {
     state.formGenerator.isCollectionExistent = payload;
   },

@@ -264,6 +264,7 @@ export default class CreateCollection extends Vue {
           description: this.collectionData.aboutTheCollection.description,
           avatar: this.collectionData.aboutTheCollection.avatar,
           api: this.collectionData.apiParameters,
+          website: this.collectionData.aboutTheCollection.webSite,
           salt: nanoid(),
         };
 

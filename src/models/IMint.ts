@@ -44,10 +44,13 @@ export enum MintStatus{
   ItemMinted,
 }
 
-export interface IGenericPayload {
-  name: string,
-  collectionId: string,
-  params: string[],
-  tokenURI: string,
-  expectedValue: string
+export interface IArtistCollectionTokenURI {
+  collectionId: string;
+  name: string;
+  description: string;
+  creatorRoyalty: number;
+  params: string[];
+  image: string; //IPFS Hash 2000x2000
+  previewImage: string; //IPFS Hash 400x400
+  mintedBy: string; //Account
 }

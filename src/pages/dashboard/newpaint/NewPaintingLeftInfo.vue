@@ -24,15 +24,20 @@ import FormGenerator from 'src/pages/create-collection/FormGenerator.vue';
 import { IFormParams } from 'src/models/ICreatorCollection';
 import ICollection from 'src/models/ICollection';
 import { NetworkInfo } from 'src/store/user/types';
-import { ICollectionInfo, IArtBasicInfo, MintStatus, IGenericPayload } from 'src/models/IMint';
+import { ICollectionInfo, IArtBasicInfo, MintStatus, IArtistCollectionTokenURI } from 'src/models/IMint';
 import { Ref, Watch } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
-import PinningServiceHelper from 'src/helpers/PinningServiceHelper';
+// import PinningServiceHelper from 'src/helpers/PinningServiceHelper';
 import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
 import { PropType } from 'vue';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import { getArtistCollectionItemAddress } from 'src/eth/Config';
 import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
+import { api } from 'src/boot/axios';
+import { nanoid } from 'nanoid';
+import Web3Helper from 'src/helpers/web3Helper';
+import { isError } from 'src/helpers/utils';
+import { keccak256 } from 'web3-utils';
 
 class Props {
   formParams = prop({
@@ -196,68 +201,63 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     return getArtistCollectionItemAddress(this.networkInfo.id);
   }
 
+  async generateBase64(file: string) {
+    const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve((reader.result || '').toString());
+      reader.onerror = error => reject(error);
+    });
+
+    const myBlob = new Blob([file], { type : 'image/png' });
+    const base64 = await toBase64(myBlob);
+
+    return base64;
+  }
+
+  parsedParamskeccak256() {
+    const parsedParamsKeccak = this.parsedGeneratedParams.map(a => keccak256(a));
+    let oneKeccakHash: string = '';
+
+    parsedParamsKeccak.forEach(param => {
+      oneKeccakHash += param.toString();
+    })
+
+    return oneKeccakHash + '.png';
+  }
+
   async mint() {
     try {
       this.restoreDefault().catch(console.error);
 
       this.isPinningPreviewUrl = true;
 
-      // Substituir expressions - preview dentro do pinning service helper
-      const previewPiningResult = await PinningServiceHelper.pinFile('Expressions - Preview', 1, this.previewUrl(this.parsedGeneratedParams, false));
-      const previewIPFSHash = previewPiningResult.ipfsHash;
+      const previewPayload = {
+        name: this.artBasicInfo.name,
+        description: this.artBasicInfo.description,
+        mintedBy: this.account,
+        image: this.generateBase64(this.previewUrl(this.parsedGeneratedParams, false)),
+        fileName: this.parsedParamskeccak256()
+      }
 
-      this.mintStatus = MintStatus.GeneratingPreviewFile;
+      const previewPiningResult = await api.post('images/pintoipfs/FILE', previewPayload);
 
-      if (!previewIPFSHash) {
+      if (previewPiningResult.status !== 200) {
         this.restoreDefault().catch(console.error);
         this.isErr = true;
         this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
         return;
       }
 
+      console.log('previewPiningResult', previewPiningResult)
+
+      this.mintStatus = MintStatus.GeneratingPreviewFile;
+
       const allowance = await this.algoPainterTokenProxy.allowance(this.account, this.artistCollectionItemContractAddress, Number(this.collectionInfo.batchPriceBlockchain));
 
       if (!allowance) {
         await this.algoPainterTokenProxy.approve(this.artistCollectionItemContractAddress, this.collectionInfo.batchPriceBlockchain.toString(), this.account)
       }
-
-      this.isMintDialogOpen = true;
-      this.mintStatus = MintStatus.GeneratingRawFile;
-
-      const rawPiningResult = await PinningServiceHelper.pinFile('Expressions - Preview', 1, this.previewUrl(this.parsedGeneratedParams, true));
-      const rawIPFSHash = rawPiningResult.ipfsHash;
-
-      if (!rawIPFSHash) {
-        this.restoreDefault().catch(console.error);
-        this.mintStatus = MintStatus.GeneratingRawFileError;
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
-        return;
-      }
-
-      this.mintStatus = MintStatus.GeneratingDescriptorFile;
-
-      const payload: IGenericPayload = {
-        name: this.artBasicInfo.name,
-        collectionId: this.collectionData.blockchainId.toString(),
-        params: this.parsedGeneratedParams,
-        tokenURI: rawIPFSHash,
-        expectedValue: this.collectionInfo.batchPriceBlockchain.toString()
-      };
-
-      const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
-      this.descriptorIPFSHash = (descriptorPinningResult.ipfsHash) ? descriptorPinningResult.ipfsHash : '';
-
-      if (!this.descriptorIPFSHash) {
-        this.restoreDefault().catch(console.error);
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
-        return;
-      }
-
-      this.setIPFSUrl(`https://ipfs.io/ipfs/${rawIPFSHash}`).catch(console.error);
-
-      this.mintStatus = MintStatus.CollectingUserConfirmations;
 
       // await this.algoPainterArtistCollection.mintCall(
       //   this.artBasicInfo.name,
@@ -266,6 +266,78 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       //   previewIPFSHash || '',
       //   this.collectionInfo.batchPriceBlockchain.toString()
       // );
+
+      this.isMintDialogOpen = true;
+      this.mintStatus = MintStatus.GeneratingRawFile;
+
+      const rawPayload = {
+        name: this.artBasicInfo.name,
+        description: this.artBasicInfo.description,
+        mintedBy: this.account,
+        image: this.generateBase64(this.previewUrl(this.parsedGeneratedParams, true)),
+        fileName: this.parsedParamskeccak256()
+      }
+
+      const rawPiningResult = await api.post('images/pintoipfs/FILE', rawPayload);
+
+      console.log('rawPiningResult', rawPiningResult)
+
+      if (rawPiningResult.status !== 200) {
+        this.restoreDefault().catch(console.error);
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
+        return;
+      }
+
+      this.mintStatus = MintStatus.GeneratingDescriptorFile;
+
+      const payload: IArtistCollectionTokenURI = {
+        collectionId: this.collectionData.blockchainId.toString(),
+        name: this.artBasicInfo.name,
+        description: this.artBasicInfo.description,
+        creatorRoyalty: this.collectionData.metrics.creatorPercentage,
+        params: this.parsedGeneratedParams,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        image: `https://ipfs.io/ipfs/${previewPiningResult}`,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        previewImage: `https://ipfs.io/ipfs/${rawPiningResult}`,
+        mintedBy: this.account
+      };
+
+      const data = {
+        ...payload,
+        salt: nanoid(),
+      };
+      const web3helper = new Web3Helper();
+      const userAccount = this.$store.getters['user/account'] as string;
+      const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
+
+      if (isError(signatureOrError as Error)) {
+        return;
+      }
+
+      const request = {
+        data,
+        signature: signatureOrError,
+        account: userAccount,
+        salt: data.salt,
+      };
+
+      this.descriptorIPFSHash = await api.post('images/pintoipfs/JSON', request);
+
+      console.log('this.descriptorIPFSHash', this.descriptorIPFSHash)
+
+      if (!this.descriptorIPFSHash) {
+        this.restoreDefault().catch(console.error);
+        this.isErr = true;
+        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
+        return;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      this.setIPFSUrl(`https://ipfs.io/ipfs/${rawPiningResult}`).catch(console.error);
+
+      this.mintStatus = MintStatus.CollectingUserConfirmations;
     } catch (e: any) {
       this.restoreDefault().catch(console.error);
 

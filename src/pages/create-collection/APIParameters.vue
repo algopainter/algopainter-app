@@ -217,7 +217,6 @@
               placeholder="default value"
               label="Default value:"
               stack-label
-              :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
             <q-select
               v-else-if="params[i].fieldType === 'Select'"
@@ -226,7 +225,6 @@
               label="Default value:"
               stack-label
               :options="params[i].options"
-              :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
             <q-checkbox
               v-else-if="params[i].fieldType === 'Checkbox'"
@@ -586,9 +584,6 @@ export default class APIParameters extends Vue.with(Props) {
         return field.validate();
       }) ||
       !this.$refs.paramsLabel.every(field => {
-        return field.validate();
-      }) ||
-      !this.$refs.paramsDefault.every(field => {
         return field.validate();
       }) ||
       (this.$refs.paramsMaxLength && !this.$refs.paramsMaxLength.every(field => {

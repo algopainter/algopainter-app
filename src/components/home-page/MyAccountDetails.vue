@@ -124,6 +124,14 @@
                   {{ $t('dashboard.homePage.buyAlgop') }}
                 </algo-button>
               </div>
+              <div v-if="haveAccount.length > 0" class="q-pa-md">
+                <algo-button
+                  size="lg"
+                  to="/validate-collection"
+                  color="primary"
+                  label="Approve Collection"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -169,6 +177,7 @@ import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overvi
 export default class AccountDetails extends Vue {
   profile: IProfile = {};
   loadingProfile: boolean = true;
+  accounts: string = ''
 
   userItems = '0';
   userOnSale: string = '0';
@@ -177,6 +186,8 @@ export default class AccountDetails extends Vue {
   balance: number = 0;
 
   expanded: boolean = false;
+  haveAccount: string = '';
+  filterAccount!: string[] | undefined;
 
   bioInic: string = '';
 
@@ -190,8 +201,20 @@ export default class AccountDetails extends Vue {
     return this.$store.getters['user/account'] as string;
   }
 
+  checkAccount() {
+    this.haveAccount = ''
+    const arrayAccount = process.env.ALGOPAINTER_APPROVERS?.split(',')
+    this.filterAccount = arrayAccount?.map((account) => {
+      if (account.toLowerCase() === this.accountAddress.toLowerCase()) {
+        this.haveAccount = account
+      }
+      return account
+    });
+  }
+
   @Watch('accountAddress')
   onPropertyChanged() {
+    void this.checkAccount();
     void this.getProfile();
     void this.getUserItems();
     void this.setAccountBalance();
@@ -199,6 +222,7 @@ export default class AccountDetails extends Vue {
   }
 
   mounted() {
+    void this.checkAccount()
     void this.setAccountBalance();
     this.formattedBalance();
     void this.getProfile();

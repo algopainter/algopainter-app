@@ -163,7 +163,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
 
   async collectionsVerify() {
     try {
-      const res = await api.get('collections?show=false')
+      const res = await api.get('collections?show=false&approvedBy=!')
       this.commit('mint/SET_COLLECTIONS_VERIFY', res);
     } catch (e) {
       console.log('Error message: mint/actions - collectionsVerifica');

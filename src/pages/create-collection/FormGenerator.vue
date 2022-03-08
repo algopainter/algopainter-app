@@ -18,6 +18,7 @@
         :label="formParams[i].label"
         stack-label
         :options="formParams[i].options"
+        :max-values="formParams[i].maxValues"
       />
       <q-checkbox
         v-else-if="formParams[i].fieldType === 'Checkbox'"

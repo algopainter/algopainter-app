@@ -77,7 +77,7 @@ export default class FormSelect extends Vue.with(Props) {
     this.params[this.i].options.push(
       {
         label: '',
-        value: ''
+        value: '',
       }
     )
   }

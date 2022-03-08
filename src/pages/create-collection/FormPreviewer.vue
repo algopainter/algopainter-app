@@ -17,6 +17,7 @@
         :label="params[i].label"
         stack-label
         :options="params[i].options"
+        :max-values="params[i].maxValues"
       />
       <q-checkbox
         v-else-if="params[i].fieldType === 'Checkbox'"
@@ -48,9 +49,6 @@ class Props {
 
 export default class FormPreviewer extends Vue.with(Props) {
     generatedParams: (number | string | boolean)[] = [];
-
-    // params[i].fieldType === 'Checkbox' ? generatedParams[i] = false
-    // params[i].fieldType === 'Slider' ? generatedParams[i] = params[i].min
 
     type(i: number) {
       switch (this.params[i].dataType) {

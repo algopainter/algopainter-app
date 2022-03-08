@@ -160,9 +160,9 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
 
     if (!this.collectionData.api.collectionInfo.isSpecialParamsChecked && !noSize) {
       if (this.collectionData.api.collectionInfo.isSizeInUrlChecked) {
-        previewUrl += `size=${this.collectionData.api.collectionInfo.width}x${this.collectionData.api.collectionInfo.height}&`;
+        previewUrl += 'size=400x400&';
       } else {
-        previewUrl += `width=${this.collectionData.api.collectionInfo.width}&height=${this.collectionData.api.collectionInfo.height}&`;
+        previewUrl += 'width=400&height=400&';
       }
     }
 
@@ -244,7 +244,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         fileName: randomHex(32) + '.png'
       }
 
-      const previewPiningResult = await api.post('images/pintoipfs/FILE', previewPayload);
+      const previewPiningResult = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
       this.previewHash = previewPiningResult.data.ipfsHash;
 
       if (previewPiningResult.status !== 200) {

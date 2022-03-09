@@ -144,7 +144,7 @@
             color="green"
             :label="
               $t('createCollectible.create.fields.agreeValue', {
-                CurrentAmount: mintValueView,
+                CurrentAmount: costTokenView,
                 Token: 'ALGOP'
               })"
           />
@@ -375,8 +375,8 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
     }
   }
 
-  get mintValueView() {
-    return new Web3Helper().fromWei(this.mintValue);
+  get costTokenView() {
+    return new Web3Helper().fromWei(this.costToken);
   }
 
   async mint() {

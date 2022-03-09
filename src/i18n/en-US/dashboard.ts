@@ -683,7 +683,7 @@ export default {
     stepFour: {
       summary: 'Summary',
       verify: 'Confirm that all field are correct',
-      feeChecked: 'I am aware that I will be paying {fee} BNB to register this collection.',
+      feeChecked: 'I am aware that I will be paying {fee} {token} to register this collection.',
       feeError: 'Please confirm that you are aware of the fee!',
       formChecked: 'I checked the form and everything is correct.',
       formError: 'Please confirm that the information in the form is correct!'

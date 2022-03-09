@@ -44,7 +44,6 @@ export default class AlgoPainterArtistCollection {
         startingPrice: string, // NFT sell price
         tokenPrice: string, // token address BUSD ALGOP
         priceType: PriceType,
-        paramsCount: string, // 7
         prices: string[], // [ 1, 100, 1000, 101, 200, 2000 ]
         nfts: string // 1000
       ): ContractSendMethod;
@@ -107,10 +106,8 @@ export default class AlgoPainterArtistCollection {
     startingPrice: number, // 1000
     tokenPrice: string,
     priceType: PriceType,
-    paramsCount: number,
     prices: string[],
     nfts: number,
-    collectionPrice: string,
     from: string,
   ) {
     return this.instance.methods.createCollection(
@@ -121,10 +118,9 @@ export default class AlgoPainterArtistCollection {
       toWei(startingPrice.toString(), 'ether'),
       tokenPrice,
       priceType,
-      paramsCount.toString(),
       prices,
       nfts.toString(),
-    ).send({ from, value: collectionPrice });
+    ).send({ from });
   }
 
   async createCollectionCall(
@@ -135,7 +131,6 @@ export default class AlgoPainterArtistCollection {
     startingPrice: number,
     tokenPrice: string,
     priceType: PriceType,
-    paramsCount: number,
     prices: string[],
     nfts: number,
     from: string
@@ -148,16 +143,13 @@ export default class AlgoPainterArtistCollection {
       toWei(startingPrice.toString(), 'ether'),
       tokenPrice,
       priceType,
-      paramsCount.toString(),
       prices,
       nfts.toString()
     ).call({ from });
   }
 
   async getCollectionTokens(collectionId: string): Promise<string[]> {
-    console.log('getCollectionTokens', collectionId);
     const result = await this.instanceItem.methods.getCollectionTokens(collectionId).call<any[]>();
-    console.log('result', result);
     return result.map(a => a.toString());
   }
 

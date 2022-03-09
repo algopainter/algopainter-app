@@ -217,7 +217,7 @@
           <div class="default-value-field">
             <p
               v-if="params[i].fieldType === 'Slider'"
-              class="label"
+              class="label q-pb-md"
             >
               Default value
             </p>
@@ -528,7 +528,10 @@ export default class APIParameters extends Vue.with(Props) {
   }
 
   validateMin(val: number, i: number) {
-    if (val > this.params[i].max) {
+    if (val > this.params[i].max && this.params[i].max === 0) {
+      this.isMinMaxError = false;
+      return true;
+    } else if (val > this.params[i].max) {
       this.minFieldErrMsg = this.$t('dashboard.createCollection.stepThree.minError');
     } else if (val === this.params[i].max) {
       this.minFieldErrMsg = this.$t('dashboard.createCollection.stepThree.minMaxError');

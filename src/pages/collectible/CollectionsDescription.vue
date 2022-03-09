@@ -251,7 +251,7 @@ export default class CollectionsDescription extends Vue.with(Props) {
   }
 
   Tokens() {
-    if (!this.collection.metrics && this.collection.namelc === 'gwei') {
+    if (this.collection.metrics && this.collection.namelc === 'gwei') {
       this.tokem = 'ALGOP'
     } else if (!this.collection.metrics && this.collection.namelc === 'expressions') {
       this.tokem = 'BNB'

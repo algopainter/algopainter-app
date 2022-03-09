@@ -2,7 +2,7 @@
   <h4 class="q-mb-md">Form Generator</h4>
   <q-form class="form-generator">
     <div v-for="(param, i) in formParams" :key="i">
-      <p v-if="formParams[i].fieldType === 'Slider'" class="label">{{ formParams[i].label }}</p>
+      <p v-if="formParams[i].fieldType === 'Slider'" class="label q-pb-md">{{ formParams[i].label }}</p>
       <q-input
         v-if="formParams[i].fieldType === 'Input Textfield'"
         v-model="generatedParams[i]"

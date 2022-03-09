@@ -145,7 +145,7 @@
             :label="
               $t('createCollectible.create.fields.agreeValue', {
                 CurrentAmount: mintValueView,
-                Token: 'BNB'
+                Token: 'ALGOP'
               })"
           />
         </template>
@@ -188,6 +188,7 @@ import AlgoPainterPersonalItemProxy, { PainterPersonalItemStatus } from 'src/eth
 import getAlgoPainterContractByNetworkId, { getPersonalItemContractByNetworkId } from 'src/eth/Config';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import { IMintData } from 'src/models/IMint';
+import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 
 class PropsTypes {
   uploadLabel: string | undefined;
@@ -225,6 +226,7 @@ interface FormData {
 })
 export default class CreateUpload extends Vue.with(PropsTypes) {
   static FILE_SIZE_LIMIT = 31457280;
+  algoPainterTokenProxy!: AlgoPainterTokenProxy;
 
   imageData: string | null = null;
   OpenModal: boolean = false;
@@ -238,6 +240,7 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   algopTokenContract!: ERC20TokenProxy;
   networkInfo!: NetworkInfo;
   mintValue: string = '';
+  costToken: string = '';
   account!: string;
   dataMint: string = ''
   responseMint?: IMintData;
@@ -256,11 +259,15 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
 
   created() {
     this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
+    this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
     this.algopTokenContract = new ERC20TokenProxy(getAlgoPainterContractByNetworkId(this.networkInfo.id));
   }
 
   async mounted() {
-    await this.personalItemContract.getMintPrice().then(costs => this.mintValue = costs.cost).catch(console.error);
+    await this.personalItemContract.getMintPrice().then((costs) => {
+      this.mintValue = costs.cost;
+      this.costToken = costs.costToken;
+    }).catch(console.error);
   }
 
   async previewImage(e: Event) {
@@ -374,8 +381,28 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
 
   async mint() {
     try {
-      if (this.responseMint) {
+      this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
+
+      if (this.costToken) {
+        await this.algoPainterTokenProxy.approve(
+          this.personalItemContractAddress,
+          this.costToken,
+          this.account
+        ).on('transactionHash', () => {
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
+        }).on('error', () => {
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
+          this.okBtnDisabled = false;
+          setTimeout(() => {
+            this.okBtnDisabled = false;
+          }, 1000);
+        }).catch(e => {
+          console.error(e);
+        });
         this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
+      }
+
+      if (this.responseMint) {
         await this.personalItemContract.mint(
           this.responseMint.data.name,
           this.responseMint.data.rawImageHash,

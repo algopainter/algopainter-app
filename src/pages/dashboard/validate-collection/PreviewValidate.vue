@@ -292,7 +292,7 @@ export default class PreviewValidate extends Vue.with(Props) {
         if (status.status === 200) {
           this.$q.notify({
             type: 'positive',
-            message: 'Success Approve!',
+            message: 'The collection was successfully approved!',
           });
           setTimeout(() => {
             void this.$router.push('/validate-collection')
@@ -300,13 +300,13 @@ export default class PreviewValidate extends Vue.with(Props) {
         } else {
           this.$q.notify({
             type: 'negative',
-            message: 'error Approve',
+            message: 'It was not possible to approve the collection :(',
           });
         }
       } catch (e) {
         this.$q.notify({
           type: 'negative',
-          message: 'error Approve',
+          message: 'It was not possible to approve the collection :(',
         });
       }
     }
@@ -338,7 +338,7 @@ export default class PreviewValidate extends Vue.with(Props) {
         if (status.status === 200) {
           this.$q.notify({
             type: 'positive',
-            message: 'Success disapprove!',
+            message: 'The collection was successfully disapproved!',
           });
           setTimeout(() => {
             void this.$router.push('/validate-collection')
@@ -346,13 +346,13 @@ export default class PreviewValidate extends Vue.with(Props) {
         } else {
           this.$q.notify({
             type: 'negative',
-            message: 'error disapprove',
+            message: 'It was not possible to disapprove the collection :(',
           });
         }
       } catch (e) {
         this.$q.notify({
           type: 'negative',
-          message: 'error disapprove',
+          message: 'It was not possible to disapprove the collection :(',
         });
       }
     }

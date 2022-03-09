@@ -211,6 +211,7 @@ export default class CreateCollection extends Vue {
           break;
         case 3:
           this.collectionData.apiParameters = data;
+          console.log('this.collectionData.apiParameters', this.collectionData.apiParameters);
           break;
       }
     }

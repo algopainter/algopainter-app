@@ -126,6 +126,7 @@ import Example from './Example.vue';
 import { mapGetters } from 'vuex';
 import ICollection from 'src/models/ICollection';
 import Collections from './Collections.vue';
+// import moment from 'moment';
 
 interface IAiArtist {
   id: number;
@@ -232,21 +233,8 @@ export default class Create extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       // this.userOnSale = customValeu.data;
       this.formCollection = collection.data
-      console.log('this.formCollection', this.formCollection)
     });
   }
-
-  // clickImg(name: string): void {
-  //   this.detalImg = name;
-  //   this.arts = this.arts.map((item) => {
-  //     if (item.name !== name) {
-  //       item.isOff = true;
-  //     } else {
-  //       item.isOff = false;
-  //     }
-  //     return item;
-  //   });
-  // }
 
   eventPreview(play: string | null) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

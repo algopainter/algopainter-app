@@ -45,7 +45,7 @@
       <div
         class="text-bold row  justify-center text-end"
       >
-        {{ $t('dashboard.bid.auctionTime') }}
+        {{ $t('createCollectible.create.collections.endCollection') }}
       </div>
       <div
         class="row justify-center time q-gutter-sm "

@@ -21,7 +21,8 @@ export default {
     collections: {
       batchPrice: 'BATCH PRICE({coin})',
       remaining: 'REMAINING',
-      minted: 'MINTED'
+      minted: 'MINTED',
+      endCollection: 'Collection ends in'
     },
     fields: {
       uploadLabel: 'Upload File',

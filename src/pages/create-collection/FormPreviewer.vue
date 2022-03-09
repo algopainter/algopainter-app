@@ -17,6 +17,7 @@
         :label="params[i].label"
         stack-label
         :options="params[i].options"
+        :multiple="params[i].maxValues != 1"
         :max-values="params[i].maxValues"
       />
       <q-checkbox

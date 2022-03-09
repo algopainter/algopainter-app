@@ -62,7 +62,7 @@ export default class NewPainting extends Vue {
   collectionToken!: string;
   collectionInfo!: ICollection;
   formParams: IFormParams[] = [];
-  defaultValues: (number | string | boolean | {label: string, value: string | number})[] = [];
+  defaultValues: (number | string | boolean | {label: string, value: string | number})[] | any= [];
   collectionId!: number;
   collectionMaxImagesAmount!: number;
   collectionAvatar!: string;
@@ -100,7 +100,11 @@ export default class NewPainting extends Vue {
     this.formParams = res.api.parameters;
 
     this.formParams.forEach((param, i) => {
-      this.defaultValues[i] = param.defaultValue;
+      if (param.fieldType === 'Select' && param.maxValues > 1) {
+        this.defaultValues[i] = [param.defaultValue];
+      } else {
+        this.defaultValues[i] = param.defaultValue;
+      }
     });
 
     this.collectionId = res.blockchainId;

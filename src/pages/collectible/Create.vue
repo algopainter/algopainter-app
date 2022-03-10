@@ -235,7 +235,7 @@ export default class Create extends Vue {
       this.form = collection.data
       // eslint-disable-next-line array-callback-return
       this.formCollection = this.form.filter(function(obj) {
-        if (obj.title === 'Expressions' || obj.title === 'Gwei' || moment().isAfter(obj.metrics.endDT) === true) {
+        if (obj.title === 'Expressions' || obj.title === 'Gwei' || moment().isAfter(obj.metrics.endDT) === false) {
           return true
         }
       })

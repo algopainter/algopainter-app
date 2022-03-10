@@ -160,7 +160,7 @@
       color="primary"
     />
   </div>
-  <error v-if="isError && isVerifyingTheForm" :error-msg="errorMsg" />
+  <error v-if="(isError && isVerifyingTheForm) || callErrMsg !== ''" :error-msg="errorMsg" />
   <q-page-sticky
     position="bottom-right"
     :offset="[18, 18]"
@@ -198,6 +198,12 @@ class Props {
   collectionData = prop({
     type: Object as PropType<IcollectionData>,
     required: true,
+  });
+
+  callErrMsg = prop({
+    type: String,
+    required: true,
+    default: ''
   });
 }
 
@@ -246,7 +252,11 @@ export default class CollectionSummary extends Vue.with(Props) {
 
     this.registerPrice = await this.algoPainterArtistCollection.getCollectionPrice();
     void this.loadUserProfile();
-    console.log('account', this.accountAddress)
+  }
+
+  @Watch('callErrMsg')
+  onCallErrMsgChanged() {
+    this.errorMsg = this.callErrMsg;
   }
 
   get generatePreviewUrl() {
@@ -304,8 +314,7 @@ export default class CollectionSummary extends Vue.with(Props) {
     const result = await this.userController.getUserProfile(
       this.accountAddress as string,
     )
-    this.userProfile = result.getValue() as IProfile
-    console.log('account', this.userProfile.name)
+    this.userProfile = result.getValue() as IProfile;
   }
 }
 </script>

@@ -42,7 +42,7 @@
         icon="summarize"
         :done="step > 4"
       >
-        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" @data="storeData" @verify="verifyStepFour" />
+        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" @data="storeData" :call-err-msg="errMsg" @verify="verifyStepFour" />
       </q-step>
 
       <template #navigation>
@@ -117,6 +117,7 @@ export default class CreateCollection extends Vue {
   step: number = 1;
   isStepTwoDisabled: boolean = false;
   openModalCreate: boolean = false;
+  errMsg: string = '';
 
   verifyFormOne: boolean = false;
   verifyFormTwo: boolean = false;
@@ -252,12 +253,16 @@ export default class CreateCollection extends Vue {
           break;
         case 4:
           this.verifyFormFour = true;
-          setTimeout(() => {
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          setTimeout(async() => {
             if (this.isFormFourVerified) {
-              void this.createCollection()
-              // this.postCollection().catch(console.error);
-              this.verifyFormFour = false;
-              this.openModalCreate = true;
+              const isCallVerified = await this.createCollectionCall();
+
+              if (isCallVerified) {
+                this.verifyFormFour = false;
+                this.openModalCreate = true;
+                await this.createCollection();
+              }
             }
           }, 250)
       }
@@ -371,6 +376,61 @@ export default class CreateCollection extends Vue {
       }
     }
 
+    async createCollectionCall() {
+      this.errMsg = '';
+      const priceblock: any[] = [];
+      const priceRange = this.collectionData.collectionMetrics.priceRange;
+      // eslint-disable-next-line array-callback-return
+      priceRange.map(price => {
+        priceblock.push(price.from);
+        priceblock.push(price.to);
+        priceblock.push(price.amount);
+      })
+      const startPrice = Number(priceblock[2])
+      const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
+      const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
+      const times = [startDT, endDT]
+      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
+
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await this.artistCollection.createCollectionCall(
+          this.collectionData.collectionMetrics.walletAddress,
+          times,
+          this.collectionData.aboutTheCollection.nameCollection,
+          this.collectionData.collectionMetrics.creatorPercentage,
+          startPrice,
+          this.collectionData.collectionMetrics.tokenPriceAddress as string,
+          this.priceType(this.collectionData.collectionMetrics.priceType),
+          priceblock,
+          this.collectionData.collectionMetrics.nfts,
+          this.userAccount
+        )
+      } catch (e:any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        if (e.message && e.message.indexOf('START_TIME_RANGE_INVALID') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.startTimeErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('END_TIME_RANGE_INVALID') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.endTimeErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('COLLECTION_NAME_NOT_UNIQUE') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.collectionNameErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('TOKEN_UNAVAILABLE') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.tokenErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('MINIMUM_ALLOWANCE_REQUIRED') >= 0) {
+          return true;
+        } else {
+          this.errMsg = e.message;
+        }
+
+        return false;
+      }
+      return false;
+    }
+
     async createCollection() {
       this.statusData = 'Awaiting';
       this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
@@ -390,7 +450,7 @@ export default class CreateCollection extends Vue {
         const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
         const times = [startDT, endDT]
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
         await this.artistCollection.createCollection(
           this.collectionData.collectionMetrics.walletAddress,
           times,

@@ -126,7 +126,7 @@ import Example from './Example.vue';
 import { mapGetters } from 'vuex';
 import ICollection from 'src/models/ICollection';
 import Collections from './Collections.vue';
-// import moment from 'moment';
+import moment from 'moment';
 
 interface IAiArtist {
   id: number;
@@ -196,6 +196,7 @@ export default class Create extends Vue {
   };
 
   formCollection: ICollection[] = [];
+  form: ICollection[] = [];
 
   // setCurrentArtist(id: number) {
   //   this.currentArtist = this.arts.filter((art) => art.id === id)[0];
@@ -231,8 +232,13 @@ export default class Create extends Vue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const collection = this.$store.getters['mint/GET_COLLECTIONS'];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      // this.userOnSale = customValeu.data;
-      this.formCollection = collection.data
+      this.form = collection.data
+      // eslint-disable-next-line array-callback-return
+      this.formCollection = this.form.filter(function(obj) {
+        if (obj.title === 'Expressions' || obj.title === 'Gwei' || moment().isAfter(obj.metrics.endDT) === true) {
+          return true
+        }
+      })
     });
   }
 

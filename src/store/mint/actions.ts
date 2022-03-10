@@ -172,7 +172,8 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
   async VerifyPreview(type, value) {
     const Id : string = value.collectionId;
     try {
-      const res = await api.get(`collections/${Id}`)
+      console.log('id collection', Id)
+      const res = await api.get(`collections/db/${Id}`)
       this.commit('mint/SET_VERIFY_PREVIEW', res.data);
     } catch (e) {
       console.log('Error message: mint/actions - collectionsVerifica');

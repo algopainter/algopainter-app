@@ -10,7 +10,7 @@
       <q-form class="q-pa-sm full-width">
         <div class="row">
           <q-input
-            :model-value="formCollection.title"
+            :model-value="userProfile.name"
             :label="$t('dashboard.createCollection.aboutTheCollection.nameArtist')"
             class="col-6 q-pr-md"
             readonly
@@ -175,6 +175,8 @@ import { nanoid } from 'nanoid';
 import Web3Helper from 'src/helpers/web3Helper';
 import { isError } from 'src/helpers/utils';
 import { api } from 'src/boot/axios';
+import UserController from 'src/controllers/user/UserController';
+import { IProfile } from 'src/models/IProfile';
 
 interface Aproved {
   collectionId: number;
@@ -231,8 +233,10 @@ export default class PreviewValidate extends Vue.with(Props) {
   typePrice: string = ''
 
   formCollection: ICollection | null = null;
+  userProfile: IProfile = {};
   startDT: string = ''
-  endDT: string = ''
+  endDT: string = '';
+  userController: UserController = new UserController();
 
   mounted() {
     void this.getCollection()
@@ -261,9 +265,18 @@ export default class PreviewValidate extends Vue.with(Props) {
       const collection = this.$store.getters['mint/GET_VERIFY_PREVIEW'];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       this.formCollection = collection
-      console.log('this.formCollection', this.formCollection)
+      console.log('collele', this.formCollection)
       this.formatter()
+      void this.loadUserProfile()
     });
+  }
+
+  async loadUserProfile() {
+    const result = await this.userController.getUserProfile(
+      this.formCollection?.account as string,
+    )
+    this.userProfile = result.getValue() as IProfile
+    console.log('account', this.userProfile.name)
   }
 
   async ApproveCollection() {

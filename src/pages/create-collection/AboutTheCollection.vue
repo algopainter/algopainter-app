@@ -7,16 +7,6 @@
           <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'col-sm-12 column reverse' : '  row justify-between items-start content-between']">
             <div class="col-xs-6 col-sm-12 col-md-7 col-xs-12">
               <q-input
-                ref="artistName"
-                v-model="fields.artistName"
-                :label="$t('dashboard.createCollection.aboutTheCollection.nameArtist')"
-                :rules="[ name => validArtistName(name) || isErrorMsg]"
-                :error-message="$t('dashboard.createCollection.aboutTheCollection.nameArtistError')"
-                maxlength="30"
-                counter
-                @input="validateForm"
-              />
-              <q-input
                 ref="nameCollection"
                 v-model="fields.nameCollection"
                 :label="$t('dashboard.createCollection.aboutTheCollection.nameCollection')"
@@ -101,67 +91,6 @@
               </div>
             </div>
           </div>
-
-          <!-- <h5 class="text-bold text-center q-mb-none q-ml-md">
-            {{ $t('dashboard.editProfile.sMedia') }}
-          </h5> -->
-          <!-- <div class="row q-col-gutter-x-xl" :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-col-gutter-x-xl' : ' row q-col-gutter-x-xl']">
-            <q-input
-              v-model="fields.facebook"
-              class="input col-sm-12 col-md-6 col-xs-12"
-            >
-              <template #before>
-                <q-icon
-                  color="primary"
-                  name="facebook"
-                />
-              </template>
-            </q-input>
-            <q-input
-              v-model="fields.twitter"
-              class="input col-sm-12 col-md-6 col-xs-12"
-            >
-              <template #before>
-                <q-icon
-                  color="primary"
-                  name="mdi-twitter"
-                />
-              </template>
-            </q-input>
-            <q-input
-              v-model="fields.instagram"
-              class="input col-sm-12 col-md-6 col-xs-12"
-            >
-              <template #before>
-                <q-icon
-                  color="primary"
-                  name="mdi-instagram"
-                />
-              </template>
-            </q-input>
-            <q-input
-              v-model="fields.gmail"
-              class="input col-sm-12 col-md-6 col-xs-12"
-            >
-              <template #before>
-                <q-icon
-                  color="primary"
-                  name="mdi-google"
-                />
-              </template>
-            </q-input>
-            <q-input
-              v-model="fields.telegram"
-              class="input col-sm-12 col-md-6 col-xs-12"
-            >
-              <template #before>
-                <q-icon
-                  color="primary"
-                  name="mdi-telegram"
-                />
-              </template>
-            </q-input>
-          </div> -->
         </div>
         <error v-if="isError && isVerifyingTheForm" :error-msg="isErrorMsg" />
       </q-form>
@@ -194,7 +123,6 @@ class Props {
 })
 export default class AboutTheCollection extends Vue.with(Props) {
   declare $refs: {
-    artistName: QInput;
     nameCollection: QInput;
     webSite: QInput;
     customProfile: QInput;
@@ -205,7 +133,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
   fields = {
     avatar: '/images/do-utilizador (1).png',
     nameCollection: '',
-    artistName: '',
     description: '',
     creator: '',
     account: '',
@@ -254,11 +181,7 @@ export default class AboutTheCollection extends Vue.with(Props) {
 
    validateForm() {
      this.isVerifyingTheForm = true;
-     if (this.fields.artistName === '') {
-       this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.nameArtistError')
-       this.isError = true;
-       void this.$refs.artistName.validate()
-     } else if (this.fields.nameCollection.length < 6 || this.fields.nameCollection === '') {
+     if (this.fields.nameCollection.length < 6 || this.fields.nameCollection === '') {
        this.isError = true;
        this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.nameCollectionError')
        void this.$refs.nameCollection.validate()
@@ -283,16 +206,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
      }
 
      return false;
-   }
-
-   validArtistName(name: string) {
-     if (name === '' || this.fields.artistName === '') {
-       this.isError = true;
-       return false;
-     } else {
-       this.isError = false;
-       return true;
-     }
    }
 
    validateCollectionName(val: string) {

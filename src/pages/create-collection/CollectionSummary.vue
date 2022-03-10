@@ -10,7 +10,7 @@
     <q-form class="q-pa-sm full-width">
       <div class="row">
         <q-input
-          :model-value="collectionData.aboutTheCollection.artistName"
+          :model-value="userProfile.name"
           :label="$t('dashboard.createCollection.aboutTheCollection.nameArtist')"
           class="col-6 q-pr-md"
           readonly
@@ -186,6 +186,8 @@ import moment from 'moment';
 import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
+import UserController from 'src/controllers/user/UserController';
+import { IProfile } from 'src/models/IProfile';
 
 class Props {
   checkForm = prop({
@@ -227,9 +229,15 @@ export default class CollectionSummary extends Vue.with(Props) {
   isPreviewingForm: boolean = false;
   startDT: Date | string = '';
   endDT?: Date | string;
+  userProfile: IProfile = {};
+  userController: UserController = new UserController();
 
   created() {
     this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
+  }
+
+  get accountAddress() {
+    return this.$store.state.user.account;
   }
 
   async mounted() {
@@ -237,6 +245,8 @@ export default class CollectionSummary extends Vue.with(Props) {
     this.endDT = moment(this.collectionData.collectionMetrics.endDT).format('MMMM Do YYYY, h:mm:ss a');
 
     this.registerPrice = await this.algoPainterArtistCollection.getCollectionPrice();
+    void this.loadUserProfile();
+    console.log('account', this.accountAddress)
   }
 
   get generatePreviewUrl() {
@@ -288,6 +298,14 @@ export default class CollectionSummary extends Vue.with(Props) {
     if (this.checkForm) {
       this.verifyForm() ? this.$emit('verify', true) : this.$emit('verify', false);
     }
+  }
+
+  async loadUserProfile() {
+    const result = await this.userController.getUserProfile(
+      this.accountAddress as string,
+    )
+    this.userProfile = result.getValue() as IProfile
+    console.log('account', this.userProfile.name)
   }
 }
 </script>

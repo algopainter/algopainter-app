@@ -156,7 +156,7 @@ export default class CollectionModal extends Vue.with(Props) {
   ArtistCollectionStatus = ArtistCollectionStatus;
 
   showMsgAndLeave() {
-    if (this.artistCollectionStatus === ArtistCollectionStatus.ArtistCollectionCreated) {
+    if (this.statusData === 'confirme') {
       this.$q.notify({
         type: 'positive',
         message: 'The collection was successfully registered. Now you must wait until our team approves the registration.',

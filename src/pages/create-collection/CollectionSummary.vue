@@ -1,4 +1,4 @@
-<template>
+<template v-if="registerPrice">
   <h5 class="text-bold">{{ $t('dashboard.createCollection.stepFour.summary') }}</h5>
   <div v-if="!isPreviewingForm">
     <div class="flex justify-center align-center">
@@ -156,7 +156,7 @@
     />
     <q-checkbox
       v-model="isFeeChecked"
-      :label="$t('dashboard.createCollection.stepFour.feeChecked', {fee: '0.1'})"
+      :label="$t('dashboard.createCollection.stepFour.feeChecked', {fee: registerPrice, token: 'ALGOP'})"
       color="primary"
     />
   </div>
@@ -183,6 +183,9 @@ import { Watch } from 'vue-property-decorator';
 import Error from './Error.vue';
 import { PropType } from 'vue';
 import moment from 'moment';
+import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
 
 class Props {
   checkForm = prop({
@@ -201,9 +204,21 @@ class Props {
     FormPreviewer,
     Error
   },
+  computed: {
+    ...mapGetters(
+      'user', [
+        'isConnected',
+        'networkInfo',
+        'account',
+      ]),
+  }
 })
 
 export default class CollectionSummary extends Vue.with(Props) {
+  algoPainterArtistCollection!: AlgoPainterArtistCollection;
+  networkInfo!: NetworkInfo;
+  registerPrice!: string;
+
   isFeeChecked: boolean = false;
   isFormChecked: boolean = false;
   isError: boolean = false;
@@ -213,9 +228,15 @@ export default class CollectionSummary extends Vue.with(Props) {
   startDT: Date | string = '';
   endDT?: Date | string;
 
-  mounted() {
-    this.startDT = moment(this.collectionData.collectionMetrics.startDT).format('MMMM Do YYYY, h:mm:ss a')
-    this.endDT = moment(this.collectionData.collectionMetrics.endDT).format('MMMM Do YYYY, h:mm:ss a')
+  created() {
+    this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
+  }
+
+  async mounted() {
+    this.startDT = moment(this.collectionData.collectionMetrics.startDT).format('MMMM Do YYYY, h:mm:ss a');
+    this.endDT = moment(this.collectionData.collectionMetrics.endDT).format('MMMM Do YYYY, h:mm:ss a');
+
+    this.registerPrice = await this.algoPainterArtistCollection.getCollectionPrice();
   }
 
   get generatePreviewUrl() {

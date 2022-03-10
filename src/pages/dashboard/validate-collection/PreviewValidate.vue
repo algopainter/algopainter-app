@@ -145,10 +145,9 @@
         <div class="row">
           <div class="q-pa-md">
             <algo-button
-              type="submit"
               color="red"
-              label="Close"
-              @click="close()"
+              label="Disapprove"
+              @click="DisapproveCollection"
             />
           </div>
           <div class="q-pa-md">
@@ -289,17 +288,71 @@ export default class PreviewValidate extends Vue.with(Props) {
           account: userAccount,
           salt: data.salt,
         };
-        await api.put(`collection/${this.formCollection.blockchainId}/approve`, request)
-        const status = await api.put(`collection/${this.formCollection.blockchainId}/approve`, request);
+        const status = await api.put(`collections/${this.formCollection.blockchainId}/approve`, request);
         if (status.status === 200) {
-          console.log('Sucessoo!', status)
+          this.$q.notify({
+            type: 'positive',
+            message: 'The collection was successfully approved!',
+          });
+          setTimeout(() => {
+            void this.$router.push('/validate-collection')
+          }, 1000)
         } else {
-          console.log('FAlhou!')
+          this.$q.notify({
+            type: 'negative',
+            message: 'It was not possible to approve the collection :(',
+          });
         }
       } catch (e) {
         this.$q.notify({
           type: 'negative',
-          message: 'error Approve',
+          message: 'It was not possible to approve the collection :(',
+        });
+      }
+    }
+  }
+
+  async DisapproveCollection() {
+    if (this.formCollection) {
+      try {
+        const data = {
+          collectionId: this.formCollection.blockchainId,
+          approvedBy: this.$store.getters['user/account'] as string,
+          salt: nanoid(),
+        };
+        const web3helper = new Web3Helper();
+        const userAccount = this.$store.getters['user/account'] as string;
+        const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
+
+        if (isError(signatureOrError as Error)) {
+          return;
+        }
+
+        const request = {
+          data,
+          signature: signatureOrError,
+          account: userAccount,
+          salt: data.salt,
+        };
+        const status = await api.put(`collections/${this.formCollection.blockchainId}/disapprove`, request);
+        if (status.status === 200) {
+          this.$q.notify({
+            type: 'positive',
+            message: 'The collection was successfully disapproved!',
+          });
+          setTimeout(() => {
+            void this.$router.push('/validate-collection')
+          }, 1000)
+        } else {
+          this.$q.notify({
+            type: 'negative',
+            message: 'It was not possible to disapprove the collection :(',
+          });
+        }
+      } catch (e) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'It was not possible to disapprove the collection :(',
         });
       }
     }

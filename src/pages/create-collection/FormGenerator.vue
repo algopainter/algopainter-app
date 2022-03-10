@@ -2,7 +2,7 @@
   <h4 class="q-mb-md">Form Generator</h4>
   <q-form class="form-generator">
     <div v-for="(param, i) in formParams" :key="i">
-      <p v-if="formParams[i].fieldType === 'Slider'" class="label">{{ formParams[i].label }}</p>
+      <p v-if="formParams[i].fieldType === 'Slider'" class="label q-pb-md">{{ formParams[i].label }}</p>
       <q-input
         v-if="formParams[i].fieldType === 'Input Textfield'"
         v-model="generatedParams[i]"
@@ -18,6 +18,8 @@
         :label="formParams[i].label"
         stack-label
         :options="formParams[i].options"
+        :multiple="formParams[i].maxValues != 1"
+        :max-values="formParams[i].maxValues"
       />
       <q-checkbox
         v-else-if="formParams[i].fieldType === 'Checkbox'"
@@ -83,6 +85,7 @@ export default class FormPreviewer extends Vue.with(Props) {
 
     setDefaultValues() {
       this.generatedParams = this.defaultValues;
+      console.log('this.generatedParams', this.generatedParams);
     }
 
     @Watch('clearForm')

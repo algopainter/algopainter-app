@@ -678,8 +678,8 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
   selectCoin(coin: string) {
     this.coin = coin;
-    this.form.tokenPriceAddress = this.allowedCoins[Number(coin) - 1].tokenAddress;
-    this.form.tokenPriceSymbol = this.allowedCoins[Number(coin) - 1].label;
+    this.form.tokenPriceAddress = this.allowedCoins[Number(coin) - 2].tokenAddress;
+    this.form.tokenPriceSymbol = this.allowedCoins[Number(coin) - 2].label;
   }
 
   get allowedCoins() {

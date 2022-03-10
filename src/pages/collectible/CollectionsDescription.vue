@@ -38,6 +38,46 @@
       </div>
     </div>
   </div>
+  <div>
+    <div
+      class="text-bold"
+    >
+      <div
+        class="text-bold row  justify-center text-end"
+      >
+        {{ $t('createCollectible.create.collections.endCollection') }}
+      </div>
+      <div
+        class="row justify-center time q-gutter-sm "
+      >
+        <div>
+          <div class="text-bold">
+            <!-- {{ days }}  -->{{ countDays }}
+          </div>
+          <span> {{ $t('dashboard.bid.days') }} </span>
+        </div>
+
+        <div>
+          <div class="text-bold">
+            <!-- {{ hours }}--> {{ countHours }}
+          </div>
+          <span>{{ $t('dashboard.bid.hours') }}</span>
+        </div>
+        <div>
+          <div class="text-bold">
+            <!-- {{ minutes }} -->{{ countMinutes }}
+          </div>
+          <span>{{ $t('dashboard.bid.minis') }}</span>
+        </div>
+        <div>
+          <div class="text-bold">
+            <!-- {{ seconds }} --> {{ countSeconds }}
+          </div>
+          <span>{{ $t('dashboard.bid.seconds') }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script lang="ts">
 import { Vue, prop, Options } from 'vue-class-component';
@@ -52,6 +92,8 @@ import ICollection from 'src/models/ICollection';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
 import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
+import moment from 'moment';
+import { now } from 'src/helpers/timer';
 
 class Props {
   collectionName = prop({
@@ -90,10 +132,65 @@ class Props {
 })
 export default class CollectionsDescription extends Vue.with(Props) {
   img: string= '/images/gwei.png';
+  countDays: number = 0;
+  countYear: number = 0;
+  countHours: number = 0;
+  countMinutes: number = 0;
+  countSeconds: number = 0;
+  stopCount: boolean = false;
+  lastCountDays: number = 0;
+  lastCountHours: number = 0;
+  lastCountMinutes: number = 0;
+  lastCountSeconds: number = 0;
+  monthExpirations: string = ''
+  dayExpirations: string = ''
+  yearExpirations: string = ''
+  hoursExpirations!: string ;
 
   goApp(name: string) {
     this.$router.push(`/create-collectible/new-painting/${name}`).catch(console.error);
   }
+
+  getTime() {
+    if (this.collection.metrics) {
+      const newEnded = moment(this.collection.metrics.endDT);
+      const timeLeft = moment.duration(newEnded.diff(moment()));
+      this.countYear = timeLeft.years() || 0;
+      this.countDays = timeLeft.days() || 0;
+      this.countHours = timeLeft.hours() || 0;
+      this.countMinutes = timeLeft.minutes() || 0;
+      this.countSeconds = timeLeft.seconds() || 0;
+    }
+  }
+
+  get now() {
+    return now.value;
+  }
+
+   @Watch('now')
+  onPropertyChanged() {
+    if (!this.stopCount) {
+      if (this.countDays <= 0 && this.countHours <= 0 && this.countMinutes <= 0 && this.countSeconds <= 0) {
+        if (this.lastCountDays === 0 && this.lastCountHours === 0 && this.lastCountMinutes === 0 && this.lastCountSeconds === 1) {
+          this.formatTime();
+        }
+        this.stopCount = true;
+      } else {
+        this.getTime();
+      }
+    }
+    this.lastCountDays = this.countDays;
+    this.lastCountHours = this.countHours;
+    this.lastCountMinutes = this.countMinutes;
+    this.lastCountSeconds = this.countSeconds;
+  }
+
+   formatTime(): void {
+     this.monthExpirations = moment(this.collection.metrics.endDT).format('MMM');
+     this.dayExpirations = moment(this.collection.metrics.endDT).format('DD');
+     this.yearExpirations = moment(this.collection.metrics.endDT).format('YYYY');
+     this.hoursExpirations = moment(this.collection.metrics.endDT).format('LT');
+   }
 
   gweiSystem!: AlgoPainterGweiItemProxy;
   collectionSystem!: AlgoPainterGweiItemProxy | AlgoPainterExpressionsProxy | AlgoPainterArtistCollection;
@@ -142,6 +239,7 @@ export default class CollectionsDescription extends Vue.with(Props) {
   }
 
   async mounted() {
+    void this.getTime()
     void this.Tokens()
     if (this.isArtistCollection(this.collectionSystem)) {
       await this.getRemainingImages();
@@ -153,7 +251,7 @@ export default class CollectionsDescription extends Vue.with(Props) {
   }
 
   Tokens() {
-    if (!this.collection.metrics && this.collection.namelc === 'gwei') {
+    if (this.collection.metrics && this.collection.namelc === 'gwei') {
       this.tokem = 'ALGOP'
     } else if (!this.collection.metrics && this.collection.namelc === 'expressions') {
       this.tokem = 'BNB'

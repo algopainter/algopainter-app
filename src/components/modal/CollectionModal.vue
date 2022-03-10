@@ -106,6 +106,7 @@
           :disabled="okBtnDisabled"
           :label="$t('dashboard.auctionPage.okButton')"
           color="primary"
+          @click="showMsgAndLeave"
         />
       </q-card-section>
     </q-card>
@@ -153,6 +154,20 @@ okBtnDisabled = prop({
 export default class CollectionModal extends Vue.with(Props) {
   @Prop({ required: true }) artistCollectionStatus!: ArtistCollectionStatus
   ArtistCollectionStatus = ArtistCollectionStatus;
+
+  showMsgAndLeave() {
+    if (this.statusData === 'confirme') {
+      this.$q.notify({
+        type: 'positive',
+        message: 'The collection was successfully registered. Now you must wait until our team approves the registration.',
+      });
+
+      setTimeout(() => {
+        void this.$router.push('/');
+      }, 3000);
+    }
+  }
+
   get firstStepLabel() {
     switch (this.artistCollectionStatus) {
       case ArtistCollectionStatus.ArtistCollectionAwaitingInput:

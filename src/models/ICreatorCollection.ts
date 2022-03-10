@@ -27,9 +27,9 @@ export interface IFormParams {
   fieldType: string;
   options: {
     label: string;
-    value: string | number;
-  }[]
-  ;
+    value: string | number | (string | number)[];
+  }[];
+  maxValues: number;
   min: string | number;
   max: string | number;
   defaultValue: string | number | boolean | {label: string; value: string | number};

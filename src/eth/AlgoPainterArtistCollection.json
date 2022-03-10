@@ -22,6 +22,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "address",
+        "name": "_collectionPriceToken",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "_maxCollectionTime",
         "type": "uint256"
@@ -167,6 +172,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "collectionPriceToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -505,6 +523,19 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_collectionPriceToken",
+        "type": "address"
+      }
+    ],
+    "name": "setCollectionPriceToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_devAddress",
         "type": "address"
       }
@@ -654,11 +685,6 @@
       },
       {
         "internalType": "uint16",
-        "name": "paramsCount",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint16",
         "name": "nfts",
         "type": "uint16"
       }
@@ -702,11 +728,6 @@
         "internalType": "enum IAlgoPainterArtistCollection.PriceType",
         "name": "priceType",
         "type": "uint8"
-      },
-      {
-        "internalType": "uint16",
-        "name": "paramsCount",
-        "type": "uint16"
       },
       {
         "internalType": "uint256[]",

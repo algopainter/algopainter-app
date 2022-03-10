@@ -78,9 +78,11 @@ import UserController from 'src/controllers/user/UserController';
 import { IProfile } from 'src/models/IProfile';
 import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI, IcollectionData } from 'src/models/ICreatorCollection';
 import CollectionModal from 'src/components/modal/CollectionModal.vue'
-import AlgoPainterArtistCollection, { PriceType, ArtistCollectionStatus } from 'src/eth/AlgoPainterArtistCollectionProxy'
+import AlgoPainterArtistCollection, { PriceType, ArtistCollectionStatus } from 'src/eth/AlgoPainterArtistCollectionProxy';
+import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import moment from 'moment';
 import { toWei } from 'web3-utils'
+import { getArtistCollectionAddress } from 'src/eth/Config';
 
 @Options({
   components: {
@@ -101,11 +103,14 @@ import { toWei } from 'web3-utils'
 })
 
 export default class CreateCollection extends Vue {
+  algoPainterTokenProxy!: AlgoPainterTokenProxy;
+  artistCollection = <AlgoPainterArtistCollection>{};
+  registerPrice!: string;
+  networkinfo?: NetworkInfo;
+
   PriceType = PriceType;
   isConnected?: boolean;
   userAccount!: string;
-  networkinfo?: NetworkInfo;
-  artistCollection = <AlgoPainterArtistCollection>{};
   artistCollectionStatus: ArtistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
   statusData : string = 'Awaiting';
   statusblock: string = '';
@@ -138,10 +143,11 @@ export default class CreateCollection extends Vue {
 
   created() {
     this.artistCollection = new AlgoPainterArtistCollection(this.networkInfo);
+    this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
   }
 
-  mounted() {
-    void this.registerCollection();
+  async mounted() {
+    await this.registerCollection();
   }
 
   @Watch('step')
@@ -264,6 +270,7 @@ export default class CreateCollection extends Vue {
           description: this.collectionData.aboutTheCollection.description,
           avatar: this.collectionData.aboutTheCollection.avatar,
           api: this.collectionData.apiParameters,
+          website: this.collectionData.aboutTheCollection.webSite,
           salt: nanoid(),
         };
 
@@ -271,6 +278,7 @@ export default class CreateCollection extends Vue {
         const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
 
         if (isError(signatureOrError as Error)) {
+          this.statusData = 'error';
           return;
         }
 
@@ -319,54 +327,105 @@ export default class CreateCollection extends Vue {
       }
     }
 
-    async createCollection() {
-      const priceblock: any[] = [];
-      const priceRange = this.collectionData.collectionMetrics.priceRange;
-      // eslint-disable-next-line array-callback-return
-      priceRange.map(price => {
-        priceblock.push(price.from);
-        priceblock.push(price.to);
-        priceblock.push(price.amount);
-      })
-      const startPrice = Number(priceblock[2])
-      const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
-      const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
-      const times = [startDT, endDT]
-      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      await this.artistCollection.createCollection(
-        this.collectionData.collectionMetrics.walletAddress,
-        times,
-        this.collectionData.aboutTheCollection.nameCollection,
-        this.collectionData.collectionMetrics.creatorPercentage,
-        startPrice,
-        this.collectionData.collectionMetrics.tokenPriceAddress as string,
-        this.priceType(this.collectionData.collectionMetrics.priceType),
-        this.collectionData.apiParameters.parameters.length,
-        priceblock,
-        this.collectionData.collectionMetrics.nfts,
-        toWei(await this.artistCollection.getCollectionPrice(), 'ether'),
-        this.userAccount
-      ).on('transactionHash', (a) => {
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation
-      }).on('receipt', (receipt): void => {
-        if (receipt.events) {
-          this.collectionId = receipt.events.CollectionCreated.returnValues.index
-        }
-      }).on('error', (e) => {
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
-        this.okBtnDisabled = false;
-      })
+    get artistCollectionContractAddress() {
+      return getArtistCollectionAddress(this.networkInfo.id);
+    }
 
-      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated
-      while (this.hasCollection === false) {
-        const teste = await api.get(`collections?blockchainId=${this.collectionId}`);
-        this.hasCollection = teste.data.length !== 0;
-      }
-      if (this.hasCollection) {
-        void this.postCollection()
+    async getAllowance() {
+      try {
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
+        this.registerPrice = toWei(await this.artistCollection.getCollectionPrice());
+
+        if (this.registerPrice) {
+          let allowance = false;
+
+          await this.algoPainterTokenProxy.approve(
+            this.artistCollectionContractAddress,
+            this.registerPrice,
+            this.userAccount
+          )
+            .on('error', () => {
+              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
+              this.okBtnDisabled = false;
+              setTimeout(() => {
+                this.okBtnDisabled = false;
+                return false;
+              }, 1000);
+            })
+            .on('transactionHash', () => {
+              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+            })
+            .on('confirmation', () => {
+              allowance = true;
+            })
+            .catch(e => {
+              console.error(e);
+              allowance = false;
+            });
+
+          return allowance;
+        }
+      } catch (e) {
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
+        return false;
       }
     }
+
+    async createCollection() {
+      this.statusData = 'Awaiting';
+      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+      const allowance = await this.getAllowance()
+
+      if (allowance) {
+        const priceblock: any[] = [];
+        const priceRange = this.collectionData.collectionMetrics.priceRange;
+        // eslint-disable-next-line array-callback-return
+        priceRange.map(price => {
+          priceblock.push(price.from);
+          priceblock.push(price.to);
+          priceblock.push(price.amount);
+        })
+        const startPrice = Number(priceblock[2])
+        const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
+        const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
+        const times = [startDT, endDT]
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await this.artistCollection.createCollection(
+          this.collectionData.collectionMetrics.walletAddress,
+          times,
+          this.collectionData.aboutTheCollection.nameCollection,
+          this.collectionData.collectionMetrics.creatorPercentage,
+          startPrice,
+          this.collectionData.collectionMetrics.tokenPriceAddress as string,
+          this.priceType(this.collectionData.collectionMetrics.priceType),
+          priceblock,
+          this.collectionData.collectionMetrics.nfts,
+          this.userAccount
+        ).on('transactionHash', (a) => {
+          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+        }).on('receipt', (receipt): void => {
+          if (receipt.events) {
+            this.collectionId = receipt.events.CollectionCreated.returnValues.index
+          }
+        }).on('error', (e) => {
+          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
+          this.okBtnDisabled = false;
+        })
+
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated
+        while (this.hasCollection === false) {
+          const teste = await api.get(`collections?blockchainId=${this.collectionId}`);
+          this.hasCollection = teste.data.length !== 0;
+        }
+        if (this.hasCollection) {
+          void this.postCollection()
+        }
+      } else {
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
+        this.okBtnDisabled = false;
+      }
+    };
 }
 </script>
 <style lang="scss">

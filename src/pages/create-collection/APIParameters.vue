@@ -169,13 +169,24 @@
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
             />
           </div>
-          <form-select
-            v-if="params[i].fieldType === 'Select'"
-            :params="params"
-            :i="i"
-            :check-form="verifyFormSelect"
-            @verify="checkIfFormSelectIsVerified"
-          />
+          <div v-if="params[i].fieldType === 'Select'">
+            <form-select
+              :params="params"
+              :i="i"
+              :check-form="verifyFormSelect"
+              @verify="checkIfFormSelectIsVerified"
+            />
+            <q-input
+              ref="maxOptions"
+              v-model.number="params[i].maxValues"
+              label="Max selections:"
+              class="col-6 q-pr-md"
+              mask="#"
+              fill-mask="0"
+              reverse-fill-mask
+              :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
+            />
+          </div>
           <div
             v-if="params[i].fieldType === 'Slider'"
             class="min-max-field row q-pa-md q-my-md"
@@ -206,7 +217,7 @@
           <div class="default-value-field">
             <p
               v-if="params[i].fieldType === 'Slider'"
-              class="label"
+              class="label q-pb-md"
             >
               Default value
             </p>
@@ -352,9 +363,10 @@ export default class APIParameters extends Vue.with(Props) {
       options: [
         {
           label: '',
-          value: ''
+          value: '',
         }
       ],
+      maxValues: 0,
       min: 0,
       max: 0,
       defaultValue: ''
@@ -422,9 +434,10 @@ export default class APIParameters extends Vue.with(Props) {
         options: [
           {
             label: '',
-            value: ''
+            value: '',
           }
         ],
+        maxValues: 0,
         min: 0,
         max: 0,
         defaultValue: ''
@@ -515,7 +528,10 @@ export default class APIParameters extends Vue.with(Props) {
   }
 
   validateMin(val: number, i: number) {
-    if (val > this.params[i].max) {
+    if (val > this.params[i].max && this.params[i].max === 0) {
+      this.isMinMaxError = false;
+      return true;
+    } else if (val > this.params[i].max) {
       this.minFieldErrMsg = this.$t('dashboard.createCollection.stepThree.minError');
     } else if (val === this.params[i].max) {
       this.minFieldErrMsg = this.$t('dashboard.createCollection.stepThree.minMaxError');

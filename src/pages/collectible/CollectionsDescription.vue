@@ -38,7 +38,7 @@
       </div>
     </div>
   </div>
-  <div>
+  <div v-if="collection.namelc !== 'gwei' && collection.namelc !== 'expressions'">
     <div
       class="text-bold"
     >

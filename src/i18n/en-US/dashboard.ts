@@ -608,6 +608,8 @@ export default {
     stepThreeTitle: 'API parameters',
     stepFourTitle: 'Summary',
     hasNoProfile: 'To register a collection you need to create a profile.',
+    apiPatchRefused: 'You successfully registered your collection on blockchain but refused to sign to upload to our database. In order to have your collection working correctly, go back and accept it.',
+    uploadError: 'An error occurred while trying to upload the collection params to our database. Please, try again!',
     aboutTheCollection: {
       about: 'About',
       nameArtist: 'Artist name:',

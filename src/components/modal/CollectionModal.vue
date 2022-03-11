@@ -56,7 +56,15 @@
           <div class="col-12 step">
             <div class="avatar">
               <q-avatar
-                v-if="statusData === 'Awaiting'"
+                v-if="statusData === 'Awaiting' && artistCollectionStatus < ArtistCollectionStatus.ArtistCollectionCreated"
+                size="60px"
+                color="grey"
+                text-color="white"
+              >
+                <q-icon name="mdi-cancel" />
+              </q-avatar>
+              <q-avatar
+                v-else-if="statusData === 'Awaiting'"
                 size="60px"
                 color="warning"
                 text-color="white"

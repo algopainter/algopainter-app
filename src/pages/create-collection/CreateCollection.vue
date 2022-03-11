@@ -47,11 +47,17 @@
 
       <template #navigation>
         <q-stepper-navigation>
-          <q-btn color="primary" :disable="isStepTwoDisabled" :label="step === 4 ? 'Finish' : 'Continue'" @click="next()" />
+          <q-btn
+            color="primary"
+            :disable="isStepTwoDisabled"
+            :label="step === 4 ? 'Finish' : 'Continue'" @click="next()"
+          />
           <q-btn
             v-if="step > 1" flat color="primary" label="Back" class="q-ml-sm"
+            :disable="statusData === 'error'"
             @click="previous()"
           />
+          <q-tooltip v-if="statusData === 'error'">{{ $t('dashboard.createCollection.apiPatchRefused') }}</q-tooltip>
         </q-stepper-navigation>
       </template>
     </q-stepper>
@@ -255,7 +261,7 @@ export default class CreateCollection extends Vue {
           this.verifyFormFour = true;
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           setTimeout(async() => {
-            if (this.isFormFourVerified) {
+            if (this.isFormFourVerified && typeof this.collectionId === 'undefined') {
               const isCallVerified = await this.createCollectionCall();
 
               if (isCallVerified) {
@@ -263,62 +269,14 @@ export default class CreateCollection extends Vue {
                 this.openModalCreate = true;
                 await this.createCollection();
               }
+            } else {
+              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
+              this.openModalCreate = true;
+              await this.postCollection();
             }
           }, 250)
       }
     }
-
-    async postCollection() {
-      this.statusData = 'aproved';
-      try {
-        const data = {
-          description: this.collectionData.aboutTheCollection.description,
-          avatar: this.collectionData.aboutTheCollection.avatar,
-          api: this.collectionData.apiParameters,
-          website: this.collectionData.aboutTheCollection.webSite,
-          salt: nanoid(),
-        };
-
-        const web3helper = new Web3Helper();
-        const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
-
-        if (isError(signatureOrError as Error)) {
-          this.statusData = 'error';
-          return;
-        }
-
-        const request = {
-          data,
-          signature: signatureOrError,
-          account: this.userAccount,
-          salt: data.salt,
-        };
-
-        await api.patch(`collections/${this.collectionId}`, request);
-        this.statusData = 'confirme';
-        this.okBtnDisabled = false;
-      } catch (e) {
-        this.statusData = 'error';
-        this.$q.notify({
-          type: 'negative',
-          message: 'Error no Upload',
-        });
-      }
-    }
-
-    // async post(url: string, data: any) {
-    //   const response = await fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-type': 'application/json'
-    //     },
-    //     body: JSON.stringify(data)
-    //   });
-
-    //   const resData = await response.json();
-    //   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    //   return resData;
-    // }
 
     previous() {
       this.step--;
@@ -466,17 +424,18 @@ export default class CreateCollection extends Vue {
           this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
         }).on('receipt', (receipt): void => {
           if (receipt.events) {
-            this.collectionId = receipt.events.CollectionCreated.returnValues.index
+            this.collectionId = receipt.events.CollectionCreated.returnValues.index;
           }
         }).on('error', (e) => {
-          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
+          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
           this.okBtnDisabled = false;
         })
 
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
+        this.statusData = 'aproved';
         while (this.hasCollection === false) {
-          const teste = await api.get(`collections?blockchainId=${this.collectionId}`);
-          this.hasCollection = teste.data.length !== 0;
+          const test = await api.get(`collections?blockchainId=${this.collectionId}`);
+          this.hasCollection = test.data.length !== 0;
         }
         if (this.hasCollection) {
           void this.postCollection()
@@ -486,6 +445,49 @@ export default class CreateCollection extends Vue {
         this.okBtnDisabled = false;
       }
     };
+
+    async postCollection() {
+      this.statusData = 'aproved';
+      try {
+        const data = {
+          description: this.collectionData.aboutTheCollection.description,
+          avatar: this.collectionData.aboutTheCollection.avatar,
+          api: this.collectionData.apiParameters,
+          website: this.collectionData.aboutTheCollection.webSite,
+          salt: nanoid(),
+        };
+
+        const web3helper = new Web3Helper();
+        this.statusData = 'Awaiting';
+        const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
+
+        if (isError(signatureOrError as Error)) {
+          this.okBtnDisabled = false;
+          this.statusData = 'error';
+          return;
+        }
+
+        this.statusData = 'aproved';
+
+        const request = {
+          data,
+          signature: signatureOrError,
+          account: this.userAccount,
+          salt: data.salt,
+        };
+
+        await api.patch(`collections/${this.collectionId}`, request);
+        this.statusData = 'confirme';
+        this.okBtnDisabled = false;
+      } catch (e) {
+        this.statusData = 'error';
+        this.okBtnDisabled = false;
+        this.$q.notify({
+          type: 'negative',
+          message: this.$t('dashboard.createCollection.uploadError')
+        });
+      }
+    }
 }
 </script>
 <style lang="scss">

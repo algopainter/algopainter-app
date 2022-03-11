@@ -158,6 +158,7 @@
               @update:model-value="dataTypeUpdateDefaultValue(i)"
             />
             <q-input
+              v-if="params[i].dataType === 'string'"
               ref="paramsMaxLength"
               v-model.number="params[i].maxLength"
               placeholder="64"
@@ -224,10 +225,11 @@
             <q-input
               v-if="params[i].fieldType === 'Input Textfield'"
               ref="paramsDefault"
-              v-model.trim="params[i].defaultValue"
-              placeholder="default value"
+              v-model.number="params[i].defaultValue"
+              placeholder="10"
               label="Default value:"
-              stack-label
+              :type="type(i)"
+              :maxlength="params[i].maxLength"
             />
             <q-select
               v-else-if="params[i].fieldType === 'Select'"
@@ -369,7 +371,7 @@ export default class APIParameters extends Vue.with(Props) {
       maxValues: 0,
       min: 0,
       max: 0,
-      defaultValue: ''
+      defaultValue: 0
     }
   ]
 
@@ -421,6 +423,15 @@ export default class APIParameters extends Vue.with(Props) {
   @Watch('windowWidth')
   onWindowWidthChanged() {
     this.isSmallDevice = (this.windowWidth < 1024);
+  }
+
+  type(i: number) {
+    switch (this.params[i].dataType) {
+      case 'string':
+        return 'text';
+      case 'number':
+        return 'number';
+    }
   }
 
   addParam() {

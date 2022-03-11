@@ -608,6 +608,8 @@ export default {
     stepThreeTitle: 'API parameters',
     stepFourTitle: 'Summary',
     hasNoProfile: 'To register a collection you need to create a profile.',
+    apiPatchRefused: 'You successfully registered your collection on blockchain but refused to sign to upload to our database. In order to have your collection working correctly, go back and accept it.',
+    uploadError: 'An error occurred while trying to upload the collection params to our database. Please, try again!',
     aboutTheCollection: {
       about: 'About',
       nameArtist: 'Artist name:',
@@ -686,7 +688,11 @@ export default {
       feeChecked: 'I am aware that I will be paying {fee} {token} to register this collection.',
       feeError: 'Please confirm that you are aware of the fee!',
       formChecked: 'I checked the form and everything is correct.',
-      formError: 'Please confirm that the information in the form is correct!'
+      formError: 'Please confirm that the information in the form is correct!',
+      startTimeErrMsg: 'The date to start generating arts for your collection is not valid!',
+      endTimeErrMsg: 'The date to stop generating arts for your collection is not valid!',
+      collectionNameErrMsg: 'The collection name is already in use!',
+      tokenErrMsg: 'The token you chose for your collection is unavailable now, try again later!'
     }
   },
 };

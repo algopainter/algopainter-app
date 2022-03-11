@@ -42,16 +42,22 @@
         icon="summarize"
         :done="step > 4"
       >
-        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" @data="storeData" @verify="verifyStepFour" />
+        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" @data="storeData" :call-err-msg="errMsg" @verify="verifyStepFour" />
       </q-step>
 
       <template #navigation>
         <q-stepper-navigation>
-          <q-btn color="primary" :disable="isStepTwoDisabled" :label="step === 4 ? 'Finish' : 'Continue'" @click="next()" />
+          <q-btn
+            color="primary"
+            :disable="isStepTwoDisabled"
+            :label="step === 4 ? 'Finish' : 'Continue'" @click="next()"
+          />
           <q-btn
             v-if="step > 1" flat color="primary" label="Back" class="q-ml-sm"
+            :disable="statusData === 'error'"
             @click="previous()"
           />
+          <q-tooltip v-if="statusData === 'error'">{{ $t('dashboard.createCollection.apiPatchRefused') }}</q-tooltip>
         </q-stepper-navigation>
       </template>
     </q-stepper>
@@ -117,6 +123,7 @@ export default class CreateCollection extends Vue {
   step: number = 1;
   isStepTwoDisabled: boolean = false;
   openModalCreate: boolean = false;
+  errMsg: string = '';
 
   verifyFormOne: boolean = false;
   verifyFormTwo: boolean = false;
@@ -252,68 +259,24 @@ export default class CreateCollection extends Vue {
           break;
         case 4:
           this.verifyFormFour = true;
-          setTimeout(() => {
-            if (this.isFormFourVerified) {
-              void this.createCollection()
-              // this.postCollection().catch(console.error);
-              this.verifyFormFour = false;
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          setTimeout(async() => {
+            if (this.isFormFourVerified && typeof this.collectionId === 'undefined') {
+              const isCallVerified = await this.createCollectionCall();
+
+              if (isCallVerified) {
+                this.verifyFormFour = false;
+                this.openModalCreate = true;
+                await this.createCollection();
+              }
+            } else {
+              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
               this.openModalCreate = true;
+              await this.postCollection();
             }
           }, 250)
       }
     }
-
-    async postCollection() {
-      this.statusData = 'aproved';
-      try {
-        const data = {
-          description: this.collectionData.aboutTheCollection.description,
-          avatar: this.collectionData.aboutTheCollection.avatar,
-          api: this.collectionData.apiParameters,
-          website: this.collectionData.aboutTheCollection.webSite,
-          salt: nanoid(),
-        };
-
-        const web3helper = new Web3Helper();
-        const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
-
-        if (isError(signatureOrError as Error)) {
-          this.statusData = 'error';
-          return;
-        }
-
-        const request = {
-          data,
-          signature: signatureOrError,
-          account: this.userAccount,
-          salt: data.salt,
-        };
-
-        await api.patch(`collections/${this.collectionId}`, request);
-        this.statusData = 'confirme';
-        this.okBtnDisabled = false;
-      } catch (e) {
-        this.statusData = 'error';
-        this.$q.notify({
-          type: 'negative',
-          message: 'Error no Upload',
-        });
-      }
-    }
-
-    // async post(url: string, data: any) {
-    //   const response = await fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-type': 'application/json'
-    //     },
-    //     body: JSON.stringify(data)
-    //   });
-
-    //   const resData = await response.json();
-    //   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    //   return resData;
-    // }
 
     previous() {
       this.step--;
@@ -371,6 +334,61 @@ export default class CreateCollection extends Vue {
       }
     }
 
+    async createCollectionCall() {
+      this.errMsg = '';
+      const priceblock: any[] = [];
+      const priceRange = this.collectionData.collectionMetrics.priceRange;
+      // eslint-disable-next-line array-callback-return
+      priceRange.map(price => {
+        priceblock.push(price.from);
+        priceblock.push(price.to);
+        priceblock.push(price.amount);
+      })
+      const startPrice = Number(priceblock[2])
+      const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
+      const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
+      const times = [startDT, endDT]
+      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
+
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await this.artistCollection.createCollectionCall(
+          this.collectionData.collectionMetrics.walletAddress,
+          times,
+          this.collectionData.aboutTheCollection.nameCollection,
+          this.collectionData.collectionMetrics.creatorPercentage,
+          startPrice,
+          this.collectionData.collectionMetrics.tokenPriceAddress as string,
+          this.priceType(this.collectionData.collectionMetrics.priceType),
+          priceblock,
+          this.collectionData.collectionMetrics.nfts,
+          this.userAccount
+        )
+      } catch (e:any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        if (e.message && e.message.indexOf('START_TIME_RANGE_INVALID') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.startTimeErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('END_TIME_RANGE_INVALID') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.endTimeErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('COLLECTION_NAME_NOT_UNIQUE') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.collectionNameErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('TOKEN_UNAVAILABLE') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.tokenErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('MINIMUM_ALLOWANCE_REQUIRED') >= 0) {
+          return true;
+        } else {
+          this.errMsg = e.message;
+        }
+
+        return false;
+      }
+      return false;
+    }
+
     async createCollection() {
       this.statusData = 'Awaiting';
       this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
@@ -390,7 +408,7 @@ export default class CreateCollection extends Vue {
         const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
         const times = [startDT, endDT]
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
         await this.artistCollection.createCollection(
           this.collectionData.collectionMetrics.walletAddress,
           times,
@@ -406,17 +424,18 @@ export default class CreateCollection extends Vue {
           this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
         }).on('receipt', (receipt): void => {
           if (receipt.events) {
-            this.collectionId = receipt.events.CollectionCreated.returnValues.index
+            this.collectionId = receipt.events.CollectionCreated.returnValues.index;
           }
         }).on('error', (e) => {
-          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError
+          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
           this.okBtnDisabled = false;
         })
 
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
+        this.statusData = 'aproved';
         while (this.hasCollection === false) {
-          const teste = await api.get(`collections?blockchainId=${this.collectionId}`);
-          this.hasCollection = teste.data.length !== 0;
+          const test = await api.get(`collections?blockchainId=${this.collectionId}`);
+          this.hasCollection = test.data.length !== 0;
         }
         if (this.hasCollection) {
           void this.postCollection()
@@ -426,6 +445,49 @@ export default class CreateCollection extends Vue {
         this.okBtnDisabled = false;
       }
     };
+
+    async postCollection() {
+      this.statusData = 'aproved';
+      try {
+        const data = {
+          description: this.collectionData.aboutTheCollection.description,
+          avatar: this.collectionData.aboutTheCollection.avatar,
+          api: this.collectionData.apiParameters,
+          website: this.collectionData.aboutTheCollection.webSite,
+          salt: nanoid(),
+        };
+
+        const web3helper = new Web3Helper();
+        this.statusData = 'Awaiting';
+        const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
+
+        if (isError(signatureOrError as Error)) {
+          this.okBtnDisabled = false;
+          this.statusData = 'error';
+          return;
+        }
+
+        this.statusData = 'aproved';
+
+        const request = {
+          data,
+          signature: signatureOrError,
+          account: this.userAccount,
+          salt: data.salt,
+        };
+
+        await api.patch(`collections/${this.collectionId}`, request);
+        this.statusData = 'confirme';
+        this.okBtnDisabled = false;
+      } catch (e) {
+        this.statusData = 'error';
+        this.okBtnDisabled = false;
+        this.$q.notify({
+          type: 'negative',
+          message: this.$t('dashboard.createCollection.uploadError')
+        });
+      }
+    }
 }
 </script>
 <style lang="scss">

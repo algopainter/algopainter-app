@@ -108,7 +108,7 @@ export default class AlgoPainterArtistCollection {
     priceType: PriceType,
     prices: string[],
     nfts: number,
-    from: string,
+    from: string
   ) {
     return this.instance.methods.createCollection(
       walletAddress,
@@ -145,7 +145,7 @@ export default class AlgoPainterArtistCollection {
       priceType,
       prices,
       nfts.toString()
-    ).call({ from });
+    ).call({ from: from });
   }
 
   async getCollectionTokens(collectionId: string): Promise<string[]> {

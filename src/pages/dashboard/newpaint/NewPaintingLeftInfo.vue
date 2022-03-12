@@ -152,13 +152,13 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     this.clearForm = false;
     this.parsedGeneratedParams = parsedGeneratedParams;
 
-    this.setPreviewUrl(this.previewUrl(parsedGeneratedParams)).catch(console.error);
+    this.setPreviewUrl(this.previewUrl(parsedGeneratedParams, true)).catch(console.error);
   }
 
-  previewUrl(parsedGeneratedParams: (number | string | boolean)[], noSize = false) {
+  previewUrl(parsedGeneratedParams: (number | string | boolean)[], setSize = false) {
     let previewUrl = `${this.collectionData.api.collectionInfo.api}?`;
 
-    if (!this.collectionData.api.collectionInfo.isSpecialParamsChecked && !noSize) {
+    if (!this.collectionData.api.collectionInfo.isSpecialParamsChecked && setSize) {
       if (this.collectionData.api.collectionInfo.isSizeInUrlChecked) {
         previewUrl += 'size=400x400&';
       } else {
@@ -232,7 +232,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
 
       this.isPinningPreviewUrl = true;
 
-      const previewImage = this.previewUrl(this.parsedGeneratedParams, false);
+      const previewImage = this.previewUrl(this.parsedGeneratedParams);
 
       this.srcImage = await this.toDataUrl(previewImage);
 
@@ -277,7 +277,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         name: this.artBasicInfo.name,
         description: this.artBasicInfo.description,
         mintedBy: this.account,
-        image: await this.toDataUrl(this.previewUrl(this.parsedGeneratedParams, true)),
+        image: await this.toDataUrl(this.previewUrl(this.parsedGeneratedParams)),
         fileName: randomHex(32) + '.png'
       }
 
@@ -300,9 +300,9 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
         creatorRoyalty: this.collectionData.metrics.creatorPercentage,
         params: this.parsedGeneratedParams,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        image: `https://ipfs.io/ipfs/${this.previewHash}`,
+        image: `https://ipfs.io/ipfs/${this.rawHash}`,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        previewImage: `https://ipfs.io/ipfs/${this.rawHash}`,
+        previewImage: `https://ipfs.io/ipfs/${this.previewHash}`,
         mintedBy: this.account
       };
 
@@ -317,7 +317,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       }
 
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.setIPFSUrl(`https://ipfs.io/ipfs/${rawPiningResult}`).catch(console.error);
+      this.setIPFSUrl(`https://ipfs.io/ipfs/${this.rawHash}`).catch(console.error);
 
       this.mintStatus = MintStatus.CollectingUserConfirmations;
     } catch (e: any) {

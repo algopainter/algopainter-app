@@ -177,7 +177,12 @@
           v-if="mintStatus === MintStatus.CollectingUserConfirmations && isIpfsUrlSet"
           class="col-12 step column"
         >
-          <a target="_blank" :href="[collectionName === 'gwei' ? ipfsUrlGwei : ipfsUrlExpressions]">{{ $t('dashboard.newPainting.mintConfirmations.rawFileLink') }}</a>
+          <a
+            target="_blank"
+            :href="fullDefinitionUrl()"
+          >
+            {{ $t('dashboard.newPainting.mintConfirmations.rawFileLink') }}
+          </a>
           <q-checkbox
             v-model="hasCheckedRawFile"
             :label="$t('dashboard.newPainting.mintConfirmations.rawFile')"
@@ -318,6 +323,17 @@ export default class MintDialog extends Vue {
   @Watch('ipfsUrlGeneric')
   onIpfsUrlGenericChanged() {
     this.isIpfsUrlSet = true;
+  }
+
+  fullDefinitionUrl() {
+    switch (this.collectionName) {
+      case 'gwei':
+        return this.ipfsUrlGwei;
+      case 'expressions':
+        return this.ipfsUrlExpressions;
+      default:
+        return this.ipfsUrlGeneric;
+    }
   }
 
   async updateMintingStatus() {

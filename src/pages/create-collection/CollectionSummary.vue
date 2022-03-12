@@ -306,7 +306,7 @@ export default class CollectionSummary extends Vue.with(Props) {
   @Watch('checkForm')
   onCheckFormErrorChanged() {
     if (this.checkForm) {
-      this.verifyForm() ? this.$emit('verify', true) : this.$emit('verify', false);
+      this.verifyForm() && this.isError === false ? this.$emit('verify', true) : this.$emit('verify', false);
     }
   }
 

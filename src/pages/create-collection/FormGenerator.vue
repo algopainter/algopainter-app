@@ -18,7 +18,7 @@
         :label="formParams[i].label"
         stack-label
         :options="formParams[i].options"
-        :multiple="formParams[i].maxValues != 1"
+        :multiple="formParams[i].maxValues > 1"
         :max-values="formParams[i].maxValues"
       />
       <q-checkbox
@@ -85,7 +85,6 @@ export default class FormPreviewer extends Vue.with(Props) {
 
     setDefaultValues() {
       this.generatedParams = this.defaultValues;
-      console.log('this.generatedParams', this.generatedParams);
     }
 
     @Watch('clearForm')

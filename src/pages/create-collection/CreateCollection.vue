@@ -270,9 +270,11 @@ export default class CreateCollection extends Vue {
                 await this.createCollection();
               }
             } else {
-              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
-              this.openModalCreate = true;
-              await this.postCollection();
+              if (this.isFormFourVerified) { 
+                this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
+                this.openModalCreate = true;
+                await this.postCollection();
+              }
             }
           }, 250)
       }

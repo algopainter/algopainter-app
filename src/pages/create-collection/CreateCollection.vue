@@ -42,7 +42,7 @@
         icon="summarize"
         :done="step > 4"
       >
-        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" @data="storeData" :call-err-msg="errMsg" @verify="verifyStepFour" />
+        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" :call-err-msg="errMsg" @data="storeData" @verify="verifyStepFour" />
       </q-step>
 
       <template #navigation>
@@ -259,6 +259,7 @@ export default class CreateCollection extends Vue {
           break;
         case 4:
           this.verifyFormFour = true;
+
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           setTimeout(async() => {
             if (this.isFormFourVerified && typeof this.collectionId === 'undefined') {
@@ -270,7 +271,7 @@ export default class CreateCollection extends Vue {
                 await this.createCollection();
               }
             } else {
-              if (this.isFormFourVerified) { 
+              if (this.isFormFourVerified) {
                 this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
                 this.openModalCreate = true;
                 await this.postCollection();
@@ -366,6 +367,7 @@ export default class CreateCollection extends Vue {
           this.collectionData.collectionMetrics.nfts,
           this.userAccount
         )
+        return true
       } catch (e:any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('START_TIME_RANGE_INVALID') >= 0) {
@@ -388,7 +390,6 @@ export default class CreateCollection extends Vue {
 
         return false;
       }
-      return false;
     }
 
     async createCollection() {

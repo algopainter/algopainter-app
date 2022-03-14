@@ -35,6 +35,7 @@ import { getArtistCollectionItemAddress } from 'src/eth/Config';
 import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
 import { api } from 'src/boot/axios';
 import { randomHex } from 'web3-utils';
+import { auctionCoins } from 'src/helpers/auctionCoins';
 
 class Props {
   formParams = prop({
@@ -164,6 +165,12 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       } else {
         previewUrl += 'width=400&height=400&';
       }
+    } else if ((!this.collectionData.api.collectionInfo.isSpecialParamsChecked && !setSize)) {
+      if (this.collectionData.api.collectionInfo.isSizeInUrlChecked) {
+        previewUrl += 'size=2000x2000&';
+      } else {
+        previewUrl += 'width=2000&height=2000&';
+      }
     }
 
     this.collectionData.api.fixedParams.forEach((param) => {
@@ -227,131 +234,131 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   }
 
   async mint() {
+    this.restoreDefault().catch(console.error);
+    this.mintStatus = MintStatus.GeneratingPreviewFile;
+    this.isMintDialogOpen = true;
+    this.isPinningPreviewUrl = true;
+
+    const previewPayload = {
+      name: this.artBasicInfo.name,
+      description: this.artBasicInfo.description,
+      mintedBy: this.account,
+      image: await this.toDataUrl(this.previewUrl(this.parsedGeneratedParams)),
+      fileName: randomHex(32) + '.png'
+    }
+
     try {
-      this.restoreDefault().catch(console.error);
-
-      this.isPinningPreviewUrl = true;
-
-      const previewImage = this.previewUrl(this.parsedGeneratedParams);
-
-      this.srcImage = await this.toDataUrl(previewImage);
-
-      const previewPayload = {
-        name: this.artBasicInfo.name,
-        description: this.artBasicInfo.description,
-        mintedBy: this.account,
-        image: this.srcImage,
-        fileName: randomHex(32) + '.png'
-      }
-
       const previewPiningResult = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
       this.previewHash = previewPiningResult.data.ipfsHash;
+    } catch (e) {
+      this.mintStatus = MintStatus.GeneratingPreviewFileError;
+      this.restoreDefault().catch(console.error);
+      this.isErr = true;
+      this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
+      return;
+    }
 
-      if (previewPiningResult.status !== 200) {
-        this.restoreDefault().catch(console.error);
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
-        return;
-      }
+    this.mintStatus = MintStatus.GeneratingRawFile;
 
-      this.mintStatus = MintStatus.GeneratingPreviewFile;
+    const rawPayload = {
+      name: this.artBasicInfo.name,
+      description: this.artBasicInfo.description,
+      mintedBy: this.account,
+      image: await this.toDataUrl(this.previewUrl(this.parsedGeneratedParams)),
+      fileName: randomHex(32) + '.png'
+    }
 
-      const allowance = await this.algoPainterTokenProxy.allowance(this.account, this.artistCollectionItemContractAddress, Number(this.collectionInfo.batchPriceBlockchain));
-
-      if (!allowance) {
-        await this.algoPainterTokenProxy.approve(this.artistCollectionItemContractAddress, this.collectionInfo.batchPriceBlockchain.toString(), this.account)
-      }
-
-      // await this.algoPainterArtistCollection.mintCall(
-      //   this.artBasicInfo.name,
-      //   this.collectionData.blockchainId.toString(),
-      //   this.parsedGeneratedParams,
-      //   previewIPFSHash || '',
-      //   this.collectionInfo.batchPriceBlockchain.toString()
-      // );
-
-      this.isMintDialogOpen = true;
-      this.mintStatus = MintStatus.GeneratingRawFile;
-
-      const rawPayload = {
-        name: this.artBasicInfo.name,
-        description: this.artBasicInfo.description,
-        mintedBy: this.account,
-        image: await this.toDataUrl(this.previewUrl(this.parsedGeneratedParams)),
-        fileName: randomHex(32) + '.png'
-      }
-
+    try {
       const rawPiningResult = await api.post('images/pintoipfs/FILE', rawPayload);
       this.rawHash = rawPiningResult.data.ipfsHash;
+    } catch (e) {
+      this.mintStatus = MintStatus.GeneratingRawFileError;
+      this.isErr = true;
+      this.restoreDefault().catch(console.error);
+      this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
+      return;
+    }
 
-      if (rawPiningResult.status !== 200) {
-        this.restoreDefault().catch(console.error);
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
-        return;
-      }
+    this.mintStatus = MintStatus.GeneratingDescriptorFile;
 
-      this.mintStatus = MintStatus.GeneratingDescriptorFile;
+    console.log('this.collectionInfo', this.collectionInfo);
+    console.log('auctionCoins', auctionCoins);
 
-      const payload: IArtistCollectionTokenURI = {
-        collectionId: this.collectionData.blockchainId.toString(),
-        name: this.artBasicInfo.name,
-        description: this.artBasicInfo.description,
-        creatorRoyalty: this.collectionData.metrics.creatorPercentage,
-        params: this.parsedGeneratedParams,
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        image: `https://ipfs.io/ipfs/${this.rawHash}`,
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        previewImage: `https://ipfs.io/ipfs/${this.previewHash}`,
-        mintedBy: this.account
-      };
+    const token = auctionCoins.find(coin => {
+      return (coin.label === this.collectionInfo.collectionToken) ? coin.tokenAddress : '';
+    });
 
+    const payload: IArtistCollectionTokenURI = {
+      collectionId: this.collectionData.blockchainId.toString(),
+      name: this.artBasicInfo.name,
+      description: this.artBasicInfo.description,
+      creatorRoyalty: this.collectionData.metrics.creatorPercentage,
+      params: this.parsedGeneratedParams,
+      amount: this.collectionInfo.batchPriceCurrency,
+      amountToken: token?.tokenAddress ? token?.tokenAddress.toString() : '',
+      amountTokenSymbol: this.collectionInfo.collectionToken,
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      image: `https://ipfs.io/ipfs/${this.rawHash}`,
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      previewImage: `https://ipfs.io/ipfs/${this.previewHash}`,
+      mintedBy: this.account
+    };
+
+    console.log('payload', payload);
+
+    try {
       const descriptorPinningResult = await api.post('images/pintoipfs/JSON', payload);
       this.descriptorIPFSHash = descriptorPinningResult.data.ipfsHash;
 
-      if (!this.descriptorIPFSHash) {
-        this.restoreDefault().catch(console.error);
-        this.isErr = true;
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
-        return;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.setIPFSUrl(`https://ipfs.io/ipfs/${this.rawHash}`).catch(console.error);
+    } catch (e) {
+      this.mintStatus = MintStatus.GeneratingDescriptorFileError;
+      this.restoreDefault().catch(console.error);
+      this.isErr = true;
+      this.errMsg = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
+      return;
+    }
+
+    try {
+      await this.algoPainterArtistCollection.mintCall(
+        this.artBasicInfo.name,
+        this.collectionData.blockchainId.toString(),
+        this.parsedGeneratedParams,
+        this.descriptorIPFSHash,
+        this.collectionInfo.batchPriceBlockchain.toString()
+      );
 
       this.mintStatus = MintStatus.CollectingUserConfirmations;
     } catch (e: any) {
-      this.restoreDefault().catch(console.error);
+      if (e.message) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        if (e.message.indexOf('COLLECTION_RETIRED') >= 0) {
+          this.errMsg = this.$t('dashboard.newPainting.mintErrors.collectionRetired');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message.indexOf('NAME_NOT_UNIQUE') >= 0) {
+          this.errMsg = this.$t('dashboard.newPainting.mintErrors.nameNotUnique');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message.indexOf('CANNOT_MINT') >= 0) {
+          this.errMsg = this.$t('dashboard.newPainting.mintErrors.cannotMint');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message.indexOf('NOT_UNIQUE') >= 0) {
+          this.errMsg = this.$t('dashboard.newPainting.mintErrors.alreadyMinted');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message.indexOf('PRICE_HAS_CHANGED') >= 0) {
+          this.errMsg = this.$t('dashboard.newPainting.mintErrors.priceChanged');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message.indexOf('MINIMUM_ALLOWANCE_REQUIRED') >= 0) {
+          this.mintStatus = MintStatus.CollectingUserConfirmations;
+        } else {
+          this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
+        }
 
-      this.isErr = true;
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      if (e.message && e.message.indexOf('ALREADY_REGISTERED') >= 0) {
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.alreadyMinted');
-        return;
+        if (this.mintStatus !== MintStatus.CollectingUserConfirmations) {
+          this.restoreDefault().catch(console.error);
+          this.isMintDialogOpen = false;
+          this.isErr = true;
+        }
       }
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      if (e.message && e.message.indexOf('PRICE_HAS_CHANGED') >= 0) {
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.priceChanged');
-        return;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      if (e.message && e.message.indexOf('INVALID_AMOUNT') >= 0) {
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.invalidAmount');
-        return;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      if (e.message && e.message.indexOf('NAME_NOT_UNIQUE') >= 0) {
-        this.errMsg = this.$t('dashboard.newPainting.mintErrors.nameNotUnique');
-        return;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.errMsg = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
-      // return;
     }
   }
 
@@ -391,7 +398,9 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   async finishMinting() {
     try {
       this.isConfigured = false;
+
       this.mintStatus = MintStatus.MintAwaitingInput;
+      await this.algoPainterTokenProxy.approve(this.artistCollectionItemContractAddress, this.collectionInfo.batchPriceBlockchain.toString(), this.account);
 
       await this.algoPainterArtistCollection.mint(
         this.artBasicInfo.name,
@@ -418,8 +427,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
           };
         })
     } catch (e: any) {
-      this.mintStatus = MintStatus.MintError;
       this.restoreDefault().catch(console.error);
+      this.mintStatus = MintStatus.MintError;
       this.isErr = true;
 
       if (e.code === 4001) {
@@ -446,7 +455,6 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   }
 
   async restoreDefault() {
-    this.mintStatus = MintStatus.GeneratingPreviewFile;
     this.isErr = false;
     this.descriptorIPFSHash = '';
     this.isPinningPreviewUrl = false;

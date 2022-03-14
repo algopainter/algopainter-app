@@ -128,6 +128,7 @@ class Props {
       previewUrlGeneric: 'GET_PREVIEW_URL',
       errorMessageGwei: 'GET_GWEI_ERROR_MESSAGE',
       errorMessageExpressions: 'GET_EXPRESSIONS_ERROR_MESSAGE',
+      errorMessageGeneric: 'GET_ERROR_MESSAGE',
       collectionData: 'GET_COLLECTION_DATA',
       isPinningPreviewUrl: 'GET_IS_PINNING_PREVIEW_URL'
     }),
@@ -152,6 +153,7 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 
   errorMessageGwei!: string;
   errorMessageExpressions!: string;
+  errorMessageGeneric!: string;
   isError: boolean = false;
   errorMessage!: string;
 
@@ -243,6 +245,12 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   onErrorMessageExpressionsChanged() {
     this.errorMessage = this.errorMessageExpressions;
     this.isError = (this.errorMessageExpressions !== '');
+  }
+
+  @Watch('errorMessageGeneric')
+  onErrorMessageGenericChanged() {
+    this.errorMessage = this.errorMessageGeneric;
+    this.isError = (this.errorMessageGeneric !== '');
   }
 
   async mint() {

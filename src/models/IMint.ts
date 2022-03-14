@@ -37,6 +37,8 @@ export enum MintStatus{
   GeneratingRawFileError,
   GeneratingDescriptorFile,
   GeneratingDescriptorFileError,
+  MintCall,
+  MintCallError,
   CollectingUserConfirmations,
   MintAwaitingInput,
   MintAwaitingConfirmation,
@@ -49,6 +51,9 @@ export interface IArtistCollectionTokenURI {
   name: string;
   description: string;
   creatorRoyalty: number;
+  amount: string,
+  amountToken: string,
+  amountTokenSymbol: string,
   params: string[];
   image: string; //IPFS Hash 2000x2000
   previewImage: string; //IPFS Hash 400x400

@@ -21,6 +21,7 @@
             >
               <q-date
                 v-model="form.startDT"
+                :options="startOptions"
                 mask="MM/DD/YYYY HH:mm"
               />
               <q-time
@@ -52,6 +53,7 @@
             >
               <q-date
                 v-model="form.endDT"
+                :options="endOptions"
                 mask="MM/DD/YYYY HH:mm"
               />
               <q-time
@@ -389,6 +391,22 @@ export default class CollectionMetrics extends Vue.with(Props) {
       this.artistCollection = new AlgoPainterArtistCollection(this.networkInfo);
       await this.loadAvailableTokens();
     }
+  }
+
+  get nowFormatted() {
+    return moment().format('YYYY/MM/DD');
+  }
+
+  startOptions(date: string) {
+    return date > this.nowFormatted
+  }
+
+  endOptions(date: string) {
+    const startDate = moment(this.form.startDT).format('YYYY/MM/DD')
+    console.log('date start', startDate)
+    const dayWrapper = moment().add(90, 'days');
+    const dayString = dayWrapper.format('YYYY/MM/DD');
+    return date > startDate && date <= dayString;
   }
 
   @Watch('isConnected')

@@ -645,7 +645,7 @@ export default {
       creator: 'Creator royalties:',
       creatorMin: 'The creator royalties must be at least 1%',
       creatorMax: 'The creator royalties can not be higher than 30%',
-      address: 'Blockchain address:',
+      address: 'Wallet address to receive taxes:',
       from: 'From:',
       to: 'To:',
       toTooSmall: "The 'to' field cannot be smaller than the 'from' field in the same range",

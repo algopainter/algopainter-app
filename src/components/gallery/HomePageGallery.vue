@@ -78,7 +78,7 @@ interface OptionsCollection {
 export default class HomePageGallery extends Vue {
   currentCollection!: ICollection;
   collections: ICollection[] = [];
-  collectionsTeste!: string;
+  collectionsTeste: string = 'Gwei' ;
   currentCollectionGallery: IGallery[] = [];
   loading: boolean = true;
 
@@ -196,8 +196,7 @@ export default class HomePageGallery extends Vue {
           this.currentCollectionGallery = images.map((image) =>
             this.mapImageToGalleryItem(image)
           );
-          this.collectionsTeste = this.labelActive[1]
-          this.currentCollection = collections[1];
+          this.collectionsTeste = [...this.labelActive].pop() as string
         }
       })
     }

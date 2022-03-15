@@ -265,7 +265,6 @@ export default class PreviewValidate extends Vue.with(Props) {
       const collection = this.$store.getters['mint/GET_VERIFY_PREVIEW'];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       this.formCollection = collection
-      console.log('collele', this.formCollection)
       this.formatter()
       void this.loadUserProfile()
     });
@@ -276,7 +275,6 @@ export default class PreviewValidate extends Vue.with(Props) {
       this.formCollection?.account as string,
     )
     this.userProfile = result.getValue() as IProfile
-    console.log('account', this.userProfile.name)
   }
 
   async ApproveCollection() {

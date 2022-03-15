@@ -26,6 +26,12 @@ const mutation: MutationTree<CollectionsStateInterface> = {
   SET_IMAGE_PAST_OWNERS(state: CollectionsStateInterface, payload) {
     state.imagePastOwners = payload as [];
   },
+  SET_REPORT_AUCTIONS(state: CollectionsStateInterface, payload) {
+    state.reportAuction = payload as [];
+  },
+  SET_REPORT_MINTS(state: CollectionsStateInterface, payload) {
+    state.reportMints = payload as [];
+  },
   SET_OPEN_NEW_PAINTING_MODAL(state: CollectionsStateInterface) {
     state.isNewPaintingModalOpen = !state.isNewPaintingModalOpen;
   },

@@ -596,7 +596,8 @@ export default {
     title: 'Report Collection',
     fixedReport: 'Fixed report for 90 days',
     textReport: 'In this tab, you can track your earnings by minted images from your collection or by creator royalties from the auctioned arts.',
-    noHaveCollection:'You do not have earnings to track yet. How about promoting your collections and auctions?'
+    noHaveCollection:"You don't have data to show in reports yet. How about promoting your collection?"
+
   },
   reportEarnings: {
     title: 'Report Earnings',

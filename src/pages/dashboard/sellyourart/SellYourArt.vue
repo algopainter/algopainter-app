@@ -485,6 +485,7 @@ export default class SellYourArt extends Vue {
     if (this.image.collectionName === 'PersonalItem') {
       this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.image.nft.index) as string;
       this.createdItems = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
+      console.log('this.createdItems', this.createdItems)
     } else {
       this.createdPirs = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
     }

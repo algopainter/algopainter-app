@@ -74,7 +74,6 @@ export default class ValidateCollection extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         // this.userOnSale = customValeu.data;
         this.formCollection = collection.data
-        console.log('this.formCollection', this.formCollection)
       });
     }
 }

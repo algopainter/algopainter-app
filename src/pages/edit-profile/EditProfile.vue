@@ -225,7 +225,6 @@ export default class EditProfile extends Vue {
     const file = newLocala[0];
     if (file) {
       if (file.size < EditProfile.FILE_SIZE_LIMIT) {
-        console.log('File size', file.size);
         const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);

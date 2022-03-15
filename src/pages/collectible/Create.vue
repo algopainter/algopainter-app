@@ -37,79 +37,9 @@
       >
         <collections :collection="collection" :descriptions="descriptions" />
       </div>
-      <!-- <div class="q-pa-md">
-        <p class="row justify-center text-h5">
-          {{ $t('dashboard.selectAlgoP') }}
-        </p>
-        <div class="row justify-center">
-          <div>
-            <q-btn
-              round
-              type="a"
-              :to="{name: 'newPainting', params: { collection: 'gwei' } }"
-            >
-              <q-avatar size="250px" class="avatar">
-                <img width="150px" class="img" src="/images/gwei.png" />
-              </q-avatar>
-            </q-btn>
-            <p class="text-bold text-center">Hashly Gwei</p>
-          </div>
-          <div>
-            <q-btn
-              round
-              type="a"
-              :to="{name: 'newPainting', params: { collection: 'expressions' } }"
-            >
-              <q-avatar size="250px" class="avatar">
-                <img src="/images/manwithnoname.png" />
-              </q-avatar>
-            </q-btn>
-            <p class="text-bold text-center">Man With No Name</p>
-          </div>
-        </div>
-      </div> -->
-      <!--
-      <div>
-        <p class="text-bold text-subtitle2">
-          {{ $t('createCollectible.selectAi.title') }}
-        </p>
-      </div>
-      <div class="row justify-center q-col-gutter-md">
-        <ia-artist
-          v-for="art in arts"
-          :key="art.id"
-          :img="art.img"
-          :name="art.name"
-          :is-off="art.isOff"
-          :is-borda="clickImg"
-          @click="setCurrentArtist(art.id)"
-        />
-      </div>
-      <div>
-        <p class="text-h6 text-weight-bold">
-          {{ $t(currentArtist.title) }}
-        </p>
-        <p class="text-weight-medium">
-          {{ $t(currentArtist.textSubtitle) }}
-        </p>
-        <p class="text-weight-medium">
-          {{ $t(currentArtist.textBody) }}
-        </p>
-      </div>
-    </div>
-    -->
     </div>
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
       <div v-if="activeFormId === 'createWithArtist'" class="col q-preview">
-        <!--
-        <example
-          :example-img="currentArtist.exampleImg"
-          :batch-prince="currentArtist.batchPrince"
-          :remaining="currentArtist.remaining"
-          :minted="currentArtist.minted"
-          :btn-link="currentArtist.btnLink"
-        />
-        -->
       </div>
     </div>
   </div>
@@ -197,11 +127,6 @@ export default class Create extends Vue {
 
   formCollection: ICollection[] = [];
   form: ICollection[] = [];
-
-  // setCurrentArtist(id: number) {
-  //   this.currentArtist = this.arts.filter((art) => art.id === id)[0];
-  //   this.$emit('artistSettled');
-  // }
 
   activeFormId: string | null = null;
   isNewPaintingModalOpen!: boolean;

@@ -1,4 +1,5 @@
 <template>
+  <h4 class="q-mb-sm">{{ $t('dashboard.homePage.gwei') }}</h4>
   <div class="title">
     {{ $t('dashboard.newPainting.parameters') }}
   </div>

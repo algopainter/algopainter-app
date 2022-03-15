@@ -3,6 +3,7 @@
     :form-params="formParams"
     :default-values="defaultValues"
     :clear-form="clearForm"
+    :collection-title="collectionTitle"
     @generate-preview="GeneratePreview"
   />
   <q-dialog
@@ -40,12 +41,17 @@ import { auctionCoins } from 'src/helpers/auctionCoins';
 class Props {
   formParams = prop({
     type: Object as PropType<IFormParams[]>,
-    required: true,
+    required: true
   });
 
   defaultValues = prop({
     type: Object as PropType<number | string | boolean | {label: string, value: string | number}[]>,
-    required: true,
+    required: true
+  });
+
+  collectionTitle = prop({
+    type: String,
+    required: true
   });
 }
 

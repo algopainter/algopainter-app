@@ -1,5 +1,6 @@
 <template>
-  <h4 class="q-mb-md">Form Generator</h4>
+  <h4 class="q-mb-sm">{{ collectionTitle }}</h4>
+  <div class="title">{{ $t('dashboard.newPainting.parameters') }}</div>
   <q-form class="form-generator">
     <div v-for="(param, i) in formParams" :key="i">
       <p v-if="formParams[i].fieldType === 'Slider'" class="label q-pb-md">{{ formParams[i].label }}</p>
@@ -65,6 +66,11 @@ class Props {
   clearForm = prop({
     type: Boolean,
     required: true,
+  });
+
+  collectionTitle = prop({
+    type: String,
+    required: true
   });
 }
 
@@ -142,6 +148,11 @@ export default class FormPreviewer extends Vue.with(Props) {
 </script>
 
 <style scoped lang="scss">
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.6);
+  }
   .form-generator {
     .label {
       margin: 0px;

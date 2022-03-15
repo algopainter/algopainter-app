@@ -25,6 +25,7 @@
         v-else
         :form-params="formParams"
         :default-values="defaultValues"
+        :collection-title="collectionTitle"
       />
     </div>
     <div
@@ -60,12 +61,12 @@ import { IFormParams } from 'src/models/ICreatorCollection';
 export default class NewPainting extends Vue {
   collectionCustomUrl !: string | string[];
   collectionToken!: string;
-  collectionInfo!: ICollection;
   formParams: IFormParams[] = [];
   defaultValues: (number | string | boolean | {label: string, value: string | number})[] | any= [];
   collectionId!: number;
   collectionMaxImagesAmount!: number;
   collectionAvatar!: string;
+  collectionTitle!: string;
 
   created() {
     this.getCollectionCustomUrl();
@@ -110,6 +111,7 @@ export default class NewPainting extends Vue {
     this.collectionId = res.blockchainId;
     this.collectionMaxImagesAmount = res.metrics.nfts;
     this.collectionAvatar = res.avatar;
+    this.collectionTitle = res.title;
   }
 }
 

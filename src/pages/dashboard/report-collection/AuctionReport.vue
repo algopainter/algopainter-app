@@ -42,7 +42,7 @@ export default class AuctionReport extends Vue {
       name: 'Art',
       required: true,
       label: 'Art',
-      field: (collectionReport: { nft: string }) => `# ${collectionReport.nft}`,
+      field: (collectionReport: { nft: string }) => `#${collectionReport.nft}`,
       // style: ('text-align: center')
     },
     {
@@ -63,21 +63,21 @@ export default class AuctionReport extends Vue {
       name: 'Date of sale',
       required: true,
       label: 'Date of sale',
-      field: (collectionReport:{sellDT: string}) => this.formatDt(collectionReport.sellDT),
+      field: (collectionReport:{sellDT: string}) => collectionReport.sellDT ? this.formatDt(collectionReport.sellDT) : '-',
       style: ('text-align: center')
     },
     {
       name: 'Sale Value',
       required: true,
       label: 'Sale Value',
-      field: (collectionReport:{amount: string}) => `${collectionReport.amount || 0}`,
+      field: (collectionReport:{amount: string}) => `${collectionReport.amount || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'Creator gain',
       required: true,
       label: 'Creator gain',
-      field: (collectionReport:{toClaim: boolean, creator: string}) => collectionReport.toClaim ? `(waiting claim)` : `${collectionReport.creator}`,
+      field: (collectionReport:{toClaim: boolean, creator: string}) => collectionReport.toClaim ? `(waiting claim)` : `${collectionReport.creator || '-'}`,
       style: ('text-align: center')
     },
   ];

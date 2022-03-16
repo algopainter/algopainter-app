@@ -29,7 +29,7 @@ columns = [
     name: 'art',
     required: true,
     label: 'Art',
-    field: (collectionReport: { nft: string }) => `# ${collectionReport.nft}`,
+    field: (collectionReport: { nft: string }) => `${collectionReport.nft || '-'}`,
     style: ('text-align: center')
 
   },
@@ -44,7 +44,7 @@ columns = [
     name: 'ValueToMint',
     required: true,
     label: 'Value to Mint',
-    field: (collectionReport: { amount: string}) => `${collectionReport.amount}`,
+    field: (collectionReport: { amount: string}) => `${collectionReport.amount || '-'}`,
     style: ('text-align: center')
 
   },

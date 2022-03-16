@@ -138,11 +138,13 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   async getRemainingImages() {
     this.loading = true;
 
-    this.remainingImages = (this.isArtistCollection(this.collectionSystem))
-      ? Number(await this.collectionSystem.getRemainingTokens(this.collectionId))
-      : await this.collectionSystem.totalSupply();
-
-    this.mintedImagesAmount = this.collectionMaxImagesAmount - this.remainingImages;
+    if (this.isArtistCollection(this.collectionSystem)) {
+      this.remainingImages = Number(await this.collectionSystem.getRemainingTokens(this.collectionId));
+      this.mintedImagesAmount = this.collectionMaxImagesAmount - this.remainingImages;
+    } else {
+      this.mintedImagesAmount = await this.collectionSystem.totalSupply();
+      this.remainingImages = this.collectionMaxImagesAmount - this.mintedImagesAmount;
+    }
 
     this.getBatchPrice().catch(console.error);
   }

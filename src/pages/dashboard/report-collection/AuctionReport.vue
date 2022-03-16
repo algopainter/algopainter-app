@@ -70,14 +70,14 @@ export default class AuctionReport extends Vue {
       name: 'Sale Value',
       required: true,
       label: 'Sale Value',
-      field: (collectionReport:{amount: string}) => `${collectionReport.amount}`,
+      field: (collectionReport:{amount: string}) => `${collectionReport.amount || 0}`,
       style: ('text-align: center')
     },
     {
       name: 'Creator gain',
       required: true,
       label: 'Creator gain',
-      field: (collectionReport:{toClaim: boolean, creator: string}) => collectionReport.toClaim === false ? `${collectionReport.creator} (waiting claim)` : `${collectionReport.creator}`,
+      field: (collectionReport:{toClaim: boolean, creator: string}) => collectionReport.toClaim ? `(waiting claim)` : `${collectionReport.creator}`,
       style: ('text-align: center')
     },
   ];

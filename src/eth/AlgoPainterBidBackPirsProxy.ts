@@ -23,6 +23,10 @@ export default class AlgoPainterBidBackPirsProxy {
         tokenAddress: string,
         imageId: number
       ): ContractMethod;
+      getCreatorRate(
+        tokenAddress: string,
+        imageId: string
+      ): ContractMethod;
       getCreatorRoyaltiesRate(
         auctionId: number
       ): ContractSendMethod;
@@ -109,6 +113,16 @@ export default class AlgoPainterBidBackPirsProxy {
     ).call();
 
     return response as number;
+  }
+
+  async getCreatorRate(
+    address: string,
+    token: string
+  ) : Promise<number> {
+    return await this.smartContract.methods.getCreatorRate(
+      address,
+      token
+    ).call<number>();
   }
 
   setBidBackRate(

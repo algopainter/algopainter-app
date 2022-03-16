@@ -57,44 +57,51 @@
               </q-item-section>
             </q-item>
             <q-separator />
-            <q-item class="q-pl-none">
-              <q-item-section>
-                <div class="flex">
-                  <div
-                    class="text-bold cursor-pointer"
-                    @click="goToProfilePage"
-                  >
-                    {{ $t('dashboard.editProfileTerm') }}
-                  </div>
-                </div>
-              </q-item-section>
-            </q-item>
+            <q-expansion-item
+              expand-separator
+              header-class="bg-primary text-white"
+              expand-icon-class="text-white"
+              label="Profile"
+            >
+              <q-list>
+                <q-item v-close-popup clickable @click="goToProfilePage">
+                  <q-item-section>
+                    <q-item-label>{{ $t('dashboard.editProfileTerm') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-close-popup clickable @click="goToEarningsReport">
+                  <q-item-section>
+                    <q-item-label>{{ $t('dashboard.homePage.earningsReport') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
             <q-separator />
-            <q-item class="q-pl-none">
-              <q-item-section>
-                <div class="flex">
-                  <div
-                    class="text-bold cursor-pointer"
-                    @click="registerCollection"
-                  >
-                    {{ $t('dashboard.registerCollection') }}
-                  </div>
-                </div>
-              </q-item-section>
-            </q-item>
-            <q-separator />
-            <q-item v-if="collectionOwner" class="q-pl-none">
-              <q-item-section>
-                <div class="flex">
-                  <div
-                    class="text-bold cursor-pointer"
-                    @click="report"
-                  >
-                    {{ $t('dashboard.reportCollection') }}
-                  </div>
-                </div>
-              </q-item-section>
-            </q-item>
+            <q-expansion-item
+              expand-separator
+              header-class="bg-primary text-white"
+              expand-icon-class="text-white"
+              label="Collections"
+            >
+              <q-list>
+                <q-item v-close-popup clickable @click="registerCollection">
+                  <q-item-section>
+                    <q-item-label>{{ $t('dashboard.registerCollection') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item v-if="collectionOwner" v-close-popup clickable @click="report">
+                  <q-item-section>
+                    <q-item-label>{{ $t('dashboard.reportCollection') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="haveAccount.length > 0" v-close-popup clickable @click="goToApproveCollection">
+                  <q-item-section>
+                    <q-item-label>{{ $t('dashboard.approveCollection') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
             <q-separator />
             <q-item class="q-pa-none q-pt-md">
               <q-item-section>
@@ -145,6 +152,8 @@ export default class ProfileDropdownButton extends Vue {
 
   userController: UserController = new UserController();
   collectionOwner: boolean = false;
+  haveAccount: string = '';
+  filterAccount!: string[] | undefined;
 
   get accountAddress() {
     return this.$store.state.user.account;
@@ -156,6 +165,7 @@ export default class ProfileDropdownButton extends Vue {
 
   mounted() {
     void this.loadUserProfile();
+    void this.checkAccount();
     void this.setAccountBalance();
     void this.reportCollection()
   }
@@ -168,6 +178,7 @@ export default class ProfileDropdownButton extends Vue {
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
+      void this.checkAccount();
       void this.setAccountBalance();
       void this.reportCollection()
     }
@@ -175,6 +186,7 @@ export default class ProfileDropdownButton extends Vue {
 
   @Watch('accountAddress')
   onPropertyChanged() {
+    void this.checkAccount();
     void this.loadUserProfile();
     void this.reportCollection()
   }
@@ -208,6 +220,25 @@ export default class ProfileDropdownButton extends Vue {
 
   async goToProfilePage() {
     await this.$router.push('/edit-profile/' + 'editProfile');
+  }
+
+  async goToEarningsReport() {
+    await this.$router.push('/report-earnings')
+  }
+
+  async goToApproveCollection() {
+    await this.$router.push('/validate-collection')
+  }
+
+  checkAccount() {
+    this.haveAccount = ''
+    const arrayAccount = process.env.ALGOPAINTER_APPROVERS?.split(',')
+    this.filterAccount = arrayAccount?.map((account) => {
+      if (account.toLowerCase() === this.accountAddress?.toLowerCase()) {
+        this.haveAccount = account
+      }
+      return account
+    });
   }
 
   async registerCollection() {
@@ -260,5 +291,8 @@ export default class ProfileDropdownButton extends Vue {
 .profile-dropdown-button-container {
   display: flex;
   align-items: center;
+}
+.btn-drop{
+  width: 100%;
 }
 </style>

@@ -8,7 +8,7 @@
       rounded
       outlined
       bottom-slots
-      @update:model-value="filterCollection(1, currentCollection.label)"
+      @update:model-value="filterCollection(1, currentCollection)"
     >
       <template #before>
         <q-icon
@@ -66,7 +66,7 @@
         class=" q-mx-auto q-mb-md"
       >
         <q-btn
-          v-for="(btn, index) in galleryTabs[0].maxPages"
+          v-for="index in galleryTabs[0].maxPages"
           :key="index"
           :color="galleryTabs[0].currentPage === index + 1 ? 'primary' : 'grey-4' "
           :label="index + 1"
@@ -142,7 +142,7 @@
         class="q-mx-auto q-mb-md"
       >
         <q-btn
-          v-for="(btn, index) in galleryTabs[1].maxPages"
+          v-for="index in galleryTabs[1].maxPages"
           :key="index"
           :color="galleryTabs[1].currentPage === index + 1 ? 'primary' : 'grey-4'"
           :label="index + 1"
@@ -204,7 +204,7 @@
         class="q-mx-auto q-mb-md"
       >
         <q-btn
-          v-for="(btn, index) in galleryTabs[2].maxPages"
+          v-for="index in galleryTabs[2].maxPages"
           :key="index"
           :color="galleryTabs[2].currentPage === index + 1 ? 'primary' : 'grey-4'"
           :label="index + 1"
@@ -234,13 +234,14 @@ import { Vue, Options } from 'vue-class-component';
 import AlgoButton from 'components/common/Button.vue';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
-import { IMyGallery } from 'src/models/IMyGallery';
 import ICollection from 'src/models/ICollection';
 import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
 import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 import { Watch } from 'vue-property-decorator';
 import OnsaleItem from './OnsaleItem.vue';
+import IGalleryTab from 'src/models/IGalleryTab';
+import CollectionController from 'src/controllers/collection/CollectionController';
 
 @Options({
   components: {
@@ -263,66 +264,65 @@ export default class UserGalleryOverview extends Vue {
 
   currentBtnClicked: number = 1;
 
-  currentCollection: string = 'All Collections';
+  currentCollection: { label: string } = { label: 'All Collections' };
 
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
   getCollectionsLoading: boolean = true;
 
-  galleryTabs = [
+  galleryTabs: IGalleryTab[] = [
     {
-      label: 'galleryBtn' as string,
-      cont: 0 as number,
-      contLabel: '' as string,
-      btnIndex: 1 as number,
-      maxPages: 0 as number,
-      currentPage: 0 as number,
-      loadingData: true as boolean,
-      loadingButtons: true as boolean,
-      data: [] as IMyGallery[],
-      noData: false as boolean,
+      label: 'galleryBtn',
+      cont: 0,
+      contLabel: '',
+      btnIndex: 1,
+      maxPages: 0,
+      currentPage: 0,
+      loadingData: true,
+      loadingButtons: true,
+      data: [],
+      noData: false,
     },
     {
-      label: 'onSaleBtn' as string,
-      cont: 0 as number,
-      contLabel: '' as string,
-      btnIndex: 2 as number,
-      maxPages: 0 as number,
-      currentPage: 0 as number,
-      loadingData: true as boolean,
-      data: [] as IMyGallery[],
-      noData: false as boolean,
+      label: 'onSaleBtn',
+      cont: 0,
+      contLabel: '',
+      btnIndex: 2,
+      maxPages: 0,
+      currentPage: 0,
+      loadingData: true,
+      data: [],
+      noData: false,
     },
     {
-      label: 'likedBtn' as string,
-      cont: 0 as number,
-      contLabel: '' as string,
-      btnIndex: 3 as number,
-      maxPages: 0 as number,
-      currentPage: 0 as number,
-      loadingData: true as boolean,
-      data: [] as IMyGallery[],
-      noData: false as boolean,
+      label: 'likedBtn',
+      cont: 0,
+      contLabel: '',
+      btnIndex: 3,
+      maxPages: 0,
+      currentPage: 0,
+      loadingData: true,
+      data: [],
+      noData: false,
     },
   ];
 
   mounted() {
-    // void this.getGalleryBidders();
     void this.getCollections();
-    void this.getLikes(1, this.currentCollection);
-    void this.getOnSalePublic(1, this.currentCollection);
-    void this.getGalleryArts(1, this.currentCollection);
+    void this.getLikes(1, this.currentCollection.label);
+    void this.getOnSalePublic(1, this.currentCollection.label);
+    void this.getGalleryArts(1, this.currentCollection.label);
   }
 
   @Watch('currentCollection')
   onCollectionChanged() {
     if (this.currentBtnClicked !== 1) {
-      void this.getGalleryArts(1, this.currentCollection, true);
+      void this.getGalleryArts(1, this.currentCollection.label, true);
     }
     if (this.currentBtnClicked !== 2) {
-      void this.getOnSalePublic(1, this.currentCollection, true);
+      void this.getOnSalePublic(1, this.currentCollection.label, true);
     }
     if (this.currentBtnClicked !== 3) {
-      void this.getLikes(1, this.currentCollection, true);
+      void this.getLikes(1, this.currentCollection.label, true);
     }
   }
 
@@ -339,29 +339,37 @@ export default class UserGalleryOverview extends Vue {
         type: 'collections/getAllCollections',
       })
       .then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const response = this.$store.getters[
-          'collections/GET_COLLECTIONS'
-        ] as IAxios;
-        const collectionFilter = response.data;
-        collectionFilter.forEach((item: ICollection) => {
-          this.collectionFilter.push({ label: item.title });
-        });
+        const res = this.$store.getters['collections/GET_COLLECTIONS'] as IAxios;
+        const collectionFilter = res.data;
+
+        collectionFilter.map(async(item: ICollection) => {
+          if (item.show === true) {
+            const images = await new CollectionController().getCollectionsImages(
+              item._id
+            );
+            if (images.length > 0) {
+              this.collectionFilter.push({ label: item.title })
+            }
+          } else if (item.title === 'Personal Item') {
+            this.collectionFilter.push({ label: item.title })
+          }
+        })
+
         this.getCollectionsLoading = false;
       });
   }
 
-  filterCollection(page: number = 1, currentCollection: string = 'All Collections') {
+  filterCollection(page: number = 1, currentCollection = { label: 'All Collections' }) {
     this.currentCollection = currentCollection;
     const device = (window.innerWidth <= 768) ? 'mobile' : 'desktop';
 
     if (device === 'desktop') {
       if (this.currentBtnClicked === this.galleryTabs[0].btnIndex) {
-        void this.getGalleryArts(page, currentCollection);
+        void this.getGalleryArts(page, currentCollection.label);
       } else if (this.currentBtnClicked === this.galleryTabs[1].btnIndex) {
-        void this.getOnSalePublic(page, currentCollection);
+        void this.getOnSalePublic(page, currentCollection.label);
       } else if (this.currentBtnClicked === this.galleryTabs[2].btnIndex) {
-        void this.getLikes(page, currentCollection);
+        void this.getLikes(page, currentCollection.label);
       }
     } else if (device === 'mobile') {
       this.loadMoreCounter = 0;
@@ -373,16 +381,16 @@ export default class UserGalleryOverview extends Vue {
       this.galleryTabs[2].noData = false;
       this.btnLoadMoreMsg = 'Load More';
       if (this.currentBtnClicked === this.galleryTabs[0].btnIndex) {
-        void this.loadMore(currentCollection, true);
+        void this.loadMore(currentCollection.label, true);
       } else if (this.currentBtnClicked === this.galleryTabs[1].btnIndex) {
-        void this.loadMoreOnSale(currentCollection, true);
+        void this.loadMoreOnSale(currentCollection.label, true);
       } else if (this.currentBtnClicked === this.galleryTabs[2].btnIndex) {
-        void this.loadMoreLike(currentCollection, true);
+        void this.loadMoreLike(currentCollection.label, true);
       }
     }
   }
 
-  async getGalleryArts(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+  async getGalleryArts(page:number = 1, collection:string = this.currentCollection.label, watcher:boolean = false) {
     this.galleryTabs[0].loadingData = true;
     this.galleryTabs[0].currentPage = page;
     if (!watcher) {
@@ -407,7 +415,7 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
-  async getOnSalePublic(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+  async getOnSalePublic(page:number = 1, collection:string = this.currentCollection.label, watcher:boolean = false) {
     this.galleryTabs[1].loadingData = true;
     this.galleryTabs[1].currentPage = page;
     if (!watcher) {
@@ -431,7 +439,7 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
-  async getLikes(page:number = 1, collection:string = this.currentCollection, watcher:boolean = false) {
+  async getLikes(page:number = 1, collection:string = this.currentCollection.label, watcher:boolean = false) {
     this.galleryTabs[2].loadingData = true;
     if (!watcher) {
       this.currentBtnClicked = 3;
@@ -456,7 +464,7 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
-  async loadMore(collection:string = this.currentCollection, filter: boolean = false) {
+  async loadMore(collection:string = this.currentCollection.label, filter: boolean = false) {
     if (filter) {
       this.galleryTabs[0].loadingData = true;
       this.galleryTabs[0].data = [];
@@ -490,7 +498,7 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
-  async loadMoreOnSale(collection:string = this.currentCollection, filter: boolean = false) {
+  async loadMoreOnSale(collection:string = this.currentCollection.label, filter: boolean = false) {
     if (filter) {
       this.galleryTabs[1].loadingData = true;
       this.galleryTabs[1].data = [];
@@ -523,7 +531,7 @@ export default class UserGalleryOverview extends Vue {
     });
   }
 
-  async loadMoreLike(collection:string = this.currentCollection, filter: boolean = false) {
+  async loadMoreLike(collection:string = this.currentCollection.label, filter: boolean = false) {
     if (filter) {
       this.galleryTabs[2].loadingData = true;
       this.galleryTabs[2].data = [];

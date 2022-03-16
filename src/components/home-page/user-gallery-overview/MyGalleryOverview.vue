@@ -605,11 +605,6 @@ export default class MyGalleryOverview extends Vue {
       .then(() => {
         const collectionFilter = this.filterCollectionOptions.data;
 
-        // collectionFilter.forEach((item: ICollection) => {
-        //   if (item.title !== 'Personal Item') {
-        //     this.collectionFilter.push({ label: item.title });
-        //   }
-        // });
         collectionFilter.map(async(item: ICollection) => {
           if (item.show === true) {
             const images = await new CollectionController().getCollectionsImages(

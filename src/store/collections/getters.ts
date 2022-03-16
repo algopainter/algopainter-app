@@ -27,6 +27,12 @@ const getters: GetterTree<CollectionsStateInterface, StateInterface> = {
   GET_IMAGE_PAST_OWNERS(state: CollectionsStateInterface): [] {
     return state.imagePastOwners;
   },
+  GET_REPORT_AUCTIONS(state: CollectionsStateInterface): [] {
+    return state.reportAuction;
+  },
+  GET_REPORT_MINTS(state: CollectionsStateInterface): [] {
+    return state.reportMints;
+  },
   GET_IS_NEW_PAINTING_MODAL_OPEN(state: CollectionsStateInterface): boolean {
     return state.isNewPaintingModalOpen;
   },

@@ -1,9 +1,8 @@
 export interface IReportCollection{
-    index: number,
-    collectionName: string,
-    amount: number,
-    createdRoater: number,
-    tokenSymbol: string,
-    date: string,
-    creatorGain: number,
+    amount: string;
+    collection: string
+    creator: string
+    nft: string
+    sellDT: string
+    toClaim: boolean
 }

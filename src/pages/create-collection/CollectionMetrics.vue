@@ -403,7 +403,6 @@ export default class CollectionMetrics extends Vue.with(Props) {
 
   endOptions(date: string) {
     const startDate = moment(this.form.startDT).format('YYYY/MM/DD')
-    console.log('date start', startDate)
     const dayWrapper = moment().add(90, 'days');
     const dayString = dayWrapper.format('YYYY/MM/DD');
     return date > startDate && date <= dayString;

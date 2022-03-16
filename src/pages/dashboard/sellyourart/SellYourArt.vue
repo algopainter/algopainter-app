@@ -482,26 +482,18 @@ export default class SellYourArt extends Vue {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
 
-    if (this.image.collectionName === 'PersonalItem') {
-      this.hashPersonalItem = await this.personalItemContract.getTokenHashForAuction(this.image.nft.index) as string;
-      this.createdItems = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.hashPersonalItem);
-    } else {
-      this.createdPirs = await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner);
-    }
+    const creatorRate = ['Expressions', 'Gwei'].includes(this.image.collectionName)
+      ? await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner)
+      : await this.rewardsRates.getCreatorRate(this.image.collectionOwner, this.image.nft.index.toString());
 
-    this.collectionCreatorRoyaltiesRate = this.createdItems / 100;
+    this.collectionCreatorRoyaltiesRate = creatorRate / 100;
     this.hasPirs = await this.rewardsRates.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
 
     if (this.hasPirs) {
       this.imagePirsRate = (this.image.pirs.investorRate || 0) / 100;
     }
 
-    await this.getAuctionFeeRate();
-  }
-
-  async getAuctionFeeRate() {
-    const auctionFeeRate =
-      (await this.auctionSystem.getAuctionFeeRate()) / 10000;
+    const auctionFeeRate = (await this.auctionSystem.getAuctionFeeRate()) / 10000;
 
     this.auctionFeeRate = this.$n(auctionFeeRate, 'percent', {
       maximumFractionDigits: 2,

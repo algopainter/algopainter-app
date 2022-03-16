@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <div v-if="collectionReport.length > 0" class="q-pa-md">
     <q-table
       :rows="collectionReport"
       :columns="columns"
@@ -11,58 +11,25 @@
       bordered
     />
   </div>
+  <div v-else>
+    <p>
+      {{ $t('dashboard.report.noHaveCollection') }}
+    </p>
+  </div>
 </template>
 
 <script lang="ts">
 import { Vue } from 'vue-class-component';
-import { IReportCollection } from 'src/models/IReportCollection';
+import { IReportMints } from 'src/models/IReportMints';
 
 export default class MintReport extends Vue {
-  collectionReport: IReportCollection[] = [
-    {
-      index: 1,
-      collectionName: 'algoArtMint',
-      amount: 500,
-      createdRoater: 5,
-      tokenSymbol: 'ALGOP',
-      date: '',
-      creatorGain: 0,
-    },
-    {
-      index: 2,
-      collectionName: 'algoArtMint',
-      amount: 500,
-      createdRoater: 5,
-      tokenSymbol: 'ALGOP',
-      date: '',
-      creatorGain: 0,
-    },
-    {
-      index: 3,
-      collectionName: 'algoArtMint',
-      amount: 500,
-      createdRoater: 5,
-      tokenSymbol: 'ALGOP',
-      date: '',
-      creatorGain: 0,
-    },
-    {
-      index: 4,
-      collectionName: 'algoArtMint',
-      amount: 600,
-      createdRoater: 5,
-      tokenSymbol: 'ALGOP',
-      date: '',
-      creatorGain: 0,
-    },
-  ];
-
+  collectionReport: IReportMints[] = [];
 columns = [
   {
-    name: 'index',
+    name: 'art',
     required: true,
     label: 'Art',
-    field: (collectionReport: { index: number }) => `# ${collectionReport.index}`,
+    field: (collectionReport: { nft: string }) => `${collectionReport.nft || '-'}`,
     style: ('text-align: center')
 
   },
@@ -70,14 +37,14 @@ columns = [
     name: 'collection',
     required: true,
     label: 'Collection',
-    field: (collectionReport: { collectionName: string }) => collectionReport.collectionName,
+    field: (collectionReport: { collection: string }) => collectionReport.collection,
     style: ('text-align: center')
   },
   {
     name: 'ValueToMint',
     required: true,
     label: 'Value to Mint',
-    field: (collectionReport: { amount: string, tokenSymbol: string }) => `${collectionReport.amount} ${collectionReport.tokenSymbol}`,
+    field: (collectionReport: { amount: string}) => `${collectionReport.amount || '-'}`,
     style: ('text-align: center')
 
   },
@@ -85,12 +52,32 @@ columns = [
     name: 'ValueToMint',
     required: true,
     label: 'Creator %',
-    field: (collectionReport: { createdRoater: string }) => collectionReport.createdRoater,
+    field: (collectionReport: { creator: string }) => collectionReport.creator,
     style: ('text-align: center')
 
   },
-
 ]
+
+mounted() {
+  void this.getReport()
+}
+
+get accountAddress() {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  return this.$store.getters['user/account'] as string;
+}
+
+getReport() {
+  void this.$store.dispatch({
+    type: 'collections/getReportMints',
+    artist: this.accountAddress
+  }).then(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const report = this.$store.getters['collections/GET_REPORT_MINTS'];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    this.collectionReport = report
+  });
+}
 }
 </script>
 

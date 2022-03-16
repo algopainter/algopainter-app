@@ -115,6 +115,27 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
   openNewPaintingModal() {
     this.commit('collections/SET_OPEN_NEW_PAINTING_MODAL');
   },
+
+  async getReportAuctions(type, value) {
+    const artist = value.artist as string;
+    try {
+      const res = await api.get(`reports/artist/${artist}/auctions`);
+      const report: [] = res.data;
+      this.commit('collections/SET_REPORT_AUCTIONS', report);
+    } catch (e) {
+      console.log('error message - getReportAuctions');
+    }
+  },
+  async getReportMints(type, value) {
+    const artist = value.artist as string;
+    try {
+      const res = await api.get(`reports/artist/${artist}/mints`);
+      const report: [] = res.data;
+      this.commit('collections/SET_REPORT_MINTS', report);
+    } catch (e) {
+      console.log('error message - getReportMints');
+    }
+  },
 };
 
 export default actions;

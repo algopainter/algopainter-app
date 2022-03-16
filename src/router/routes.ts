@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        name: 'homepage',
+        name: 'homePage',
         path: '',
         component: () => import('pages/dashboard/HomePage.vue'),
       },
@@ -68,6 +68,18 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: i18n.global.t('dashboard.newPainting.title'),
         },
+        beforeEnter: (to, from, next) => {
+          void myStore.dispatch({
+            type: 'mint/collectionData',
+            collectionCustomUrl: to.params.collection
+          }).then(() => {
+            const isCollectionExistent = myStore.getters['mint/GET_COLLECTION_DATA'];
+
+            isCollectionExistent
+              ? next()
+              : next({ name: '404' });
+          });
+        },
       },
       {
         name: 'auction',
@@ -112,8 +124,19 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'editProfile',
-        path: 'edit-profile',
+        path: 'edit-profile/:name',
         component: () => import('pages/edit-profile/EditProfile.vue'),
+        children: [
+          {
+            path: '',
+            component: () => import('pages/edit-profile/EditProfile.vue'),
+          },
+          {
+            path: 'registerCollection',
+            component: () => import('pages/edit-profile/EditProfile.vue'),
+          },
+
+        ],
         meta: {
           title: i18n.global.t('dashboard.editProfile.title'),
         },
@@ -128,11 +151,29 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'create-collection',
-        component: () => import('src/pages/collectible/Index.vue'),
+        component: () => import('src/pages/create-collection/CreateCollection.vue'),
         meta: {
-          title: i18n.global.t('dashboard.creationCollection.title'),
+          title: i18n.global.t('dashboard.createCollection.title'),
         },
       },
+      {
+        path:'report-collection',
+        component: () => import('src/pages/dashboard/report-collection/ReportCollection.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.report.title'),
+        }
+      },
+      {
+        path:'report-earnings',
+        component: () => import('src/components/home-page/ReportEarnings.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.reportEarnings.title'),
+        }
+      },
+      {
+        path:'validate-collection',
+        component: () => import('src/pages/dashboard/validate-collection/ValidateCollection.vue')
+      }
     ],
   },
 

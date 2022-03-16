@@ -348,7 +348,7 @@ import { Watch } from 'vue-property-decorator';
 import AlgoButton from 'components/common/Button.vue';
 import IGalleryTab from 'src/models/IGalleryTab';
 import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import GallerySelect from './GallerySelect.vue';
@@ -357,6 +357,7 @@ import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 import PirsItem from './PirsItem.vue';
 import { mapGetters } from 'vuex';
+import CollectionController from 'src/controllers/collection/CollectionController';
 
 enum GalleryTabsEnum {
   GalleryTab,
@@ -604,11 +605,18 @@ export default class MyGalleryOverview extends Vue {
       .then(() => {
         const collectionFilter = this.filterCollectionOptions.data;
 
-        collectionFilter.forEach((item: ICollection) => {
-          if (item.title !== 'Personal Item') {
-            this.collectionFilter.push({ label: item.title });
+        collectionFilter.map(async(item: ICollection) => {
+          if (item.show === true) {
+            const images = await new CollectionController().getCollectionsImages(
+              item._id
+            );
+            if (images.length > 0) {
+              this.collectionFilter.push({ label: item.title })
+            }
+          } else if (item.title === 'Personal Item') {
+            this.collectionFilter.push({ label: item.title })
           }
-        });
+        })
 
         this.getCollectionsLoading = false;
       });

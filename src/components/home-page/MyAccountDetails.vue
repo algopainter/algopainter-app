@@ -81,7 +81,7 @@
                 class="full-width btn-edit"
                 size="lg"
                 color="primary"
-                to="/edit-profile"
+                to="/edit-profile/editProfile"
               >
                 {{ $t('dashboard.homePage.editAccount') }}
               </algo-button>
@@ -113,17 +113,36 @@
                   {{ $t(`dashboard.algop`) }} {{ balance }}
                 </q-tooltip>
               </div>
-              <algo-button
-                size="lg"
-                color="primary"
-                type="a"
-                href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
-                target="_blank"
-              >
-                {{ $t('dashboard.homePage.buyAlgop') }}
-              </algo-button>
+              <div class="row justify-evenly q-gutter-sm">
+                <algo-button
+                  size="lg"
+                  color="primary"
+                  type="a"
+                  href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
+                  target="_blank"
+                >
+                  {{ $t('dashboard.homePage.buyAlgop') }}
+                </algo-button>
+              </div>
+              <div v-if="haveAccount.length > 0" class="q-pa-md">
+                <algo-button
+                  size="lg"
+                  to="/validate-collection"
+                  color="primary"
+                  label="Approve Collection"
+                />
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-6">
+        <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'row justify-center q-gutter-xl q-pt-md' : 'row justify-end q-gutter-md']">
+          <algo-button
+            size="lg"
+            to="/report-earnings"
+            color="primary" :label="$t('dashboard.homePage.earningsReport')"
+          />
         </div>
       </div>
     </div>
@@ -158,6 +177,7 @@ import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overvi
 export default class AccountDetails extends Vue {
   profile: IProfile = {};
   loadingProfile: boolean = true;
+  accounts: string = ''
 
   userItems = '0';
   userOnSale: string = '0';
@@ -166,6 +186,8 @@ export default class AccountDetails extends Vue {
   balance: number = 0;
 
   expanded: boolean = false;
+  haveAccount: string = '';
+  filterAccount!: string[] | undefined;
 
   bioInic: string = '';
 
@@ -179,8 +201,20 @@ export default class AccountDetails extends Vue {
     return this.$store.getters['user/account'] as string;
   }
 
+  checkAccount() {
+    this.haveAccount = ''
+    const arrayAccount = process.env.ALGOPAINTER_APPROVERS?.split(',')
+    this.filterAccount = arrayAccount?.map((account) => {
+      if (account.toLowerCase() === this.accountAddress.toLowerCase()) {
+        this.haveAccount = account
+      }
+      return account
+    });
+  }
+
   @Watch('accountAddress')
   onPropertyChanged() {
+    void this.checkAccount();
     void this.getProfile();
     void this.getUserItems();
     void this.setAccountBalance();
@@ -188,6 +222,7 @@ export default class AccountDetails extends Vue {
   }
 
   mounted() {
+    void this.checkAccount()
     void this.setAccountBalance();
     this.formattedBalance();
     void this.getProfile();
@@ -364,6 +399,10 @@ export default class AccountDetails extends Vue {
 
 .text-email{
   color: black;
+}
+
+.btn-report{
+  top: 40%
 }
 
 </style>

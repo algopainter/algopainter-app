@@ -1,10 +1,15 @@
-export interface ICollection {
-  account: string;
-  avatar: string;
-  customURL: string;
+import { ICollectionMetrics, ICollectionNFTCreationAPI } from './ICreatorCollection';
+export default interface ICollection {
+  _id: string;
+  blockchainId: number;
   description: string;
   owner: string;
-  show: boolean;
   title: string;
-  _id: string;
+  avatar: string;
+  account: string;
+  customURL: string;
+  show: boolean;
+  namelc: string;
+  metrics: ICollectionMetrics;
+  api: ICollectionNFTCreationAPI;
 }

@@ -88,7 +88,7 @@ import { ref } from 'vue';
 import { IGallery } from 'src/models/IGallery';
 import { GalleryItem } from 'components/gallery';
 import AlgoButton from 'components/common/Button.vue';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import CollectionController from 'src/controllers/collection/CollectionController';
 import { Person } from 'src/models/IArt';
 import { IImage } from 'src/models/IImage';

@@ -12,6 +12,8 @@ function state(): CollectionsStateInterface {
     userOnSalePublic: [],
     userPastImages: [],
     imagePastOwners: [],
+    reportAuction: [],
+    reportMints: [],
     userPirsTabImages: [],
     isNewPaintingModalOpen: false,
   };

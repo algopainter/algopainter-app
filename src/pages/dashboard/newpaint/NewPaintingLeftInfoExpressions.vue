@@ -1,4 +1,5 @@
 <template>
+  <h4 class="q-mb-sm">{{ $t('dashboard.homePage.expressions') }}</h4>
   <div class="title">
     {{ $t('dashboard.newPainting.parameters') }}
   </div>
@@ -139,7 +140,7 @@ class Props {
 @Options({
   components: {
     AlgoButton,
-    MintDialog,
+    MintDialog
   },
   computed: {
     ...mapGetters(
@@ -389,7 +390,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (e.message && e.message.indexOf('INVALID_AMOUNT') >= 0) {
-          this.$t('dashboard.newPainting.mintErrors.invalidAmount');
+          this.errorMessage = this.$t('dashboard.newPainting.mintErrors.invalidAmount');
           return;
         }
 
@@ -454,7 +455,6 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
       this.mintStatus = MintStatus.CollectingUserConfirmations;
     } catch (e) {
-      console.log(e);
       this.setModalInitialState().catch(console.error);
     }
   }
@@ -507,6 +507,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       result.on('confirmation', () => {
         if (!this.isConfigured) {
           this.mintStatus = MintStatus.ItemMinted;
+          this.updateTopInfo().catch(console.error);
           this.setFormInitialState().catch(console.error);
         };
       }).catch(console.error);
@@ -522,6 +523,13 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
       }
     }
+  }
+
+  async updateTopInfo() {
+    await this.$store
+      .dispatch({
+        type: 'mint/updateTopInfo'
+      })
   }
 
   onCloseStatusDialog() {

@@ -38,7 +38,7 @@ export default class ReportEarnings extends Vue {
       name: 'end of auction',
       required: true,
       label: 'End of auction',
-      field: (collectionReport:{date: string}) => this.formatDt(collectionReport.date),
+      field: (collectionReport:{sellDT: string}) => this.formatDt(collectionReport.sellDT),
       style: ('text-align: center')
     },
     {
@@ -52,14 +52,14 @@ export default class ReportEarnings extends Vue {
       name: 'Collection',
       required: true,
       label: 'Collection',
-      field: (collectionReport: { collectionName: string }) => `${collectionReport.collectionName || '-'}`,
+      field: (collectionReport: { collection: string }) => `${collectionReport.collection || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'Sale Value',
       required: true,
       label: 'Sale Value',
-      field: (collectionReport:{saleValue: string}) => `${collectionReport.saleValue || '-'}`,
+      field: (collectionReport:{amount: string}) => `${collectionReport.amount || '-'}`,
       style: ('text-align: center')
     },
     {

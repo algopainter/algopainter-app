@@ -1,8 +1,9 @@
 export interface IReportEarnings {
-    date: string,
+    amount: string,
+    collection: string,
+    creator: string,
     nft: string,
-    collectionName: string,
-    saleValue: number,
-    Bidback: number,
-    Pirs: number,
+    sellDT: string,
+    toClaim: boolean,
+    lastBid: string
 }

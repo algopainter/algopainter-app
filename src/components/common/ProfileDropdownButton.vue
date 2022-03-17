@@ -59,8 +59,8 @@
             <q-separator />
             <q-expansion-item
               expand-separator
-              header-class="bg-primary text-white"
-              expand-icon-class="text-white"
+              default-opened
+              header-class="text-bold"
               label="Profile"
             >
               <q-list>
@@ -79,8 +79,8 @@
             <q-separator />
             <q-expansion-item
               expand-separator
-              header-class="bg-primary text-white"
-              expand-icon-class="text-white"
+              header-class="text-bold"
+              default-opened
               label="Collections"
             >
               <q-list>

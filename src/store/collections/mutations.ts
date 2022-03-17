@@ -32,6 +32,9 @@ const mutation: MutationTree<CollectionsStateInterface> = {
   SET_REPORT_MINTS(state: CollectionsStateInterface, payload) {
     state.reportMints = payload as [];
   },
+  SET_REPORT_USER(state: CollectionsStateInterface, payload) {
+    state.reportUser = payload as [];
+  },
   SET_OPEN_NEW_PAINTING_MODAL(state: CollectionsStateInterface) {
     state.isNewPaintingModalOpen = !state.isNewPaintingModalOpen;
   },

@@ -11,6 +11,7 @@ export interface CollectionsStateInterface {
   imagePastOwners: [];
   reportAuction: [],
   reportMints: [],
+  reportUser: [],
   userPirsTabImages: [];
   isNewPaintingModalOpen: boolean;
 }

@@ -1,13 +1,12 @@
 <template>
   <div>
-    <div v-if="haveEarnings" class="q-pa-md row justify-center">
+    <div v-if="collectionReport.length > 0" class="q-pa-md row justify-center">
       <p>{{ $t('dashboard.reportEarnings.textEarnings') }}</p>
       <q-table
         :rows="collectionReport"
         :columns="columns"
         row-key="name"
         class="table-auction-report"
-        hide-bottom
         separator="vertical"
         flat
         bordered
@@ -28,52 +27,11 @@ export default class ReportEarnings extends Vue {
  dataform: string = '';
  haveEarnings: boolean = false;
 
-  collectionReport: IReportEarnings[]= [
-    {
-      date: '2022-01-21T21:38:01.000Z',
-      index: 1,
-      collectionName: 'algoArtMint',
-      createdRoater: 5,
-      saleValue: 500,
-      Bidback: 50,
-      Pirs: 30,
-      tokenSymbol: 'ALGOP',
-      creatorGain: 70,
-    },
-    {
-      date: '2022-01-21T21:38:01.000Z',
-      index: 2,
-      collectionName: 'algoArtMint',
-      saleValue: 0,
-      Bidback: 50,
-      Pirs: 30,
-      createdRoater: 5,
-      tokenSymbol: 'ALGOP',
-      creatorGain: 60,
-    },
-    {
-      date: '2022-01-21T21:38:01.000Z',
-      index: 3,
-      collectionName: 'algoArtMint',
-      saleValue: 500,
-      Bidback: 50,
-      Pirs: 30,
-      createdRoater: 5,
-      tokenSymbol: 'ALGOP',
-      creatorGain: 50,
-    },
-    {
-      date: '2022-01-21T21:38:01.000Z',
-      index: 4,
-      collectionName: 'algoArtMint',
-      saleValue: 500,
-      Bidback: 0,
-      Pirs: 0,
-      createdRoater: 5,
-      tokenSymbol: 'ALGOP',
-      creatorGain: 30,
-    },
-  ]
+  collectionReport: IReportEarnings[]= [];
+
+  mounted() {
+    void this.getReport()
+  }
 
   columns = [
     {
@@ -87,41 +45,59 @@ export default class ReportEarnings extends Vue {
       name: 'Art',
       required: true,
       label: 'Art',
-      field: (collectionReport: { index: string }) => collectionReport.index,
+      field: (collectionReport: { nft: string }) => `${collectionReport.nft || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'Collection',
       required: true,
       label: 'Collection',
-      field: (collectionReport: { collectionName: string }) => collectionReport.collectionName,
+      field: (collectionReport: { collectionName: string }) => `${collectionReport.collectionName || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'Sale Value',
       required: true,
       label: 'Sale Value',
-      field: (collectionReport:{saleValue: string, tokenSymbol: string}) => collectionReport.saleValue ? `${collectionReport.saleValue} ${collectionReport.tokenSymbol}` : '-',
+      field: (collectionReport:{saleValue: string}) => `${collectionReport.saleValue || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'bidback gain',
       required: true,
       label: 'Bidback Gain',
-      field: (collectionReport:{Bidback: string, tokenSymbol: string}) => collectionReport.Bidback ? `${collectionReport.Bidback} ${collectionReport.tokenSymbol}` : '-',
+      field: (collectionReport:{Bidback: string}) => `${collectionReport.Bidback || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'PIRS gain',
       required: true,
       label: 'PIRS Gain',
-      field: (collectionReport:{Pirs: string, tokenSymbol: string}) => collectionReport.Pirs ? `${collectionReport.Pirs} ${collectionReport.tokenSymbol}` : '-',
+      field: (collectionReport:{Pirs: string}) => `${collectionReport.Pirs || '-'}`,
       style: ('text-align: center')
     },
   ];
 
   formatDt(date: string) {
     return moment(date).format('DD/MM/YYYY hh:mm:ss')
+  }
+
+  get accountAddress() {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.$store.getters['user/account'] as string;
+  }
+
+  getReport() {
+    void this.$store.dispatch({
+      type: 'collections/getReportUser',
+      account: this.accountAddress
+    }).then(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const report = this.$store.getters['collections/GET_REPORT_USER'];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      this.collectionReport = report
+      console.log(' this.collectionReport', this.collectionReport)
+    });
   }
 }
 </script>
@@ -131,7 +107,6 @@ export default class ReportEarnings extends Vue {
 
   .table-auction-report
   .q-table__top,
-  .q-table__bottom,
   thead tr:first-child th
     background-color: #F4538D
     font-weight: bold

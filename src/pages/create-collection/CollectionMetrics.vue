@@ -68,6 +68,7 @@
   </div>
   <q-input
     ref="nfts"
+    inputmode="number"
     v-model="form.nfts"
     class="nft-amount"
     :label="$t('dashboard.createCollection.stepTwo.amount')"

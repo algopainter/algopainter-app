@@ -7,6 +7,18 @@
           <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'col-sm-12 column reverse' : '  row justify-between items-start content-between']">
             <div class="col-xs-6 col-sm-12 col-md-7 col-xs-12">
               <q-input
+                    :label="$t('dashboard.sellYourArt.minimumPrice')"
+                    inputmode="number"
+                    mask="#.####"
+                    reverse-fill-mask
+                    fill-mask="0"
+                    color="primary"
+                    :rules="[
+                      (val) =>
+                        val > 0 || $t('dashboard.sellYourArt.setAMinimumPrice'),
+                    ]"
+                  ></q-input>
+              <q-input
                 ref="nameCollection"
                 v-model="fields.nameCollection"
                 :label="$t('dashboard.createCollection.aboutTheCollection.nameCollection')"

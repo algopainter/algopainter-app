@@ -135,7 +135,6 @@ const routes: RouteRecordRaw[] = [
             path: 'registerCollection',
             component: () => import('pages/edit-profile/EditProfile.vue'),
           },
-
         ],
         meta: {
           title: i18n.global.t('dashboard.editProfile.title'),
@@ -171,9 +170,9 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
-        path:'validate-collection',
-        component: () => import('src/pages/dashboard/validate-collection/ValidateCollection.vue')
-      }
+        path:'validate-collection/',
+        component: () => import('src/pages/dashboard/validate-collection/ValidateCollection.vue'),
+      },
     ],
   },
 

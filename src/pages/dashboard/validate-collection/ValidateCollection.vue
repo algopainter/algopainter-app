@@ -1,14 +1,30 @@
 <template>
-  <div v-if="checkar" class="q-pa-md">
+  <div
+    v-if="loading"
+    class="spinner-container"
+  >
+    <q-spinner
+      color="primary"
+      size="60px"
+      class="text-center"
+    />
+  </div>
+  <div v-else-if="!verify && formCollection.length > 0" class="q-pa-md">
     <div
       v-for="(collection, index) in formCollection"
       :key="index"
     >
-      <Collections :collection="collection" :descriptions="descriptions" @check="check" />
+      <collections :collection="collection" :descriptions="descriptions" @check="check" />
     </div>
   </div>
+  <div
+    v-else-if="formCollection.length === 0"
+    class="no-data"
+  >
+    {{ $t('dashboard.verifyCollection.noData') }}
+  </div>
   <div v-else>
-    <PreviewValidate :id="idCo" @close="close" />
+    <preview-validate :id="idCo" @close="close" />
   </div>
 </template>
 
@@ -35,87 +51,103 @@ import PreviewValidate from './PreviewValidate.vue';
 })
 
 export default class ValidateCollection extends Vue {
-    descriptions: boolean = false;
-    checkar: boolean = true;
-    idCo!: string;
+  descriptions: boolean = false;
+  idCo!: string;
+  verify: boolean = false;
+  formCollection: ICollection[] = [];
+  formPreview: ICollection[] = [];
+  loading: boolean = false;
 
-    check(id: string) {
-      this.checkar = false;
-      this.idCo = id
-    }
+  async mounted() {
+    await this.getCollection();
+  }
 
-    close() {
-      this.checkar = true
-    }
+  async getCollection() {
+    this.loading = true;
 
-    formCollection: ICollection[] = [];
-    formPreview: ICollection[] = [];
+    await this.$store.dispatch({
+      type: 'mint/collectionsVerify',
+    }).then(() => {
+      this.formCollection = this.$store.getters['mint/GET_COLLECTIONS_VERIFY'] as ICollection[];
 
-    get account() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-      return this.$store.getters['user/account'];
-    }
+      this.loading = false;
+    });
+  }
 
-    mounted() {
-      void this.getCollection();
-    }
+  check(id: string) {
+    this.idCo = id
+    this.verify = true;
+  }
 
-    goApp(name: string) {
-      const nameCollection = name.replace(/\0/g, '')
-      this.$router.push(`/create-collectible/new-painting/${nameCollection}`).catch(console.error);
-    }
+  async close() {
+    await this.getCollection();
+    this.verify = false;
+  }
 
-    getCollection() {
-      void this.$store.dispatch({
-        type: 'mint/collectionsVerify',
-      }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        const collection = this.$store.getters['mint/GET_COLLECTIONS_VERIFY'];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        // this.userOnSale = customValeu.data;
-        this.formCollection = collection.data
-      });
-    }
+  get account() {
+    return this.$store.getters['user/account'] as string;
+  }
+
+  goApp(name: string) {
+    const nameCollection = name.replace(/\0/g, '')
+    this.$router.push(`/create-collectible/new-painting/${nameCollection}`).catch(console.error);
+  }
 }
 </script>
 
 <style scoped>
-.container-avatar{
+  .container-avatar {
     width: 200px;
-     display: block;
+    display: block;
     justify-content: center;
-}
-.img{
+  }
+
+  .img {
     display: flex;
     justify-content: center;
     width: 210px;
     height: 210px;
     border-radius: 50%;
-}
-.description{
+  }
+
+  .description {
     width: 500px;
     margin-top: 88px;
+  }
 
-}
-.btn{
+  .btn {
     margin-top: 150px;
-}
+  }
+
+  .no-data {
+    font-weight: bold;
+    font-size: 22px;
+    color: #F4538D;
+    text-align: center;
+  }
+
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+  }
 
   @media(max-width: 889px) {
-    .description{
+    .description {
       margin-top: 0
     }
-    .btn{
+
+    .btn {
       margin-top: 0;
       margin-bottom: 15px;
     }
   }
 
-    @media(max-width: 500px) {
-    .description{
+  @media(max-width: 500px) {
+    .description {
       margin-top: 0
     }
-    .btn{
+
+    .btn {
       margin-top: 0;
       margin-bottom: 15px;
     }

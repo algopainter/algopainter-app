@@ -107,8 +107,8 @@ export default class Collections extends Vue.with(Props) {
 
   formatDate() {
     if (this.collection.metrics) {
-      this.startDT = moment(this.collection.metrics.startDT).format('DD/MM/YYYY hh:mm:ss')
-      this.endDT = moment(this.collection.metrics.endDT).format('DD/MM/YYYY hh:mm:ss')
+      this.startDT = moment(this.collection.metrics.startDT).format('MMMM Do YYYY, h:mm:ss a');
+      this.endDT = moment(this.collection.metrics.endDT).format('MMMM Do YYYY, h:mm:ss a');
     }
   }
 

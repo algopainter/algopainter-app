@@ -699,4 +699,7 @@ export default {
       tokenErrMsg: 'The token you chose for your collection is unavailable now, try again later!'
     }
   },
+  verifyCollection: {
+    noData: 'There are no collections to be verified at the moment!'
+  }
 };

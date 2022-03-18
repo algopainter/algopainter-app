@@ -53,58 +53,6 @@
               </div>
             </div>
           </div>
-          <div class="col-12 step">
-            <div class="avatar">
-              <q-avatar
-                v-if="statusData === 'Awaiting' && artistCollectionStatus < ArtistCollectionStatus.ArtistCollectionCreated"
-                size="60px"
-                color="grey"
-                text-color="white"
-              >
-                <q-icon name="mdi-cancel" />
-              </q-avatar>
-              <q-avatar
-                v-else-if="statusData === 'Awaiting'"
-                size="60px"
-                color="warning"
-                text-color="white"
-              >
-                <q-icon name="mdi-alert" />
-              </q-avatar>
-              <q-avatar
-                v-else-if="statusData === 'aproved'"
-                size="60px"
-                color="primary"
-                text-color="white"
-              >
-                <q-spinner color="white" />
-              </q-avatar>
-              <q-avatar
-                v-else-if="statusData === 'error'"
-                size="60px"
-                color="negative"
-                text-color="white"
-              >
-                <q-icon name="mdi-alert-circle" />
-              </q-avatar>
-              <q-avatar
-                v-else
-                size="60px"
-                color="positive"
-                text-color="white"
-              >
-                <q-icon name="mdi-check" />
-              </q-avatar>
-            </div>
-            <div class="label">
-              <div class="title">
-                {{ $t('createCollectible.collectionModal.approveSignature') }}
-              </div>
-              <div>
-                {{ scondStepLabel }}
-              </div>
-            </div>
-          </div>
         </div>
       </q-card-section>
       <q-card-section class="btn-container">
@@ -138,20 +86,15 @@ export enum ArtistCollectionStatus {
   ArtistCollectionCreated,
 }
 class Props {
-statusData = prop({
-  type: String,
-  required: true,
-})
+  statusblock = prop({
+    type: String,
+    required: true,
+  })
 
-statusblock = prop({
-  type: String,
-  required: true,
-})
-
-okBtnDisabled = prop({
-  type: Boolean,
-  required: true,
-})
+  okBtnDisabled = prop({
+    type: Boolean,
+    required: true,
+  })
 }
 
 @Options({
@@ -164,7 +107,7 @@ export default class CollectionModal extends Vue.with(Props) {
   ArtistCollectionStatus = ArtistCollectionStatus;
 
   showMsgAndLeave() {
-    if (this.statusData === 'confirme') {
+    if (this.artistCollectionStatus === ArtistCollectionStatus.ArtistCollectionCreated) {
       this.$q.notify({
         type: 'positive',
         message: 'The collection was successfully registered. Now you must wait until our team approves the registration.',
@@ -187,29 +130,6 @@ export default class CollectionModal extends Vue.with(Props) {
       case ArtistCollectionStatus.ArtistCollectionError:
         return this.$t(
           'createCollectible.createCollection.approveContractError',
-        );
-      default:
-        return this.$t(
-          'dashboard.sellYourArt.statuses.approveContractAvailable',
-        );
-    }
-  }
-
-  get scondStepLabel() {
-    switch (this.statusData) {
-      case 'Awaiting':
-        return this.$t(
-          'createCollectible.collectionModal.Awaiting',
-        );
-      case 'aproved':
-        return this.$t(
-          'createCollectible.collectionModal.approveSignature',
-        );
-      case 'confirme':
-        return this.$t('createCollectible.collectionModal.confirmeSignature');
-      case 'error':
-        return this.$t(
-          'createCollectible.collectionModal.errorSignature',
         );
       default:
         return this.$t(

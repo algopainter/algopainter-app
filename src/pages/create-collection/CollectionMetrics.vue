@@ -100,7 +100,8 @@
     <div v-if="form.priceType === 'fixed'" class="fixed-price">
       <q-input
         ref="amountFixed"
-        v-model="form.priceRange[0].amount"
+        :model-value="form.priceRange[0].amount"
+        inputmode="number"
         :label="$t('dashboard.createCollection.stepTwo.price')"
         mask="#.####"
         fill-mask="0"

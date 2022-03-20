@@ -58,13 +58,13 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_COLLECTION_NAME(state: MintStateInterface): IFormParams[] | undefined {
     return state.formGenerator.collectionName;
   },
-  GET_COLLECTIONS(state: MintStateInterface): IFormParams[] | undefined {
+  GET_COLLECTIONS(state: MintStateInterface): ICollection[] | undefined {
     return state.formGenerator.collections;
   },
-  GET_COLLECTIONS_VERIFY(state: MintStateInterface): IFormParams[] | undefined {
+  GET_COLLECTIONS_VERIFY(state: MintStateInterface): ICollection[] | undefined {
     return state.formGenerator.collections;
   },
-  GET_VERIFY_PREVIEW(state: MintStateInterface): IFormParams[] | undefined {
+  GET_VERIFY_PREVIEW(state: MintStateInterface): ICollection[] | undefined {
     return state.formGenerator.collections;
   },
   GET_IS_COLLECTION_EXISTENT(state: MintStateInterface): boolean {

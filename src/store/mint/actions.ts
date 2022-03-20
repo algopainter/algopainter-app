@@ -164,19 +164,19 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
   async collectionsVerify() {
     try {
       const res = await api.get('collections?show=false&approvedBy=!')
-      this.commit('mint/SET_COLLECTIONS_VERIFY', res);
+      this.commit('mint/SET_COLLECTIONS_VERIFY', res.data);
     } catch (e) {
-      console.log('Error message: mint/actions - collectionsVerifica');
+      console.log('Error message: mint/actions - collectionsVerify');
     }
   },
+
   async VerifyPreview(type, value) {
     const Id : string = value.collectionId;
     try {
-      console.log('id collection', Id)
       const res = await api.get(`collections/db/${Id}`)
       this.commit('mint/SET_VERIFY_PREVIEW', res.data);
     } catch (e) {
-      console.log('Error message: mint/actions - collectionsVerifica');
+      console.log('Error message: mint/actions - VerifyPreview');
     }
   },
 };

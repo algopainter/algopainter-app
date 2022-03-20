@@ -1,17 +1,16 @@
 <template>
-  <div v-if="collectionReport.length > 0" class="q-pa-md">
+  <div v-if="collectionReport.length > 0" class="q-pa-md full-width row justify-center">
     <q-table
       :rows="collectionReport"
       :columns="columns"
       row-key="name"
       class="table-mint-report"
-      hide-bottom
       separator="vertical"
       flat
       bordered
     />
   </div>
-  <div v-else>
+  <div v-else class="q-pa-md full-width row justify-center">
     <p>
       {{ $t('dashboard.report.noHaveCollection') }}
     </p>
@@ -87,7 +86,6 @@ getReport() {
 
   .table-mint-report
   .q-table__top,
-  .q-table__bottom,
   thead tr:first-child th
     background-color: #F4538D
     font-weight: bold

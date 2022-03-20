@@ -68,6 +68,7 @@
   </div>
   <q-input
     ref="nfts"
+    inputmode="number"
     v-model="form.nfts"
     class="nft-amount"
     :label="$t('dashboard.createCollection.stepTwo.amount')"
@@ -99,7 +100,8 @@
     <div v-if="form.priceType === 'fixed'" class="fixed-price">
       <q-input
         ref="amountFixed"
-        v-model.number="form.priceRange[0].amount"
+        :model-value="form.priceRange[0].amount"
+        inputmode="number"
         :label="$t('dashboard.createCollection.stepTwo.price')"
         mask="#.####"
         fill-mask="0"

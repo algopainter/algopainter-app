@@ -696,7 +696,8 @@ export default {
       startTimeErrMsg: 'The date to start generating arts for your collection is not valid!',
       endTimeErrMsg: 'The date to stop generating arts for your collection is not valid!',
       collectionNameErrMsg: 'The collection name is already in use!',
-      tokenErrMsg: 'The token you chose for your collection is unavailable now, try again later!'
+      tokenErrMsg: 'The token you chose for your collection is unavailable now, try again later!',
+      ipfsErr: 'We could not upload the avatar image to IPFS. Try another image or contact us!'
     }
   },
   verifyCollection: {

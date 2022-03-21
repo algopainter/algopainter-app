@@ -31,16 +31,22 @@
       </div>
     </div>
     <div v-if="activeFormId === 'createWithArtist'" class="col q-mt-md">
-      <div
-        v-for="(collection, index) in formCollection"
-        :key="index"
-      >
-        <collections :collection="collection" :descriptions="descriptions" />
+      <div v-if="loading === false">
+        <div
+          v-for="(collection, index) in formCollection"
+          :key="index"
+        >
+          <collections :collection="collection" :descriptions="descriptions" />
+        </div>
+      </div>
+
+      <div v-else>
+        <CollectionsSkeleton />
       </div>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-      <div v-if="activeFormId === 'createWithArtist'" class="col q-preview">
-      </div>
+  </div>
+  <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+    <div v-if="activeFormId === 'createWithArtist'" class="col q-preview">
     </div>
   </div>
 </template>
@@ -56,6 +62,7 @@ import Example from './Example.vue';
 import { mapGetters } from 'vuex';
 import ICollection from 'src/models/ICollection';
 import Collections from './Collections.vue';
+import CollectionsSkeleton from './CollectionsSkeleton.vue'
 import moment from 'moment';
 
 interface IAiArtist {
@@ -80,7 +87,8 @@ interface IAiArtist {
     IaArtist,
     Preview,
     Example,
-    Collections
+    Collections,
+    CollectionsSkeleton
   },
   emits: ['createWithArtistClick', 'eventPreview', 'eventClose'],
   computed: {
@@ -92,6 +100,7 @@ interface IAiArtist {
 export default class Create extends Vue {
   imageData: string | null = null;
   descriptions: boolean = true;
+  loading: boolean = true;
   imageButtons: IImageButton[] = [
     {
       id: 'importFile',
@@ -160,10 +169,11 @@ export default class Create extends Vue {
       this.form = collection.data
       // eslint-disable-next-line array-callback-return
       this.formCollection = this.form.filter(function(obj) {
-        if (obj.title === 'Expressions' || obj.title === 'Gwei' || moment().isAfter(obj.metrics.endDT) === false) {
+        if (obj.title === 'Expressions' || obj.title === 'Gwei' || (moment().isAfter(obj.metrics.endDT) === false && moment().isBefore(obj.metrics.startDT) === false)) {
           return true
         }
       })
+      this.loading = false
     });
   }
 

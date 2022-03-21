@@ -687,6 +687,11 @@
         "internalType": "uint16",
         "name": "nfts",
         "type": "uint16"
+      },
+      {
+        "internalType": "string",
+        "name": "descriptor",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -738,6 +743,11 @@
         "internalType": "uint16",
         "name": "nfts",
         "type": "uint16"
+      },
+      {
+        "internalType": "string",
+        "name": "descriptor",
+        "type": "string"
       }
     ],
     "name": "createCollection",

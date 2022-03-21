@@ -111,7 +111,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName = value.collection as string;
 
     try {
-      const res = await api.get(`collections?namelc=${collectionName}`);
+      const res = await api.get(`collections?namelc=${collectionName.toLowerCase()}`);
 
       res.data.length === 0
         ? this.commit('mint/SET_IS_COLLECTION_EXISTENT', false)
@@ -125,7 +125,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName: string = value.collectionCustomUrl;
 
     try {
-      const res = await api.get(`collections?namelc=$${collectionName}`);
+      const res = await api.get(`collections?namelc=$${collectionName.toLowerCase()}`);
 
       this.commit('mint/SET_COLLECTION_DATA', res.data[0]);
     } catch (e) {
@@ -137,7 +137,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName : string = value.collectionName;
 
     try {
-      const res = await api.get(`collections?namelc=${collectionName}`)
+      const res = await api.get(`collections?namelc=${collectionName.toLowerCase()}`)
       this.commit('mint/SET_COLLECTION_NAME', res);
     } catch (e) {
       console.log('Error message: mint/actions - collectionName');
@@ -164,19 +164,19 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
   async collectionsVerify() {
     try {
       const res = await api.get('collections?show=false&approvedBy=!')
-      this.commit('mint/SET_COLLECTIONS_VERIFY', res);
+      this.commit('mint/SET_COLLECTIONS_VERIFY', res.data);
     } catch (e) {
-      console.log('Error message: mint/actions - collectionsVerifica');
+      console.log('Error message: mint/actions - collectionsVerify');
     }
   },
+
   async VerifyPreview(type, value) {
     const Id : string = value.collectionId;
     try {
-      console.log('id collection', Id)
       const res = await api.get(`collections/db/${Id}`)
       this.commit('mint/SET_VERIFY_PREVIEW', res.data);
     } catch (e) {
-      console.log('Error message: mint/actions - collectionsVerifica');
+      console.log('Error message: mint/actions - VerifyPreview');
     }
   },
 };

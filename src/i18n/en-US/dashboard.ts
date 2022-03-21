@@ -8,8 +8,9 @@ export default {
   tokenBalance: '{amount} {token}',
   buyToken: 'Buy {token}',
   editProfileTerm: 'Edit profile',
-  registerCollection: 'Register algorithmic collection',
-  reportCollection: 'Report Collection',
+  registerCollection: 'Register a new Collection',
+  reportCollection: 'Deals Reports',
+  approveCollection: 'Approve Collection',
   balance: 'Balance',
   algop: '$ALGOP',
   selectAlgoP: 'Select an AlgoPainter',
@@ -698,4 +699,7 @@ export default {
       tokenErrMsg: 'The token you chose for your collection is unavailable now, try again later!'
     }
   },
+  verifyCollection: {
+    noData: 'There are no collections to be verified at the moment!'
+  }
 };

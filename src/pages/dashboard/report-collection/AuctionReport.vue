@@ -1,17 +1,16 @@
 <template>
-  <div v-if="collectionReport.length > 0" class="q-pa-md">
+  <div v-if="collectionReport.length > 0" class="q-pa-md full-width row justify-center">
     <q-table
       :rows="collectionReport"
       :columns="columns"
       row-key="name"
       class="table-auction-report"
-      hide-bottom
       separator="vertical"
       flat
       bordered
     />
   </div>
-  <div v-else class="q-pa-md">
+  <div v-else class="q-pa-md full-width row justify-center">
     <p>
       {{ $t('dashboard.report.noHaveCollection') }}
     </p>
@@ -42,8 +41,7 @@ export default class AuctionReport extends Vue {
       name: 'Art',
       required: true,
       label: 'Art',
-      field: (collectionReport: { nft: string }) => `#${collectionReport.nft}`,
-      // style: ('text-align: center')
+      field: (collectionReport: { nft: string }) => `${collectionReport.nft}`,
     },
     {
       name: 'collection',
@@ -52,13 +50,6 @@ export default class AuctionReport extends Vue {
       field: (collectionReport: { collection: string }) => collectionReport.collection,
       style: ('text-align: center')
     },
-    // {
-    //   name: 'Creator',
-    //   required: true,
-    //   label: '% Creator',
-    //   field: (collectionReport: { creator: string }) => collectionReport.creator,
-    //   style: ('text-align: center')
-    // },
     {
       name: 'Date of sale',
       required: true,
@@ -105,7 +96,6 @@ export default class AuctionReport extends Vue {
 
   .table-auction-report
   .q-table__top,
-  .q-table__bottom,
   thead tr:first-child th
     background-color: #F4538D
     font-weight: bold

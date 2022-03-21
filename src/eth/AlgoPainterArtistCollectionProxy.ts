@@ -45,7 +45,8 @@ export default class AlgoPainterArtistCollection {
         tokenPrice: string, // token address BUSD ALGOP
         priceType: PriceType,
         prices: string[], // [ 1, 100, 1000, 101, 200, 2000 ]
-        nfts: string // 1000
+        nfts: string, // 1000
+        collectionInfo: string
       ): ContractSendMethod;
     };
   };
@@ -108,7 +109,8 @@ export default class AlgoPainterArtistCollection {
     priceType: PriceType,
     prices: string[],
     nfts: number,
-    from: string
+    from: string,
+    collectionInfo: string
   ) {
     for (let i = 0; i < prices.length; i += 3) {
       prices[i + 2] = toWei(prices[i + 2].toString(), 'ether');
@@ -124,6 +126,7 @@ export default class AlgoPainterArtistCollection {
       priceType,
       prices,
       nfts.toString(),
+      collectionInfo
     ).send({ from });
   }
 
@@ -137,7 +140,8 @@ export default class AlgoPainterArtistCollection {
     priceType: PriceType,
     prices: string[],
     nfts: number,
-    from: string
+    from: string,
+    collectionInfo: string
   ) {
     for (let i = 0; i < prices.length; i += 3) {
       prices[i + 2] = toWei(prices[i + 2].toString(), 'ether');
@@ -152,7 +156,8 @@ export default class AlgoPainterArtistCollection {
       tokenPrice,
       priceType,
       prices,
-      nfts.toString()
+      nfts.toString(),
+      collectionInfo
     ).call({ from: from });
   }
 

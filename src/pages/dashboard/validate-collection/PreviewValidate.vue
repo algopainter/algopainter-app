@@ -92,20 +92,20 @@
             </p>
             <div class="row">
               <q-input
-                :model-value="formCollection.metrics.priceRange[i].from"
+                :model-value="formCollection?.metrics.priceRange[i].from"
                 :label="$t('dashboard.createCollection.stepTwo.from')"
                 class="col-6 q-pr-md"
                 readonly
               />
               <q-input
-                :model-value="formCollection.metrics.priceRange[i].to"
+                :model-value="formCollection?.metrics.priceRange[i].to"
                 :label="$t('dashboard.createCollection.stepTwo.to')"
                 class="col-6 q-pl-md"
                 readonly
               />
             </div>
             <q-input
-              :model-value="formCollection.metrics.priceRange[i].amount"
+              :model-value="formCollection?.metrics.priceRange[i].amount"
               :label="$t('dashboard.createCollection.stepTwo.price')"
               class="col-6 q-pr-md"
               readonly
@@ -142,7 +142,7 @@
             />
           </div>
         </div>
-        <div class="row">
+        <div class="row justify-center">
           <div class="q-pa-md">
             <algo-button
               color="red"
@@ -155,6 +155,15 @@
               color="green"
               label="Approve"
               @click="ApproveCollection"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="q-pa-md justify-end">
+            <algo-button
+              color="primary"
+              label="Return"
+              @click="$emit('close');"
             />
           </div>
         </div>
@@ -238,8 +247,8 @@ export default class PreviewValidate extends Vue.with(Props) {
   endDT: string = '';
   userController: UserController = new UserController();
 
-  mounted() {
-    void this.getCollection()
+  async mounted() {
+    await this.getCollection()
   }
 
   formatter() {
@@ -248,25 +257,19 @@ export default class PreviewValidate extends Vue.with(Props) {
     } else {
       this.typePrice = 'variable'
     }
-    this.startDT = moment(this.formCollection?.metrics.startDT).format('DD/MM/YYYY hh:mm:ss')
-    this.endDT = moment(this.formCollection?.metrics.endDT).format('DD/MM/YYYY hh:mm:ss')
+    this.startDT = moment(this.formCollection?.metrics.startDT).format('MMMM Do YYYY, h:mm:ss a');
+    this.endDT = moment(this.formCollection?.metrics.endDT).format('MMMM Do YYYY, h:mm:ss a');
   }
 
-  close() {
-    this.$emit('close', false)
-  }
-
-  getCollection() {
-    void this.$store.dispatch({
+  async getCollection() {
+    await this.$store.dispatch({
       type: 'mint/VerifyPreview',
       collectionId: this.id
-    }).then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    }).then(async() => {
       const collection = this.$store.getters['mint/GET_VERIFY_PREVIEW'];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      this.formCollection = collection
-      this.formatter()
-      void this.loadUserProfile()
+      this.formCollection = collection;
+      this.formatter();
+      await this.loadUserProfile();
     });
   }
 
@@ -305,9 +308,8 @@ export default class PreviewValidate extends Vue.with(Props) {
             type: 'positive',
             message: 'The collection was successfully approved!',
           });
-          setTimeout(() => {
-            void this.$router.push('/validate-collection')
-          }, 1000)
+
+          this.$emit('close');
         } else {
           this.$q.notify({
             type: 'negative',
@@ -351,9 +353,8 @@ export default class PreviewValidate extends Vue.with(Props) {
             type: 'positive',
             message: 'The collection was successfully disapproved!',
           });
-          setTimeout(() => {
-            void this.$router.push('/validate-collection')
-          }, 1000)
+
+          this.$emit('close');
         } else {
           this.$q.notify({
             type: 'negative',
@@ -392,5 +393,4 @@ export default class PreviewValidate extends Vue.with(Props) {
       width: 210px;
       height: 210px;
   }
-
 </style>

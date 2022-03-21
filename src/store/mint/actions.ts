@@ -18,6 +18,28 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     }
   },
 
+  itemParameters(type, value) {
+    const parsedItem: ICollectionInfo = value.parsedItem;
+    const collectionName: string = value.collectionName;
+
+    if (collectionName === 'gwei') {
+      this.commit('mint/SET_GWEI_ITEM_PARAMETERS', parsedItem);
+    } else if (collectionName === 'expressions') {
+      this.commit('mint/SET_EXPRESSIONS_ITEM_PARAMETERS', parsedItem);
+    }
+  },
+
+  previewingStatus(type, value) {
+    const isPreviewing: boolean = value.isPreviewing;
+    const collectionName: string = value.collectionName;
+
+    if (collectionName === 'gwei') {
+      this.commit('mint/SET_GWEI_IS_PREVIEWING', isPreviewing);
+    } else if (collectionName === 'expressions') {
+      this.commit('mint/SET_EXPRESSIONS_IS_PREVIEWING', isPreviewing);
+    }
+  },
+
   previewUrl(type, value) {
     const previewUrl: string = value.previewUrl;
     const collectionName: string = value.collectionName;
@@ -28,17 +50,6 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
       this.commit('mint/SET_EXPRESSIONS_PREVIEW_URL', previewUrl);
     } else {
       this.commit('mint/SET_PREVIEW_URL', previewUrl);
-    }
-  },
-
-  itemParameters(type, value) {
-    const parsedItem: ICollectionInfo = value.parsedItem;
-    const collectionName: string = value.collectionName;
-
-    if (collectionName === 'gwei') {
-      this.commit('mint/SET_GWEI_ITEM_PARAMETERS', parsedItem);
-    } else if (collectionName === 'expressions') {
-      this.commit('mint/SET_EXPRESSIONS_ITEM_PARAMETERS', parsedItem);
     }
   },
 

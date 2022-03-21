@@ -14,6 +14,12 @@ const mutation: MutationTree<MintStateInterface> = {
   SET_EXPRESSIONS_ITEM_PARAMETERS(state: MintStateInterface, payload) {
     state.expressions.itemParameters = payload;
   },
+  SET_GWEI_IS_PREVIEWING(state: MintStateInterface, payload) {
+    state.gwei.isPreviewing = payload;
+  },
+  SET_EXPRESSIONS_IS_PREVIEWING(state: MintStateInterface, payload) {
+    state.expressions.isPreviewing = payload;
+  },
   SET_GWEI_PREVIEW_URL(state: MintStateInterface, payload) {
     state.gwei.previewUrl = payload;
   },

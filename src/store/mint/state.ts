@@ -6,6 +6,7 @@ function state(): MintStateInterface {
     gwei: {
       collectionInfo: undefined,
       itemParameters: undefined,
+      isPreviewing: undefined,
       previewUrl: undefined,
       artBasicInfo: undefined,
       IPFSUrl: undefined,
@@ -16,6 +17,7 @@ function state(): MintStateInterface {
     expressions: {
       collectionInfo: undefined,
       itemParameters: undefined,
+      isPreviewing: undefined,
       previewUrl: undefined,
       artBasicInfo: undefined,
       IPFSUrl: undefined,

@@ -7,6 +7,7 @@ export default interface MintStateInterface {
   gwei: {
     collectionInfo: ICollectionInfo | undefined,
     itemParameters: IGweiParsedItemParameters | undefined,
+    isPreviewing: boolean | undefined,
     previewUrl: string | undefined,
     artBasicInfo: IArtBasicInfo | undefined,
     IPFSUrl: string | undefined,
@@ -17,6 +18,7 @@ export default interface MintStateInterface {
   expressions: {
     collectionInfo: ICollectionInfo | undefined,
     itemParameters: IGweiParsedItemParameters | undefined,
+    isPreviewing: boolean | undefined,
     previewUrl: string | undefined,
     artBasicInfo: IArtBasicInfo | undefined,
     IPFSUrl: string | undefined,

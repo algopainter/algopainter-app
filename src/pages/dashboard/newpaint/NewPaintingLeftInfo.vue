@@ -28,7 +28,6 @@ import { NetworkInfo } from 'src/store/user/types';
 import { ICollectionInfo, IArtBasicInfo, MintStatus, IArtistCollectionTokenURI } from 'src/models/IMint';
 import { Ref, Watch } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
-// import PinningServiceHelper from 'src/helpers/PinningServiceHelper';
 import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
 import { PropType } from 'vue';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
@@ -245,7 +244,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     this.isMintDialogOpen = true;
     this.isPinningPreviewUrl = true;
 
-    const previewPayload = {
+    const imgPayload = {
       name: this.artBasicInfo.name,
       description: this.artBasicInfo.description,
       mintedBy: this.account,
@@ -254,7 +253,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     }
 
     try {
-      const previewPiningResult = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
+      const previewPiningResult = await api.post('images/pintoipfs/FILE?resize=1', imgPayload);
       this.previewHash = previewPiningResult.data.ipfsHash;
     } catch (e) {
       this.mintStatus = MintStatus.GeneratingPreviewFileError;
@@ -266,16 +265,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
 
     this.mintStatus = MintStatus.GeneratingRawFile;
 
-    const rawPayload = {
-      name: this.artBasicInfo.name,
-      description: this.artBasicInfo.description,
-      mintedBy: this.account,
-      image: await this.toDataUrl(this.previewUrl(this.parsedGeneratedParams)),
-      fileName: randomHex(32) + '.png'
-    }
-
     try {
-      const rawPiningResult = await api.post('images/pintoipfs/FILE', rawPayload);
+      const rawPiningResult = await api.post('images/pintoipfs/FILE', imgPayload);
       this.rawHash = rawPiningResult.data.ipfsHash;
     } catch (e) {
       this.mintStatus = MintStatus.GeneratingRawFileError;
@@ -287,14 +278,11 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
 
     this.mintStatus = MintStatus.GeneratingDescriptorFile;
 
-    console.log('this.collectionInfo', this.collectionInfo);
-    console.log('auctionCoins', auctionCoins);
-
     const token = auctionCoins.find(coin => {
       return (coin.label === this.collectionInfo.collectionToken) ? coin.tokenAddress : '';
     });
 
-    const payload: IArtistCollectionTokenURI = {
+    const descriptorPayload: IArtistCollectionTokenURI = {
       collectionId: this.collectionData.blockchainId.toString(),
       name: this.artBasicInfo.name,
       description: this.artBasicInfo.description,
@@ -310,10 +298,8 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       mintedBy: this.account
     };
 
-    console.log('payload', payload);
-
     try {
-      const descriptorPinningResult = await api.post('images/pintoipfs/JSON', payload);
+      const descriptorPinningResult = await api.post('images/pintoipfs/JSON', descriptorPayload);
       this.descriptorIPFSHash = descriptorPinningResult.data.ipfsHash;
 
       this.setIPFSUrl(`https://ipfs.io/ipfs/${this.rawHash}`).catch(console.error);

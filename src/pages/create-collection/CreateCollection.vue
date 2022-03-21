@@ -82,7 +82,7 @@ import CollectionModal from 'src/components/modal/CollectionModal.vue'
 import AlgoPainterArtistCollection, { PriceType, ArtistCollectionStatus } from 'src/eth/AlgoPainterArtistCollectionProxy';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import moment from 'moment';
-import { toWei } from 'web3-utils'
+import { toWei, randomHex } from 'web3-utils'
 import { getArtistCollectionAddress } from 'src/eth/Config';
 
 @Options({
@@ -304,7 +304,17 @@ export default class CreateCollection extends Vue {
         website: this.collectionData.aboutTheCollection.webSite
       };
 
+      const previewPayload = {
+        name: this.collectionData.aboutTheCollection.description,
+        description: this.collectionData.aboutTheCollection.description,
+        mintedBy: this.userAccount,
+        image: this.collectionData.aboutTheCollection.avatar,
+        fileName: randomHex(32) + '.png'
+      };
+
       try {
+        const resAvatar = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
+        data.avatar = `https://ipfs.io/ipfs/${resAvatar.data.ipfsHash.toString()}`;
         const res = await api.post('images/pintoipfs/JSON', data);
         this.dataIPFSHash = res.data.ipfsHash;
         return true;
@@ -449,3 +459,7 @@ export default class CreateCollection extends Vue {
     margin: 0px;
   }
 </style>
+
+function randomHex(arg0: number) {
+  throw new Error('Function not implemented.');
+}

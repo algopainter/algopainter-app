@@ -54,15 +54,13 @@
           />
           <q-btn
             v-if="step > 1" flat color="primary" label="Back" class="q-ml-sm"
-            :disable="statusData === 'error'"
             @click="previous()"
           />
-          <q-tooltip v-if="statusData === 'error'">{{ $t('dashboard.createCollection.apiPatchRefused') }}</q-tooltip>
         </q-stepper-navigation>
       </template>
     </q-stepper>
     <div class="flex">
-      <collection-modal v-model="openModalCreate" :status-data="statusData" :artist-collection-status="artistCollectionStatus" :ok-btn-disabled="okBtnDisabled" />
+      <collection-modal v-model="openModalCreate" :artist-collection-status="artistCollectionStatus" :ok-btn-disabled="okBtnDisabled" />
     </div>
   </div>
 </template>
@@ -77,9 +75,6 @@ import { Watch } from 'vue-property-decorator';
 import { api } from 'src/boot/axios';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
-import { nanoid } from 'nanoid';
-import Web3Helper from 'src/helpers/web3Helper';
-import { isError } from 'src/helpers/utils';
 import UserController from 'src/controllers/user/UserController';
 import { IProfile } from 'src/models/IProfile';
 import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI, IcollectionData } from 'src/models/ICreatorCollection';
@@ -87,7 +82,7 @@ import CollectionModal from 'src/components/modal/CollectionModal.vue'
 import AlgoPainterArtistCollection, { PriceType, ArtistCollectionStatus } from 'src/eth/AlgoPainterArtistCollectionProxy';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import moment from 'moment';
-import { toWei } from 'web3-utils'
+import { toWei, randomHex } from 'web3-utils'
 import { getArtistCollectionAddress } from 'src/eth/Config';
 
 @Options({
@@ -117,8 +112,7 @@ export default class CreateCollection extends Vue {
   PriceType = PriceType;
   isConnected?: boolean;
   userAccount!: string;
-  artistCollectionStatus: ArtistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
-  statusData : string = 'Awaiting';
+  artistCollectionStatus: ArtistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
   statusblock: string = '';
   step: number = 1;
   isStepTwoDisabled: boolean = false;
@@ -134,11 +128,14 @@ export default class CreateCollection extends Vue {
   isFormThreeVerified: boolean = false;
   isFormFourVerified: boolean = false;
   okBtnDisabled: boolean = true;
-  collectionId!: string;
-  hasCollection: boolean = false;
   networkInfo!: NetworkInfo;
   userController: UserController = new UserController();
   userProfile: IProfile = {};
+  dataIPFSHash!: string;
+
+  times: number[] = [];
+  priceblock: string[] = [];
+  startPrice!: number;
 
   collectionData: IcollectionData = {
     aboutTheCollection: {} as IAboutTheCollection,
@@ -262,19 +259,16 @@ export default class CreateCollection extends Vue {
 
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           setTimeout(async() => {
-            if (this.isFormFourVerified && typeof this.collectionId === 'undefined') {
+            if (this.isFormFourVerified) {
+              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+              this.parseData();
+              const isDataIPFSHashGenerated = await this.generateDataIPFSHash();
               const isCallVerified = await this.createCollectionCall();
 
-              if (isCallVerified) {
+              if (isDataIPFSHashGenerated && isCallVerified) {
                 this.verifyFormFour = false;
                 this.openModalCreate = true;
                 await this.createCollection();
-              }
-            } else {
-              if (this.isFormFourVerified) {
-                this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
-                this.openModalCreate = true;
-                await this.postCollection();
               }
             }
           }, 250)
@@ -285,6 +279,51 @@ export default class CreateCollection extends Vue {
       this.step--;
     }
 
+    parseData() {
+      const priceRange = this.collectionData.collectionMetrics.priceRange;
+
+      // eslint-disable-next-line array-callback-return
+      priceRange.map(price => {
+        this.priceblock.push(price.from.toString());
+        this.priceblock.push(price.to.toString());
+        this.priceblock.push(price.amount.toString());
+      })
+
+      this.startPrice = Number(this.priceblock[2]);
+
+      const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
+      const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
+      this.times = [startDT, endDT];
+    }
+
+    async generateDataIPFSHash() {
+      const data = {
+        description: this.collectionData.aboutTheCollection.description,
+        avatar: this.collectionData.aboutTheCollection.avatar,
+        api: this.collectionData.apiParameters,
+        website: this.collectionData.aboutTheCollection.webSite
+      };
+
+      const previewPayload = {
+        name: this.collectionData.aboutTheCollection.description,
+        description: this.collectionData.aboutTheCollection.description,
+        mintedBy: this.userAccount,
+        image: this.collectionData.aboutTheCollection.avatar,
+        fileName: randomHex(32) + '.png'
+      };
+
+      try {
+        const resAvatar = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
+        data.avatar = `https://ipfs.io/ipfs/${resAvatar.data.ipfsHash.toString()}`;
+        const res = await api.post('images/pintoipfs/JSON', data);
+        this.dataIPFSHash = res.data.ipfsHash;
+        return true;
+      } catch (e) {
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
+        return false;
+      }
+    }
+
     priceType(type:string) {
       if (type === 'fixed') {
         return this.PriceType.Fixed
@@ -293,8 +332,47 @@ export default class CreateCollection extends Vue {
       }
     }
 
-    get artistCollectionContractAddress() {
-      return getArtistCollectionAddress(this.networkInfo.id);
+    async createCollectionCall() {
+      this.errMsg = '';
+
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await this.artistCollection.createCollectionCall(
+          this.collectionData.collectionMetrics.walletAddress,
+          this.times,
+          this.collectionData.aboutTheCollection.nameCollection,
+          this.collectionData.collectionMetrics.creatorPercentage,
+          this.startPrice,
+          this.collectionData.collectionMetrics.tokenPriceAddress as string,
+          this.priceType(this.collectionData.collectionMetrics.priceType),
+          this.priceblock,
+          this.collectionData.collectionMetrics.nfts,
+          this.userAccount,
+          this.dataIPFSHash
+        )
+        return true
+      } catch (e:any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        if (e.message && e.message.indexOf('START_TIME_RANGE_INVALID') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.startTimeErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('END_TIME_RANGE_INVALID') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.endTimeErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('COLLECTION_NAME_NOT_UNIQUE') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.collectionNameErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('TOKEN_UNAVAILABLE') >= 0) {
+          this.errMsg = this.$t('dashboard.createCollection.stepFour.tokenErrMsg');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        } else if (e.message && e.message.indexOf('MINIMUM_ALLOWANCE_REQUIRED') >= 0) {
+          return true;
+        } else {
+          this.errMsg = e.message;
+        }
+
+        return false;
+      }
     }
 
     async getAllowance() {
@@ -337,160 +415,43 @@ export default class CreateCollection extends Vue {
       }
     }
 
-    async createCollectionCall() {
-      this.errMsg = '';
-      const priceblock: any[] = [];
-      const priceRange = this.collectionData.collectionMetrics.priceRange;
-      // eslint-disable-next-line array-callback-return
-      priceRange.map(price => {
-        priceblock.push(price.from);
-        priceblock.push(price.to);
-        priceblock.push(price.amount);
-      })
-      const startPrice = Number(priceblock[2])
-      const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
-      const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
-      const times = [startDT, endDT]
-      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
-
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        await this.artistCollection.createCollectionCall(
-          this.collectionData.collectionMetrics.walletAddress,
-          times,
-          this.collectionData.aboutTheCollection.nameCollection,
-          this.collectionData.collectionMetrics.creatorPercentage,
-          startPrice,
-          this.collectionData.collectionMetrics.tokenPriceAddress as string,
-          this.priceType(this.collectionData.collectionMetrics.priceType),
-          priceblock,
-          this.collectionData.collectionMetrics.nfts,
-          this.userAccount
-        )
-        return true
-      } catch (e:any) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        if (e.message && e.message.indexOf('START_TIME_RANGE_INVALID') >= 0) {
-          this.errMsg = this.$t('dashboard.createCollection.stepFour.startTimeErrMsg');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        } else if (e.message && e.message.indexOf('END_TIME_RANGE_INVALID') >= 0) {
-          this.errMsg = this.$t('dashboard.createCollection.stepFour.endTimeErrMsg');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        } else if (e.message && e.message.indexOf('COLLECTION_NAME_NOT_UNIQUE') >= 0) {
-          this.errMsg = this.$t('dashboard.createCollection.stepFour.collectionNameErrMsg');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        } else if (e.message && e.message.indexOf('TOKEN_UNAVAILABLE') >= 0) {
-          this.errMsg = this.$t('dashboard.createCollection.stepFour.tokenErrMsg');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        } else if (e.message && e.message.indexOf('MINIMUM_ALLOWANCE_REQUIRED') >= 0) {
-          return true;
-        } else {
-          this.errMsg = e.message;
-        }
-
-        return false;
-      }
+    get artistCollectionContractAddress() {
+      return getArtistCollectionAddress(this.networkInfo.id);
     }
 
     async createCollection() {
-      this.statusData = 'Awaiting';
       this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
-      const allowance = await this.getAllowance()
+
+      const allowance = await this.getAllowance();
 
       if (allowance) {
-        const priceblock: any[] = [];
-        const priceRange = this.collectionData.collectionMetrics.priceRange;
-        // eslint-disable-next-line array-callback-return
-        priceRange.map(price => {
-          priceblock.push(price.from);
-          priceblock.push(price.to);
-          priceblock.push(price.amount);
-        })
-        const startPrice = Number(priceblock[2])
-        const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
-        const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
-        const times = [startDT, endDT]
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput
+        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
 
         await this.artistCollection.createCollection(
           this.collectionData.collectionMetrics.walletAddress,
-          times,
+          this.times,
           this.collectionData.aboutTheCollection.nameCollection,
           this.collectionData.collectionMetrics.creatorPercentage,
-          startPrice,
+          this.startPrice,
           this.collectionData.collectionMetrics.tokenPriceAddress as string,
           this.priceType(this.collectionData.collectionMetrics.priceType),
-          priceblock,
+          this.priceblock,
           this.collectionData.collectionMetrics.nfts,
-          this.userAccount
+          this.userAccount,
+          this.dataIPFSHash
         ).on('transactionHash', (a) => {
           this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
-        }).on('receipt', (receipt): void => {
-          if (receipt.events) {
-            this.collectionId = receipt.events.CollectionCreated.returnValues.index;
-          }
         }).on('error', (e) => {
           this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
           this.okBtnDisabled = false;
         })
 
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
-        this.statusData = 'aproved';
-        while (this.hasCollection === false) {
-          const test = await api.get(`collections?blockchainId=${this.collectionId}`);
-          this.hasCollection = test.data.length !== 0;
-        }
-        if (this.hasCollection) {
-          void this.postCollection()
-        }
       } else {
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
         this.okBtnDisabled = false;
       }
     };
-
-    async postCollection() {
-      this.statusData = 'aproved';
-      try {
-        const data = {
-          description: this.collectionData.aboutTheCollection.description,
-          avatar: this.collectionData.aboutTheCollection.avatar,
-          api: this.collectionData.apiParameters,
-          website: this.collectionData.aboutTheCollection.webSite,
-          salt: nanoid(),
-        };
-
-        const web3helper = new Web3Helper();
-        this.statusData = 'Awaiting';
-        const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, this.userAccount);
-
-        if (isError(signatureOrError as Error)) {
-          this.okBtnDisabled = false;
-          this.statusData = 'error';
-          return;
-        }
-
-        this.statusData = 'aproved';
-
-        const request = {
-          data,
-          signature: signatureOrError,
-          account: this.userAccount,
-          salt: data.salt,
-        };
-
-        await api.patch(`collections/${this.collectionId}`, request);
-        this.statusData = 'confirme';
-        this.okBtnDisabled = false;
-      } catch (e) {
-        this.statusData = 'error';
-        this.okBtnDisabled = false;
-        this.$q.notify({
-          type: 'negative',
-          message: this.$t('dashboard.createCollection.uploadError')
-        });
-      }
-    }
 }
 </script>
 <style lang="scss">
@@ -498,3 +459,7 @@ export default class CreateCollection extends Vue {
     margin: 0px;
   }
 </style>
+
+function randomHex(arg0: number) {
+  throw new Error('Function not implemented.');
+}

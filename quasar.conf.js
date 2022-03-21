@@ -77,12 +77,18 @@ module.exports = configure(function (ctx) {
       // https://v2.quasar.dev/quasar-cli/handling-webpack
       // "chain" is a webpack-chain object
       // https://github.com/neutrinojs/webpack-chain
-      chainWebpack(/* chain */) {
-        //
+      chainWebpack (chain) {
+        const nodePolyfillWebpackPlugin = require('node-polyfill-webpack-plugin')
+        chain.plugin('node-polyfill').use(nodePolyfillWebpackPlugin)
       },
 
       extendWebpack(cfg) {
-        cfg.plugins.push(new NodePolyfillPlugin());
+        cfg.resolve = {
+          ...cfg.resolve,
+          fallback: {
+            fs: false
+          }
+        }
       },
     },
 

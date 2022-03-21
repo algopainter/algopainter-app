@@ -111,7 +111,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName = value.collection as string;
 
     try {
-      const res = await api.get(`collections?namelc=${collectionName}`);
+      const res = await api.get(`collections?namelc=${collectionName.toLowerCase()}`);
 
       res.data.length === 0
         ? this.commit('mint/SET_IS_COLLECTION_EXISTENT', false)
@@ -125,7 +125,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName: string = value.collectionCustomUrl;
 
     try {
-      const res = await api.get(`collections?namelc=$${collectionName}`);
+      const res = await api.get(`collections?namelc=$${collectionName.toLowerCase()}`);
 
       this.commit('mint/SET_COLLECTION_DATA', res.data[0]);
     } catch (e) {
@@ -137,7 +137,7 @@ const actions: ActionTree<MintStateInterface, StateInterface> = {
     const collectionName : string = value.collectionName;
 
     try {
-      const res = await api.get(`collections?namelc=${collectionName}`)
+      const res = await api.get(`collections?namelc=${collectionName.toLowerCase()}`)
       this.commit('mint/SET_COLLECTION_NAME', res);
     } catch (e) {
       console.log('Error message: mint/actions - collectionName');

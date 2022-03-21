@@ -100,13 +100,13 @@
     <div v-if="form.priceType === 'fixed'" class="fixed-price">
       <q-input
         ref="amountFixed"
-        :model-value="form.priceRange[0].amount"
+        v-model="form.priceRange[0].amount"
         inputmode="number"
         :label="$t('dashboard.createCollection.stepTwo.price')"
         mask="#.####"
         fill-mask="0"
         reverse-fill-mask
-        :rules="[ val => validateAmount(val) || priceAmountErrMsg]"
+        :rules="[ val => validateAmount(parseFloat(val)) || priceAmountErrMsg]"
       >
         <q-btn-dropdown
           color="primary"
@@ -183,7 +183,7 @@
           mask="#.####"
           fill-mask="0"
           reverse-fill-mask
-          :rules="[ val => validateAmount(val) || priceAmountErrMsg]"
+          :rules="[ val => validateAmount(parseFloat(val)) || priceAmountErrMsg]"
         >
           <q-btn-dropdown
             v-if="index === 0"

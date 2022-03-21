@@ -181,7 +181,10 @@ export default class AboutTheCollection extends Vue.with(Props) {
 
    validateForm() {
      this.isVerifyingTheForm = true;
-     if (this.fields.nameCollection.length < 6 || this.fields.nameCollection === '') {
+     if (this.fields.avatar === '/images/do-utilizador (1).png') {
+       this.isError = true;
+       this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.enableAvatar')
+     } else if (this.fields.nameCollection.length < 6 || this.fields.nameCollection === '') {
        this.isError = true;
        this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.nameCollectionError')
        void this.$refs.nameCollection.validate()
@@ -197,9 +200,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
        this.isError = true;
        this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.descriptionError')
        void this.$refs.description.validate()
-     } else if (this.fields.avatar === '/images/do-utilizador (1).png') {
-       this.isError = true;
-       this.isErrorMsg = this.$t('dashboard.createCollection.aboutTheCollection.enableAvatar')
      } else {
        this.isVerifyingTheForm = false;
        return true;
@@ -238,7 +238,6 @@ export default class AboutTheCollection extends Vue.with(Props) {
              });
              const base64 = await toBase64(file);
              this.fields.avatar = base64;
-             this.validateForm()
            } else {
              this.$q.notify({
                type: 'negative',

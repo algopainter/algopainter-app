@@ -33,6 +33,9 @@ const getters: GetterTree<CollectionsStateInterface, StateInterface> = {
   GET_REPORT_MINTS(state: CollectionsStateInterface): [] {
     return state.reportMints;
   },
+  GET_REPORT_USER(state: CollectionsStateInterface): [] {
+    return state.reportUser;
+  },
   GET_IS_NEW_PAINTING_MODAL_OPEN(state: CollectionsStateInterface): boolean {
     return state.isNewPaintingModalOpen;
   },

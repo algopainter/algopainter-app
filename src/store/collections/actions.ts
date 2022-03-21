@@ -136,6 +136,16 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
       console.log('error message - getReportMints');
     }
   },
+  async getReportUser(type, value) {
+    const account = value.account as string;
+    try {
+      const res = await api.get(`reports/user/${account}/auctions`);
+      const report: [] = res.data;
+      this.commit('collections/SET_REPORT_USER', report);
+    } catch (e) {
+      console.log('error message - getReportUser');
+    }
+  },
 };
 
 export default actions;

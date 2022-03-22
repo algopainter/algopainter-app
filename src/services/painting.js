@@ -104,7 +104,7 @@ export class PaintExpression {
       backgroundFile.flip(true, false);
     }
 
-    return await backgroundFile.getBase64Async('image/png');
+    return await backgroundFile.quality(90).getBase64Async('image/jpeg');
   }
 }
 
@@ -296,7 +296,7 @@ export class PaintGwei {
         final.resize(finalWidth, finalHeight)
       }
 
-      return await final.getBase64Async('image/png');
+      return await final.quality(90).getBase64Async('image/jpeg');
     } else {
       const background = await new Jimp.read(`${this.basePath}/walls/wall${wallType}.jpg`);
       const newPainting = base.clone();
@@ -335,7 +335,7 @@ export class PaintGwei {
         background.resize(finalWidth, finalHeight)
       }
 
-      return await background.getBase64Async('image/png');
+      return await background.quality(90).getBase64Async('image/jpeg');
     }
   }
 }

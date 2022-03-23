@@ -1,29 +1,29 @@
 <template>
   <div class="img-container">
     <img
-      v-if="!previewUrlGeneric && collectionAvatar"
+      v-if="!previewUrlGeneric && collectionAvatar && !isPreviewing"
       :src="collectionAvatar"
       class="img"
     >
     <q-img
-      v-else-if="!previewUrlGwei && !previewUrlExpressions && collectionName === 'expressions'"
+      v-else-if="!previewUrlGwei && !previewUrlExpressions && collectionName === 'expressions' && !isPreviewing"
       :src="collectionImagePlaceholder"
       class="img"
     />
     <icon
-      v-else-if="!previewUrlGwei && !previewUrlExpressions && collectionName === 'gwei'"
+      v-else-if="!previewUrlGwei && !previewUrlExpressions && collectionName === 'gwei' && !isPreviewing"
       :collection-name="'gwei'"
       :width="gweiPlaceholder.width"
       :heigth="gweiPlaceholder.heigth"
       :view-box="gweiPlaceholder.viewBox"
     />
     <q-spinner
-      v-else-if="!isImgLoaded && previewUrl"
+      v-else-if="(!isImgLoaded && previewUrl) || (isPreviewing)"
       size="50px"
       color="primary"
     />
     <img
-      v-show="isImgLoaded"
+      v-show="isImgLoaded && !isPreviewing"
       ref="previewImg"
       :src="previewUrl"
       class="img"
@@ -123,6 +123,8 @@ class Props {
       collectionInfoGeneric: 'GET_COLLECTION_INFO',
       itemParametersGwei: 'GET_GWEI_ITEM_PARAMETERS',
       itemParametersExpressions: 'GET_EXPRESSIONS_ITEM_PARAMETERS',
+      isPreviewingGwei: 'GET_GWEI_IS_PREVIEWING',
+      isPreviewingExpressions: 'GET_EXPRESSIONS_IS_PREVIEWING',
       previewUrlGwei: 'GET_GWEI_PREVIEW_URL',
       previewUrlExpressions: 'GET_EXPRESSIONS_PREVIEW_URL',
       previewUrlGeneric: 'GET_PREVIEW_URL',
@@ -170,6 +172,9 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   previewUrlGeneric?: string;
   isPreviewUrlSet: boolean = false;
   isImgLoaded: boolean = false;
+  isPreviewingGwei!: boolean;
+  isPreviewingExpressions!: boolean;
+  isPreviewing: boolean = false;
 
   artBasicInfo: IArtBasicInfo = {
     name: '',
@@ -228,6 +233,16 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
 
       this.isCollectionInfoSet = true;
     }
+  }
+
+  @Watch('isPreviewingGwei')
+  onIsPreviewingGweiChanged() {
+    this.isPreviewing = this.isPreviewingGwei;
+  }
+
+  @Watch('isPreviewingExpressions')
+  onIsPreviewingExpressionsChanged() {
+    this.isPreviewing = this.isPreviewingExpressions;
   }
 
   @Watch('itemParametersGwei')

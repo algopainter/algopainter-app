@@ -1,4 +1,9 @@
-import Jimp from "jimp";
+/* eslint-disable new-cap */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import Jimp from 'jimp';
 import crypto from 'crypto';
 import seedrandom from 'seedrandom';
 
@@ -99,7 +104,7 @@ export class PaintExpression {
       backgroundFile.flip(true, false);
     }
 
-    return await backgroundFile.getBase64Async('image/png');
+    return await backgroundFile.quality(90).getBase64Async('image/jpeg');
   }
 }
 
@@ -107,7 +112,6 @@ export class PaintGwei {
   constructor() {
     this.basePath = 'https://raw.githubusercontent.com/algopainter/ms-algopainter-gwei/master'
   }
-
 
   /*
   {
@@ -138,11 +142,11 @@ export class PaintGwei {
     const width = size * 8;
     const height = size * 8;
 
-    const firstHash = crypto.createHash("sha256")
+    const firstHash = crypto.createHash('sha256')
       .update(text)
       .digest('hex');
 
-    const secondHash = crypto.createHash("sha256")
+    const secondHash = crypto.createHash('sha256')
       .update(firstHash)
       .digest('hex');
 
@@ -161,7 +165,7 @@ export class PaintGwei {
     let src = null;
     let part = null;
 
-    var rng = seedrandom(text);
+    const rng = seedrandom(text);
     let continuos = 0;
 
     for (let i = 0; i < 8; i++) {
@@ -182,7 +186,6 @@ export class PaintGwei {
           src.invert();
         }
 
-        console.log(`Compositing Gwei ${i}-${j}`)
         base.composite(src, i * size, j * size);
       }
     }
@@ -204,7 +207,6 @@ export class PaintGwei {
     }
 
     if (overlay > 0) {
-      console.log(`Using overlay ${overlay}`);
       const overlayLayer = await Jimp.read(`${this.basePath}/overlays/overlay-${overlay}.png`);
       overlayLayer.resize(width, height);
       base.composite(overlayLayer, 0, 0, {
@@ -224,15 +226,12 @@ export class PaintGwei {
       const finalHeight = size * 14;
       const final = new Jimp(finalWidth, finalHeight, 'white');
 
-      console.log('Creating the background image');
       const background = base.clone();
       background.resize(finalWidth * 0.25, finalHeight * 0.25);
       //background.gaussian(3);
       background.resize(finalWidth, finalHeight);
       final.composite(background, 0, 0);
-      console.log('Background image created');
 
-      console.log(`Creating the mosaic`);
       const startPoint = useRandomOpacity ? rng() * 100 % 3 * 0.1 : 0;
 
       final.composite(base, size * 3, 0);
@@ -245,7 +244,6 @@ export class PaintGwei {
       const factor = 0.5;
 
       for (let i = 0; i < 6; i++) {
-        console.log(`Creating base ${i}`);
         const newBase = base.clone();
         newBase.opacity(1 - startPoint - (i * 0.1));
 
@@ -289,18 +287,18 @@ export class PaintGwei {
       final.composite(finalBackground, size * 2.8, size * 3.2);
       final.composite(finalBackground, size * 2.9, size * 3.1);
 
-      let frame = await new Jimp.read(`${this.basePath}/inspirations/silver-frame.png`);
+      const frame = await new Jimp.read(`${this.basePath}/inspirations/silver-frame.png`);
 
       final.composite(final2, size * 3, size * 3);
       final.composite(frame, 0, 0);
 
-      if(finalWidth && finalHeight) {
+      if (finalWidth && finalHeight) {
         final.resize(finalWidth, finalHeight)
       }
 
-      return await final.getBase64Async('image/png');
+      return await final.quality(90).getBase64Async('image/jpeg');
     } else {
-      let background = await new Jimp.read(`${this.basePath}/walls/wall${wallType}.jpg`);
+      const background = await new Jimp.read(`${this.basePath}/walls/wall${wallType}.jpg`);
       const newPainting = base.clone();
 
       if (wallType === '1') {
@@ -333,11 +331,11 @@ export class PaintGwei {
         background.composite(newPainting, 1904, 907);
       }
 
-      if(finalWidth && finalHeight) {
+      if (finalWidth && finalHeight) {
         background.resize(finalWidth, finalHeight)
       }
 
-      return await background.getBase64Async('image/png');
+      return await background.quality(90).getBase64Async('image/jpeg');
     }
   }
 }

@@ -19,6 +19,12 @@ const getters: GetterTree<MintStateInterface, StateInterface> = {
   GET_EXPRESSIONS_ITEM_PARAMETERS(state: MintStateInterface): IGweiParsedItemParameters | undefined {
     return state.expressions.itemParameters;
   },
+  GET_GWEI_IS_PREVIEWING(state: MintStateInterface): boolean | undefined {
+    return state.gwei.isPreviewing;
+  },
+  GET_EXPRESSIONS_IS_PREVIEWING(state: MintStateInterface): boolean | undefined {
+    return state.expressions.isPreviewing;
+  },
   GET_GWEI_PREVIEW_URL(state: MintStateInterface): string | undefined {
     return state.gwei.previewUrl;
   },

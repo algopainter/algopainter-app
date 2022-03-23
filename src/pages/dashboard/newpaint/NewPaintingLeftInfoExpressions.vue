@@ -86,6 +86,7 @@
     :label="$t('dashboard.newPainting.leftInfoBtnName')"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
     color="primary"
+    :loading="isPreviewing"
     @click="generatePreview()"
   />
 
@@ -108,11 +109,13 @@ import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import { getExpressionItemContractByNetworkId } from 'src/eth/Config';
 import { IExpressionsItemParameters, IExpressionsParsedItemParameters, IExpressionsMintParameters, IExpressionsPayload } from 'src/models/INewPaintingExpressions';
 import { ICollectionInfo, IArtBasicInfo, MintStatus } from 'src/models/IMint';
-// import IPFSHelper from "src/helpers/IPFSHelper";
 import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
 import AlgoButton from 'components/common/Button.vue';
 import { mapGetters } from 'vuex';
-import PinningServiceHelper from 'src/helpers/PinningServiceHelper';
+import { PaintExpression } from 'src/services/painting.js';
+import { randomHex } from 'web3-utils';
+import { api } from 'src/boot/axios';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 
 interface INewPainting {
   labelA?: string,
@@ -161,8 +164,10 @@ class Props {
 export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   @Ref() dialogRef!: QDialog;
 
+  rewardsRates!: AlgoPainterBidBackPirsProxy;
   expressionsSystem!: AlgoPainterExpressionsProxy;
   algoPainterTokenProxy!: AlgoPainterTokenProxy;
+  expression: any;
   isConnected!: boolean;
   networkInfo!: NetworkInfo;
   account!: string;
@@ -172,6 +177,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   isMinting!: boolean;
   intParameters: number[] = [];
   baseUrl!: string | undefined;
+  img!: string;
 
   mintStatus: MintStatus | null = null;
   isMintDialogOpen: boolean = false;
@@ -180,6 +186,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   errorMessage: string = '';
   isConfigured: boolean = false;
 
+  isPreviewing: boolean = false;
   previewIPFSHash!: string | undefined;
   rawIPFSHash!: string | undefined;
   descriptorIPFSHash!: string;
@@ -238,8 +245,10 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
   created() {
     if (this.isConnected) {
-      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo)
-      this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo)
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
+      this.rewardsRates = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo);
+      this.expression = new PaintExpression();
     }
   }
 
@@ -257,8 +266,10 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
-      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo)
-      this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo)
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
+      this.rewardsRates = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+      this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo);
+      this.expression = new PaintExpression();
     }
   }
 
@@ -281,9 +292,20 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
     }
   }
 
-  generatePreview() {
+  @Watch('isPreviewing')
+  async onIsPreviewingChanged() {
+    await this.$store
+      .dispatch({
+        type: 'mint/previewingStatus',
+        isPreviewing: this.isPreviewing,
+        collectionName: this.collectionName
+      })
+  }
+
+  async generatePreview() {
     this.isError = false;
     this.errorMessage = '';
+    this.isPreviewing = true;
 
     this.parsedItem = {
       background: Number(this.item.background.value),
@@ -302,10 +324,21 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       flip: this.item.flip,
     }
 
-    const previewUrl = (this.baseUrl) ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expression}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=400x400&flip=${this.parsedItem.flip.toString()}` : '';
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    await this.expression.generate({
+      ...this.parsedItem
+    })
+      .then((img: string) => {
+        this.img = img;
+        this.setItemParameters(this.parsedItem).catch(console.error);
+        this.setPreviewUrl(img).catch(console.error);
+      })
+      .catch((e: any) => {
+        this.isError = true;
+        this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
+      });
 
-    this.setItemParameters(this.parsedItem).catch(console.error);
-    this.setPreviewUrl(previewUrl).catch(console.error);
+    this.isPreviewing = false;
   }
 
   async setItemParameters(parsedItem: IExpressionsParsedItemParameters) {
@@ -330,17 +363,6 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   onIsMintingChanged() {
     if (this.isMinting) {
       this.mint().catch(console.error);
-    }
-  }
-
-  parseUrl(urlType: string) {
-    switch (urlType) {
-      case 'preview':
-        return this.baseUrl ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expression}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=400x400&flip=${this.parsedItem.flip.toString()}` : '';
-      case 'raw':
-        return this.baseUrl ? `${this.baseUrl}?background=${this.parsedItem.background}&gender=${this.parsedItem.gender}&expression=${this.parsedItem.expression}&expressionTemplate=${this.parsedItem.expressionTemplate}&useWireframe=${this.parsedItem.useWireframe.toString()}&wireframeBlendStyle=${this.parsedItem.wireframeBlendStyle}&useWireframeBlend=${this.parsedItem.useWireframeBlend.toString()}&innerColorHue=${this.parsedItem.innerColorHue}&overlay=${this.parsedItem.overlay}&overlayHue=${this.parsedItem.overlayHue}&useShadow=${this.parsedItem.useShadow.toString()}&shadowHue=0&wireframeHue=${this.parsedItem.wireframeHue}&size=2000x2000&flip=${this.parsedItem.flip.toString()}` : '';
-      default:
-        return '';
     }
   }
 
@@ -403,11 +425,20 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
       this.mintStatus = MintStatus.GeneratingPreviewFile;
 
-      const previewPiningResult = await PinningServiceHelper.pinFile('Expressions - Preview', 1, this.parseUrl('preview'));
-      this.previewIPFSHash = previewPiningResult.ipfsHash;
+      const previewPayload = {
+        name: this.artBasicInfo.name,
+        description: this.artBasicInfo.description,
+        mintedBy: this.account,
+        image: this.img,
+        fileName: randomHex(32) + '.png'
+      }
 
-      if (!this.previewIPFSHash) {
+      try {
+        const previewPiningResult = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
+        this.previewIPFSHash = previewPiningResult.data.ipfsHash;
+      } catch (e) {
         this.setModalInitialState().catch(console.error);
+        this.mintStatus = MintStatus.GeneratingPreviewFileError;
         this.isError = true;
         this.errorMessage = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
         return;
@@ -415,10 +446,24 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
       this.mintStatus = MintStatus.GeneratingRawFile;
 
-      const rawPiningResult = await PinningServiceHelper.pinFile('Expressions - Raw', 1, this.parseUrl('raw'));
-      this.rawIPFSHash = rawPiningResult.ipfsHash;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      const rawImg = await this.expression.generate({
+        ...this.parsedItem,
+        size: '2000x2000'
+      })
 
-      if (!this.rawIPFSHash) {
+      const rawPayload = {
+        name: this.artBasicInfo.name,
+        description: this.artBasicInfo.description,
+        mintedBy: this.account,
+        image: rawImg,
+        fileName: randomHex(32) + '.png'
+      }
+
+      try {
+        const rawPiningResult = await api.post('images/pintoipfs/FILE', rawPayload);
+        this.rawIPFSHash = rawPiningResult.data.ipfsHash;
+      } catch (e) {
         this.setModalInitialState().catch(console.error);
         this.mintStatus = MintStatus.GeneratingRawFileError;
         this.isError = true;
@@ -428,10 +473,12 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
 
       this.mintStatus = MintStatus.GeneratingDescriptorFile;
 
-      const payload: IExpressionsPayload = {
+      const descriptorPayload: IExpressionsPayload = {
         name: this.artBasicInfo.name,
         description: this.artBasicInfo.description,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         image: `https://ipfs.io/ipfs/${this.rawIPFSHash}`,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         previewImage: `https://ipfs.io/ipfs/${this.previewIPFSHash}`,
         collection: {
           id: 1,
@@ -441,17 +488,19 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
         mintedBy: this.account,
       };
 
-      const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
-      this.descriptorIPFSHash = (descriptorPinningResult.ipfsHash) ? descriptorPinningResult.ipfsHash : '';
+      try {
+        const descriptorPinningResult = await api.post('images/pintoipfs/JSON', descriptorPayload);
+        this.descriptorIPFSHash = descriptorPinningResult.data.ipfsHash;
 
-      if (!this.descriptorIPFSHash) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        this.setIPFSUrl(`https://ipfs.io/ipfs/${this.rawIPFSHash}`).catch(console.error);
+      } catch (e) {
         this.setModalInitialState().catch(console.error);
+        this.mintStatus = MintStatus.GeneratingDescriptorFileError;
         this.isError = true;
         this.errorMessage = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
         return;
       }
-
-      this.setIPFSUrl(`https://ipfs.io/ipfs/${this.rawIPFSHash}`).catch(console.error);
 
       this.mintStatus = MintStatus.CollectingUserConfirmations;
     } catch (e) {

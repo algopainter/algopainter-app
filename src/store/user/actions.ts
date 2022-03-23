@@ -171,6 +171,16 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
   openConnectYourWalletModal() {
     this.commit('user/SET_OPEN_CONNECT_YOUR_WALLET_MODAL');
   },
+  setStatusBidBackTab(type, value) {
+    const status = value.status;
+
+    this.commit('user/SET_IS_BIDBACK_TAB_OPEN', status);
+  },
+  setStatusPirsTab(type, value) {
+    const status = value.status;
+
+    this.commit('user/SET_IS_PIRS_TAB_OPEN', status);
+  },
 };
 
 export default actions;

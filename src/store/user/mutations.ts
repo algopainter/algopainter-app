@@ -29,6 +29,12 @@ const mutation: MutationTree<UserStateInterface> = {
   SET_USER_LIKES(state: UserStateInterface, payload: []) {
     state.userLikes = payload;
   },
+  SET_IS_BIDBACK_TAB_OPEN(state: UserStateInterface, payload: boolean) {
+    state.isBidBackTabOpen = payload;
+  },
+  SET_IS_PIRS_TAB_OPEN(state: UserStateInterface, payload: boolean) {
+    state.isPirsTabOpen = payload;
+  },
 };
 
 export default mutation;

@@ -2,25 +2,23 @@
   <div class="auction-notificator-container">
     <q-btn
       class="pirs-btn"
-      :disable="btnDisabled"
       :label="
         $t('dashboard.header.auctionNotificator.pirsBtn', {
           pirsCounter: pirsCounter,
         })
       "
       color="primary"
-      :to="{name: 'myGallery', params: { btn: 'Pirs' } }"
+      @click="goToPirsTab"
     />
     <q-btn
       class="bidback-btn"
-      :disable="btnDisabled"
       :label="
         $t('dashboard.header.auctionNotificator.bidBackBtn', {
           bidBackCounter: bidBackCounter,
         })
       "
       color="primary"
-      :to="{name: 'myGallery', params: { btn: 'BidBack' } }"
+      @click="goToBidBackTab"
     />
   </div>
 </template>
@@ -58,10 +56,32 @@ export default class AuctionNotificator extends Vue {
   bidBackTabData!: IAxiosPaginated;
   reloadInterval: ReturnType<typeof setInterval> | number = 0;
   page: number = 1;
-  btnDisabled: boolean = false;
+
+  async goToPirsTab() {
+    if (this.$route.name !== 'myGallery') {
+      await this.$router.push({ name: 'myGallery', params: { btn: 'Pirs' } });
+    }
+
+    await this.$store
+      .dispatch({
+        type: 'user/setStatusPirsTab',
+        status: true
+      })
+  }
+
+  async goToBidBackTab() {
+    if (this.$route.name !== 'myGallery') {
+      await this.$router.push({ name: 'myGallery', params: { btn: 'BidBack' } });
+    }
+
+    await this.$store
+      .dispatch({
+        type: 'user/setStatusBidBackTab',
+        status: true
+      })
+  }
 
   mounted() {
-    this.btnDisabled = (this.$route.name === 'myGallery');
     this.getPirsCounter();
     this.getBidBackCounter();
     this.setReloadInterval();
@@ -113,11 +133,6 @@ export default class AuctionNotificator extends Vue {
         this.bidBackCounter = (this.bidBackTabData.count) ? this.bidBackTabData.count : 0;
       })
       .catch(console.error);
-  }
-
-  @Watch('$route.name')
-  onRouteParamsChanged() {
-    this.btnDisabled = (this.$route.name === 'myGallery');
   }
 }
 </script>

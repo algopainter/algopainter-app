@@ -11,6 +11,8 @@ function state(): UserStateInterface {
     userProfile: undefined,
     userLikes: undefined,
     openConnectYourWalletModal: false,
+    isBidBackTabOpen: false,
+    isPirsTabOpen: false
   };
 }
 

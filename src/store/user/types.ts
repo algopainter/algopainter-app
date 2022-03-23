@@ -74,6 +74,8 @@ export interface UserStateInterface {
   userProfile?: [];
   userLikes?: [] | undefined;
   openConnectYourWalletModal: boolean;
+  isBidBackTabOpen: boolean;
+  isPirsTabOpen: boolean;
 }
 
 export interface IWeb3Provider {

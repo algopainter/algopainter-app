@@ -1,17 +1,18 @@
 /* eslint-disable array-callback-return */
 <template>
-  <div v-if="loading === false">
+  <div v-if="loadingCollection === false">
     <q-page class="q-gutter-lg q-pb-lg">
       <div class="header q-gutter-xs">
         <q-select
-          v-model="collectionsTeste"
+          v-model="collectionsOptionLabel"
           class="limit-text"
           :options="collectionsOptions"
           color="primary"
+          :loading="getCollectionsLoading"
           rounded
           outlined
           bottom-slots
-          @update:model-value="filterCollection(collectionsTeste)"
+          @update:model-value="filterCollection(collectionsOptionLabel)"
         >
           <template #before>
             <q-icon name="filter_list" color="primary" />
@@ -78,9 +79,8 @@ interface OptionsCollection {
 export default class HomePageGallery extends Vue {
   currentCollection!: ICollection;
   collections: ICollection[] = [];
-  collectionsTeste: string = 'Gwei' ;
+  collectionsOptionLabel!: string ;
   currentCollectionGallery: IGallery[] = [];
-  loading: boolean = true;
 
   loadingBtn: boolean = false;
   loadingCollection: boolean = true;
@@ -94,6 +94,7 @@ export default class HomePageGallery extends Vue {
   imgIdArray: string[] = [];
   currentCollectionTest: { label: string } = { label: 'All Collections' };
   collectionFilter: unknown[] = [{ label: 'All Collections' }];
+  getCollectionsLoading: boolean = true;
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
@@ -131,25 +132,6 @@ export default class HomePageGallery extends Vue {
       this.loadingBtn = false;
     }
   }
-
-  // async collectionClicked(collection: IImage) {
-  //   this.loadingCollection = true;
-  //   this.imgIdArray = [];
-  //   this.loadMoreCounter = 1;
-  //   this.btnLoadMoreMsg = 'Load More';
-  //   this.noMoreImages = false;
-  //   const images = await new CollectionController().getCollectionsImages(
-  //     collection._id
-  //   );
-  //   console.log('collectionClicked', images);
-  //   this.currentCollectionGallery = images.map((image) =>
-  //     this.mapImageToGalleryItem(image)
-  //   );
-  //   this.currentCollectionGallery.forEach((item) => {
-  //     this.imgIdArray.push(item.id);
-  //   });
-  //   this.loadingCollection = false;
-  // }
 
   async filterCollection(collection: OptionsCollection) {
     this.loadingCollection = true;
@@ -196,13 +178,14 @@ export default class HomePageGallery extends Vue {
           this.currentCollectionGallery = images.map((image) =>
             this.mapImageToGalleryItem(image)
           );
-          this.collectionsTeste = [...this.labelActive].pop() as string
+          this.collectionsOptionLabel = this.labelActive.shift() as string;
         }
+        setTimeout(() => {
+          this.loadingCollection = false;
+          this.getCollectionsLoading = false;
+        }, 1000)
       })
     }
-
-    this.loading = false;
-    this.loadingCollection = false;
   }
 
   mapImageToGalleryItem(image: IImage) {

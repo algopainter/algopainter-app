@@ -84,6 +84,7 @@ import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import moment from 'moment';
 import { toWei, randomHex } from 'web3-utils'
 import { getArtistCollectionAddress } from 'src/eth/Config';
+import { IAxiosIPFSPost } from 'src/models/IAxios';
 
 @Options({
   components: {
@@ -262,13 +263,16 @@ export default class CreateCollection extends Vue {
             if (this.isFormFourVerified) {
               this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
               this.parseData();
+
+              this.openModalCreate = true;
               const isDataIPFSHashGenerated = await this.generateDataIPFSHash();
               const isCallVerified = await this.createCollectionCall();
 
               if (isDataIPFSHashGenerated && isCallVerified) {
                 this.verifyFormFour = false;
-                this.openModalCreate = true;
-                await this.createCollection();
+                if (isDataIPFSHashGenerated) {
+                  await this.createCollection();
+                }
               }
             }
           }, 250)
@@ -313,12 +317,14 @@ export default class CreateCollection extends Vue {
       };
 
       try {
-        const resAvatar = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
+        const resAvatar: IAxiosIPFSPost = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
         data.avatar = `https://ipfs.io/ipfs/${resAvatar.data.ipfsHash.toString()}`;
         const res = await api.post('images/pintoipfs/JSON', data);
         this.dataIPFSHash = res.data.ipfsHash;
         return true;
       } catch (e) {
+        this.openModalCreate = false;
+        this.errMsg = this.$t('dashboard.createCollection.stepFour.ipfsErr');
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
         return false;
       }
@@ -371,6 +377,7 @@ export default class CreateCollection extends Vue {
           this.errMsg = e.message;
         }
 
+        this.openModalCreate = false;
         return false;
       }
     }
@@ -390,7 +397,6 @@ export default class CreateCollection extends Vue {
           )
             .on('error', () => {
               this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
-              this.okBtnDisabled = false;
               setTimeout(() => {
                 this.okBtnDisabled = false;
                 return false;
@@ -411,6 +417,7 @@ export default class CreateCollection extends Vue {
         }
       } catch (e) {
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
+        this.okBtnDisabled = false;
         return false;
       }
     }
@@ -447,6 +454,7 @@ export default class CreateCollection extends Vue {
         })
 
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
+        this.okBtnDisabled = false;
       } else {
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
         this.okBtnDisabled = false;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable new-cap */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -141,7 +142,7 @@ export class PaintGwei {
     const size = 190;
     const width = size * 8;
     const height = size * 8;
-
+    
     const firstHash = crypto.createHash('sha256')
       .update(text)
       .digest('hex');
@@ -161,6 +162,7 @@ export class PaintGwei {
       const int = parseInt(hex, 16)
       keys.push(int);
     }
+
 
     let src = null;
     let part = null;

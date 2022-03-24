@@ -343,6 +343,10 @@ export default class MintDialog extends Vue {
         isMinting: false,
         collectionName: this.collectionName
       })
+
+    setTimeout(() => {
+      this.$router.push('/my-gallery').catch(console.error);
+    }, 1000);
   }
 
   async setUserConfirmations() {

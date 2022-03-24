@@ -293,7 +293,6 @@ export default class CollectionsDescription extends Vue.with(Props) {
         this.currentAmount = (this.isArtistCollection(this.collectionSystem))
           ? Number(await this.collectionSystem.getMintValue(this.collectionId))
           : -1
-        console.log('current', this.currentAmount)
       } else if (this.collectionName === 'gwei') {
         this.currentAmount = await this.gweiSystem.getCurrentAmount(this.mintedImagesAmount)
       } else if (this.collectionName === 'expressions') {
@@ -308,8 +307,6 @@ export default class CollectionsDescription extends Vue.with(Props) {
       this.batchPrice = this.$n(batchPrice, 'decimal', {
         maximumFractionDigits: this.coinDetails.decimalPlaces,
       } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
-
-      console.log('batchPrice', this.batchPrice)
 
       if (this.isGwei(this.collectionSystem)) {
         this.getTokensToBurn().catch(console.error);

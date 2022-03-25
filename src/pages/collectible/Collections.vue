@@ -114,7 +114,8 @@ export default class Collections extends Vue.with(Props) {
 
   goApp(name: string) {
     const nameCollection = name.replace(/\0/g, '')
-    this.$router.push(`/create-collectible/new-painting/${nameCollection}`).catch(console.error);
+    const nameFormat = encodeURIComponent(nameCollection.toLowerCase())
+    this.$router.push(`/create-collectible/new-painting/${nameFormat}`).catch(console.error);
   }
 }
 </script>

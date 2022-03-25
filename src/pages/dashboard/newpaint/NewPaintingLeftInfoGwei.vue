@@ -342,8 +342,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       return;
     }
 
-    console.log('this.previewIPFSHash', this.previewIPFSHash);
-
     this.mintStatus = MintStatus.GeneratingRawFile;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -359,7 +357,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       overlay: this.parsedItem.parsedOverlay,
       overlayOpacity: this.parsedItem.parsedOverlayOpacity
     })
-    console.log('rawImg', rawImg);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const img = await this.gwei.generate({
@@ -374,7 +371,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       overlay: this.parsedItem.parsedOverlay,
       overlayOpacity: this.parsedItem.parsedOverlayOpacity
     })
-    console.log('img', img);
 
     const rawPayload = {
       name: this.artBasicInfo.name,
@@ -395,11 +391,9 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     try {
       const rawPiningResult = await api.post('images/pintoipfs/FILE', rawPayload);
       this.rawIPFSHash = rawPiningResult.data.ipfsHash;
-      console.log('this.rawIPFSHash', this.rawIPFSHash);
 
       const imgPiningResult = await api.post('images/pintoipfs/FILE', imgPayload);
       this.imgIPFSHash = imgPiningResult.data.ipfsHash;
-      console.log('this.imgIPFSHash', this.imgIPFSHash);
     } catch (e) {
       this.setModalInitialState().catch(console.error);
       this.mintStatus = MintStatus.GeneratingRawFileError;

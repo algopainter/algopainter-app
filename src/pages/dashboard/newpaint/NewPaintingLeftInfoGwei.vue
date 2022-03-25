@@ -140,6 +140,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   gwei: any;
   previewIPFSHash!: string | undefined;
   rawIPFSHash!: string | undefined;
+  imgIPFSHash!: string | undefined;
   descriptorIPFSHash!: string;
 
   receipt!: any;
@@ -341,6 +342,8 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       return;
     }
 
+    console.log('this.previewIPFSHash', this.previewIPFSHash);
+
     this.mintStatus = MintStatus.GeneratingRawFile;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -352,10 +355,26 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       useRandom: this.parsedItem.parsedUseRandom,
       probability: this.parsedItem.parsedProbability,
       useRandomOpacity: false,
+      wallType: '0',
+      overlay: this.parsedItem.parsedOverlay,
+      overlayOpacity: this.parsedItem.parsedOverlayOpacity
+    })
+    console.log('rawImg', rawImg);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const img = await this.gwei.generate({
+      finalWidth: 2422,
+      finalHeight: 2422,
+      inspiration: this.parsedItem.parsedInspiration,
+      text: this.parsedItem.parsedText,
+      useRandom: this.parsedItem.parsedUseRandom,
+      probability: this.parsedItem.parsedProbability,
+      useRandomOpacity: false,
       wallType: this.parsedItem.parsedWallType,
       overlay: this.parsedItem.parsedOverlay,
       overlayOpacity: this.parsedItem.parsedOverlayOpacity
     })
+    console.log('img', img);
 
     const rawPayload = {
       name: this.artBasicInfo.name,
@@ -365,9 +384,22 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       fileName: randomHex(32) + '.png'
     }
 
+    const imgPayload = {
+      name: this.artBasicInfo.name,
+      description: this.artBasicInfo.description,
+      mintedBy: this.account,
+      image: img,
+      fileName: randomHex(32) + '.png'
+    }
+
     try {
       const rawPiningResult = await api.post('images/pintoipfs/FILE', rawPayload);
       this.rawIPFSHash = rawPiningResult.data.ipfsHash;
+      console.log('this.rawIPFSHash', this.rawIPFSHash);
+
+      const imgPiningResult = await api.post('images/pintoipfs/FILE', imgPayload);
+      this.imgIPFSHash = imgPiningResult.data.ipfsHash;
+      console.log('this.imgIPFSHash', this.imgIPFSHash);
     } catch (e) {
       this.setModalInitialState().catch(console.error);
       this.mintStatus = MintStatus.GeneratingRawFileError;
@@ -381,9 +413,11 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       description: this.artBasicInfo.description,
       amount: this.collectionInfo.batchPriceBlockchain,
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      image: `https://ipfs.io/ipfs/${this.rawIPFSHash}`,
+      image: `https://ipfs.io/ipfs/${this.imgIPFSHash}`,
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       previewImage: `https://ipfs.io/ipfs/${this.previewIPFSHash}`,
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      rawImage: `https://ipfs.io/ipfs/${this.rawIPFSHash}`,
       collection: {
         id: 0,
         name: 'Gwei',

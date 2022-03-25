@@ -142,7 +142,7 @@ export class PaintGwei {
     const size = 190;
     const width = size * 8;
     const height = size * 8;
-    
+
     const firstHash = crypto.createHash('sha256')
       .update(text)
       .digest('hex');
@@ -162,7 +162,6 @@ export class PaintGwei {
       const int = parseInt(hex, 16)
       keys.push(int);
     }
-
 
     let src = null;
     let part = null;
@@ -222,7 +221,7 @@ export class PaintGwei {
     base.composite(signature, 1180, 1220);
 
     if (wallType === '0') {
-      return base;
+      return base.quality(90).getBase64Async('image/jpeg');
     } else if (wallType === '7') {
       const finalWidth = size * 14;
       const finalHeight = size * 14;

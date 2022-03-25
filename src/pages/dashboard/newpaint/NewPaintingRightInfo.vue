@@ -238,7 +238,6 @@ export default class NewPaintingRightInfo extends Vue.with(Props) {
   @Watch('isPreviewingGwei')
   onIsPreviewingGweiChanged() {
     this.isPreviewing = this.isPreviewingGwei;
-    console.log('this.isPreviewing', this.isPreviewing);
   }
 
   @Watch('isPreviewingExpressions')

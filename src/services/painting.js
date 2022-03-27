@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable new-cap */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -220,7 +221,7 @@ export class PaintGwei {
     base.composite(signature, 1180, 1220);
 
     if (wallType === '0') {
-      return base;
+      return base.quality(90).getBase64Async('image/jpeg');
     } else if (wallType === '7') {
       const finalWidth = size * 14;
       const finalHeight = size * 14;

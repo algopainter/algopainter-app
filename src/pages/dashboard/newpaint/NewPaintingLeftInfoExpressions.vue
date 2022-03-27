@@ -86,7 +86,7 @@
     :label="$t('dashboard.newPainting.leftInfoBtnName')"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
     color="primary"
-    :loading="isPreviewing"
+    :disable="isPreviewing"
     @click="generatePreview()"
   />
 
@@ -115,7 +115,6 @@ import { mapGetters } from 'vuex';
 import { PaintExpression } from 'src/services/painting.js';
 import { randomHex } from 'web3-utils';
 import { api } from 'src/boot/axios';
-import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 
 interface INewPainting {
   labelA?: string,
@@ -164,7 +163,6 @@ class Props {
 export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   @Ref() dialogRef!: QDialog;
 
-  rewardsRates!: AlgoPainterBidBackPirsProxy;
   expressionsSystem!: AlgoPainterExpressionsProxy;
   algoPainterTokenProxy!: AlgoPainterTokenProxy;
   expression: any;
@@ -246,7 +244,6 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   created() {
     if (this.isConnected) {
       this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
-      this.rewardsRates = new AlgoPainterBidBackPirsProxy(this.networkInfo);
       this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo);
       this.expression = new PaintExpression();
     }
@@ -267,7 +264,6 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   onIsConnectedChanged() {
     if (this.isConnected) {
       this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
-      this.rewardsRates = new AlgoPainterBidBackPirsProxy(this.networkInfo);
       this.expressionsSystem = new AlgoPainterExpressionsProxy(this.networkInfo);
       this.expression = new PaintExpression();
     }
@@ -346,7 +342,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       .dispatch({
         type: 'mint/itemParameters',
         parsedItem: parsedItem,
-        collectionName: this.collectionName,
+        collectionName: this.collectionName
       })
   }
 
@@ -355,7 +351,7 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
       .dispatch({
         type: 'mint/previewUrl',
         previewUrl: previewUrl,
-        collectionName: this.collectionName,
+        collectionName: this.collectionName
       })
   }
 

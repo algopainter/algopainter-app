@@ -112,10 +112,6 @@ export default class AlgoPainterArtistCollection {
     from: string,
     collectionInfo: string
   ) {
-    for (let i = 0; i < prices.length; i += 3) {
-      prices[i + 2] = toWei(prices[i + 2].toString(), 'ether');
-    }
-
     return this.instance.methods.createCollection(
       walletAddress,
       timeRange.map(a => a.toString()),

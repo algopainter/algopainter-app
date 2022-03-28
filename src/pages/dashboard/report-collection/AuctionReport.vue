@@ -76,7 +76,7 @@ export default class AuctionReport extends Vue {
       required: true,
       label: 'Status',
       field: (collectionReport:{toClaim:boolean; sellDT: string}) => this.check(collectionReport.toClaim, collectionReport.sellDT),
-      style: ('text-align: center; color: red')
+      style: ('text-align: center')
     },
   ];
 

@@ -36,6 +36,7 @@ import { NetworkInfo } from 'src/store/user/types';
 import { Watch } from 'vue-property-decorator';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
+import AlgoPainterArtistCollection from 'src/eth/AlgoPainterArtistCollectionProxy';
 
 class Props {
   collectionName = prop({
@@ -47,10 +48,20 @@ class Props {
     type: String,
     required: true,
   });
+
+  collectionId = prop({
+    type: String,
+    required: true,
+  });
+
+  collectionMaxImagesAmount = prop({
+    type: Number,
+    required: true,
+  });
 }
 @Options({
   components: {
-    AlgoButton, 
+    AlgoButton,
   },
   computed: {
     ...mapGetters(
@@ -59,11 +70,16 @@ class Props {
         'account',
         'isConnected',
       ]),
+    ...mapGetters(
+      'mint', {
+        updateTopInfo: 'GET_UPDATE_TOP_INFO'
+      }),
   }
 })
 export default class NewPaintingTopInfo extends Vue.with(Props) {
   gweiSystem!: AlgoPainterGweiItemProxy;
-  collectionSystem!: AlgoPainterGweiItemProxy | AlgoPainterExpressionsProxy;
+  collectionSystem!: AlgoPainterGweiItemProxy | AlgoPainterExpressionsProxy | AlgoPainterArtistCollection;
+  algoPainterArtistCollection!: AlgoPainterArtistCollection;
 
   isConnected!: boolean;
   networkInfo!: NetworkInfo;
@@ -77,39 +93,66 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
   currentAmount!: number;
 
   loading: boolean = true;
+  updateTopInfo!: boolean;
 
   created() {
     if (this.isConnected) {
-      this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
-      this.collectionSystem = (this.collectionName === 'gwei')
-        ? new AlgoPainterGweiItemProxy(this.networkInfo)
-        : new AlgoPainterExpressionsProxy(this.networkInfo);
+      this.setProxy();
     }
   }
 
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
-      this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
-      this.collectionSystem = (this.collectionName === 'gwei')
-        ? new AlgoPainterGweiItemProxy(this.networkInfo)
-        : new AlgoPainterExpressionsProxy(this.networkInfo);
+      this.setProxy();
     }
   }
 
-  mounted() {
-    this.getTotalSupply().catch(console.error);
+  @Watch('updateTopInfo')
+  async onUpdateTopInfoChanged() {
+    if (this.isConnected) {
+      this.setProxy();
+      await this.getRemainingImages();
+    }
   }
 
-  async getTotalSupply() {
+  setProxy() {
+    this.gweiSystem = new AlgoPainterGweiItemProxy(this.networkInfo)
+
+    switch (this.collectionName) {
+      case 'gwei':
+        this.collectionSystem = new AlgoPainterGweiItemProxy(this.networkInfo);
+        break;
+      case 'expressions':
+        this.collectionSystem = new AlgoPainterExpressionsProxy(this.networkInfo);
+        break;
+      default:
+        this.collectionSystem = new AlgoPainterArtistCollection(this.networkInfo);
+    }
+  }
+
+  async mounted() {
+    await this.getRemainingImages();
+  }
+
+  async getRemainingImages() {
     this.loading = true;
-    this.mintedImagesAmount = await this.collectionSystem.totalSupply();
-    this.remainingImages = (this.isGwei(this.collectionSystem)) ? 1000 - this.mintedImagesAmount : 750 - this.mintedImagesAmount;
-    this.getCurrentAmount().catch(console.error);
+
+    if (this.isArtistCollection(this.collectionSystem)) {
+      this.remainingImages = Number(await this.collectionSystem.getRemainingTokens(this.collectionId));
+      this.mintedImagesAmount = this.collectionMaxImagesAmount - this.remainingImages;
+    } else {
+      this.mintedImagesAmount = await this.collectionSystem.totalSupply();
+      this.remainingImages = this.collectionMaxImagesAmount - this.mintedImagesAmount;
+    }
+
+    this.getBatchPrice().catch(console.error);
   }
 
-  async getCurrentAmount() {
-    this.currentAmount = await this.collectionSystem.getCurrentAmount(this.mintedImagesAmount);
+  async getBatchPrice() {
+    this.currentAmount = (this.isArtistCollection(this.collectionSystem))
+      ? Number(await this.collectionSystem.getMintValue(this.collectionId))
+      : await this.collectionSystem.getCurrentAmount(this.mintedImagesAmount);
 
     const batchPrice = blockchainToCurrency(
       this.currentAmount,
@@ -120,20 +163,15 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
       maximumFractionDigits: this.coinDetails.decimalPlaces,
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    if (this.isGwei(this.collectionSystem)) {
-      this.getTokensToBurn().catch(console.error);
-    } else {
-      this.setCollectionInfo().catch(console.error);
-    }
-  }
-
-  isGwei(instance: any) : instance is AlgoPainterGweiItemProxy {
-    return instance instanceof AlgoPainterGweiItemProxy;
+    this.isGwei(this.collectionSystem)
+      ? this.getTokensToBurn().catch(console.error)
+      : this.setCollectionInfo().catch(console.error);
   }
 
   async getTokensToBurn() {
     const tokensToBurn = await this.gweiSystem.getAmountToBurn();
     this.tokensToBurn = tokensToBurn.toFixed(2);
+
     this.setCollectionInfo(tokensToBurn).catch(console.error);
   }
 
@@ -177,6 +215,18 @@ export default class NewPaintingTopInfo extends Vue.with(Props) {
       }
     }
     return coin;
+  }
+
+  isGwei(instance: any) : instance is AlgoPainterGweiItemProxy {
+    return instance instanceof AlgoPainterGweiItemProxy;
+  }
+
+  isExpressions(instance: any) : instance is AlgoPainterExpressionsProxy {
+    return instance instanceof AlgoPainterExpressionsProxy;
+  }
+
+  isArtistCollection(instance: any) : instance is AlgoPainterArtistCollection {
+    return instance instanceof AlgoPainterArtistCollection;
   }
 }
 </script>

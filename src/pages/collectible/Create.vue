@@ -31,80 +31,22 @@
       </div>
     </div>
     <div v-if="activeFormId === 'createWithArtist'" class="col q-mt-md">
-      <div class="q-pa-md">
-        <p class="row justify-center text-h5">
-          {{ $t('dashboard.selectAlgoP') }}
-        </p>
-        <div class="row justify-center">
-          <div>
-            <q-btn
-              round
-              type="a"
-              :to="{name: 'newPainting', params: { collection: 'gwei' } }"
-            >
-              <q-avatar size="250px" class="avatar">
-                <img width="150px" class="img" src="/images/gwei.png" />
-              </q-avatar>
-            </q-btn>
-            <p class="text-bold text-center">Hashly Gwei</p>
-          </div>
-          <div>
-            <q-btn
-              round
-              type="a"
-              :to="{name: 'newPainting', params: { collection: 'expressions' } }"
-            >
-              <q-avatar size="250px" class="avatar">
-                <img src="/images/manwithnoname.png" />
-              </q-avatar>
-            </q-btn>
-            <p class="text-bold text-center">Man With No Name</p>
-          </div>
+      <div v-if="loading === false">
+        <div
+          v-for="(collection, index) in formCollection"
+          :key="index"
+        >
+          <collections :collection="collection" :descriptions="descriptions" />
         </div>
       </div>
-      <!--
-      <div>
-        <p class="text-bold text-subtitle2">
-          {{ $t('createCollectible.selectAi.title') }}
-        </p>
-      </div>
-      <div class="row justify-center q-col-gutter-md">
-        <ia-artist
-          v-for="art in arts"
-          :key="art.id"
-          :img="art.img"
-          :name="art.name"
-          :is-off="art.isOff"
-          :is-borda="clickImg"
-          @click="setCurrentArtist(art.id)"
-        />
-      </div>
-      <div>
-        <p class="text-h6 text-weight-bold">
-          {{ $t(currentArtist.title) }}
-        </p>
-        <p class="text-weight-medium">
-          {{ $t(currentArtist.textSubtitle) }}
-        </p>
-        <p class="text-weight-medium">
-          {{ $t(currentArtist.textBody) }}
-        </p>
+
+      <div v-else>
+        <CollectionsSkeleton />
       </div>
     </div>
-    -->
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-      <div v-if="activeFormId === 'createWithArtist'" class="col q-preview">
-        <!--
-        <example
-          :example-img="currentArtist.exampleImg"
-          :batch-prince="currentArtist.batchPrince"
-          :remaining="currentArtist.remaining"
-          :minted="currentArtist.minted"
-          :btn-link="currentArtist.btnLink"
-        />
-        -->
-      </div>
+  </div>
+  <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+    <div v-if="activeFormId === 'createWithArtist'" class="col q-preview">
     </div>
   </div>
 </template>
@@ -118,6 +60,10 @@ import IaArtist from './IaArtist.vue';
 import Preview from './Preview.vue';
 import Example from './Example.vue';
 import { mapGetters } from 'vuex';
+import ICollection from 'src/models/ICollection';
+import Collections from './Collections.vue';
+import CollectionsSkeleton from './CollectionsSkeleton.vue'
+import moment from 'moment';
 
 interface IAiArtist {
   id: number;
@@ -141,6 +87,8 @@ interface IAiArtist {
     IaArtist,
     Preview,
     Example,
+    Collections,
+    CollectionsSkeleton
   },
   emits: ['createWithArtistClick', 'eventPreview', 'eventClose'],
   computed: {
@@ -151,6 +99,8 @@ interface IAiArtist {
 })
 export default class Create extends Vue {
   imageData: string | null = null;
+  descriptions: boolean = true;
+  loading: boolean = true;
   imageButtons: IImageButton[] = [
     {
       id: 'importFile',
@@ -184,55 +134,8 @@ export default class Create extends Vue {
     btnLink: '',
   };
 
-  setCurrentArtist(id: number) {
-    this.currentArtist = this.arts.filter((art) => art.id === id)[0];
-    this.$emit('artistSettled');
-  }
-
-  arts: IAiArtist[] = [
-    {
-      id: 1,
-      img: '/images/Hashly.svg',
-      name: 'Hashly Gwei',
-      exampleImg: '/images/Hashly.Art.svg',
-      title: 'createCollectible.selectAi.titleHashly',
-      textSubtitle: 'createCollectible.selectAi.textHashly1',
-      textBody: 'createCollectible.selectAi.textHashly2',
-      batchPrince: '600',
-      remaining: '580',
-      minted: '420',
-      isOff: true,
-      btnLink: './new-painting',
-    },
-    {
-      id: 2,
-      img: '/images/Angelo.svg',
-      name: 'Angelo Fracthereum',
-      exampleImg: '/images/Angelo.Art.svg',
-      title: 'createCollectible.selectAi.titleAngelo',
-      textSubtitle: 'createCollectible.selectAi.textAngelo1',
-      textBody: '',
-      batchPrince: '-',
-      remaining: '-',
-      minted: '-',
-      isOff: true,
-      btnLink: '',
-    },
-    {
-      id: 3,
-      img: '/images/Claude.svg',
-      name: 'Claude Monero',
-      exampleImg: '/images/Claude.Art.svg',
-      title: 'createCollectible.selectAi.titleClaude',
-      textSubtitle: 'createCollectible.selectAi.textClaude1',
-      textBody: 'createCollectible.selectAi.textClaude2',
-      batchPrince: '-',
-      remaining: '-',
-      minted: '-',
-      isOff: true,
-      btnLink: '',
-    },
-  ];
+  formCollection: ICollection[] = [];
+  form: ICollection[] = [];
 
   activeFormId: string | null = null;
   isNewPaintingModalOpen!: boolean;
@@ -252,15 +155,25 @@ export default class Create extends Vue {
     });
   }
 
-  clickImg(name: string): void {
-    this.detalImg = name;
-    this.arts = this.arts.map((item) => {
-      if (item.name !== name) {
-        item.isOff = true;
-      } else {
-        item.isOff = false;
-      }
-      return item;
+  mounted() {
+    void this.getCollection();
+  }
+
+  getCollection() {
+    void this.$store.dispatch({
+      type: 'mint/collections',
+    }).then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const collection = this.$store.getters['mint/GET_COLLECTIONS'];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      this.form = collection.data
+      // eslint-disable-next-line array-callback-return
+      this.formCollection = this.form.filter(function(obj) {
+        if (obj.title === 'Expressions' || obj.title === 'Gwei' || (moment().isAfter(obj.metrics.endDT) === false && moment().isBefore(obj.metrics.startDT) === false)) {
+          return true
+        }
+      })
+      this.loading = false
     });
   }
 

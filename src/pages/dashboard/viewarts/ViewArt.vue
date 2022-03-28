@@ -4,7 +4,7 @@
       <div class="col-xs-12 col-sm-6 col-md-6 row justify-between items-center container-text-share">
         <div>
           <p class="text-bold text-h5 text-img">
-            {{ $t('dashboard.homePage.symbol') }}{{ image.nft.index }} {{ image.title }}
+            {{ $t('dashboard.homePage.symbol') }}{{ image.nft.sequentialNumber ? image.nft.sequentialNumber : image.nft.index }} {{ image.title }}
           </p>
           <q-tooltip
             class="bg-primary"

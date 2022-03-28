@@ -46,7 +46,7 @@
     />
     <div class="details q-pa-sm">
       <div class="name limit-text">
-        {{ $t('dashboard.homePage.symbol') }}{{ galleryItem.index }} {{ galleryItem.art.name }}
+        {{ $t('dashboard.homePage.symbol') }}{{ galleryItem.sequentialNumber ? galleryItem.sequentialNumber : galleryItem.index }} {{ galleryItem.art.name }}
         <q-tooltip
           class="bg-primary"
         >

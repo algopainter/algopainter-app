@@ -9,6 +9,9 @@ export interface CollectionsStateInterface {
   userOnSalePublic: [];
   userPastImages: [];
   imagePastOwners: [];
+  reportAuction: [],
+  reportMints: [],
+  reportUser: [],
   userPirsTabImages: [];
   isNewPaintingModalOpen: boolean;
 }

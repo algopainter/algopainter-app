@@ -143,6 +143,16 @@
         class="row justify-center btnSave"
       >
         <algo-button
+          v-if="routeName === 'registerCollection'"
+          class="q-py-md q-my-md btnsize"
+          type="submit"
+          color="primary"
+          :label="$t('dashboard.editProfile.changesRegistro')"
+          :disable="!isConnected"
+          @click="saveChanges"
+        />
+        <algo-button
+          v-else
           class="q-py-md q-my-md btnsize"
           type="submit"
           color="primary"
@@ -187,6 +197,7 @@ export default class EditProfile extends Vue {
 
   isLoading: boolean = false;
   isValid: boolean = false;
+  paramsRouterName!: unknown;
 
   get isConnected() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -214,7 +225,6 @@ export default class EditProfile extends Vue {
     const file = newLocala[0];
     if (file) {
       if (file.size < EditProfile.FILE_SIZE_LIMIT) {
-        console.log('File size', file.size);
         const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
@@ -252,6 +262,10 @@ export default class EditProfile extends Vue {
 
   emailValid() {
     this.isValid = this.validateEmail(this.formFields.email);
+  }
+
+  get routeName() {
+    return this.paramsRouterName = this.$route.params.name;
   }
 
   async loadData() {
@@ -387,6 +401,9 @@ export default class EditProfile extends Vue {
       }
     } finally {
       this.isLoading = false;
+      if (this.routeName === 'registerCollection') {
+        await this.$router.push('/create-collection');
+      }
     }
   }
 

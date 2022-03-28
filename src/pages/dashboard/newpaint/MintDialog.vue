@@ -177,7 +177,12 @@
           v-if="mintStatus === MintStatus.CollectingUserConfirmations && isIpfsUrlSet"
           class="col-12 step column"
         >
-          <a target="_blank" :href="[collectionName === 'gwei' ? ipfsUrlGwei : ipfsUrlExpressions]">{{ $t('dashboard.newPainting.mintConfirmations.rawFileLink') }}</a>
+          <a
+            target="_blank"
+            :href="fullDefinitionUrl()"
+          >
+            {{ $t('dashboard.newPainting.mintConfirmations.rawFileLink') }}
+          </a>
           <q-checkbox
             v-model="hasCheckedRawFile"
             :label="$t('dashboard.newPainting.mintConfirmations.rawFile')"
@@ -281,11 +286,12 @@ import { MintStatus } from 'src/models/IMint';
       'user', [
         'networkInfo',
         'account',
-        'isConnected',
+        'isConnected'
       ]),
     ...mapGetters('mint', {
       ipfsUrlGwei: 'GET_GWEI_IPFS_URL',
       ipfsUrlExpressions: 'GET_EXPRESSIONS_IPFS_URL',
+      ipfsUrlGeneric: 'GET_IPFS_URL'
     }),
   }
 })
@@ -295,9 +301,10 @@ export default class MintDialog extends Vue {
 
   MintStatus = MintStatus;
 
+  isIpfsUrlSet: boolean = false;
   ipfsUrlGwei!: string;
   ipfsUrlExpressions!: string;
-  isIpfsUrlSet: boolean = false;
+  ipfsUrlGeneric!: string;
 
   isAwareOfFee: boolean = false;
   hasCheckedRawFile: boolean = false;
@@ -313,13 +320,35 @@ export default class MintDialog extends Vue {
     this.isIpfsUrlSet = true;
   }
 
+  @Watch('ipfsUrlGeneric')
+  onIpfsUrlGenericChanged() {
+    this.isIpfsUrlSet = true;
+  }
+
+  fullDefinitionUrl() {
+    switch (this.collectionName) {
+      case 'gwei':
+        return this.ipfsUrlGwei;
+      case 'expressions':
+        return this.ipfsUrlExpressions;
+      default:
+        return this.ipfsUrlGeneric;
+    }
+  }
+
   async updateMintingStatus() {
     await this.$store
       .dispatch({
         type: 'mint/mintingStatus',
         isMinting: false,
-        collectionName: this.collectionName,
+        collectionName: this.collectionName
       })
+
+    if (this.mintStatus === 12) {
+      setTimeout(() => {
+        this.$router.push('/my-gallery').catch(console.error);
+      }, 1000);
+    }
   }
 
   async setUserConfirmations() {
@@ -327,7 +356,7 @@ export default class MintDialog extends Vue {
       .dispatch({
         type: 'mint/userConfirmations',
         userConfirmations: true,
-        collectionName: this.collectionName,
+        collectionName: this.collectionName
       })
   }
 

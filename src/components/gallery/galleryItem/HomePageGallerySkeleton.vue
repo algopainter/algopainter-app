@@ -6,18 +6,6 @@
       height="50px"
       class="custom-skeleton-border q-mr-sm"
     />
-    <q-skeleton
-      type="QBtn"
-      width="200px"
-      height="50px"
-      class="custom-skeleton-border q-mr-sm"
-    />
-    <q-skeleton
-      type="QBtn"
-      width="200px"
-      height="50px"
-      class="custom-skeleton-border q-mr-sx"
-    />
   </div>
   <div class="flex mobile-only">
     <q-skeleton

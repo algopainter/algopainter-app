@@ -348,7 +348,7 @@ import { Watch } from 'vue-property-decorator';
 import AlgoButton from 'components/common/Button.vue';
 import IGalleryTab from 'src/models/IGalleryTab';
 import { IAxios, IAxiosPaginated } from 'src/models/IAxios';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import GalleryItem from './GalleryItem.vue';
 import LatestBidsItem from './LatestBidsItem.vue';
 import GallerySelect from './GallerySelect.vue';
@@ -357,6 +357,7 @@ import LatestBidsItemSkeleton from './LatestBidsItemSkeleton.vue';
 import MyGallerySkeleton from './MyGallerySkeleton.vue';
 import PirsItem from './PirsItem.vue';
 import { mapGetters } from 'vuex';
+import CollectionController from 'src/controllers/collection/CollectionController';
 
 enum GalleryTabsEnum {
   GalleryTab,
@@ -392,6 +393,8 @@ enum GalleryTabsEnum {
       networkInfo: 'networkInfo',
       isConnected: 'isConnected',
       likedTabData: 'GET_USER_LIKES',
+      isBidBackTabOpen: 'GET_IS_BIDBACK_TAB_OPEN',
+      isPirsTabOpen: 'GET_IS_PIRS_TAB_OPEN'
     }),
   },
 })
@@ -404,6 +407,8 @@ export default class MyGalleryOverview extends Vue {
   pirsTabData!: IAxiosPaginated;
   bidBackTabData!: IAxiosPaginated;
   filterCollectionOptions!: IAxios;
+  isBidBackTabOpen!: boolean;
+  isPirsTabOpen!: boolean;
 
   galleryTabsEnum: GalleryTabsEnum = GalleryTabsEnum.GalleryTab;
   currentBtnClicked: number = 1;
@@ -487,20 +492,21 @@ export default class MyGalleryOverview extends Vue {
   ];
 
   @Watch('galleryTabsEnum')
-  onGalleryTabsEnumChanged() {
+  async onGalleryTabsEnumChanged() {
     this.galleryTabs.forEach((tab) => {
       clearInterval(tab.reloadInterval as number);
     });
     switch (this.galleryTabsEnum) {
       case GalleryTabsEnum.GalleryTab:
         this.galleryTabs[0].reloadInterval = setInterval(() => {
-          this.getGalleryArts(
-            1,
-            this.currentCollection.label,
-            false,
-            true
-          ).catch(console.error);
+          this.getGalleryArts(1, this.currentCollection.label, false, true).catch(
+            console.error
+          );
         }, 5000);
+
+        await this.setStatusPirsTab(false);
+        await this.setStatusBidBackTab(false);
+
         break;
       case GalleryTabsEnum.OnSaleTab:
         this.galleryTabs[1].reloadInterval = setInterval(() => {
@@ -508,6 +514,10 @@ export default class MyGalleryOverview extends Vue {
             console.error
           );
         }, 5000);
+
+        await this.setStatusPirsTab(false);
+        await this.setStatusBidBackTab(false);
+
         break;
       case GalleryTabsEnum.LikedTab:
         this.galleryTabs[2].reloadInterval = setInterval(() => {
@@ -515,16 +525,61 @@ export default class MyGalleryOverview extends Vue {
             console.error
           );
         }, 5000);
+
+        await this.setStatusPirsTab(false);
+        await this.setStatusBidBackTab(false);
+
         break;
       case GalleryTabsEnum.PirsTab:
         this.galleryTabs[3].reloadInterval = setInterval(() => {
           this.getPirs(1, true);
         }, 5000);
+
+        await this.setStatusPirsTab(true);
+        await this.setStatusBidBackTab(false);
+
         break;
       case GalleryTabsEnum.BidBackTab:
         this.galleryTabs[4].reloadInterval = setInterval(() => {
           this.getBidBack(1, true);
         }, 5000);
+
+        await this.setStatusPirsTab(false);
+        await this.setStatusBidBackTab(true);
+    }
+  }
+
+  async setStatusPirsTab(status:boolean) {
+    if (status !== this.isPirsTabOpen) {
+      await this.$store
+        .dispatch({
+          type: 'user/setStatusPirsTab',
+          status: status
+        })
+    }
+  }
+
+  async setStatusBidBackTab(status:boolean) {
+    if (status !== this.isBidBackTabOpen) {
+      await this.$store
+        .dispatch({
+          type: 'user/setStatusBidBackTab',
+          status: status
+        })
+    }
+  }
+
+  @Watch('isPirsTabOpen')
+  onPirsTabOpenChanged() {
+    if (this.isPirsTabOpen) {
+      this.getPirs(1);
+    }
+  }
+
+  @Watch('isBidBackTabOpen')
+  onBidBackTabOpenChanged() {
+    if (this.isBidBackTabOpen) {
+      this.getBidBack(1);
     }
   }
 
@@ -604,11 +659,18 @@ export default class MyGalleryOverview extends Vue {
       .then(() => {
         const collectionFilter = this.filterCollectionOptions.data;
 
-        collectionFilter.forEach((item: ICollection) => {
-          if (item.title !== 'Personal Item') {
-            this.collectionFilter.push({ label: item.title });
+        collectionFilter.map(async(item: ICollection) => {
+          if (item.show === true) {
+            const images = await new CollectionController().getCollectionsImages(
+              item._id
+            );
+            if (images.length > 0) {
+              this.collectionFilter.push({ label: item.title })
+            }
+          } else if (item.title === 'Personal Item') {
+            this.collectionFilter.push({ label: item.title })
           }
-        });
+        })
 
         this.getCollectionsLoading = false;
       });
@@ -675,7 +737,7 @@ export default class MyGalleryOverview extends Vue {
           this.galleryTabs[0].cont = this.galleryTabData.count;
           this.galleryTabs[0].contLabel = ` (${this.galleryTabData.count})`;
           this.galleryTabs[0].maxPages = this.galleryTabData.pages;
-          this.galleryTabs[0].noData = this.galleryTabs[0].data.length === 0;
+          this.galleryTabs[0].noData = !this.galleryTabs[0].data || this.galleryTabs[0].data.length === 0;
         }
         this.galleryTabs[0].loadingButtons = false;
         this.galleryTabs[0].loadingData = false;
@@ -708,7 +770,7 @@ export default class MyGalleryOverview extends Vue {
           this.galleryTabs[1].cont = this.onSaleTabData.count;
           this.galleryTabs[1].contLabel = ` (${this.onSaleTabData.count})`;
           this.galleryTabs[1].maxPages = this.onSaleTabData.pages;
-          this.galleryTabs[1].noData = this.galleryTabs[1].data.length === 0;
+          this.galleryTabs[1].noData = !this.galleryTabs[1].data || this.galleryTabs[1].data.length === 0;
         }
         this.galleryTabs[1].loadingData = false;
       });
@@ -740,7 +802,7 @@ export default class MyGalleryOverview extends Vue {
           this.galleryTabs[2].cont = this.likedTabData.count;
           this.galleryTabs[2].contLabel = ` (${this.likedTabData.count})`;
           this.galleryTabs[2].maxPages = this.likedTabData.pages;
-          this.galleryTabs[2].noData = this.galleryTabs[2].data.length === 0;
+          this.galleryTabs[2].noData = !this.galleryTabs[2].data || this.galleryTabs[2].data.length === 0;
         }
         this.galleryTabs[2].loadingData = false;
       });
@@ -770,7 +832,7 @@ export default class MyGalleryOverview extends Vue {
           this.pirsTabData.count > 0 ? this.pirsTabData.count : 0;
           this.galleryTabs[3].contLabel = ` (${this.galleryTabs[3].cont})`;
           this.galleryTabs[3].maxPages = this.pirsTabData.pages;
-          this.galleryTabs[3].noData = this.galleryTabs[3].data.length === 0;
+          this.galleryTabs[3].noData = !this.galleryTabs[3].data || this.galleryTabs[3].data.length === 0;
         }
 
         this.galleryTabs[3].loadingData = false;
@@ -799,7 +861,7 @@ export default class MyGalleryOverview extends Vue {
           this.galleryTabs[4].cont = this.bidBackTabData.count > 0 ? this.bidBackTabData.count : 0;
           this.galleryTabs[4].contLabel = ` (${this.galleryTabs[4].cont})`;
           this.galleryTabs[4].maxPages = this.bidBackTabData.pages;
-          this.galleryTabs[4].noData = this.galleryTabs[4].data.length === 0;
+          this.galleryTabs[4].noData = !this.galleryTabs[4].data || this.galleryTabs[4].data.length === 0;
         }
         this.galleryTabs[4].loadingData = false;
       })

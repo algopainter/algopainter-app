@@ -145,7 +145,7 @@
             :label="
               $t('createCollectible.create.fields.agreeValue', {
                 CurrentAmount: mintValueView,
-                Token: 'BNB'
+                Token: 'ALGOP'
               })"
           />
         </template>
@@ -188,7 +188,7 @@ import AlgoPainterPersonalItemProxy, { PainterPersonalItemStatus } from 'src/eth
 import getAlgoPainterContractByNetworkId, { getPersonalItemContractByNetworkId } from 'src/eth/Config';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import { IMintData } from 'src/models/IMint';
-
+import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 class PropsTypes {
   uploadLabel: string | undefined;
   titleLabel: string | undefined;
@@ -196,7 +196,6 @@ class PropsTypes {
   descriptionLabel: string | undefined;
   descriptionMaxlength: number | undefined;
 }
-
 interface FormData {
   name: string;
   description: string;
@@ -206,7 +205,6 @@ interface FormData {
   salt: string;
   fileName: string;
 }
-
 @Options({
   components: {
     UploadBox,
@@ -225,7 +223,7 @@ interface FormData {
 })
 export default class CreateUpload extends Vue.with(PropsTypes) {
   static FILE_SIZE_LIMIT = 31457280;
-
+  algoPainterTokenProxy!: AlgoPainterTokenProxy;
   imageData: string | null = null;
   OpenModal: boolean = false;
   isDisabled: boolean = true;
@@ -238,12 +236,12 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   algopTokenContract!: ERC20TokenProxy;
   networkInfo!: NetworkInfo;
   mintValue: string = '';
+  costToken: string = '';
   account!: string;
   dataMint: string = ''
   responseMint?: IMintData;
   okBtnDisabled: boolean = true;
   fileInputKey: number = 0;
-
   formData: FormData = {
     name: '',
     description: '',
@@ -256,11 +254,16 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
 
   created() {
     this.personalItemContract = new AlgoPainterPersonalItemProxy(this.networkInfo);
+    this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
     this.algopTokenContract = new ERC20TokenProxy(getAlgoPainterContractByNetworkId(this.networkInfo.id));
   }
 
   async mounted() {
     await this.personalItemContract.getMintPrice().then(costs => this.mintValue = costs.cost).catch(console.error);
+    await this.personalItemContract.getMintPrice().then((costs) => {
+      this.mintValue = costs.cost;
+      this.costToken = costs.costToken;
+    }).catch(console.error);
   }
 
   async previewImage(e: Event) {
@@ -337,18 +340,15 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
       const web3helper = new Web3Helper();
       const userAccount = this.$store.getters['user/account'] as string;
       const signatureOrError = await web3helper.hashMessageAndAskForSignature(data, userAccount);
-
       if (isError(signatureOrError as Error)) {
         return;
       }
-
       const request = {
         data,
         signature: signatureOrError,
         account: userAccount,
         salt: data.salt,
       };
-
       await api.post('images/mint', request);
       const ipfsUploadResult = await api.post('images/mint', request);
       if (ipfsUploadResult.status === 200) {
@@ -369,39 +369,59 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   }
 
   get mintValueView() {
-    return new Web3Helper().fromWei(this.mintValue);
+    return new Web3Helper().fromWei(this.costToken);
   }
 
   async mint() {
     try {
       if (this.responseMint) {
         this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
-        await this.personalItemContract.mint(
-          this.responseMint.data.name,
-          this.responseMint.data.rawImageHash,
-          this.responseMint.data.creatorRoyalty,
-          this.responseMint.tokenURI,
-          this.account,
-          this.mintValue
-        ).on('transactionHash', () => {
-          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
-        }).on('error', () => {
-          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
-          this.okBtnDisabled = false;
-          setTimeout(() => {
+        if (this.costToken) {
+          await this.algoPainterTokenProxy.approve(
+            this.personalItemContractAddress,
+            this.costToken,
+            this.account
+          ).on('transactionHash', () => {
+            this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
+          }).on('error', () => {
+            this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
             this.okBtnDisabled = false;
-          }, 1000);
-        }).catch(e => {
-          console.error(e);
-        });
-        this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
-        setTimeout(() => {
-          this.OpenModal = false;
-          this.okBtnDisabled = false;
-          void this.$router.push('/my-gallery')
-        }, 3000);
-      } else {
-        throw new Error('NFT Mint information is missing.');
+            setTimeout(() => {
+              this.okBtnDisabled = false;
+            }, 1000);
+          }).catch(e => {
+            console.error(e);
+          });
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
+        }
+        if (this.responseMint) {
+          await this.personalItemContract.mint(
+            this.responseMint.data.name,
+            this.responseMint.data.rawImageHash,
+            this.responseMint.data.creatorRoyalty,
+            this.responseMint.tokenURI,
+            this.account,
+            this.mintValue
+          ).on('transactionHash', () => {
+            this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingConfirmation;
+          }).on('error', () => {
+            this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemError;
+            this.okBtnDisabled = false;
+            setTimeout(() => {
+              this.okBtnDisabled = false;
+            }, 1000);
+          }).catch(e => {
+            console.error(e);
+          });
+          this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemCreated;
+          setTimeout(() => {
+            this.OpenModal = false;
+            this.okBtnDisabled = false;
+            void this.$router.push('/my-gallery')
+          }, 3000);
+        } else {
+          throw new Error('NFT Mint information is missing.');
+        }
       }
     } catch (e) {
       console.log('error mint', e);
@@ -427,11 +447,9 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   display: flex;
   justify-content: center;
 }
-
 .preview-mobile{
     margin: 0;
   }
-
 @media (min-width: 1024px){
   .preview{
     position: fixed;
@@ -458,17 +476,13 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   align-items: center;
   display: flex;
   justify-content: center;
-
 }
-
 }
-
 .q-uploader-component-size {
   position: relative;
   width: auto;
   height: 15rem;
 }
-
 .q-upload-box {
   padding: 25px 50px 25px 50px;
   border: 2px dashed #f4538d;
@@ -480,7 +494,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   width: 200px;
   background: #f4538d;
 }
-
 .q-upload-label {
   font-family: Poppins;
   font-style: normal;
@@ -488,7 +501,6 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
   font-size: 16px;
   line-height: 24px;
 }
-
 input[type='file'] {
   display: none;
 }
@@ -520,7 +532,6 @@ input[type='file'] {
 .q-uploader__file--img {
   height: 430px;
 }
-
 .q-uploader {
   max-height: 100vh;
 }

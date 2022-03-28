@@ -31,6 +31,28 @@ export function getWalletConnectConfig(): IWalletConnectProviderOptions {
   }
 }
 
+export function getArtistCollectionAddress(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_ARTIST_COLLECTION_CONTRACT as string;
+    case 97:
+      return process.env.ALGOPAINTER_ARTIST_COLLECTION_CONTRACT as string;
+    default:
+      return process.env.ALGOPAINTER_ARTIST_COLLECTION_CONTRACT as string;
+  }
+}
+
+export function getArtistCollectionItemAddress(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_ARTIST_COLLECTION_ITEM_CONTRACT as string;
+    case 97:
+      return process.env.ALGOPAINTER_ARTIST_COLLECTION_ITEM_CONTRACT as string;
+    default:
+      return process.env.ALGOPAINTER_ARALGOPAINTER_ARTIST_COLLECTION_ITEM_CONTRACTTIST_COLLECTION_CONTRACT as string;
+  }
+}
+
 export function getAuctionSystemContractByNetworkId(id: number): string {
   switch (id) {
     case 56:

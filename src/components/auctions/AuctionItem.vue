@@ -78,7 +78,7 @@
         <div
           class="name"
         >
-          {{ $t('dashboard.homePage.symbol') }}{{ isHot.item.index }} {{ isHot.item.title }}
+          {{ $t('dashboard.homePage.symbol') }}{{ isHot.item.sequentialNumber ? isHot.item.sequentialNumber : isHot.item.index }} {{ isHot.item.title }}
         </div>
         <q-tooltip
           class="bg-primary"

@@ -16,3 +16,15 @@ export interface IAxiosPaginated {
   perPage: number;
   length: number;
 }
+
+export interface IAxiosIPFSPost {
+  config: any;
+  data: {
+    ipfsHash: string;
+    error?: string;
+  };
+  headers: any;
+  request: any;
+  status: number;
+  statusText: string;
+}

@@ -1,4 +1,5 @@
 <template>
+  <h4 class="q-mb-sm">{{ $t('dashboard.homePage.gwei') }}</h4>
   <div class="title">
     {{ $t('dashboard.newPainting.parameters') }}
   </div>
@@ -55,6 +56,7 @@
     :label="$t('dashboard.newPainting.leftInfoBtnName')"
     :class="[$q.screen.lt.sm || $q.screen.lt.md ? 'full-width q-mt-lg q-mb-lg' : 'full-width q-mt-lg']"
     color="primary"
+    :disable="isPreviewing"
     @click="generatePreview"
   />
   <q-dialog v-model="isMintDialogOpen" persistent>
@@ -72,14 +74,16 @@ import { Ref, Watch } from 'vue-property-decorator';
 import { QDialog } from 'quasar';
 import AlgoButton from 'components/common/Button.vue';
 import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
-import { IGweiItemParameters, IGweiParsedItemParameters, IGweiPayload, INewMintGwei } from 'src/models/INewPaintingGwei';
+import { IGweiItemParameters, IGweiParsedItemParameters, INewMintGwei } from 'src/models/INewPaintingGwei';
 import { NetworkInfo } from 'src/store/user/types';
 import { mapGetters } from 'vuex';
 import AlgoPainterGweiProxy from 'src/eth/AlgoPainterGweiItemProxy';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import { getGweiItemContractByNetworkId } from 'src/eth/Config';
 import { ICollectionInfo, IArtBasicInfo, MintStatus } from 'src/models/IMint';
-import IPFSHelper from 'src/helpers/IPFSHelper';
+import { PaintGwei } from 'src/services/painting.js';
+import { randomHex } from 'web3-utils';
+import { api } from 'src/boot/axios';
 
 class Props {
   collectionName = prop({
@@ -131,6 +135,13 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   isError: boolean = false;
   errorMessage: string = '';
   isConfigured: boolean = false;
+  isPreviewing: boolean = false;
+  img!: string;
+  gwei: any;
+  previewIPFSHash!: string | undefined;
+  rawIPFSHash!: string | undefined;
+  imgIPFSHash!: string | undefined;
+  descriptorIPFSHash!: string;
 
   receipt!: any;
 
@@ -160,16 +171,18 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
 
   created() {
     if (this.isConnected) {
-      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo)
-      this.gweiSystem = new AlgoPainterGweiProxy(this.networkInfo)
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
+      this.gweiSystem = new AlgoPainterGweiProxy(this.networkInfo);
+      this.gwei = new PaintGwei();
     }
   }
 
   @Watch('isConnected')
   onIsConnectedChanged() {
     if (this.isConnected) {
-      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo)
-      this.gweiSystem = new AlgoPainterGweiProxy(this.networkInfo)
+      this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
+      this.gweiSystem = new AlgoPainterGweiProxy(this.networkInfo);
+      this.gwei = new PaintGwei();
     }
   }
 
@@ -193,32 +206,63 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     this.hasAllowance = await this.algoPainterTokenProxy.allowance(this.account, this.gweiContractAddress);
   }
 
+  @Watch('isPreviewing')
+  async onIsPreviewingChanged() {
+    await this.$store
+      .dispatch({
+        type: 'mint/previewingStatus',
+        isPreviewing: this.isPreviewing,
+        collectionName: this.collectionName
+      })
+  }
+
   async generatePreview() {
     this.isError = false;
     this.errorMessage = '';
+    this.isPreviewing = true;
 
     this.parsedItem = {
+      parsedInspiration: this.item.inspiration.value,
       parsedText: this.item.text,
       parsedUseRandom: this.item.useRandom,
-      parsedInspiration: this.item.inspiration.value,
       parsedProbability: parseFloat((this.item.probability / 10).toFixed(1)),
+      parsedWallType: this.item.wallType.value,
       parsedOverlay: parseInt(this.item.overlay.value),
       parsedOverlayOpacity: parseFloat((Number(this.item.overlayOpacity) / 10).toFixed(1)),
-      parsedWallType: this.item.wallType.value,
     }
 
-    const previewUrl = (this.baseUrl) ? `${this.baseUrl}?width=300&height=300&ticks=${this.ticks}&text=${this.parsedItem.parsedText}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}` : '';
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    await this.gwei.generate({
+      finalWidth: 400,
+      finalHeight: 400,
+      inspiration: this.parsedItem.parsedInspiration,
+      text: this.parsedItem.parsedText,
+      useRandom: this.parsedItem.parsedUseRandom,
+      probability: this.parsedItem.parsedProbability,
+      useRandomOpacity: false,
+      wallType: this.parsedItem.parsedWallType,
+      overlay: this.parsedItem.parsedOverlay,
+      overlayOpacity: this.parsedItem.parsedOverlayOpacity
+    })
+      .then((img: string) => {
+        this.img = img;
+        this.setItemParameters(this.parsedItem).catch(console.error);
+        this.setPreviewUrl(img).catch(console.error);
+      })
+      .catch((e: any) => {
+        this.isError = true;
+        this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.message });
+      });
 
-    await this.setItemParameters();
-    await this.setPreviewUrl(previewUrl);
+    this.isPreviewing = false;
   }
 
-  async setItemParameters() {
+  async setItemParameters(parsedItem: IGweiParsedItemParameters) {
     await this.$store
       .dispatch({
         type: 'mint/itemParameters',
-        parsedItem: this.parsedItem,
-        collectionName: this.collectionName,
+        parsedItem: parsedItem,
+        collectionName: this.collectionName
       })
   }
 
@@ -227,7 +271,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       .dispatch({
         type: 'mint/previewUrl',
         previewUrl: previewUrl,
-        collectionName: this.collectionName,
+        collectionName: this.collectionName
       })
   }
 
@@ -236,10 +280,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     if (this.isMinting) {
       await this.mint();
     }
-  }
-
-  srcIPFS() {
-    return (this.baseUrl) ? `${this.baseUrl}?text=${encodeURIComponent(this.parsedItem.parsedText)}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}` : '';
   }
 
   async setIPFSUrl(IPFSUrl: string) {
@@ -279,33 +319,118 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     this.isMintDialogOpen = true;
     this.mintStatus = MintStatus.GeneratingPreviewFile;
 
-    const payload: IGweiPayload = {
-      image: this.srcIPFS(),
-      text: this.parsedItem.parsedText,
-      inspiration: this.parsedItem.parsedInspiration,
-      useRandom: this.parsedItem.parsedUseRandom,
-      probability: this.parsedItem.parsedProbability,
-      place: this.parsedItem.parsedWallType,
+    const previewPayload = {
+      name: this.artBasicInfo.name,
       description: this.artBasicInfo.description,
-      amount: this.gweiSystem.fromWei(this.collectionInfo.batchPriceBlockchain),
-      overlay: this.parsedItem.parsedOverlay,
-      overlayOpacity: this.parsedItem.parsedOverlayOpacity,
       mintedBy: this.account,
+      image: this.img,
+      fileName: randomHex(32) + '.png'
+    }
+
+    try {
+      const previewPiningResult = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
+      this.previewIPFSHash = previewPiningResult.data.ipfsHash;
+    } catch (e) {
+      this.setModalInitialState().catch(console.error);
+      this.mintStatus = MintStatus.GeneratingPreviewFileError;
+      this.isError = true;
+      this.errorMessage = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'preview' });
+      return;
     }
 
     this.mintStatus = MintStatus.GeneratingRawFile;
 
-    try {
-      const ipfsData: {path: string} = await IPFSHelper.addGwei(payload);
-      const ipfsPath = ipfsData.path;
-      this.tokenURI = 'https://ipfs.io/ipfs/' + ipfsPath;
-      await this.setIPFSUrl(this.srcIPFS());
-      this.mintStatus = MintStatus.CollectingUserConfirmations;
-    } catch (e) {
-      console.error(e);
-      this.mintStatus = MintStatus.GeneratingRawFileError;
-      await this.setModalInitialState();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const rawImg = await this.gwei.generate({
+      finalWidth: 2422,
+      finalHeight: 2422,
+      inspiration: this.parsedItem.parsedInspiration,
+      text: this.parsedItem.parsedText,
+      useRandom: this.parsedItem.parsedUseRandom,
+      probability: this.parsedItem.parsedProbability,
+      useRandomOpacity: false,
+      wallType: '0',
+      overlay: this.parsedItem.parsedOverlay,
+      overlayOpacity: this.parsedItem.parsedOverlayOpacity
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const img = await this.gwei.generate({
+      finalWidth: 2422,
+      finalHeight: 2422,
+      inspiration: this.parsedItem.parsedInspiration,
+      text: this.parsedItem.parsedText,
+      useRandom: this.parsedItem.parsedUseRandom,
+      probability: this.parsedItem.parsedProbability,
+      useRandomOpacity: false,
+      wallType: this.parsedItem.parsedWallType,
+      overlay: this.parsedItem.parsedOverlay,
+      overlayOpacity: this.parsedItem.parsedOverlayOpacity
+    })
+
+    const rawPayload = {
+      name: this.artBasicInfo.name,
+      description: this.artBasicInfo.description,
+      mintedBy: this.account,
+      image: rawImg,
+      fileName: randomHex(32) + '.png'
     }
+
+    const imgPayload = {
+      name: this.artBasicInfo.name,
+      description: this.artBasicInfo.description,
+      mintedBy: this.account,
+      image: img,
+      fileName: randomHex(32) + '.png'
+    }
+
+    try {
+      const rawPiningResult = await api.post('images/pintoipfs/FILE', rawPayload);
+      this.rawIPFSHash = rawPiningResult.data.ipfsHash;
+
+      const imgPiningResult = await api.post('images/pintoipfs/FILE', imgPayload);
+      this.imgIPFSHash = imgPiningResult.data.ipfsHash;
+    } catch (e) {
+      this.setModalInitialState().catch(console.error);
+      this.mintStatus = MintStatus.GeneratingRawFileError;
+      this.isError = true;
+      this.errorMessage = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'raw' });
+      return;
+    }
+
+    const descriptorPayload = {
+      name: this.artBasicInfo.name,
+      description: this.artBasicInfo.description,
+      amount: this.collectionInfo.batchPriceBlockchain,
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      image: `https://ipfs.io/ipfs/${this.imgIPFSHash}`,
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      previewImage: `https://ipfs.io/ipfs/${this.previewIPFSHash}`,
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      rawImage: `https://ipfs.io/ipfs/${this.rawIPFSHash}`,
+      collection: {
+        id: 0,
+        name: 'Gwei',
+      },
+      parameters: this.parsedItem,
+      mintedBy: this.account,
+    };
+
+    try {
+      const descriptorPinningResult = await api.post('images/pintoipfs/JSON', descriptorPayload);
+      this.descriptorIPFSHash = descriptorPinningResult.data.ipfsHash;
+
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      this.setIPFSUrl(`https://ipfs.io/ipfs/${this.rawIPFSHash}`).catch(console.error);
+    } catch (e) {
+      this.setModalInitialState().catch(console.error);
+      this.mintStatus = MintStatus.GeneratingDescriptorFileError;
+      this.isError = true;
+      this.errorMessage = this.$t('dashboard.newPainting.mintErrors.generating', { type: 'descriptor' });
+      return;
+    }
+
+    this.mintStatus = MintStatus.CollectingUserConfirmations;
   }
 
   @Watch('errorMessage')
@@ -335,7 +460,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       useRandom: this.parsedItem.parsedUseRandom === 'true',
       probability: this.parsedItem.parsedProbability * 10,
       place: Number(this.parsedItem.parsedWallType),
-      tokenURI: this.tokenURI,
+      tokenURI: 'https://ipfs.io/ipfs/' + this.descriptorIPFSHash,
       amount: this.collectionInfo.batchPriceBlockchain,
     };
 
@@ -346,6 +471,7 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
       await this.gweiSystem.mint(newMint, this.account);
       if (!this.isConfigured) {
         this.mintStatus = MintStatus.ItemMinted;
+        this.updateTopInfo().catch(console.error);
         await this.setFormInitialState();
       }
     } catch (e: any) {
@@ -369,6 +495,13 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
           this.errorMessage = this.$t('dashboard.newPainting.mintErrors.unexpected', { errorMsg: e.code });
       }
     }
+  }
+
+  async updateTopInfo() {
+    await this.$store
+      .dispatch({
+        type: 'mint/updateTopInfo'
+      })
   }
 
   async setFormInitialState() {

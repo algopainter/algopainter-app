@@ -17,7 +17,7 @@ module.exports = configure(function (ctx) {
     supportTS: {
       tsCheckerConfig: {
         eslint: {
-          enabled: true,
+          enabled: false,
           files: './src/**/*.{ts,tsx,js,jsx,vue}',
         },
       },
@@ -38,7 +38,7 @@ module.exports = configure(function (ctx) {
     extras: [
       // 'ionicons-v4',
       'mdi-v5',
-      // 'fontawesome-v5',
+      'fontawesome-v5',
       // 'eva-icons',
       // 'themify',
       // 'line-awesome',
@@ -77,12 +77,18 @@ module.exports = configure(function (ctx) {
       // https://v2.quasar.dev/quasar-cli/handling-webpack
       // "chain" is a webpack-chain object
       // https://github.com/neutrinojs/webpack-chain
-      chainWebpack(/* chain */) {
-        //
+      chainWebpack (chain) {
+        const nodePolyfillWebpackPlugin = require('node-polyfill-webpack-plugin')
+        chain.plugin('node-polyfill').use(nodePolyfillWebpackPlugin)
       },
 
       extendWebpack(cfg) {
-        cfg.plugins.push(new NodePolyfillPlugin());
+        cfg.resolve = {
+          ...cfg.resolve,
+          fallback: {
+            fs: false
+          }
+        }
       },
     },
 

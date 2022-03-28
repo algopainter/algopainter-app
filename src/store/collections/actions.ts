@@ -17,12 +17,19 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
         ? ''
         : collectionName;
     try {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=false`);
-      const userItems: string = res.data.count;
-      const images: [] = res.data;
-      this.commit('collections/SET_USER_ITEMS', userItems);
-      this.commit('collections/SET_IMAGES', images);
+      if (currentCollection === 'Personal Item') {
+        const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection.replace(/\s/g, '')}&onSale=false`);
+        const userItems: string = res.data.count;
+        const images: [] = res.data;
+        this.commit('collections/SET_USER_ITEMS', userItems);
+        this.commit('collections/SET_IMAGES', images);
+      } else {
+        const res = await api.get(`users/${account}/images?page=${page}&perPage=${perPage}&collectionName=${currentCollection}&onSale=false`);
+        const userItems: string = res.data.count;
+        const images: [] = res.data;
+        this.commit('collections/SET_USER_ITEMS', userItems);
+        this.commit('collections/SET_IMAGES', images);
+      }
     } catch (e) {
       console.log('error message - getUserItems');
     }
@@ -107,6 +114,37 @@ const actions: ActionTree<CollectionsStateInterface, StateInterface> = {
   },
   openNewPaintingModal() {
     this.commit('collections/SET_OPEN_NEW_PAINTING_MODAL');
+  },
+
+  async getReportAuctions(type, value) {
+    const artist = value.artist as string;
+    try {
+      const res = await api.get(`reports/artist/${artist}/auctions`);
+      const report: [] = res.data;
+      this.commit('collections/SET_REPORT_AUCTIONS', report);
+    } catch (e) {
+      console.log('error message - getReportAuctions');
+    }
+  },
+  async getReportMints(type, value) {
+    const artist = value.artist as string;
+    try {
+      const res = await api.get(`reports/artist/${artist}/mints`);
+      const report: [] = res.data;
+      this.commit('collections/SET_REPORT_MINTS', report);
+    } catch (e) {
+      console.log('error message - getReportMints');
+    }
+  },
+  async getReportUser(type, value) {
+    const account = value.account as string;
+    try {
+      const res = await api.get(`reports/user/${account}/auctions`);
+      const report: [] = res.data;
+      this.commit('collections/SET_REPORT_USER', report);
+    } catch (e) {
+      console.log('error message - getReportUser');
+    }
   },
 };
 

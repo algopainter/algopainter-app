@@ -7,6 +7,7 @@ export interface IAuctionCoin {
 }
 
 export const auctionCoins : IAuctionCoin[] = [
+  /*
   {
     value: '1',
     label: 'BTC',
@@ -14,6 +15,7 @@ export const auctionCoins : IAuctionCoin[] = [
     decimalPlaces: 18,
     img: '/images/BTC.svg',
   },
+  */
   {
     value: '2',
     label: 'BUSD',
@@ -28,6 +30,7 @@ export const auctionCoins : IAuctionCoin[] = [
     decimalPlaces: 18,
     img: '/images/ALGOP.svg',
   },
+  /*
   {
     value: '4',
     label: 'DAI',
@@ -35,4 +38,5 @@ export const auctionCoins : IAuctionCoin[] = [
     decimalPlaces: 18,
     img: '/images/DAI.svg',
   },
+  */
 ];

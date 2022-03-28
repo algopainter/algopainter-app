@@ -81,7 +81,7 @@
                 class="full-width btn-edit"
                 size="lg"
                 color="primary"
-                to="/edit-profile"
+                to="/edit-profile/editProfile"
               >
                 {{ $t('dashboard.homePage.editAccount') }}
               </algo-button>
@@ -113,15 +113,17 @@
                   {{ $t(`dashboard.algop`) }} {{ balance }}
                 </q-tooltip>
               </div>
-              <algo-button
-                size="lg"
-                color="primary"
-                type="a"
-                href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
-                target="_blank"
-              >
-                {{ $t('dashboard.homePage.buyAlgop') }}
-              </algo-button>
+              <div class="row justify-evenly q-gutter-sm">
+                <algo-button
+                  size="lg"
+                  color="primary"
+                  type="a"
+                  href="https://pancakeswap.finance/swap?outputCurrency=0xbee554dbbc677eb9fb711f5e939a2f2302598c75"
+                  target="_blank"
+                >
+                  {{ $t('dashboard.homePage.buyAlgop') }}
+                </algo-button>
+              </div>
             </div>
           </div>
         </div>
@@ -158,6 +160,7 @@ import AccountDetailsSkeleton from 'src/components/home-page/user-gallery-overvi
 export default class AccountDetails extends Vue {
   profile: IProfile = {};
   loadingProfile: boolean = true;
+  accounts: string = ''
 
   userItems = '0';
   userOnSale: string = '0';
@@ -364,6 +367,10 @@ export default class AccountDetails extends Vue {
 
 .text-email{
   color: black;
+}
+
+.btn-report{
+  top: 40%
 }
 
 </style>

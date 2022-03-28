@@ -16,6 +16,14 @@ export default {
     errorTypeImage: 'file type not allowed, allowed types are PNG, JPEG, JPG.',
     btnCreate: 'Create item',
     requiredField: 'Required field',
+    dateStart: 'Start date',
+    dateEnd: 'End date',
+    collections: {
+      batchPrice: 'BATCH PRICE({coin})',
+      remaining: 'REMAINING',
+      minted: 'MINTED',
+      endCollection: 'Collection ends in'
+    },
     fields: {
       uploadLabel: 'Upload File',
       titleLabel: 'Title',
@@ -68,4 +76,19 @@ export default {
       mintImageAvailable: 'YAY! Your artwork has been successfully minted.',
     }
   },
+  collectionModal:{
+    title: 'Create Collection',
+    approveSignature: 'Upload',
+    Awaiting: 'Upload',
+    confirmeSignature: 'Upload complete! Thank you.',
+    errorSignature: 'The upload failed, try again'
+  },
+  createCollection:{
+    title: 'Create Collection',
+    approveContractApproved: 'Verifying if the contract is already approved.',
+    approveContractInput: 'Awaiting confirmation.',
+    approveContractError: 'Error in contract approval. Please try again.',
+    approveContractConfirmation: 'Awaiting confirmation.',
+
+  }
 };

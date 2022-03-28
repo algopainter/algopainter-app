@@ -1,6 +1,57 @@
 [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_emergencyTimeInterval",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxCreatorRoyaltiesRates",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxPirsRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxBidbackRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_rewardsDistributor",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_auctionSystem",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_gwei",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_expression",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_gweiRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_expressionRate",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -212,6 +263,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getInEmncyState",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -263,6 +327,19 @@
       }
     ],
     "name": "getRoleMemberCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTimeSafety",
     "outputs": [
       {
         "internalType": "uint256",
@@ -347,6 +424,39 @@
       }
     ],
     "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "setEmergencyState",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "_inEmncyState",
+        "type": "bool"
+      }
+    ],
+    "name": "setInEmncyState",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_timeSafety",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTimeSafety",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -657,6 +767,30 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "nftAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "token",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCreatorRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getMaxCreatorRoyaltiesRate",
     "outputs": [
@@ -712,6 +846,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "emergencyTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

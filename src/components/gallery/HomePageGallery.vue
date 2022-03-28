@@ -1,22 +1,23 @@
+/* eslint-disable array-callback-return */
 <template>
-  <div v-if="loading === false">
+  <div v-if="loadingCollection === false">
     <q-page class="q-gutter-lg q-pb-lg">
       <div class="header q-gutter-xs">
-        <algo-button
-          v-for="(collection, i) in collections"
-          :key="i"
-          :label="collection.title"
-          :loading="
-            currentCollection._id == collection._id ? loadingCollection : false
-          "
-          class="q-mr-xs"
-          :class="[
-            currentCollection._id == collection._id
-              ? 'btn-selected'
-              : 'btn-unselected',
-          ]"
-          @click="collectionClicked(collection)"
-        />
+        <q-select
+          v-model="collectionsOptionLabel"
+          class="limit-text"
+          :options="collectionsOptions"
+          color="primary"
+          :loading="getCollectionsLoading"
+          rounded
+          outlined
+          bottom-slots
+          @update:model-value="filterCollection(collectionsOptionLabel)"
+        >
+          <template #before>
+            <q-icon name="filter_list" color="primary" />
+          </template>
+        </q-select>
       </div>
       <div class="flex justify-center">
         <gallery-item
@@ -55,12 +56,17 @@ import { Vue, Options } from 'vue-class-component';
 import { IGallery } from 'src/models/IGallery';
 import { GalleryItem } from 'components/gallery';
 import AlgoButton from 'components/common/Button.vue';
-import { ICollection } from 'src/models/ICollection';
+import ICollection from 'src/models/ICollection';
 import CollectionController from 'src/controllers/collection/CollectionController';
 import { Person } from 'src/models/IArt';
 import { IUser } from 'src/models/IUser';
 import { IImage } from 'src/models/IImage';
 import HomePageGallerySkeleton from 'components/gallery/galleryItem/HomePageGallerySkeleton.vue';
+
+interface OptionsCollection {
+  label: string;
+  id: string;
+}
 
 @Options({
   components: {
@@ -69,22 +75,32 @@ import HomePageGallerySkeleton from 'components/gallery/galleryItem/HomePageGall
     HomePageGallerySkeleton,
   },
 })
+
 export default class HomePageGallery extends Vue {
   currentCollection!: ICollection;
   collections: ICollection[] = [];
+  collectionsOptionLabel!: string ;
   currentCollectionGallery: IGallery[] = [];
-  loading: boolean = true;
+
   loadingBtn: boolean = false;
   loadingCollection: boolean = true;
   loadMoreCounter: number = 1;
   noMoreImages: boolean = false;
   btnLoadMoreMsg: string = 'Load More';
   images: [] = [];
+
+  result: IImage[] = []
+  labelActive: string[] = []
   imgIdArray: string[] = [];
+  currentCollectionTest: { label: string } = { label: 'All Collections' };
+  collectionFilter: unknown[] = [{ label: 'All Collections' }];
+  getCollectionsLoading: boolean = true;
 
   favoriteClicked() {
     this.$emit('favoriteClicked');
   }
+
+  collectionsOptions: OptionsCollection[] = []
 
   async loadMore() {
     this.loadMoreCounter++;
@@ -117,16 +133,16 @@ export default class HomePageGallery extends Vue {
     }
   }
 
-  async collectionClicked(collection: ICollection) {
+  async filterCollection(collection: OptionsCollection) {
     this.loadingCollection = true;
     this.imgIdArray = [];
     this.loadMoreCounter = 1;
     this.btnLoadMoreMsg = 'Load More';
     this.noMoreImages = false;
-    this.currentCollection = collection;
     const images = await new CollectionController().getCollectionsImages(
-      collection._id
+      collection.id
     );
+
     this.currentCollectionGallery = images.map((image) =>
       this.mapImageToGalleryItem(image)
     );
@@ -150,20 +166,26 @@ export default class HomePageGallery extends Vue {
       }
     });
     if (collections) {
-      this.collections = collections;
-      this.currentCollection = collections[0];
-      const images = await new CollectionController().getCollectionsImages(
-        collections[0]._id
-      );
-      this.currentCollectionGallery = images.map((image) =>
-        this.mapImageToGalleryItem(image)
-      );
+      collections.map(async(item) => {
+        const images = await new CollectionController().getCollectionsImages(
+          item._id
+        );
+        if (images.length > 0) {
+          this.imgIdArray.push(item._id)
+          this.collections.push(item)
+          this.collectionsOptions.push({ label: item.title, id: item._id })
+          this.labelActive.push(item.title)
+          this.currentCollectionGallery = images.map((image) =>
+            this.mapImageToGalleryItem(image)
+          );
+          this.collectionsOptionLabel = this.labelActive.shift() as string;
+        }
+        setTimeout(() => {
+          this.loadingCollection = false;
+          this.getCollectionsLoading = false;
+        }, 1000)
+      })
     }
-    this.currentCollectionGallery.forEach((item) => {
-      this.imgIdArray.push(item.id);
-    });
-    this.loading = false;
-    this.loadingCollection = false;
   }
 
   mapImageToGalleryItem(image: IImage) {
@@ -171,6 +193,7 @@ export default class HomePageGallery extends Vue {
       id: image._id,
       description: image.description,
       index: image.nft.index,
+      sequentialNumber: image.nft.sequentialNumber,
       art: {
         id: image._id,
         name: image.title,
@@ -213,12 +236,27 @@ export default class HomePageGallery extends Vue {
   border: 2px solid #f4538d;
 }
 
+.header{
+    width: 250px;
+  }
+
 body.screen--xs {
   .header {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
+}
+body.screen--md{
+  .header{
+    width: 250px;
+  }
+}
+.limit-text{
+    word-break: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .custom-skeleton-border {

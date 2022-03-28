@@ -26,6 +26,7 @@ export interface IAuctionItem {
     description: string;
     image: string;
     index: number;
+    sequentialNumber?: number;
     previewImage: string;
     rawImage: string;
     title: string;

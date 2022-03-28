@@ -400,7 +400,7 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   startOptions(date: string) {
-    return date > this.nowFormatted
+    return date >= this.nowFormatted
   }
 
   endOptions(date: string) {

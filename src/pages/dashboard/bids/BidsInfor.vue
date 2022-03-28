@@ -9,7 +9,7 @@
     />
     <div>
       <p :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'text-bold title' : 'row text-bold container-info q-ml-lg text-center']">
-        {{ `# ${bidsAuctions.item.index} ${bidsAuctions.item.title}` }}
+        {{ `# ${bidsAuctions.item.sequentialNumber ? bidsAuctions.item.sequentialNumber : bidsAuctions.item.index} ${bidsAuctions.item.title}` }}
       </p>
       <p :class="[$q.screen.lt.md || $q.screen.lt.sm ? ' title' : 'row container-info q-ml-lg text-center']">
         {{ bidsAuctions.item.description }}

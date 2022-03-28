@@ -30,7 +30,7 @@
     </q-card>
     <div class="details q-pa-sm">
       <div class="name">
-        {{ $t('dashboard.homePage.symbol') }}{{ art.nft.index }} {{ art.title }}
+        {{ $t('dashboard.homePage.symbol') }}{{ (art.nft.sequentialNumber ? art.nft.sequentialNumber : art.nft.index) }} {{ art.title }}
       </div>
       <q-tooltip class="bg-primary">
         {{ art.title }}

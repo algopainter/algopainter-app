@@ -193,6 +193,7 @@ export default class HomePageGallery extends Vue {
       id: image._id,
       description: image.description,
       index: image.nft.index,
+      sequentialNumber: image.nft.sequentialNumber,
       art: {
         id: image._id,
         name: image.title,

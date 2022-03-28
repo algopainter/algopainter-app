@@ -8,7 +8,7 @@
     <div class="col-12 col-md-3 col-lg-4 col-xl-3 col-sm-6 col-xs-12 text-last">
       <div class="text">
         <div class="text-title text-bold text-h6">
-          {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.item.index }}
+          {{ $t('dashboard.gallery.pirsTab.symbol') }}{{ art.item.sequentialNumber ? art.item.sequentialNumber : art.item.index }}
           {{ art.item.title }}
           <q-tooltip
             anchor="bottom middle"

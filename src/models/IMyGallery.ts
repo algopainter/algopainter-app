@@ -9,6 +9,7 @@ likes: number;
 nft: {
   image: string;
   index: number;
+  sequentialNumber?: number;
   parameters: {
     text: string;
     inspiration: string;

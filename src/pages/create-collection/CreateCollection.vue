@@ -309,7 +309,7 @@ export default class CreateCollection extends Vue {
       };
 
       const previewPayload = {
-        name: this.collectionData.aboutTheCollection.description,
+        name: randomHex(32) + '.png',
         description: this.collectionData.aboutTheCollection.description,
         mintedBy: this.userAccount,
         image: this.collectionData.aboutTheCollection.avatar,

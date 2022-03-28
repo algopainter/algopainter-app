@@ -282,10 +282,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
     }
   }
 
-  srcIPFS() {
-    return (this.baseUrl) ? `${this.baseUrl}?text=${encodeURIComponent(this.parsedItem.parsedText)}&inspiration=${this.parsedItem.parsedInspiration}&useRandom=${this.parsedItem.parsedUseRandom}&probability=${this.parsedItem.parsedProbability}&wallType=${this.parsedItem.parsedWallType}&overlay=${this.parsedItem.parsedOverlay}&overlayOpacity=${this.parsedItem.parsedOverlayOpacity}` : '';
-  }
-
   async setIPFSUrl(IPFSUrl: string) {
     await this.$store
       .dispatch({

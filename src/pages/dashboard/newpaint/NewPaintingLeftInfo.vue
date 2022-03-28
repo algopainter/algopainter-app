@@ -286,12 +286,18 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       return (coin.label === this.collectionInfo.collectionToken) ? coin.tokenAddress : '';
     });
 
+    const descriptionParams: any = {};
+
+    this.formParams.forEach((param, i) => {
+      descriptionParams[param.name] = this.parsedGeneratedParams[i];
+    })
+
     const descriptorPayload: IArtistCollectionTokenURI = {
       collectionId: this.collectionData.blockchainId.toString(),
       name: this.artBasicInfo.name,
       description: this.artBasicInfo.description,
       creatorRoyalty: this.collectionData.metrics.creatorPercentage,
-      params: this.parsedGeneratedParams,
+      params: descriptionParams,
       amount: this.collectionInfo.batchPriceCurrency,
       amountToken: token?.tokenAddress ? token?.tokenAddress.toString() : '',
       amountTokenSymbol: this.collectionInfo.collectionToken,

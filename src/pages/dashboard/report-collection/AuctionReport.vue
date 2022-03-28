@@ -68,13 +68,31 @@ export default class AuctionReport extends Vue {
       name: 'Creator gain',
       required: true,
       label: 'Creator gain',
-      field: (collectionReport:{toClaim: boolean, creator: string}) => collectionReport.toClaim ? `(waiting claim)` : `${collectionReport.creator || '-'}`,
+      field: (collectionReport:{toClaim: boolean, creator: string}) => collectionReport.toClaim ? '(Waiting claim)' : `${collectionReport.creator || '-'}`,
+      style: ('text-align: center')
+    },
+    {
+      name: 'Status',
+      required: true,
+      label: 'Status',
+      field: (collectionReport:{toClaim:boolean; sellDT: string}) => this.check(collectionReport.toClaim, collectionReport.sellDT),
       style: ('text-align: center')
     },
   ];
 
   formatDt(date: string) {
     return moment(date).format('DD/MM/YYYY hh:mm:ss')
+  }
+
+  check(claim: boolean, date:string) {
+    const time = moment().isAfter(date);
+    if (!time) {
+      return 'Auction is not over yet'
+    } else if (time && claim) {
+      return 'Waiting for the NFT claim'
+    } else if (time && !claim) {
+      return 'Available'
+    }
   }
 
   getReport() {

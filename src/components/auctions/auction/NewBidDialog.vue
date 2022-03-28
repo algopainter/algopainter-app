@@ -23,6 +23,7 @@
                 name="amount"
               >
                 <q-input
+                  ref="amountInput"
                   :model-value="field.value"
                   :label="$t('dashboard.auctionPage.amount')"
                   inputmode="number"
@@ -35,16 +36,16 @@
                   :error-message="errorMessage"
                   :rules="[
                     (val) =>
-                      val <= balance ||
+                      bidAmount <= balance ||
                       $t('dashboard.auctionPage.newBidModal.rules.noFunds'),
                     (val) =>
-                      val >= minimumBid ||
+                      bidAmount >= minimumBid ||
                       $t('dashboard.auctionPage.newBidModal.rules.minimumBid', {
                         coinSymbol: coinSymbol,
                         auctionMinimumBid: minimumValue,
                       }),
                     (val) =>
-                      val > highestBid ||
+                      bidAmount > highestBid ||
                       $t('dashboard.auctionPage.newBidModal.rules.highestBid', {
                         coinSymbol: coinSymbol,
                         minimumValue: minimumValue,
@@ -91,10 +92,10 @@
             <q-space />
             <div>
               <algo-button
-                type="submit"
                 color="primary"
                 :label="$t('dashboard.auctionPage.placeABid')"
                 :loading="placingBid"
+                @click="placeBid(bidAmount)"
               />
             </div>
           </q-card-section>
@@ -112,10 +113,9 @@
 
 <script lang="ts">
 import { Vue, Options, Ref, Prop, Watch } from 'vue-property-decorator';
-import { QDialog } from 'quasar';
+import { QDialog, QInput } from 'quasar';
 import { mapGetters } from 'vuex';
 import { Form as VForm, Field as VField } from 'vee-validate';
-
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 import AlgoPainterAuctionSystemProxy from 'src/eth/AlgoPainterAuctionSystemProxy';
 import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
@@ -140,10 +140,6 @@ enum PlacingBidStatus {
   BidCreated,
 }
 
-interface INewBid {
-  amount: number;
-}
-
 @Options({
   components: {
     AlgoButton,
@@ -162,6 +158,10 @@ interface INewBid {
 export default class NewBidDialog extends Vue {
   @Ref() dialogRef!: QDialog;
   @Prop() auction!: IAuctionItem;
+
+  declare $refs: {
+    amountInput: QInput;
+  };
 
   auctionSystemProxy!: AlgoPainterAuctionSystemProxy;
   auctionCoinTokenProxy!: ERC20TokenProxy;
@@ -343,7 +343,6 @@ export default class NewBidDialog extends Vue {
 
   updateAmount(handleFormInput: (value: number) => void, value: number) {
     this.bidAmount = Number(value);
-    handleFormInput(this.bidAmount);
   }
 
   async approveContractTransfer(amount: number) {
@@ -380,34 +379,38 @@ export default class NewBidDialog extends Vue {
     }
   }
 
-  async placeBid({ amount }: INewBid) {
-    try {
-      this.placingBid = true;
-      this.displayingStatus = true;
+  async placeBid(amount: number) {
+    void this.$refs.amountInput.validate();
 
-      const { decimalPlaces } = this.coinDetails;
+    if (amount <= this.balance && amount >= this.minimumBid && amount > this.highestBid) {
+      try {
+        this.placingBid = true;
+        this.displayingStatus = true;
 
-      const bidAmount = currencyToBlockchain(Number(amount), decimalPlaces);
+        const { decimalPlaces } = this.coinDetails;
 
-      await this.approveContractTransfer(bidAmount);
+        const bidAmount = currencyToBlockchain(Number(amount), decimalPlaces);
 
-      this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingInput;
+        await this.approveContractTransfer(bidAmount);
 
-      await this.auctionSystemProxy
-        .bid(this.auction.index, numberToString(bidAmount), this.userAccount)
-        .on('error', () => {
-          this.placingBidStatus = PlacingBidStatus.PlaceBidError;
-        })
-        .on('transactionHash', () => {
-          this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingConfirmation;
-        });
+        this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingInput;
 
-      this.placingBidStatus = PlacingBidStatus.BidCreated;
+        await this.auctionSystemProxy
+          .bid(this.auction.index, numberToString(bidAmount), this.userAccount)
+          .on('error', () => {
+            this.placingBidStatus = PlacingBidStatus.PlaceBidError;
+          })
+          .on('transactionHash', () => {
+            this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingConfirmation;
+          });
 
-      this.placingBid = false;
-    } catch (error) {
-      this.placingBidStatus = PlacingBidStatus.PlaceBidError;
-      this.placingBid = false;
+        this.placingBidStatus = PlacingBidStatus.BidCreated;
+
+        this.placingBid = false;
+      } catch (error) {
+        this.placingBidStatus = PlacingBidStatus.PlaceBidError;
+        this.placingBid = false;
+      }
     }
   }
 

@@ -76,7 +76,6 @@
             <q-input
               ref="fixedParamsName"
               v-model.trim="fixedParams[i].name"
-              placeholder="fixed name"
               label="name:"
               class="col-6 q-pr-md"
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
@@ -84,7 +83,6 @@
             <q-input
               ref="fixedParamsValue"
               v-model.trim="fixedParams[i].value"
-              placeholder="fixed value"
               class="col-6 q-pl-md"
               label="value:"
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
@@ -126,7 +124,6 @@
             <q-input
               ref="paramsName"
               v-model.trim="params[i].name"
-              placeholder="name"
               label="name:"
               class="col-6 q-pr-md"
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
@@ -134,7 +131,6 @@
             <q-input
               ref="paramsLabel"
               v-model.trim="params[i].label"
-              placeholder="value"
               class="col-6 q-pl-md"
               label="label:"
               :rules="[ val => validateIfEmpty(val) || emptyFieldErrMsg ]"
@@ -161,7 +157,6 @@
               v-if="params[i].dataType === 'string'"
               ref="paramsMaxLength"
               v-model.number="params[i].maxLength"
-              placeholder="64"
               label="Max length:"
               class="col-6 q-pl-md"
               mask="#"
@@ -195,7 +190,6 @@
             <q-input
               ref="paramsMin"
               v-model.number="params[i].min"
-              placeholder="0"
               label="Min:"
               class="col-6 q-pr-md"
               mask="#"
@@ -206,7 +200,6 @@
             <q-input
               ref="paramsMax"
               v-model.number="params[i].max"
-              placeholder="10"
               label="Max:"
               class="col-6 q-pl-md"
               mask="#"
@@ -226,7 +219,6 @@
               v-if="params[i].fieldType === 'Input Textfield'"
               ref="paramsDefault"
               v-model.number="params[i].defaultValue"
-              placeholder="10"
               label="Default value:"
               :type="type(i)"
               :maxlength="params[i].maxLength"

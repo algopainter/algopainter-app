@@ -5,5 +5,5 @@ export interface IReportEarnings {
     nft: string,
     sellDT: string,
     toClaim: boolean,
-    lastBid: string
+    lastBid: string,
 }

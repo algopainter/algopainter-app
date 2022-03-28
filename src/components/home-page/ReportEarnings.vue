@@ -76,6 +76,13 @@ export default class ReportEarnings extends Vue {
       field: (collectionReport:{Pirs: string}) => `${collectionReport.Pirs || '-'}`,
       style: ('text-align: center')
     },
+    {
+      name: 'Status',
+      required: true,
+      label: 'Status',
+      field: (collectionReport:{toClaim:boolean; sellDT: string}) => this.check(collectionReport.toClaim, collectionReport.sellDT),
+      style: ('text-align: center; color: red')
+    },
   ];
 
   formatDt(date: string) {
@@ -87,6 +94,17 @@ export default class ReportEarnings extends Vue {
     return this.$store.getters['user/account'] as string;
   }
 
+  check(claim: boolean, date:string) {
+    const time = moment().isAfter(date);
+    if (!time) {
+      return 'Auction is not over yet'
+    } else if (time && claim) {
+      return 'Waiting for the NFT claim'
+    } else if (time && !claim) {
+      return 'Available'
+    }
+  }
+
   getReport() {
     void this.$store.dispatch({
       type: 'collections/getReportUser',
@@ -96,7 +114,6 @@ export default class ReportEarnings extends Vue {
       const report = this.$store.getters['collections/GET_REPORT_USER'];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       this.collectionReport = report
-      console.log(' this.collectionReport', this.collectionReport)
     });
   }
 }

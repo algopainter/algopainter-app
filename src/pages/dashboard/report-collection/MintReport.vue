@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import { Vue } from 'vue-class-component';
+import moment from 'moment';
 import { IReportMints } from 'src/models/IReportMints';
 
 export default class MintReport extends Vue {
@@ -55,6 +56,13 @@ columns = [
     style: ('text-align: center')
 
   },
+  {
+    name: 'Status',
+    required: true,
+    label: 'Status',
+    field: (collectionReport:{toClaim:boolean; sellDT: string}) => this.check(collectionReport.toClaim, collectionReport.sellDT),
+    style: ('text-align: center; color: red')
+  },
 ]
 
 mounted() {
@@ -64,6 +72,17 @@ mounted() {
 get accountAddress() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   return this.$store.getters['user/account'] as string;
+}
+
+check(claim: boolean, date:string) {
+  const time = moment().isAfter(date);
+  if (!time) {
+    return 'Auction is not over yet'
+  } else if (time && claim) {
+    return 'Waiting for the NFT claim'
+  } else if (time && !claim) {
+    return 'Available'
+  }
 }
 
 getReport() {

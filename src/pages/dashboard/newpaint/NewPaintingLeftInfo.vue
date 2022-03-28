@@ -36,6 +36,7 @@ import MintDialog from 'pages/dashboard/newpaint/MintDialog.vue';
 import { api } from 'src/boot/axios';
 import { randomHex } from 'web3-utils';
 import { auctionCoins } from 'src/helpers/auctionCoins';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 
 class Props {
   formParams = prop({
@@ -83,6 +84,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
   algoPainterArtistCollection!: AlgoPainterArtistCollection;
   algoPainterTokenProxy!: AlgoPainterTokenProxy;
   isPinningPreviewUrl: boolean = false;
+  BUSDTokenProxy!: ERC20TokenProxy;
 
   collectionInfo!: ICollectionInfo;
   artBasicInfo!: IArtBasicInfo;
@@ -110,6 +112,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     if (this.isConnected) {
       this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
       this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
+      this.BUSDTokenProxy = new ERC20TokenProxy(auctionCoins[0].tokenAddress);
     }
   }
 
@@ -118,6 +121,7 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
     if (this.isConnected) {
       this.algoPainterArtistCollection = new AlgoPainterArtistCollection(this.networkInfo);
       this.algoPainterTokenProxy = new AlgoPainterTokenProxy(this.networkInfo);
+      this.BUSDTokenProxy = new ERC20TokenProxy(auctionCoins[0].tokenAddress);
     }
   }
 
@@ -392,7 +396,15 @@ export default class NewPaintingLeftInfo extends Vue.with(Props) {
       this.isConfigured = false;
 
       this.mintStatus = MintStatus.MintAwaitingInput;
-      await this.algoPainterTokenProxy.approve(this.artistCollectionItemContractAddress, this.collectionInfo.batchPriceBlockchain.toString(), this.account);
+      if (this.collectionInfo.collectionToken === 'ALGOP') {
+        await this.algoPainterTokenProxy.approve(this.artistCollectionItemContractAddress, this.collectionInfo.batchPriceBlockchain.toString(), this.account);
+      } else if (this.collectionInfo.collectionToken === 'BUSD') {
+        const allowance = await this.BUSDTokenProxy.allowance(this.account, this.artistCollectionItemContractAddress);
+
+        if (allowance < Number(this.collectionInfo.batchPriceBlockchain)) {
+          await this.BUSDTokenProxy.approve(this.artistCollectionItemContractAddress, this.collectionInfo.batchPriceBlockchain.toString(), this.account);
+        }
+      }
 
       await this.algoPainterArtistCollection.mint(
         this.artBasicInfo.name,

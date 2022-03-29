@@ -683,20 +683,23 @@ export default {
       hasSpecialParams: 'My collection does not take size params in the url',
       hasSizeInUrl: 'The url should contain a size param instead of width and heigth params',
       previewForm: 'Preview form',
+      help: 'If you need any help registering your collection, do not hesitate to contact us: contact@algopainter.art',
       url: 'Url:',
-      goBack: 'return'
+      goBack: 'return',
     },
     stepFour: {
       summary: 'Summary',
       verify: 'Confirm that all field are correct',
       feeChecked: 'I am aware that I will be paying {fee} {token} to register this collection.',
       feeError: 'Please confirm that you are aware of the fee!',
+      reprovalError: 'Please confirm that you are aware that your collection might not be approved!',
       formChecked: 'I checked the form and everything is correct.',
       formError: 'Please confirm that the information in the form is correct!',
       startTimeErrMsg: 'The date to start generating arts for your collection is not valid!',
       endTimeErrMsg: 'The date to stop generating arts for your collection is not valid!',
       collectionNameErrMsg: 'The collection name is already in use!',
       tokenErrMsg: 'The token you chose for your collection is unavailable now, try again later!',
+      reprovalChance: 'I am aware that this collection will be analysed by AlgoPainter team and it susceptible to reproval.',
       ipfsErr: 'We could not upload the avatar image to IPFS. Try another image or contact us!'
     }
   },

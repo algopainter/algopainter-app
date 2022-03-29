@@ -1,4 +1,4 @@
-<template v-if="registerPrice">
+<template>
   <h5 class="text-bold">{{ $t('dashboard.createCollection.stepFour.summary') }}</h5>
   <div v-if="!isPreviewingForm">
     <div class="flex justify-center align-center">
@@ -155,8 +155,13 @@
       color="primary"
     />
     <q-checkbox
+      v-model="isAwareOfReprovalChange"
+      :label="$t('dashboard.createCollection.stepFour.reprovalChance')"
+      color="primary"
+    />
+    <q-checkbox
       v-model="isFeeChecked"
-      :label="$t('dashboard.createCollection.stepFour.feeChecked', {fee: registerPrice, token: 'ALGOP'})"
+      :label="$t('dashboard.createCollection.stepFour.feeChecked', {fee: displayPrice, token: 'ALGOP'})"
       color="primary"
     />
   </div>
@@ -205,6 +210,12 @@ class Props {
     required: true,
     default: ''
   });
+
+  displayPrice = prop({
+    type: String,
+    required: true,
+    default: ''
+  });
 }
 
 @Options({
@@ -225,10 +236,10 @@ class Props {
 export default class CollectionSummary extends Vue.with(Props) {
   algoPainterArtistCollection!: AlgoPainterArtistCollection;
   networkInfo!: NetworkInfo;
-  registerPrice!: string;
 
-  isFeeChecked: boolean = false;
   isFormChecked: boolean = false;
+  isAwareOfReprovalChange: boolean = false;
+  isFeeChecked: boolean = false;
   isError: boolean = false;
   errorMsg: string = '';
   isVerifyingTheForm: boolean = false;
@@ -246,11 +257,10 @@ export default class CollectionSummary extends Vue.with(Props) {
     return this.$store.state.user.account;
   }
 
-  async mounted() {
+  mounted() {
     this.startDT = moment(this.collectionData.collectionMetrics.startDT).format('MMMM Do YYYY, h:mm:ss a');
     this.endDT = moment(this.collectionData.collectionMetrics.endDT).format('MMMM Do YYYY, h:mm:ss a');
 
-    this.registerPrice = await this.algoPainterArtistCollection.getCollectionPrice();
     void this.loadUserProfile();
   }
 
@@ -293,6 +303,8 @@ export default class CollectionSummary extends Vue.with(Props) {
       this.errorMsg = this.$t('dashboard.createCollection.stepFour.feeError');
     } else if (!this.isFormChecked) {
       this.errorMsg = this.$t('dashboard.createCollection.stepFour.formError');
+    } else if (!this.isAwareOfReprovalChange) {
+      this.errorMsg = this.$t('dashboard.createCollection.stepFour.reprovalError');
     } else {
       this.isError = false;
       this.isVerifyingTheForm = false;

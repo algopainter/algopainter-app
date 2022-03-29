@@ -42,7 +42,10 @@
         icon="summarize"
         :done="step > 4"
       >
-        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" :call-err-msg="errMsg" @data="storeData" @verify="verifyStepFour" />
+        <collection-summary
+          :check-form="verifyFormFour" :collection-data="collectionData" :call-err-msg="errMsg" :display-price="displayPrice" @data="storeData"
+          @verify="verifyStepFour"
+        />
       </q-step>
 
       <template #navigation>
@@ -109,6 +112,7 @@ export default class CreateCollection extends Vue {
   artistCollection = <AlgoPainterArtistCollection>{};
   registerPrice!: string;
   networkinfo?: NetworkInfo;
+  displayPrice!: string;
 
   PriceType = PriceType;
   isConnected?: boolean;
@@ -153,6 +157,7 @@ export default class CreateCollection extends Vue {
 
   async mounted() {
     await this.registerCollection();
+    this.displayPrice = await this.artistCollection.getCollectionPrice();
   }
 
   @Watch('step')

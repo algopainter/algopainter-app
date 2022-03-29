@@ -267,6 +267,7 @@
           v-model="generatePreviewUrl"
           readonly
         />
+        <p style="margin-top:24px;">{{ $t('dashboard.createCollection.stepThree.help') }}</p>
       </q-form>
     </div>
     <div

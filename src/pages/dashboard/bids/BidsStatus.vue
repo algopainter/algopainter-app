@@ -49,7 +49,7 @@
         <div class="col q-gutter-sm">
           <algo-button v-if="endedAuction == false" size="lg" color="primary" :label="$t('dashboard.bid.bidAgain')" :to="`/auctions/${auctionItem._id}`" />
           <div v-if="hasReturn">
-            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid',{amountRemove: amountToReturn, token: auctionItem.minimumBid.tokenSymbol})" class="remove" @click="claimBid" />
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid',{amountRemove: amountToReturn, token: auctionItem.minimumBid.tokenSymbol})" class="remove" @click="openModalWithdraw" />
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@
         </div>
         <div class="col q-gutter-sm">
           <div v-if="hasReturn">
-            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid',{amountRemove: amountToReturn, token: auctionItem.minimumBid.tokenSymbol })" class="remove" @click="claimBid" />
+            <algo-button size="lg" color="primary" :label="$t('dashboard.bid.removeBid',{amountRemove: amountToReturn, token: auctionItem.minimumBid.tokenSymbol })" class="remove" @click="openModalWithdraw" />
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@
       <remove-bid :remove-bid-status="removeBidStatus" @request-close="onCloseStatusDialog" />
     </q-dialog>
     <q-dialog v-model="displayingClaimBid" persistent>
-      <claim-bid :remove-bid-status="removeBidStatus" @request-close="onCloseStatusDialog" />
+      <claim-bid :remove-bid-status="removeBidStatus" :show-button="showButton" @request-close="onCloseStatusDialog" @claim="claimBid" />
     </q-dialog>
   </div>
 </template>
@@ -137,6 +137,7 @@ export default class BidsStatus extends Vue.with(Props) {
   displayingStatus: boolean = false;
   displayingRemoveBid: boolean = false;
   displayingClaimBid: boolean = false;
+  showButton: boolean = false;
   myTotalBids: number = 0
   btnResult!: string;
   myBidsResult!: string;
@@ -242,9 +243,13 @@ export default class BidsStatus extends Vue.with(Props) {
     this.displayingClaimBid = false;
   }
 
-  async claimBid() {
-    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
+  openModalWithdraw() {
     this.displayingClaimBid = true;
+  }
+
+  async claimBid() {
+    this.showButton = true;
+    this.auctionSystem = new AlgoPainterAuctionSystemProxy(this.networkInfo);
     this.removeBidStatus = RemoveBidStatus.RemoveBidAwaitingInput;
     await this.auctionSystem.withdraw(
       this.auctionItem.index,

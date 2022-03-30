@@ -267,6 +267,7 @@
           v-model="generatePreviewUrl"
           readonly
         />
+        <p style="margin-top:24px;">{{ $t('dashboard.createCollection.stepThree.contact', {email: 'contact@algopainter.art'}) }}</p>
       </q-form>
     </div>
     <div

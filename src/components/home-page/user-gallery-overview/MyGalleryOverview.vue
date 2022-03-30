@@ -424,7 +424,7 @@ export default class MyGalleryOverview extends Vue {
   maxItemsPerPage: number = 9;
 
   currentCollection: { label: string } = { label: 'All Collections' };
-  collectionFilter: unknown[] = [{ label: 'All Collections' }];
+  collectionFilter: unknown[] = [{ label: 'All Collections' }, { label: 'Personal Item' }];
   getCollectionsLoading: boolean = true;
 
   galleryTabs: IGalleryTab[] = [

@@ -396,11 +396,11 @@ export default class CollectionMetrics extends Vue.with(Props) {
   }
 
   get nowFormatted() {
-    return moment().format('YYYY/MM/DD');
+    return moment().add(5, 'days').format('YYYY/MM/DD');
   }
 
   startOptions(date: string) {
-    return date >= this.nowFormatted
+    return date > this.nowFormatted
   }
 
   endOptions(date: string) {

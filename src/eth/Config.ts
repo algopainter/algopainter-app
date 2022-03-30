@@ -118,3 +118,14 @@ export function getExpressionItemContractByNetworkId(id: number): string {
       return process.env.ALGOPAINTER_EXPRESSION_ITEM_CONTRACT_97 as string;
   }
 }
+
+export function getAlgopTokenContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.VUE_APP_ALGOP_TOKEN_ADDRESS as string;
+    case 97:
+      return process.env.VUE_APP_ALGOP_TOKEN_ADDRESS as string;
+    default:
+      return process.env.VUE_APP_ALGOP_TOKEN_ADDRESS as string;
+  }
+}

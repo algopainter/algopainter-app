@@ -697,7 +697,8 @@ export default {
       endTimeErrMsg: 'The date to stop generating arts for your collection is not valid!',
       collectionNameErrMsg: 'The collection name is already in use!',
       tokenErrMsg: 'The token you chose for your collection is unavailable now, try again later!',
-      ipfsErr: 'We could not upload the avatar image to IPFS. Try another image or contact us!'
+      ipfsErr: 'We could not upload the avatar image to IPFS. Try another image or contact us!',
+      noFunds: 'You do not have enough ALGOP to register this collection. Buy some!'
     }
   },
   verifyCollection: {

@@ -683,7 +683,7 @@ export default {
       hasSpecialParams: 'My collection does not take size params in the url',
       hasSizeInUrl: 'The url should contain a size param instead of width and heigth params',
       previewForm: 'Preview form',
-      help: 'If you need any help registering your collection, do not hesitate to contact us: contact@algopainter.art',
+      contact: 'If you need any help registering your collection, do not hesitate to contact us: {email}',
       url: 'Url:',
       goBack: 'return',
     },

@@ -35,7 +35,7 @@ const routes: RouteRecordRaw[] = [
                 to.params.account = userAccount;
                 next();
               } else {
-                next({ name: '404' });
+                next({ name: 'noUserFound' });
               }
             });
           }
@@ -174,6 +174,15 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/dashboard/validate-collection/ValidateCollection.vue'),
       },
     ],
+  },
+
+  {
+    name: 'noUserFound',
+    path: '/no-user-found',
+    component: () => import('pages/NoUserFound.vue'),
+    /*
+    beforeEnter: (to, from, next) => {
+    */
   },
 
   // Always leave this as last one,

@@ -42,7 +42,10 @@
         icon="summarize"
         :done="step > 4"
       >
-        <collection-summary :check-form="verifyFormFour" :collection-data="collectionData" :call-err-msg="errMsg" @data="storeData" @verify="verifyStepFour" />
+        <collection-summary
+          :check-form="verifyFormFour" :collection-data="collectionData" :call-err-msg="errMsg" :display-price="displayPrice" @data="storeData"
+          @verify="verifyStepFour"
+        />
       </q-step>
 
       <template #navigation>
@@ -83,8 +86,9 @@ import AlgoPainterArtistCollection, { PriceType, ArtistCollectionStatus } from '
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import moment from 'moment';
 import { toWei, randomHex } from 'web3-utils'
-import { getArtistCollectionAddress } from 'src/eth/Config';
+import { getAlgopTokenContractByNetworkId, getArtistCollectionAddress } from 'src/eth/Config';
 import { IAxiosIPFSPost } from 'src/models/IAxios';
+import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 
 @Options({
   components: {
@@ -109,6 +113,7 @@ export default class CreateCollection extends Vue {
   artistCollection = <AlgoPainterArtistCollection>{};
   registerPrice!: string;
   networkinfo?: NetworkInfo;
+  displayPrice!: string;
 
   PriceType = PriceType;
   isConnected?: boolean;
@@ -144,7 +149,7 @@ export default class CreateCollection extends Vue {
     apiParameters: {} as ICollectionNFTCreationAPI,
   }
 
-  convertido: Date | string = '';
+  collectionCoinTokenProxy!: ERC20TokenProxy;
 
   created() {
     this.artistCollection = new AlgoPainterArtistCollection(this.networkInfo);
@@ -153,6 +158,9 @@ export default class CreateCollection extends Vue {
 
   async mounted() {
     await this.registerCollection();
+    this.displayPrice = await this.artistCollection.getCollectionPrice();
+    this.collectionCoinTokenProxy = new ERC20TokenProxy(this.algopTokenContractAddress);
+    this.registerPrice = toWei(await this.artistCollection.getCollectionPrice());
   }
 
   @Watch('step')
@@ -261,8 +269,16 @@ export default class CreateCollection extends Vue {
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           setTimeout(async() => {
             if (this.isFormFourVerified) {
+              this.errMsg = '';
               this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
               this.parseData();
+
+              const userBalance = await this.collectionCoinTokenProxy.balanceOf(this.userAccount);
+
+              if (userBalance < Number(this.registerPrice)) {
+                this.errMsg = this.$t('dashboard.createCollection.stepFour.noFunds');
+                return;
+              }
 
               this.openModalCreate = true;
               const isDataIPFSHashGenerated = await this.generateDataIPFSHash();
@@ -339,8 +355,6 @@ export default class CreateCollection extends Vue {
     }
 
     async createCollectionCall() {
-      this.errMsg = '';
-
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         await this.artistCollection.createCollectionCall(
@@ -383,55 +397,57 @@ export default class CreateCollection extends Vue {
     }
 
     async getAllowance() {
+      let isApproved;
+
       try {
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
-        this.registerPrice = toWei(await this.artistCollection.getCollectionPrice());
 
-        if (this.registerPrice) {
-          let allowance = false;
-
-          await this.algoPainterTokenProxy.approve(
-            this.artistCollectionContractAddress,
-            this.registerPrice,
-            this.userAccount
-          )
-            .on('error', () => {
-              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
-              setTimeout(() => {
-                this.okBtnDisabled = false;
-                return false;
-              }, 1000);
-            })
-            .on('transactionHash', () => {
-              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
-            })
-            .on('confirmation', () => {
-              allowance = true;
-            })
-            .catch(e => {
-              console.error(e);
-              allowance = false;
-            });
-
-          return allowance;
-        }
+        await this.algoPainterTokenProxy.approve(
+          this.artistCollectionContractAddress,
+          this.registerPrice,
+          this.userAccount
+        )
+          .on('error', () => {
+            this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
+            setTimeout(() => {
+              this.okBtnDisabled = false;
+              isApproved = false;
+            }, 1000);
+          })
+          .on('transactionHash', () => {
+            this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+          })
+          .on('confirmation', () => {
+            isApproved = true;
+          })
       } catch (e) {
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
         this.okBtnDisabled = false;
-        return false;
+        isApproved = false;
       }
+
+      return isApproved;
     }
 
     get artistCollectionContractAddress() {
       return getArtistCollectionAddress(this.networkInfo.id);
     }
 
+    get algopTokenContractAddress() {
+      return getAlgopTokenContractByNetworkId(this.networkInfo.id);
+    }
+
     async createCollection() {
       this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
 
-      const allowance = await this.getAllowance();
+      const allowance = await this.collectionCoinTokenProxy.allowance(
+        this.userAccount,
+        this.artistCollectionContractAddress
+      );
 
-      if (allowance) {
+      const isApproved = (allowance < Number(this.registerPrice)) ? await this.getAllowance() : true;
+
+      if (isApproved) {
         this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
 
         await this.artistCollection.createCollection(
@@ -467,7 +483,3 @@ export default class CreateCollection extends Vue {
     margin: 0px;
   }
 </style>
-
-function randomHex(arg0: number) {
-  throw new Error('Function not implemented.');
-}

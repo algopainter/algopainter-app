@@ -47,7 +47,23 @@
         </div>
       </div>
     </q-card-section>
-    <q-card-section class="flex justify-end">
+    <q-card-section>
+      <q-checkbox v-model="checkRemove" :label="$t('dashboard.auctionPage.textRemoveBid')" />
+    </q-card-section>
+    <q-card-section v-if="!showButton" class="flex justify-end q-gutter-sm">
+      <algo-button
+        :label="$t('dashboard.auctionPage.agreeRemoveBid')"
+        color="primary"
+        :disable="!checkRemove"
+        @click="$emit('claim')"
+      />
+      <algo-button
+        label="Cancel"
+        color="primary"
+        @click="$emit('requestClose')"
+      />
+    </q-card-section>
+    <q-card-section v-else class="flex justify-end">
       <algo-button
         :label="$t('dashboard.auctionPage.okButton')"
         color="primary"
@@ -71,8 +87,10 @@ import { RemoveBidStatus } from 'src/eth/AlgoPainterAuctionSystemProxy';
 })
 export default class ClaimBid extends Vue {
   @Prop({ required: true }) removeBidStatus!: RemoveBidStatus;
+  @Prop({ required: true }) showButton!: boolean;
 
   RemoveBidStatus = RemoveBidStatus;
+  checkRemove: boolean = false;
 
   @Watch('this.endAuctionStatus')
   onPropertyChanged() {

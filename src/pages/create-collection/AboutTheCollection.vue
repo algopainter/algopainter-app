@@ -37,15 +37,6 @@
                 :error-message="$t('dashboard.createCollection.aboutTheCollection.nameWebSite')"
                 :label="$t('dashboard.createCollection.aboutTheCollection.website')"
               />
-              <!-- <q-input
-                ref="customProfile"
-                v-model="fields.customProfile"
-                class="input col-sm-12 col-md-6 q-pr-md"
-                :label="$t('dashboard.createCollection.aboutTheCollection.customUrl')"
-                prefix="appv2.algopainter.art/collection/"
-                :rules="[ name => name.length != 0]"
-                :error-message="$t('dashboard.createCollection.aboutTheCollection.custonError')"
-              /> -->
               <q-input
                 ref="description"
                 v-model="fields.description"
@@ -60,6 +51,11 @@
                 autogrow
               >
               </q-input>
+              <a href="/web/viewer.html?file=Algorithmic_Artists.pdf">{{ $t('dashboard.createCollection.aboutTheCollection.pdf') }}</a>
+              <!-- <algo-button
+                :label="$t('dashboard.createCollection.aboutTheCollection.download')"
+                color="primary"
+              /> -->
             </div>
             <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-gutter-xl column  justify-center items-center content-center' : 'column  justify-center items-center content-center avatar']">
               <div class="column  justify-center items-center content-center">
@@ -103,6 +99,7 @@ import { QInput } from 'quasar';
 import { Vue, prop, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import Error from './Error.vue';
+import AlgoButton from 'src/components/common/Button.vue'
 
 class Props {
   step = prop({
@@ -119,6 +116,7 @@ class Props {
 @Options({
   components: {
     Error,
+    AlgoButton
   }
 })
 export default class AboutTheCollection extends Vue.with(Props) {

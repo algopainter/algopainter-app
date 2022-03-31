@@ -51,11 +51,12 @@
                 autogrow
               >
               </q-input>
-              <a href="/web/viewer.html?file=Algorithmic_Artists.pdf">{{ $t('dashboard.createCollection.aboutTheCollection.pdf') }}</a>
-              <!-- <algo-button
-                :label="$t('dashboard.createCollection.aboutTheCollection.download')"
-                color="primary"
-              /> -->
+              <a
+                style="color:#F4538D; cursor:pointer"
+                @click="downloadPdf"
+              >
+                {{ $t('dashboard.createCollection.aboutTheCollection.pdf') }}
+              </a>
             </div>
             <div :class="[$q.screen.lt.md || $q.screen.lt.sm ? 'q-gutter-xl column  justify-center items-center content-center' : 'column  justify-center items-center content-center avatar']">
               <div class="column  justify-center items-center content-center">
@@ -99,7 +100,7 @@ import { QInput } from 'quasar';
 import { Vue, prop, Options } from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import Error from './Error.vue';
-import AlgoButton from 'src/components/common/Button.vue'
+import { saveAs } from 'file-saver';
 
 class Props {
   step = prop({
@@ -115,8 +116,7 @@ class Props {
 
 @Options({
   components: {
-    Error,
-    AlgoButton
+    Error
   }
 })
 export default class AboutTheCollection extends Vue.with(Props) {
@@ -154,6 +154,25 @@ export default class AboutTheCollection extends Vue.with(Props) {
 
   mounted() {
     void this.getCollectionName()
+  }
+
+  downloadPdf() {
+    const oReq = new XMLHttpRequest();
+    const URLToPDF = 'https://ipfs.io/ipfs/QmPLpvRBmUQoTVm6vhzNzAAezAtZXwqGkNhZiFwP7oLMZ6';
+
+    oReq.open('GET', URLToPDF, true);
+
+    oReq.responseType = 'blob';
+
+    oReq.onload = function() {
+      const file = new Blob([oReq.response], {
+        type: 'application/pdf'
+      });
+
+      saveAs(file, 'Algorithmic_Artists.pdf');
+    };
+
+    oReq.send();
   }
 
    @Watch('checkForm')
@@ -287,5 +306,9 @@ input[type='file'] {
 
 .avatar{
   margin-right: 10%;
+}
+
+a {
+  text-decoration: none;
 }
 </style>

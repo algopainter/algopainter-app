@@ -631,8 +631,7 @@ export default {
       enableAvatar: 'Image field required',
       nameCollectionUse: 'Collection name already in use',
       nameWebSite: 'WebSite or Portfolio already in use',
-      pdf: "Need help registering your collection? Download the manual. It's a quick read!",
-      download: 'Download'
+      pdf: "Need help registering your collection? Download the manual. It's a quick read!"
     },
     stepTwo: {
       amount: 'NFT amount:',

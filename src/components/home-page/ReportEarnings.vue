@@ -19,18 +19,36 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 import moment from 'moment';
 import { IReportEarnings } from 'src/models/IReportEarnings';
+import AlgoPainterRewardsSystemProxy from 'src/eth/AlgoPainterRewardsSystemProxy';
+import { mapGetters } from 'vuex';
+import { NetworkInfo } from 'src/store/user/types';
+import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 
+@Options({
+  computed: {
+    ...mapGetters('user', ['networkInfo', 'account', 'isConnected']),
+  },
+})
 export default class ReportEarnings extends Vue {
- dataform: string = '';
- haveEarnings: boolean = false;
-
+  dataform: string = '';
+  haveEarnings: boolean = false;
   collectionReport: IReportEarnings[]= [];
+  rewardsSystem: AlgoPainterRewardsSystemProxy = <AlgoPainterRewardsSystemProxy>{};
+  ratesSystem: AlgoPainterBidBackPirsProxy = <AlgoPainterBidBackPirsProxy>{};
+  networkInfo: NetworkInfo = <NetworkInfo>{};
+  account: string = '';
+  isConnected: boolean = false;
 
-  mounted() {
-    void this.getReport()
+  created() {
+    this.rewardsSystem = new AlgoPainterRewardsSystemProxy(this.networkInfo);
+    this.ratesSystem = new AlgoPainterBidBackPirsProxy(this.networkInfo);
+  }
+
+  async mounted() {
+    await this.getReport();
   }
 
   columns = [
@@ -38,55 +56,55 @@ export default class ReportEarnings extends Vue {
       name: 'end of auction',
       required: true,
       label: 'End of auction',
-      field: (collectionReport:{sellDT: string}) => this.formatDt(collectionReport.sellDT),
+      field: (collectionReport: IReportEarnings) => this.formatDt(collectionReport.sellDT),
       style: ('text-align: center')
     },
     {
       name: 'Art',
       required: true,
       label: 'Art',
-      field: (collectionReport: { nft: string }) => `${collectionReport.nft || '-'}`,
+      field: (collectionReport: IReportEarnings) => `#${collectionReport.nft || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'Collection',
       required: true,
       label: 'Collection',
-      field: (collectionReport: { collection: string }) => `${collectionReport.collection || '-'}`,
+      field: (collectionReport: IReportEarnings) => `${(collectionReport.collection == 'PersonalItem' ? 'Personal' : collectionReport.collection) || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'Sale Value',
       required: true,
       label: 'Sale Value',
-      field: (collectionReport:{amount: string}) => `${collectionReport.amount || '-'}`,
+      field: (collectionReport: IReportEarnings) => `${collectionReport.amount || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'bidback gain',
       required: true,
       label: 'Bidback Gain',
-      field: (collectionReport:{Bidback: string}) => `${collectionReport.Bidback || '-'}`,
+      field: (collectionReport: IReportEarnings) => `${collectionReport.bidback || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'PIRS gain',
       required: true,
       label: 'PIRS Gain',
-      field: (collectionReport:{Pirs: string}) => `${collectionReport.Pirs || '-'}`,
+      field: (collectionReport: IReportEarnings) => `${collectionReport.pirs || '-'}`,
       style: ('text-align: center')
     },
     {
       name: 'Status',
       required: true,
       label: 'Status',
-      field: (collectionReport:{toClaim:boolean; sellDT: string}) => this.check(collectionReport.toClaim, collectionReport.sellDT),
+      field: (collectionReport: IReportEarnings) => this.check(collectionReport.toClaim, collectionReport.sellDT),
       style: ('text-align: center')
     },
   ];
 
-  formatDt(date: string) {
-    return moment(date).format('DD/MM/YYYY hh:mm:ss')
+  formatDt(date?: Date) {
+    return date ? moment(date).format('DD/MM/YYYY hh:mm:ss') : '-'
   }
 
   get accountAddress() {
@@ -94,7 +112,7 @@ export default class ReportEarnings extends Vue {
     return this.$store.getters['user/account'] as string;
   }
 
-  check(claim: boolean, date:string) {
+  check(claim: boolean, date?:Date) {
     const time = moment().isAfter(date);
     if (!time) {
       return 'Auction is not over yet'
@@ -105,18 +123,12 @@ export default class ReportEarnings extends Vue {
     }
   }
 
-  getReport() {
-    void this.$store.dispatch({
-      type: 'collections/getReportUser',
-      account: this.accountAddress
-    }).then(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const report = this.$store.getters['collections/GET_REPORT_USER'];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      this.collectionReport = report
-    });
+  async getReport() {
+    await this.$store.dispatch({ type: 'collections/getReportUser', account: this.accountAddress });
+    this.collectionReport = JSON.parse(JSON.stringify(this.$store.getters['collections/GET_REPORT_USER']));
   }
 }
+
 </script>
 <style lang="sass">
 .table-auction-report

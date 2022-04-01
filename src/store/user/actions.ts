@@ -7,10 +7,6 @@ import { api } from 'src/boot/axios';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { getWalletConnectConfig } from 'src/eth/Config';
 
-enum WalletEnum {
-  METAMASK = 'metamask',
-}
-
 type Web3ProviderConstructor = {
   new (provider: IWeb3Provider): Web3;
 };
@@ -24,7 +20,7 @@ declare global {
 }
 
 const connectionFlows = {
-  metamask: async(): Promise<IWeb3Provider> => {
+  metamask: async (): Promise<IWeb3Provider> => {
     return new Promise((resolve, reject) => {
       if (window.ethereum) {
         resolve(window.ethereum);
@@ -35,7 +31,7 @@ const connectionFlows = {
     });
   },
 
-  walletConnect: async(): Promise<IWeb3Provider> => {
+  walletConnect: async (): Promise<IWeb3Provider> => {
     const provider: IWeb3Provider = new WalletConnectProvider(getWalletConnectConfig()) as unknown as IWeb3Provider;
 
     await provider.enable();
@@ -52,7 +48,7 @@ const clear = (commit: Commit, error?: Error) => {
 };
 
 const actions: ActionTree<UserStateInterface, StateInterface> = {
-  async connectToWallet({ commit, dispatch }, wallet: WalletEnum) {
+  async connectToWallet({ commit, dispatch }, wallet: 'metamask' | 'walletConnect') {
     localStorage.wallet = wallet;
     const providerFlow = connectionFlows[wallet];
 
@@ -75,7 +71,7 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       clear(commit);
     });
 
-    window.web3 = new Web3(provider as never);
+    window.web3 = new Web3(provider as any);
 
     try {
       await dispatch('updateConnectedUser', provider);

@@ -631,6 +631,7 @@ export default {
       enableAvatar: 'Image field required',
       nameCollectionUse: 'Collection name already in use',
       nameWebSite: 'WebSite or Portfolio already in use',
+      pdf: "Need help registering your collection? Download the manual. It's a quick read!"
     },
     stepTwo: {
       amount: 'NFT amount:',
@@ -702,7 +703,7 @@ export default {
       collectionNameErrMsg: 'The collection name is already in use!',
       tokenErrMsg: 'The token you chose for your collection is unavailable now, try again later!',
       reprovalChance: 'I am aware that this collection will be analysed by AlgoPainter team and it susceptible to reproval.',
-      ipfsErr: 'We could not upload the avatar image to IPFS. Try another image or contact us!'
+      ipfsErr: 'We could not upload the avatar image to IPFS. Try another image or contact us!',
     }
   },
   verifyCollection: {

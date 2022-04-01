@@ -462,13 +462,10 @@ export default class PirsItem extends Vue.with(Props) {
       const auctionBidBackRate = this.imagePirsRate / 100;
 
       const totalBidBackPrize = auctionBidBackRate * auctionHighestBid;
-      console.log('totalBidBackPrize', totalBidBackPrize)
 
-      const userBidBackShare =
-        totalBidBackStaked > 0 ? this.algopStaked / totalBidBackStaked : 0;
-      console.log('totalBidBackStaked', totalBidBackStaked)
+      const userBidBackShare = totalBidBackStaked > 0 ? this.algopStaked / totalBidBackStaked : 0;
+
       this.userCurrentPrizeAmount = userBidBackShare * totalBidBackPrize;
-      console.log('userCurrentPrizeAmount', this.userCurrentPrizeAmount)
     } catch (e) {
       console.log('Error - getTotalBidBackStakes - PirsItem');
     }

@@ -7,7 +7,7 @@
         class="text-h2"
         style="opacity:.4"
       >
-        {{ $t('dashboard.errorPage.page') }}
+        {{ $t('dashboard.errorPage.user') }}
       </div>
 
       <algo-button

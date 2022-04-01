@@ -14,20 +14,13 @@ declare global {
 }
 
 export default class Web3Helper {
-  web3: Web3;
-  provider: IWeb3Provider;
-  constructor() {
-    this.provider = window.ethereum;
-    this.web3 = new window.Web3(this.provider);
-  }
-
   getHashMessage(message: string) {
-    return this.web3.eth.accounts.hashMessage(message);
+    return window.web3.eth.accounts.hashMessage(message);
   }
 
   async signMessageWithAddress(message: string, address: string) {
     try {
-      return await this.web3.eth.sign(message, address);
+      return await window.web3.eth.sign(message, address);
     } catch (error) {
       return error as Error;
     }
@@ -45,6 +38,6 @@ export default class Web3Helper {
   }
 
   fromWei(value: string) : string {
-    return this.web3.utils.fromWei(value);
+    return window.web3.utils.fromWei(value);
   }
 }

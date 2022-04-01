@@ -14,21 +14,12 @@ export default function getAlgoPainterContractByNetworkId(id: number) : string {
 }
 
 export function getWalletConnectConfig(): IWalletConnectProviderOptions {
-  if (process.env.NODE_ENV === 'production') {
-    return {
-      rpc: {
-        56: 'https://bsc-dataseed.binance.org/',
-      },
-      chainId: 56,
-    };
-  } else {
-    return {
-      rpc: {
-        97: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
-      },
-      chainId: 97,
-    };
-  }
+  return {
+    rpc: {
+      56: 'https://bsc-dataseed.binance.org/',
+    },
+    chainId: 56,
+  };
 }
 
 export function getArtistCollectionAddress(id: number): string {

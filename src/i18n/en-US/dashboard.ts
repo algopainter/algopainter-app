@@ -708,5 +708,10 @@ export default {
   },
   verifyCollection: {
     noData: 'There are no collections to be verified at the moment!'
+  },
+  errorPage: {
+    btn: 'Go Home',
+    page: 'This page does not exist!',
+    user: 'No profile was found!'
   }
 };

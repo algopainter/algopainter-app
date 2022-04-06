@@ -20,6 +20,7 @@ export default {
   sellerSoon: 'Nothing around here yet, but we will see the top sellers here soon!',
   buyerSoon: 'Nothing around here yet, but we will see the top buyers here soon!',
   header: {
+    registerExternal: 'Register an external NFT',
     auctionNotificator: {
       pirsBtn: '({pirsCounter}) PIRS',
       bidBackBtn: '({bidBackCounter}) BidBack',
@@ -649,7 +650,7 @@ export default {
       price: 'Price:',
       creator: 'Creator royalties:',
       creatorMin: 'The creator royalties must be at least 1%',
-      creatorMax: 'The creator royalties can not be higher than 30%',
+      creatorMax: 'The creator royalties cannot be higher than 30%',
       address: 'Wallet address to receive taxes:',
       from: 'From:',
       to: 'To:',
@@ -713,5 +714,16 @@ export default {
     btn: 'Go Home',
     page: 'This page does not exist!',
     user: 'No profile was found!'
+  },
+  registerExternal: {
+    title: 'Register External NFT',
+    name: 'Collection name:',
+    nftAddress: 'NFT address:',
+    creator: 'Creator royalties:',
+    contractAddress: 'Contract address:',
+    nfts: 'NFT(s):',
+    btn: 'Register',
+    creatorMax: 'The creator royalties cannot be higher than 30%',
+    emptyField: 'This field needs to be filled'
   }
 };

@@ -718,12 +718,20 @@ export default {
   registerExternal: {
     title: 'Register External NFT',
     name: 'Collection name:',
-    nftAddress: 'NFT address:',
+    nftId: 'ID:',
+    nftName: 'Name:',
+    nftDescription: 'Description:',
     creator: 'Creator royalties:',
     contractAddress: 'Contract address:',
-    nfts: 'NFT(s):',
-    btn: 'Register',
+    nfts: "Your NFT's in this contract:",
+    btnGet: "Get your NFT's",
+    btnRegister: 'Register',
     creatorMax: 'The creator royalties cannot be higher than 30%',
-    emptyField: 'This field needs to be filled'
+    emptyField: 'This field needs to be filled',
+    invalidAddress: 'Please make sure that the contract address is correct and try again!',
+    notEnoughChars: 'The contract address must have 42 characters',
+    noNFTs: "You do not have any NFT's in this contract",
+    inactiveIds1: "The NFT'S with the ID's ",
+    inactiveIds2: ' do not have both or either name and image'
   }
 };

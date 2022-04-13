@@ -346,9 +346,7 @@ import { auctionCoins } from 'src/helpers/auctionCoins';
 import { currencyToBlockchain } from 'src/helpers/format/currencyToBlockchain';
 import { getImage } from 'src/api/images';
 import { IImage } from 'src/models/IImage';
-import AlgoPainterAuctionSystemProxy, {
-  TokenType,
-} from 'src/eth/AlgoPainterAuctionSystemProxy';
+import AlgoPainterAuctionSystemProxy /*, {TokenType } */from 'src/eth/AlgoPainterAuctionSystemProxy';
 import AlgoPainterItemProxy from 'src/eth/AlgoPainterItemProxy';
 import AlgoPainterBidBackPirsProxy from 'src/eth/AlgoPainterBidBackPirsProxy';
 import { getAuctionSystemContractByNetworkId } from 'src/eth/Config';
@@ -448,6 +446,7 @@ export default class SellYourArt extends Vue {
 
   imagePirsRate!: number | null;
   collectionCreatorRoyaltiesRate: number | null = 0;
+  creatorRate: number = 0;
 
   async mounted() {
     await this.prepareComponent();
@@ -482,11 +481,11 @@ export default class SellYourArt extends Vue {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
 
-    const creatorRate = ['Expressions', 'Gwei'].includes(this.image.collectionName)
+    this.creatorRate = ['Expressions', 'Gwei'].includes(this.image.collectionName)
       ? await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner)
       : await this.rewardsRates.getCreatorRate(this.image.collectionOwner, this.image.nft.index.toString());
 
-    this.collectionCreatorRoyaltiesRate = creatorRate / 100;
+    this.collectionCreatorRoyaltiesRate = this.creatorRate / 100;
     this.hasPirs = await this.rewardsRates.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
 
     if (this.hasPirs) {
@@ -634,20 +633,20 @@ export default class SellYourArt extends Vue {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
     this.createAuctionStatus = CreatingAuctionStatus.SettingPirsAwaitingInput;
-    await this.rewardsRates
-      .setPIRSRate(
-        this.image.collectionOwner,
-        this.image.nft.index,
-        pirs,
-        this.userAccount,
-      )
-      .on('transactionHash', () => {
-        this.createAuctionStatus =
-          CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
-      })
-      .on('error', () => {
-        this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
-      });
+    // await this.rewardsRates
+    //   .setPIRSRate(
+    //     this.image.collectionOwner,
+    //     this.image.nft.index,
+    //     pirs,
+    //     this.userAccount,
+    //   )
+    //   .on('transactionHash', () => {
+    //     this.createAuctionStatus =
+    //       CreatingAuctionStatus.SettingPirsAwaitingConfirmation;
+    //   })
+    //   .on('error', () => {
+    //     this.createAuctionStatus = CreatingAuctionStatus.SettingPirsError;
+    //   });
     this.createAuctionStatus = CreatingAuctionStatus.SettingPirsCompleted;
   }
 
@@ -660,6 +659,7 @@ export default class SellYourArt extends Vue {
       }
 
       await this.approveContract();
+
       if (!this.hasPirs) {
         await this.setInvestorPirs(this.PIRSRate * 100);
       }
@@ -678,31 +678,30 @@ export default class SellYourArt extends Vue {
         decimalPlaces,
       );
 
-      this.createAuctionStatus =
-        CreatingAuctionStatus.CreateAuctionAwaitingInput;
+      this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionAwaitingInput;
 
-      if (
-        (await this.createAuctionResponse(
-          minimumPriceFormatted,
-          endDate,
-          endTime,
-          bidBackRate,
-        )) !== 'no error'
-      ) {
+      if ((await this.createAuctionResponse(
+        minimumPriceFormatted,
+        endDate,
+        endTime,
+        bidBackRate
+      )) !== 'no error') {
         this.displayingStatus = false;
         return;
       }
 
       const auctionResponse = await this.auctionSystem
         .createAuction(
-          TokenType.ERC721,
+          // TokenType.ERC721,
           this.image.collectionOwner,
           this.image.nft.index,
           numberToString(minimumPriceFormatted),
           moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
           this.selectedCoin.tokenAddress,
           bidBackRate,
-          this.userAccount,
+          this.creatorRate * 100,
+          this.imagePirsRate ? this.imagePirsRate : this.PIRSRate * 100,
+          this.userAccount
         )
         .on('transactionHash', () => {
           this.createAuctionStatus = CreatingAuctionStatus.CreateAuctionAwaitingConfirmation;
@@ -728,14 +727,16 @@ export default class SellYourArt extends Vue {
     if (this.image && this.selectedCoin) {
       try {
         await this.auctionSystem.createAuctionCall(
-          TokenType.ERC721,
+          // TokenType.ERC721,
           this.image.collectionOwner,
           this.image.nft.index,
           numberToString(minimumPriceFormatted),
           moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
           this.selectedCoin.tokenAddress,
           bidBack,
-          this.userAccount,
+          this.creatorRate * 100,
+          this.imagePirsRate ? this.imagePirsRate : this.PIRSRate * 100,
+          this.userAccount
         );
         return 'no error';
       } catch (e:any) {

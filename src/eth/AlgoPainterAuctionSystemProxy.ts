@@ -37,13 +37,15 @@ export default class AlgoPainterAuctionSystemProxy {
       getAllowedTokens(): ContractSendMethod;
       getBidFeeRate(): ContractSendMethod;
       createAuction(
-        tokenType: TokenType,
+        // tokenType: TokenType,
         contractAddress: string,
         tokenId: number,
         minimumAmount: string,
         endTime: number,
         tokenPriceAddress: string,
         bidbackRate: number,
+        creatorRate: number,
+        pirsRate: number
       ): ContractSendMethod;
       bid(auctionId: number, amount: string): ContractSendMethod;
       cancelAuction(auctionId: number): ContractSendMethod;
@@ -90,44 +92,48 @@ export default class AlgoPainterAuctionSystemProxy {
   }
 
   createAuction(
-    tokenType: number,
     contractAddress: string,
     tokenId: number,
     minimumAmount: string,
     endTime: number,
     tokenPriceAddress: string,
     bidbackRate: number,
+    creatorRate: number,
+    pirsRate: number,
     from: string,
   ) {
     return this.smartContract.methods.createAuction(
-      tokenType,
       contractAddress,
       tokenId,
       minimumAmount,
       endTime,
       tokenPriceAddress,
       bidbackRate,
+      creatorRate,
+      pirsRate
     ).send({ from });
   }
 
   async createAuctionCall(
-    tokenType: number,
     contractAddress: string,
     tokenId: number,
     minimumAmount: string,
     endTime: number,
     tokenPriceAddress: string,
     bidbackRate: number,
-    from: string,
+    creatorRate: number,
+    pirsRate: number,
+    from: string
   ) {
     const response: unknown = await this.smartContract.methods.createAuction(
-      tokenType,
       contractAddress,
       tokenId,
       minimumAmount,
       endTime,
       tokenPriceAddress,
       bidbackRate,
+      creatorRate,
+      pirsRate
     ).call({ from });
 
     return response as number;

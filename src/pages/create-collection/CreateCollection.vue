@@ -445,6 +445,18 @@ export default class CreateCollection extends Vue {
         this.artistCollectionContractAddress
       );
 
+      console.log('this.collectionData.collectionMetrics.walletAddress', this.collectionData.collectionMetrics.walletAddress);
+      console.log('this.times', this.times);
+      console.log('this.collectionData.aboutTheCollection.nameCollection', this.collectionData.aboutTheCollection.nameCollection);
+      console.log('this.collectionData.collectionMetrics.creatorPercentage', this.collectionData.collectionMetrics.creatorPercentage);
+      console.log('this.startPrice', this.startPrice);
+      console.log('this.collectionData.collectionMetrics.tokenPriceAddres', this.collectionData.collectionMetrics.tokenPriceAddress);
+      console.log('this.priceType(this.collectionData.collectionMetrics.priceType)', this.priceType(this.collectionData.collectionMetrics.priceType));
+      console.log('this.priceblock', this.priceblock);
+      console.log('this.collectionData.collectionMetrics.nfts', this.collectionData.collectionMetrics.nfts);
+      console.log('this.userAccount', this.userAccount);
+      console.log('this.dataIPFSHash', this.dataIPFSHash);
+
       const isApproved = (allowance < Number(this.registerPrice)) ? await this.getAllowance() : true;
 
       if (isApproved) {

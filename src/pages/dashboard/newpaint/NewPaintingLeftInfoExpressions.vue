@@ -174,7 +174,6 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   userConfirmations!: boolean;
   isMinting!: boolean;
   intParameters: number[] = [];
-  baseUrl!: string | undefined;
   img!: string;
 
   mintStatus: MintStatus | null = null;
@@ -250,7 +249,6 @@ export default class NewPaintingLeftInfoExpressions extends Vue.with(Props) {
   }
 
   mounted() {
-    this.baseUrl = process.env.VUE_APP_EXPRESSIONS_ENDPOINT;
     this.checkIfConfigured();
   }
 

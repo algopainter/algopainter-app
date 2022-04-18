@@ -130,7 +130,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   hasAllowance: boolean = false;
   ticks = Date.now();
   tokenURI!: string;
-  baseUrl!: string | undefined;
 
   isError: boolean = false;
   errorMessage: string = '';
@@ -191,7 +190,6 @@ export default class NewPaintingLeftInfoGwei extends Vue.with(Props) {
   }
 
   mounted() {
-    this.baseUrl = process.env.VUE_APP_GWEI_ENDPOINT;
     this.checkIfConfigured();
     this.checkAllowance().catch(console.error);
   }

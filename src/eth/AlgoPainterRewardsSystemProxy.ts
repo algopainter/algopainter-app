@@ -7,6 +7,10 @@ import { getRewardsSystemContractByNetworkId } from './Config';
 export default class AlgoPainterRewardsSystemProxy {
   declare smartContract: {
     methods: {
+      getCreatorRate(
+        nftAddress: string,
+        token: number
+      ): ContractSendMethod;
       getTotalBidbackStakes(
         auctionId: number,
       ): ContractSendMethod;
@@ -59,6 +63,18 @@ export default class AlgoPainterRewardsSystemProxy {
       AlgoPainterRewardsSystem as AbiItem[],
       contractAddress,
     );
+  }
+
+  async getCreatorRate(
+    nftAddress: string,
+    token: number
+  ) {
+    const response: unknown = await this.smartContract.methods.getCreatorRate(
+      nftAddress,
+      token
+    ).call();
+
+    return response as number;
   }
 
   async getTotalBidBackStakes(

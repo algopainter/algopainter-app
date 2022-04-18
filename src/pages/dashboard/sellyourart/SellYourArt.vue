@@ -1,7 +1,7 @@
 
 <template>
   <div
-    v-if="loading"
+    v-if="loading || !auctionFeeRate"
     class="flex flex-center q-pa-xl"
   >
     <q-spinner
@@ -441,7 +441,7 @@ export default class SellYourArt extends Vue {
 
   isUserInformedAboutTheFee: boolean = false;
   isUserInformedThatPirsCanBeOnlySetOnce: boolean = false;
-  auctionFeeRate!: string;
+  auctionFeeRate: string = '';
   hashPersonalItem!: string;
 
   imagePirsRate!: number | null;
@@ -492,7 +492,7 @@ export default class SellYourArt extends Vue {
       this.imagePirsRate = (this.image.pirs.investorRate || 0) / 100;
     }
 
-    const auctionFeeRate = (await this.auctionSystem.getAuctionFeeRate()) / 10000;
+    const auctionFeeRate = (await this.auctionSystem.auctionFeeRate() / 10000);
 
     this.auctionFeeRate = this.$n(auctionFeeRate, 'percent', {
       maximumFractionDigits: 2,

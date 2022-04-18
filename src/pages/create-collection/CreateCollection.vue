@@ -15,7 +15,12 @@
         icon="assignment"
         :done="step > 1"
       >
-        <about-the-collection :step="step" :check-form="verifyFormOne" @data="storeData" @verifyFormOne="verifyStepOne" />
+        <about-the-collection
+          :step="step"
+          :check-form="verifyFormOne"
+          @data="storeData"
+          @verifyFormOne="verifyStepOne"
+        />
       </q-step>
 
       <q-step
@@ -24,7 +29,12 @@
         icon="multiline_chart"
         :done="step > 2"
       >
-        <collection-metrics :step="step" :check-form="verifyFormTwo" @data="storeData" @verify="verifyStepTwo" />
+        <collection-metrics
+          :step="step"
+          :check-form="verifyFormTwo"
+          @data="storeData"
+          @verify="verifyStepTwo"
+        />
       </q-step>
 
       <q-step
@@ -33,7 +43,12 @@
         icon="auto_graph"
         :done="step > 3"
       >
-        <api-parameters :step="step" :check-form="verifyFormThree" @data="storeData" @verify="verifyStepThree" />
+        <api-parameters
+          :step="step"
+          :check-form="verifyFormThree"
+          @data="storeData"
+          @verify="verifyStepThree"
+        />
       </q-step>
 
       <q-step
@@ -43,7 +58,11 @@
         :done="step > 4"
       >
         <collection-summary
-          :check-form="verifyFormFour" :collection-data="collectionData" :call-err-msg="errMsg" :display-price="displayPrice" @data="storeData"
+          :check-form="verifyFormFour"
+          :collection-data="collectionData"
+          :call-err-msg="errMsg"
+          :display-price="displayPrice"
+          @data="storeData"
           @verify="verifyStepFour"
         />
       </q-step>
@@ -53,17 +72,26 @@
           <q-btn
             color="primary"
             :disable="isStepTwoDisabled"
-            :label="step === 4 ? 'Finish' : 'Continue'" @click="next()"
+            :label="step === 4 ? 'Finish' : 'Continue'"
+            @click="next()"
           />
           <q-btn
-            v-if="step > 1" flat color="primary" label="Back" class="q-ml-sm"
+            v-if="step > 1"
+            flat
+            color="primary"
+            label="Back"
+            class="q-ml-sm"
             @click="previous()"
           />
         </q-stepper-navigation>
       </template>
     </q-stepper>
     <div class="flex">
-      <collection-modal v-model="openModalCreate" :artist-collection-status="artistCollectionStatus" :ok-btn-disabled="okBtnDisabled" />
+      <collection-modal
+        v-model="openModalCreate"
+        :artist-collection-status="artistCollectionStatus"
+        :ok-btn-disabled="okBtnDisabled"
+      />
     </div>
   </div>
 </template>
@@ -80,13 +108,24 @@ import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
 import UserController from 'src/controllers/user/UserController';
 import { IProfile } from 'src/models/IProfile';
-import { IAboutTheCollection, ICollectionMetrics, ICollectionNFTCreationAPI, IcollectionData } from 'src/models/ICreatorCollection';
-import CollectionModal from 'src/components/modal/CollectionModal.vue'
-import AlgoPainterArtistCollection, { PriceType, ArtistCollectionStatus } from 'src/eth/AlgoPainterArtistCollectionProxy';
+import {
+  IAboutTheCollection,
+  ICollectionMetrics,
+  ICollectionNFTCreationAPI,
+  IcollectionData,
+} from 'src/models/ICreatorCollection';
+import CollectionModal from 'src/components/modal/CollectionModal.vue';
+import AlgoPainterArtistCollection, {
+  PriceType,
+  ArtistCollectionStatus,
+} from 'src/eth/AlgoPainterArtistCollectionProxy';
 import AlgoPainterTokenProxy from 'src/eth/AlgoPainterTokenProxy';
 import moment from 'moment';
-import { toWei, randomHex } from 'web3-utils'
-import { getAlgopTokenContractByNetworkId, getArtistCollectionAddress } from 'src/eth/Config';
+import { toWei, randomHex } from 'web3-utils';
+import {
+  getAlgopTokenContractByNetworkId,
+  getArtistCollectionAddress,
+} from 'src/eth/Config';
 import { IAxiosIPFSPost } from 'src/models/IAxios';
 import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
 
@@ -96,7 +135,7 @@ import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
     CollectionMetrics,
     ApiParameters,
     CollectionModal,
-    CollectionSummary
+    CollectionSummary,
   },
   computed: {
     ...mapGetters('user', {
@@ -107,7 +146,6 @@ import ERC20TokenProxy from 'src/eth/ERC20TokenProxy';
   },
   accountAddress: ['loadUserProfile'],
 })
-
 export default class CreateCollection extends Vue {
   algoPainterTokenProxy!: AlgoPainterTokenProxy;
   artistCollection = <AlgoPainterArtistCollection>{};
@@ -118,7 +156,8 @@ export default class CreateCollection extends Vue {
   PriceType = PriceType;
   isConnected?: boolean;
   userAccount!: string;
-  artistCollectionStatus: ArtistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+  artistCollectionStatus: ArtistCollectionStatus =
+    ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
   statusblock: string = '';
   step: number = 1;
   isStepTwoDisabled: boolean = false;
@@ -147,7 +186,7 @@ export default class CreateCollection extends Vue {
     aboutTheCollection: {} as IAboutTheCollection,
     collectionMetrics: {} as ICollectionMetrics,
     apiParameters: {} as ICollectionNFTCreationAPI,
-  }
+  };
 
   collectionCoinTokenProxy!: ERC20TokenProxy;
 
@@ -159,8 +198,12 @@ export default class CreateCollection extends Vue {
   async mounted() {
     await this.registerCollection();
     this.displayPrice = await this.artistCollection.getCollectionPrice();
-    this.collectionCoinTokenProxy = new ERC20TokenProxy(this.algopTokenContractAddress);
-    this.registerPrice = toWei(await this.artistCollection.getCollectionPrice());
+    this.collectionCoinTokenProxy = new ERC20TokenProxy(
+      this.algopTokenContractAddress
+    );
+    this.registerPrice = toWei(
+      await this.artistCollection.getCollectionPrice()
+    );
   }
 
   @Watch('step')
@@ -178,291 +221,345 @@ export default class CreateCollection extends Vue {
     return this.$store.state.user.account;
   }
 
-    @Watch('accountAddress')
+  @Watch('accountAddress')
   onPropertyChanged() {
     void this.registerCollection();
   }
 
-    async registerCollection() {
-      const result = await this.userController.getUserProfile(
-      this.accountAddress?.toLowerCase() as string,
+  async registerCollection() {
+    const result = await this.userController.getUserProfile(
+      this.accountAddress?.toLowerCase() as string
+    );
+    if (result.isFailure) {
+      this.$q.notify({
+        type: 'negative',
+        message: this.$t('dashboard.createCollection.hasNoProfile'),
+      });
+      await this.$router.push('/edit-profile/' + 'registerCollection');
+    } else {
+      await this.$router.push('/create-collection');
+    }
+  }
+
+  verifyStepOne(payload: boolean) {
+    this.isFormOneVerified = payload;
+    this.verifyFormOne = false;
+  }
+
+  verifyStepTwo(payload: boolean) {
+    this.isFormTwoVerified = payload;
+    this.verifyFormTwo = false;
+  }
+
+  verifyStepThree(payload: boolean) {
+    this.isFormThreeVerified = payload;
+    this.verifyFormThree = false;
+  }
+
+  verifyStepFour(payload: boolean) {
+    this.isFormFourVerified = payload;
+    this.verifyFormFour = false;
+  }
+
+  storeData(data: any, step: number) {
+    switch (step) {
+      case 1:
+        this.collectionData.aboutTheCollection = data;
+        break;
+      case 2:
+        this.collectionData.collectionMetrics = data;
+        break;
+      case 3:
+        this.collectionData.apiParameters = data;
+        break;
+    }
+  }
+
+  next() {
+    switch (this.step) {
+      case 1:
+        this.verifyFormOne = true;
+        setTimeout(() => {
+          if (this.isFormOneVerified) {
+            this.step++;
+            this.verifyFormOne = false;
+          }
+        }, 250);
+        break;
+      case 2:
+        this.verifyFormTwo = true;
+        setTimeout(() => {
+          if (this.isFormTwoVerified) {
+            this.step++;
+            this.verifyFormTwo = false;
+          }
+        }, 250);
+        break;
+      case 3:
+        this.verifyFormThree = true;
+        setTimeout(() => {
+          if (this.isFormThreeVerified) {
+            this.step++;
+            this.verifyFormThree = false;
+          }
+        }, 250);
+        break;
+      case 4:
+        this.verifyFormFour = true;
+
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        setTimeout(async () => {
+          if (this.isFormFourVerified) {
+            this.errMsg = '';
+            this.artistCollectionStatus =
+              ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+            this.parseData();
+
+            const userBalance = await this.collectionCoinTokenProxy.balanceOf(
+              this.userAccount
+            );
+
+            if (userBalance < Number(this.registerPrice)) {
+              this.errMsg = this.$t(
+                'dashboard.createCollection.stepFour.noFunds'
+              );
+              return;
+            }
+
+            this.openModalCreate = true;
+            const isDataIPFSHashGenerated = await this.generateDataIPFSHash();
+            const isCallVerified = await this.createCollectionCall();
+
+            if (isDataIPFSHashGenerated && isCallVerified) {
+              this.verifyFormFour = false;
+              if (isDataIPFSHashGenerated) {
+                await this.createCollection();
+              }
+            }
+          }
+        }, 250);
+    }
+  }
+
+  previous() {
+    this.step--;
+  }
+
+  parseData() {
+    this.priceblock = [];
+    const priceRange = this.collectionData.collectionMetrics.priceRange;
+
+    // eslint-disable-next-line array-callback-return
+    priceRange.map((price) => {
+      this.priceblock.push(price.from.toString());
+      this.priceblock.push(price.to.toString());
+      this.priceblock.push(price.amount.toString());
+    });
+
+    this.startPrice = Number(this.priceblock[2]);
+
+    const startDT = moment(
+      this.collectionData.collectionMetrics.startDT
+    ).unix();
+    const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
+    this.times = [startDT, endDT];
+  }
+
+  async generateDataIPFSHash() {
+    const data = {
+      description: this.collectionData.aboutTheCollection.description,
+      avatar: this.collectionData.aboutTheCollection.avatar,
+      api: this.collectionData.apiParameters,
+      website: this.collectionData.aboutTheCollection.webSite,
+    };
+
+    const previewPayload = {
+      name: randomHex(32) + '.png',
+      description: this.collectionData.aboutTheCollection.description,
+      mintedBy: this.userAccount,
+      image: this.collectionData.aboutTheCollection.avatar,
+      fileName: randomHex(32) + '.png',
+    };
+
+    try {
+      const resAvatar: IAxiosIPFSPost = await api.post(
+        'images/pintoipfs/FILE?resize=1',
+        previewPayload
       );
-      if (result.isFailure) {
-        this.$q.notify({
-          type: 'negative',
-          message: this.$t(
-            'dashboard.createCollection.hasNoProfile'
-          ),
-        });
-        await this.$router.push('/edit-profile/' + 'registerCollection');
-      } else {
-        await this.$router.push('/create-collection');
-      }
+      data.avatar = `https://ipfs.io/ipfs/${resAvatar.data.ipfsHash.toString()}`;
+      const res = await api.post('images/pintoipfs/JSON', data);
+      this.dataIPFSHash = res.data.ipfsHash;
+      return true;
+    } catch (e) {
+      this.openModalCreate = false;
+      this.errMsg = this.$t('dashboard.createCollection.stepFour.ipfsErr');
+      this.artistCollectionStatus =
+        ArtistCollectionStatus.ArtistCollectionError;
+      return false;
     }
+  }
 
-    verifyStepOne(payload: boolean) {
-      this.isFormOneVerified = payload;
-      this.verifyFormOne = false;
+  priceType(type: string) {
+    if (type === 'fixed') {
+      return this.PriceType.Fixed;
+    } else {
+      return this.PriceType.Variable;
     }
+  }
 
-    verifyStepTwo(payload: boolean) {
-      this.isFormTwoVerified = payload;
-      this.verifyFormTwo = false;
-    }
-
-    verifyStepThree(payload: boolean) {
-      this.isFormThreeVerified = payload;
-      this.verifyFormThree = false;
-    }
-
-    verifyStepFour(payload: boolean) {
-      this.isFormFourVerified = payload;
-      this.verifyFormFour = false;
-    }
-
-    storeData(data: any, step: number) {
-      switch (step) {
-        case 1:
-          this.collectionData.aboutTheCollection = data;
-          break;
-        case 2:
-          this.collectionData.collectionMetrics = data;
-          break;
-        case 3:
-          this.collectionData.apiParameters = data;
-          break;
-      }
-    }
-
-    next() {
-      switch (this.step) {
-        case 1:
-          this.verifyFormOne = true;
-          setTimeout(() => {
-            if (this.isFormOneVerified) {
-              this.step++;
-              this.verifyFormOne = false;
-            }
-          }, 250)
-          break;
-        case 2:
-          this.verifyFormTwo = true;
-          setTimeout(() => {
-            if (this.isFormTwoVerified) {
-              this.step++;
-              this.verifyFormTwo = false;
-            }
-          }, 250)
-          break;
-        case 3:
-          this.verifyFormThree = true;
-          setTimeout(() => {
-            if (this.isFormThreeVerified) {
-              this.step++;
-              this.verifyFormThree = false;
-            }
-          }, 250)
-          break;
-        case 4:
-          this.verifyFormFour = true;
-
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          setTimeout(async() => {
-            if (this.isFormFourVerified) {
-              this.errMsg = '';
-              this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
-              this.parseData();
-
-              const userBalance = await this.collectionCoinTokenProxy.balanceOf(this.userAccount);
-
-              if (userBalance < Number(this.registerPrice)) {
-                this.errMsg = this.$t('dashboard.createCollection.stepFour.noFunds');
-                return;
-              }
-
-              this.openModalCreate = true;
-              const isDataIPFSHashGenerated = await this.generateDataIPFSHash();
-              const isCallVerified = await this.createCollectionCall();
-
-              if (isDataIPFSHashGenerated && isCallVerified) {
-                this.verifyFormFour = false;
-                if (isDataIPFSHashGenerated) {
-                  await this.createCollection();
-                }
-              }
-            }
-          }, 250)
-      }
-    }
-
-    previous() {
-      this.step--;
-    }
-
-    parseData() {
-      const priceRange = this.collectionData.collectionMetrics.priceRange;
-
-      // eslint-disable-next-line array-callback-return
-      priceRange.map(price => {
-        this.priceblock.push(price.from.toString());
-        this.priceblock.push(price.to.toString());
-        this.priceblock.push(price.amount.toString());
-      })
-
-      this.startPrice = Number(this.priceblock[2]);
-
-      const startDT = moment(this.collectionData.collectionMetrics.startDT).unix();
-      const endDT = moment(this.collectionData.collectionMetrics.endDT).unix();
-      this.times = [startDT, endDT];
-    }
-
-    async generateDataIPFSHash() {
-      const data = {
-        description: this.collectionData.aboutTheCollection.description,
-        avatar: this.collectionData.aboutTheCollection.avatar,
-        api: this.collectionData.apiParameters,
-        website: this.collectionData.aboutTheCollection.webSite
-      };
-
-      const previewPayload = {
-        name: randomHex(32) + '.png',
-        description: this.collectionData.aboutTheCollection.description,
-        mintedBy: this.userAccount,
-        image: this.collectionData.aboutTheCollection.avatar,
-        fileName: randomHex(32) + '.png'
-      };
-
-      try {
-        const resAvatar: IAxiosIPFSPost = await api.post('images/pintoipfs/FILE?resize=1', previewPayload);
-        data.avatar = `https://ipfs.io/ipfs/${resAvatar.data.ipfsHash.toString()}`;
-        const res = await api.post('images/pintoipfs/JSON', data);
-        this.dataIPFSHash = res.data.ipfsHash;
+  async createCollectionCall() {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      await this.artistCollection.createCollectionCall(
+        this.collectionData.collectionMetrics.walletAddress,
+        this.times,
+        this.collectionData.aboutTheCollection.nameCollection,
+        this.collectionData.collectionMetrics.creatorPercentage,
+        this.startPrice,
+        this.collectionData.collectionMetrics.tokenPriceAddress as string,
+        this.priceType(this.collectionData.collectionMetrics.priceType),
+        this.priceblock,
+        this.collectionData.collectionMetrics.nfts,
+        this.userAccount,
+        this.dataIPFSHash
+      );
+      return true;
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      if (e.message && e.message.indexOf('START_TIME_RANGE_INVALID') >= 0) {
+        this.errMsg = this.$t(
+          'dashboard.createCollection.stepFour.startTimeErrMsg'
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      } else if (
+        e.message &&
+        e.message.indexOf('END_TIME_RANGE_INVALID') >= 0
+      ) {
+        this.errMsg = this.$t(
+          'dashboard.createCollection.stepFour.endTimeErrMsg'
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      } else if (
+        e.message &&
+        e.message.indexOf('COLLECTION_NAME_NOT_UNIQUE') >= 0
+      ) {
+        this.errMsg = this.$t(
+          'dashboard.createCollection.stepFour.collectionNameErrMsg'
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      } else if (e.message && e.message.indexOf('TOKEN_UNAVAILABLE') >= 0) {
+        this.errMsg = this.$t(
+          'dashboard.createCollection.stepFour.tokenErrMsg'
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      } else if (
+        e.message &&
+        e.message.indexOf('MINIMUM_ALLOWANCE_REQUIRED') >= 0
+      ) {
         return true;
-      } catch (e) {
-        this.openModalCreate = false;
-        this.errMsg = this.$t('dashboard.createCollection.stepFour.ipfsErr');
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
-        return false;
-      }
-    }
-
-    priceType(type:string) {
-      if (type === 'fixed') {
-        return this.PriceType.Fixed
       } else {
-        return this.PriceType.Variable
+        this.errMsg = e.message;
       }
+
+      this.openModalCreate = false;
+      return false;
     }
+  }
 
-    async createCollectionCall() {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        await this.artistCollection.createCollectionCall(
-          this.collectionData.collectionMetrics.walletAddress,
-          this.times,
-          this.collectionData.aboutTheCollection.nameCollection,
-          this.collectionData.collectionMetrics.creatorPercentage,
-          this.startPrice,
-          this.collectionData.collectionMetrics.tokenPriceAddress as string,
-          this.priceType(this.collectionData.collectionMetrics.priceType),
-          this.priceblock,
-          this.collectionData.collectionMetrics.nfts,
-          this.userAccount,
-          this.dataIPFSHash
-        )
-        return true
-      } catch (e:any) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        if (e.message && e.message.indexOf('START_TIME_RANGE_INVALID') >= 0) {
-          this.errMsg = this.$t('dashboard.createCollection.stepFour.startTimeErrMsg');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        } else if (e.message && e.message.indexOf('END_TIME_RANGE_INVALID') >= 0) {
-          this.errMsg = this.$t('dashboard.createCollection.stepFour.endTimeErrMsg');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        } else if (e.message && e.message.indexOf('COLLECTION_NAME_NOT_UNIQUE') >= 0) {
-          this.errMsg = this.$t('dashboard.createCollection.stepFour.collectionNameErrMsg');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        } else if (e.message && e.message.indexOf('TOKEN_UNAVAILABLE') >= 0) {
-          this.errMsg = this.$t('dashboard.createCollection.stepFour.tokenErrMsg');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        } else if (e.message && e.message.indexOf('MINIMUM_ALLOWANCE_REQUIRED') >= 0) {
-          return true;
-        } else {
-          this.errMsg = e.message;
-        }
+  async getAllowance() {
+    let isApproved;
 
-        this.openModalCreate = false;
-        return false;
-      }
-    }
+    try {
+      this.artistCollectionStatus =
+        ArtistCollectionStatus.ArtistCollectionAwaitingInput;
 
-    async getAllowance() {
-      let isApproved;
-
-      try {
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
-
-        await this.algoPainterTokenProxy.approve(
+      await this.algoPainterTokenProxy
+        .approve(
           this.artistCollectionContractAddress,
           this.registerPrice,
           this.userAccount
         )
-          .on('error', () => {
-            this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
-            setTimeout(() => {
-              this.okBtnDisabled = false;
-              isApproved = false;
-            }, 1000);
-          })
-          .on('transactionHash', () => {
-            this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
-          })
-          .on('confirmation', () => {
-            isApproved = true;
-          })
-      } catch (e) {
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
-        this.okBtnDisabled = false;
-        isApproved = false;
-      }
-
-      return isApproved;
+        .on('error', () => {
+          this.artistCollectionStatus =
+            ArtistCollectionStatus.ArtistCollectionError;
+          setTimeout(() => {
+            this.okBtnDisabled = false;
+            isApproved = false;
+          }, 1000);
+        })
+        .on('transactionHash', () => {
+          this.artistCollectionStatus =
+            ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+        })
+        .on('confirmation', () => {
+          isApproved = true;
+        });
+    } catch (e) {
+      this.artistCollectionStatus =
+        ArtistCollectionStatus.ArtistCollectionError;
+      this.okBtnDisabled = false;
+      isApproved = false;
     }
 
-    get artistCollectionContractAddress() {
-      return getArtistCollectionAddress(this.networkInfo.id);
-    }
+    return isApproved;
+  }
 
-    get algopTokenContractAddress() {
-      return getAlgopTokenContractByNetworkId(this.networkInfo.id);
-    }
+  get artistCollectionContractAddress() {
+    return getArtistCollectionAddress(this.networkInfo.id);
+  }
 
-    async createCollection() {
-      this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+  get algopTokenContractAddress() {
+    return getAlgopTokenContractByNetworkId(this.networkInfo.id);
+  }
 
-      const allowance = await this.collectionCoinTokenProxy.allowance(
-        this.userAccount,
-        this.artistCollectionContractAddress
-      );
+  async createCollection() {
+    this.artistCollectionStatus =
+      ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
 
-      console.log('this.collectionData.collectionMetrics.walletAddress', this.collectionData.collectionMetrics.walletAddress);
-      console.log('this.times', this.times);
-      console.log('this.collectionData.aboutTheCollection.nameCollection', this.collectionData.aboutTheCollection.nameCollection);
-      console.log('this.collectionData.collectionMetrics.creatorPercentage', this.collectionData.collectionMetrics.creatorPercentage);
-      console.log('this.startPrice', this.startPrice);
-      console.log('this.collectionData.collectionMetrics.tokenPriceAddres', this.collectionData.collectionMetrics.tokenPriceAddress);
-      console.log('this.priceType(this.collectionData.collectionMetrics.priceType)', this.priceType(this.collectionData.collectionMetrics.priceType));
-      console.log('this.priceblock', this.priceblock);
-      console.log('this.collectionData.collectionMetrics.nfts', this.collectionData.collectionMetrics.nfts);
-      console.log('this.userAccount', this.userAccount);
-      console.log('this.dataIPFSHash', this.dataIPFSHash);
+    const allowance = await this.collectionCoinTokenProxy.allowance(
+      this.userAccount,
+      this.artistCollectionContractAddress
+    );
 
-      const isApproved = (allowance < Number(this.registerPrice)) ? await this.getAllowance() : true;
+    console.log(
+      'this.collectionData.collectionMetrics.walletAddress',
+      this.collectionData.collectionMetrics.walletAddress
+    );
+    console.log('this.times', this.times);
+    console.log(
+      'this.collectionData.aboutTheCollection.nameCollection',
+      this.collectionData.aboutTheCollection.nameCollection
+    );
+    console.log(
+      'this.collectionData.collectionMetrics.creatorPercentage',
+      this.collectionData.collectionMetrics.creatorPercentage
+    );
+    console.log('this.startPrice', this.startPrice);
+    console.log(
+      'this.collectionData.collectionMetrics.tokenPriceAddres',
+      this.collectionData.collectionMetrics.tokenPriceAddress
+    );
+    console.log(
+      'this.priceType(this.collectionData.collectionMetrics.priceType)',
+      this.priceType(this.collectionData.collectionMetrics.priceType)
+    );
+    console.log('this.priceblock', this.priceblock);
+    console.log(
+      'this.collectionData.collectionMetrics.nfts',
+      this.collectionData.collectionMetrics.nfts
+    );
+    console.log('this.userAccount', this.userAccount);
+    console.log('this.dataIPFSHash', this.dataIPFSHash);
 
-      if (isApproved) {
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingInput;
+    const isApproved =
+      allowance < Number(this.registerPrice) ? await this.getAllowance() : true;
 
-        await this.artistCollection.createCollection(
+    if (isApproved) {
+      this.artistCollectionStatus =
+        ArtistCollectionStatus.ArtistCollectionAwaitingInput;
+
+      await this.artistCollection
+        .createCollection(
           this.collectionData.collectionMetrics.walletAddress,
           this.times,
           this.collectionData.aboutTheCollection.nameCollection,
@@ -474,24 +571,30 @@ export default class CreateCollection extends Vue {
           this.collectionData.collectionMetrics.nfts,
           this.userAccount,
           this.dataIPFSHash
-        ).on('transactionHash', (a) => {
-          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
-        }).on('error', (e) => {
-          this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
-          this.okBtnDisabled = false;
+        )
+        .on('transactionHash', (a) => {
+          this.artistCollectionStatus =
+            ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
         })
+        .on('error', (e) => {
+          this.artistCollectionStatus =
+            ArtistCollectionStatus.ArtistCollectionError;
+          this.okBtnDisabled = false;
+        });
 
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionCreated;
-        this.okBtnDisabled = false;
-      } else {
-        this.artistCollectionStatus = ArtistCollectionStatus.ArtistCollectionError;
-        this.okBtnDisabled = false;
-      }
-    };
+      this.artistCollectionStatus =
+        ArtistCollectionStatus.ArtistCollectionCreated;
+      this.okBtnDisabled = false;
+    } else {
+      this.artistCollectionStatus =
+        ArtistCollectionStatus.ArtistCollectionError;
+      this.okBtnDisabled = false;
+    }
+  }
 }
 </script>
 <style lang="scss">
-  .title {
-    margin: 0px;
-  }
+.title {
+  margin: 0px;
+}
 </style>

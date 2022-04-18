@@ -37,7 +37,6 @@ export default class AlgoPainterAuctionSystemProxy {
       getAllowedTokens(): ContractSendMethod;
       getBidFeeRate(): ContractSendMethod;
       createAuction(
-        // tokenType: TokenType,
         contractAddress: string,
         tokenId: number,
         minimumAmount: string,

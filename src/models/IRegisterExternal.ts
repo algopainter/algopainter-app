@@ -7,9 +7,11 @@ export interface INftInfo {
 
 export interface INftDescriptor {
   id: number;
-  name: string | undefined;
-  description: string | undefined;
-  image: string | undefined;
+  name?: string;
+  description?: string;
+  image?: string;
+  descriptor?: string;
+  params?: any;
 }
 
 export interface INftOption {

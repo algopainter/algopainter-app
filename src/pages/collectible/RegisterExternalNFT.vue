@@ -111,10 +111,10 @@ import { NetworkInfo } from 'src/store/user/types';
 import { INftInfo, INftDescriptor, INftOption } from 'src/models/IRegisterExternal';
 import AlgoButton from 'src/components/common/Button.vue';
 import { QInput } from 'quasar';
-import AlgoPainterExternalNftManagerProxy from 'src/eth/AlgoPainterExternalNftManagerProxy';
 import AlgoPainterERC721StubProxy from 'src/eth/ERC721StubProxy';
 import { isAddress, toChecksumAddress } from 'web3-utils';
 import { multihash } from 'is-ipfs';
+import CollectionController, { CreateCollectionByExternalContractRequest, ExternalNFTInfo } from 'src/controllers/collection/CollectionController';
 
 @Options({
   components: {
@@ -142,7 +142,6 @@ export default class registerExternalNFT extends Vue {
   account!: string;
 
   erc721Stub!: AlgoPainterERC721StubProxy;
-  externalNftManager!: AlgoPainterExternalNftManagerProxy;
 
   nftContractAddress: string = '';
   nftAddressList: INftOption[] = [];
@@ -212,20 +211,18 @@ export default class registerExternalNFT extends Vue {
 
           tokenURI = multihash(tokenURI) ? `https://ipfs.io/ipfs/${tokenURI}` : tokenURI;
 
-          await fetch(tokenURI)
-            .then(result => result.json())
-            .then((output) => {
+          try {
+            const result = await fetch(tokenURI);
+            if(result.ok) {
+              const output = await result.json();
               this.nftDescriptorList.push({
                 id: tokenId,
-                name: undefined,
-                description: undefined,
-                image: undefined
-              })
-
-              this.nftDescriptorList[i].id = tokenId;
-              this.nftDescriptorList[i].name = output.name ? output.name : undefined;
-              this.nftDescriptorList[i].description = output.description ? output.description : undefined;
-              this.nftDescriptorList[i].image = output.imagePreview ? output.imagePreview : output.image;
+                name: output.name ? output.name : undefined,
+                description: output.description ? output.description : undefined,
+                image: output.imagePreview ? output.imagePreview : output.image,
+                params: output,
+                descriptor: tokenURI
+              });
 
               const label: string = `${output.name as string} (${tokenId})`;
               const active: boolean = !!(output.name && output.image);
@@ -241,7 +238,11 @@ export default class registerExternalNFT extends Vue {
               })
 
               active ? this.nftsActiveIdsList.push(tokenId) : this.nftsInactiveIdsList.push(tokenId);
-            }).catch(err => console.error(err));
+            }
+          } catch (e) {
+            this.nftsInactiveIdsList.push(tokenId);
+            console.log(e);
+          }
         }
 
         this.inactiveIdsMsg += this.$t('dashboard.registerExternal.inactiveIds1');
@@ -269,24 +270,32 @@ export default class registerExternalNFT extends Vue {
     }
   }
 
-  validateFields() {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    console.log('validateFields')
+  validateFields() : boolean {
+    return !!(this.nftsActiveIdsList &&
+              this.nftsActiveIdsList.length > 0 &&
+              this.account &&
+              this.nftContractAddress &&
+              this.nftDescriptorList &&
+              this.nftDescriptorList.length > 0);
   }
 
   async registerNFTs() {
-    this.validateFields();
+    if(this.validateFields()) {
+      const data = <CreateCollectionByExternalContractRequest>{
+        address: this.nftContractAddress,
+        name: this.nftContractName,
+        account: this.account,
+        nfts: this.nftDescriptorList.map(a => a as any as ExternalNFTInfo)
+      };
 
-    this.externalNftManager = new AlgoPainterExternalNftManagerProxy(this.networkInfo);
+      const collectionController = new CollectionController();
 
-    const registerTokens = await this.externalNftManager.registerTokens(
-      this.nftContractAddress,
-      this.nftsActiveIdsList,
-      this.account
-      // '0xaa526b5ccad7b4c44e0f664689cda4cad501f414'
-    );
+      console.log('createRequest', data);
 
-    console.log('registerTokens', registerTokens);
+      const res = await collectionController.createCollectionByExternalContract(data);
+
+      console.log('result', res);
+    }
   }
 }
 </script>

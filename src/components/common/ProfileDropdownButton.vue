@@ -89,6 +89,11 @@
                     <q-item-label>{{ $t('dashboard.registerCollection') }}</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item v-close-popup clickable @click="registerExternalNFT">
+                  <q-item-section>
+                    <q-item-label>{{ $t('dashboard.header.registerExternal') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
 
                 <q-item v-if="collectionOwner" v-close-popup clickable @click="report">
                   <q-item-section>
@@ -256,6 +261,10 @@ export default class ProfileDropdownButton extends Vue {
     } else {
       await this.$router.push('/create-collection');
     }
+  }
+
+  async registerExternalNFT() {
+    await this.$router.push('/register-nft');
   }
 
   async report() {

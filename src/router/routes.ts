@@ -156,6 +156,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'register-nft',
+        component: () => import('src/pages/collectible/RegisterExternalNFT.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.registerExternal.title'),
+        },
+      },
+      {
         path:'report-collection',
         component: () => import('src/pages/dashboard/report-collection/ReportCollection.vue'),
         meta: {

@@ -199,7 +199,7 @@ export default class NewBidDialog extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         await UserUtils.fetchAccountBalance(
           this.$store.getters['user/networkInfo'],
-          this.$store.getters['user/account'],
+          this.$store.getters['user/account']
         );
       void this.setformattedBalance();
     }
@@ -234,12 +234,12 @@ export default class NewBidDialog extends Vue {
     if (highestBid.length === 0) {
       this.minimumBid = blockchainToCurrency(
         this.auction.minimumBid.amount,
-        decimalPlaces,
+        decimalPlaces
       );
     } else {
       this.highestBid = blockchainToCurrency(
         this.auction.highestBid.netAmount,
-        decimalPlaces,
+        decimalPlaces
       );
     }
   }
@@ -293,7 +293,7 @@ export default class NewBidDialog extends Vue {
   mounted() {
     this.show();
     this.auctionSystemProxy = new AlgoPainterAuctionSystemProxy(
-      this.networkInfo,
+      this.networkInfo
     );
     this.auctionCoinTokenProxy = new ERC20TokenProxy(
       this.auction.minimumBid.tokenPriceAddress
@@ -329,7 +329,7 @@ export default class NewBidDialog extends Vue {
 
       const [balance, fee] = await Promise.all([
         this.auctionCoinTokenProxy.balanceOf(this.userAccount),
-        this.auctionSystemProxy.getBidFeeRate(),
+        this.auctionSystemProxy.bidFeeRate(),
       ]);
 
       this.userBalance = balance;
@@ -350,7 +350,7 @@ export default class NewBidDialog extends Vue {
 
     const allowance = await this.auctionCoinTokenProxy.allowance(
       this.userAccount,
-      this.auctionSystemContractAddress,
+      this.auctionSystemContractAddress
     );
 
     if (allowance < amount) {
@@ -360,14 +360,14 @@ export default class NewBidDialog extends Vue {
 
       const allowanceAmount = currencyToBlockchain(
         Number.MAX_SAFE_INTEGER,
-        decimalPlaces,
+        decimalPlaces
       );
 
       await this.auctionCoinTokenProxy
         .approve(
           this.auctionSystemContractAddress,
           numberToString(allowanceAmount),
-          this.userAccount,
+          this.userAccount
         )
         .on('error', () => {
           this.placingBidStatus = PlacingBidStatus.IncreateAllowanceError;
@@ -382,7 +382,11 @@ export default class NewBidDialog extends Vue {
   async placeBid(amount: number) {
     void this.$refs.amountInput.validate();
 
-    if (amount <= this.balance && amount >= this.minimumBid && amount > this.highestBid) {
+    if (
+      amount <= this.balance &&
+      amount >= this.minimumBid &&
+      amount > this.highestBid
+    ) {
       try {
         this.placingBid = true;
         this.displayingStatus = true;
@@ -401,7 +405,8 @@ export default class NewBidDialog extends Vue {
             this.placingBidStatus = PlacingBidStatus.PlaceBidError;
           })
           .on('transactionHash', () => {
-            this.placingBidStatus = PlacingBidStatus.PlaceBidAwaitingConfirmation;
+            this.placingBidStatus =
+              PlacingBidStatus.PlaceBidAwaitingConfirmation;
           });
 
         this.placingBidStatus = PlacingBidStatus.BidCreated;

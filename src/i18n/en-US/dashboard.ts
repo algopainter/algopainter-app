@@ -20,6 +20,7 @@ export default {
   sellerSoon: 'Nothing around here yet, but we will see the top sellers here soon!',
   buyerSoon: 'Nothing around here yet, but we will see the top buyers here soon!',
   header: {
+    registerExternal: 'Register an external NFT',
     auctionNotificator: {
       pirsBtn: '({pirsCounter}) PIRS',
       bidBackBtn: '({bidBackCounter}) BidBack',
@@ -649,7 +650,7 @@ export default {
       price: 'Price:',
       creator: 'Creator royalties:',
       creatorMin: 'The creator royalties must be at least 1%',
-      creatorMax: 'The creator royalties can not be higher than 30%',
+      creatorMax: 'The creator royalties cannot be higher than 30%',
       address: 'Wallet address to receive taxes:',
       from: 'From:',
       to: 'To:',
@@ -713,5 +714,27 @@ export default {
     btn: 'Go Home',
     page: 'This page does not exist!',
     user: 'No profile was found!'
+  },
+  registerExternal: {
+    title: 'Register External NFT',
+    name: 'Collection name:',
+    nftId: 'ID:',
+    nftName: 'Name:',
+    nftDescription: 'Description:',
+    creator: 'Creator royalties:',
+    contractAddress: 'Contract address:',
+    nfts: "Your NFT's in this contract:",
+    btnGet: "Get your NFT's",
+    btnRegister: 'Register',
+    creatorMax: 'The creator royalties cannot be higher than 30%',
+    emptyField: 'This field needs to be filled',
+    invalidAddress: 'Please make sure that the contract address is correct and try again!',
+    notEnoughChars: 'The contract address must have 42 characters',
+    noNFTs: "You do not have any NFT's in this contract",
+    inactiveIds1: "The NFT'S with the ID's ",
+    inactiveIds2: ' do not have both or either name and image',
+    registerSuccess: 'You have successfully registered your NFT',
+    registerDuplicate: "One or all NFT's have already been registered!",
+    registerFailure: 'Something wrong happened. Try again!'
   }
 };

@@ -3,12 +3,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "nftCreatorsAddress",
+        "name": "_nftCreatorsAddress",
         "type": "address"
       },
       {
         "internalType": "address",
         "name": "_rewardsRatesAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_auctionSystemAddress",
         "type": "address"
       },
       {
@@ -594,6 +599,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "proxyHook",
+    "outputs": [
+      {
+        "internalType": "contract IAlgoPainterPersonalItemHook",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -889,6 +907,19 @@
       }
     ],
     "name": "setMintCost",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "proxyAdr",
+        "type": "address"
+      }
+    ],
+    "name": "setProxy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

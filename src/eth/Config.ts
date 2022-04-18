@@ -120,3 +120,14 @@ export function getAlgopTokenContractByNetworkId(id: number): string {
       return process.env.VUE_APP_ALGOP_TOKEN_ADDRESS as string;
   }
 }
+
+export function getExternalNftManagerContractByNetworkId(id: number): string {
+  switch (id) {
+    case 56:
+      return process.env.ALGOPAINTER_EXTERNAL_NFT_MANAGER_CONTRACT as string;
+    case 97:
+      return process.env.ALGOPAINTER_EXTERNAL_NFT_MANAGER_CONTRACT as string;
+    default:
+      return process.env.ALGOPAINTER_EXTERNAL_NFT_MANAGER_CONTRACT as string;
+  }
+}

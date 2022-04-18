@@ -98,9 +98,10 @@
       <algo-button
         v-if="nftsActiveIdsList.length > 0 && !loadingOptions"
         :disable="nftAddressList.length === 0"
+        :loading="loadingRegister"
         color="primary"
         :label="$t('dashboard.registerExternal.btnRegister')"
-        class="q-mx-auto q-mt-lg flex"
+        class="q-mx-auto q-my-lg flex"
         @click="registerNFTs"
       />
     </q-form>
@@ -159,6 +160,7 @@ export default class registerExternalNFT extends Vue {
 
   isWarning: boolean = false;
   warningMsg: string = '';
+  loadingRegister: boolean = false;
 
   async getNftsOptions() {
     try {
@@ -217,7 +219,7 @@ export default class registerExternalNFT extends Vue {
 
           try {
             const result = await fetch(tokenURI);
-            if(result.ok) {
+            if (result.ok) {
               const output = await result.json();
               this.nftDescriptorList.push({
                 id: tokenId,
@@ -245,7 +247,6 @@ export default class registerExternalNFT extends Vue {
             }
           } catch (e) {
             this.nftsInactiveIdsList.push(tokenId);
-            console.log(e);
           }
         }
 
@@ -288,20 +289,51 @@ export default class registerExternalNFT extends Vue {
   }
 
   async registerNFTs() {
-    if(this.validateFields()) {
+    this.loadingRegister = true;
+
+    let res: any;
+
+    if (this.validateFields()) {
       const data = <CreateCollectionByExternalContractRequest>{
         address: this.nftContractAddress,
         name: this.nftContractName,
         account: this.account,
-        nfts: this.nftDescriptorList.map(a => a as any as ExternalNFTInfo)
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        nfts: this.nftDescriptorList.map(a => a as unknown as ExternalNFTInfo)
       };
 
       const collectionController = new CollectionController();
 
-      const res = await collectionController.createCollectionByExternalContract(data);
-
-      console.log('result', res);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      res = await collectionController.createCollectionByExternalContract(data);
     }
+
+    if (res.status && res.status === 200) {
+      this.$q.notify({
+        type: 'positive',
+        message: this.$t(
+          'dashboard.registerExternal.registerSuccess'
+        ),
+      })
+    } else {
+      if (!res.response.data.success && res.response.data.type === 409) {
+        this.$q.notify({
+          type: 'negative',
+          message: this.$t(
+            'dashboard.registerExternal.registerDuplicate'
+          ),
+        })
+      } else {
+        this.$q.notify({
+          type: 'negative',
+          message: this.$t(
+            'dashboard.registerExternal.registerFailure'
+          ),
+        })
+      }
+    }
+
+    this.loadingRegister = false;
   }
 }
 </script>

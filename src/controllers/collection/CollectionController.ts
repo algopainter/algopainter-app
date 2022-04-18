@@ -6,6 +6,22 @@ import Collections from 'src/data/Collections.json';
 import { nanoid } from 'nanoid';
 import { isError } from 'src/helpers/utils';
 
+export interface ExternalNFTInfo {
+  id: number;
+  name?: string;
+  description?: string;
+  image?: string;
+  descriptor?: string;
+  params?: string;
+}
+
+export interface CreateCollectionByExternalContractRequest {
+  address: string;
+  name: string;
+  account: string;
+  nfts: ExternalNFTInfo[]
+}
+
 export default class CollectionController extends BaseController {
   async getCollections() {
     try {
@@ -38,7 +54,7 @@ export default class CollectionController extends BaseController {
     return Collections.find(c => c.id === id);
   }
 
-  async createCollectionByExternalContract(request: CreateCollectionByExternalContractRequest) : Promise<boolean> {
+  async createCollectionByExternalContract(request: CreateCollectionByExternalContractRequest) : Promise<any> {
     const signRequestData = {
       ...request,
       salt: nanoid()
@@ -57,24 +73,13 @@ export default class CollectionController extends BaseController {
       account: request.account
     };
 
-    const result = await this.post(`collections`, signRequest);
+    try {
+      const result = await this.post('collections', signRequest);
 
-    return result.status == 200;
+      return result;
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return e;
+    }
   }
-}
-
-export interface CreateCollectionByExternalContractRequest {
-  address: string;
-  name: string;
-  account: string;
-  nfts: ExternalNFTInfo[]
-}
-
-export interface ExternalNFTInfo {
-  id: number;
-  name?: string;
-  description?: string;
-  image?: string;
-  descriptor?: string;
-  params?: string;
 }

@@ -732,6 +732,9 @@ export default {
     notEnoughChars: 'The contract address must have 42 characters',
     noNFTs: "You do not have any NFT's in this contract",
     inactiveIds1: "The NFT'S with the ID's ",
-    inactiveIds2: ' do not have both or either name and image'
+    inactiveIds2: ' do not have both or either name and image',
+    registerSuccess: 'You have successfully registered your NFT',
+    registerDuplicate: "One or all NFT's have already been registered!",
+    registerFailure: 'Something wrong happened. Try again!'
   }
 };

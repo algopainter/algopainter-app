@@ -394,6 +394,8 @@ export default class CreateUpload extends Vue.with(PropsTypes) {
           });
           this.painterPersonalItemStatus = PainterPersonalItemStatus.PersonalItemAwaitingInput;
         }
+        console.log('this.responseMint.data.creatorRoyalty', this.responseMint.data.creatorRoyalty);
+        console.log('this.mintValue', this.mintValue);
         if (this.responseMint) {
           await this.personalItemContract.mint(
             this.responseMint.data.name,

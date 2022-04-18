@@ -2,18 +2,18 @@
   <h5 class="text-bold">{{ $t('dashboard.registerExternal.title') }}</h5>
   <q-page>
     <q-form>
-      <div
-        class="row q-mb-md"
-        style="align-items: center"
-      >
+      <div class="row q-mb-md" style="align-items: center">
         <q-input
           v-model.trim="nftContractAddress"
           :label="$t('dashboard.registerExternal.contractAddress')"
           class="col-6 q-pr-md"
           maxlength="42"
           :rules="[
-            val => val.length > 0 || $t('dashboard.registerExternal.emptyField'),
-            val => val.length === 42 || $t('dashboard.registerExternal.notEnoughChars')
+            (val) =>
+              val.length > 0 || $t('dashboard.registerExternal.emptyField'),
+            (val) =>
+              val.length === 42 ||
+              $t('dashboard.registerExternal.notEnoughChars'),
           ]"
         />
         <algo-button
@@ -33,7 +33,9 @@
           :label="$t('dashboard.registerExternal.nfts')"
           multiple
           :options="nftsOptions"
-          :option-disable="opt => Object(opt) === opt ? opt.active === false : false"
+          :option-disable="
+            (opt) => (Object(opt) === opt ? opt.active === false : false)
+          "
           :hint="inactiveIdsMsg"
           :hide-hint="nftsInactiveIdsList.length === 0"
           class="col-6 q-pr-md"
@@ -43,7 +45,10 @@
           v-model.trim="nftContractName"
           :label="$t('dashboard.registerExternal.name')"
           class="col-6 q-pl-md"
-          :rules="[ val => val.length === 0 || $t('dashboard.registerExternal.emptyField') ]"
+          :rules="[
+            (val) =>
+              val.length === 0 || $t('dashboard.registerExternal.emptyField'),
+          ]"
           readonly
         />
       </div>
@@ -55,31 +60,30 @@
         >
           <div class="nft-info q-pb-md">
             <p class="label">
-              <span class="text-bold">{{ $t('dashboard.registerExternal.nftId') }}</span> {{ nftAddressList[i].id }}
+              <span class="text-bold">{{
+                $t('dashboard.registerExternal.nftId')
+              }}</span>
+              {{ nftAddressList[i].id }}
             </p>
             <p class="label">
-              <span class="text-bold">{{ $t('dashboard.registerExternal.nftName') }}</span> {{ nftAddressList[i].name }}
+              <span class="text-bold">{{
+                $t('dashboard.registerExternal.nftName')
+              }}</span>
+              {{ nftAddressList[i].name }}
             </p>
-            <p
-              v-if="nftAddressList[i].description !== undefined"
-              class="label"
-            >
-              <span class="text-bold">{{ $t('dashboard.registerExternal.nftDescription') }}</span> {{ nftAddressList[i].description }}
+            <p v-if="nftAddressList[i].description !== undefined" class="label">
+              <span class="text-bold">{{
+                $t('dashboard.registerExternal.nftDescription')
+              }}</span>
+              {{ nftAddressList[i].description }}
             </p>
           </div>
           <div class="nft-img">
-            <q-img
-              :src="nftAddressList[i].image"
-              width="100%"
-              height="auto"
-            />
+            <q-img :src="nftAddressList[i].image" width="100%" height="auto" />
           </div>
         </div>
       </div>
-      <error
-        v-if="isWarning"
-        :error-msg="warningMsg"
-      >
+      <error v-if="isWarning" :error-msg="warningMsg">
         <template #icon>
           <q-avatar
             size="60px"
@@ -108,7 +112,11 @@ import { Vue, Options } from 'vue-class-component';
 import Error from 'src/pages/create-collection/Error.vue';
 import { mapGetters } from 'vuex';
 import { NetworkInfo } from 'src/store/user/types';
-import { INftInfo, INftDescriptor, INftOption } from 'src/models/IRegisterExternal';
+import {
+  INftInfo,
+  INftDescriptor,
+  INftOption,
+} from 'src/models/IRegisterExternal';
 import AlgoButton from 'src/components/common/Button.vue';
 import { QInput } from 'quasar';
 import AlgoPainterExternalNftManagerProxy from 'src/eth/AlgoPainterExternalNftManagerProxy';
@@ -119,18 +127,12 @@ import { multihash } from 'is-ipfs';
 @Options({
   components: {
     Error,
-    AlgoButton
+    AlgoButton,
   },
   computed: {
-    ...mapGetters(
-      'user', [
-        'isConnected',
-        'networkInfo',
-        'account',
-      ]),
-  }
+    ...mapGetters('user', ['isConnected', 'networkInfo', 'account']),
+  },
 })
-
 export default class registerExternalNFT extends Vue {
   declare $refs: {
     name: QInput;
@@ -187,11 +189,13 @@ export default class registerExternalNFT extends Vue {
     // this.account = 0xaa526b5ccad7b4c44e0f664689cda4cad501f414
 
     try {
-      this.erc721Stub = new AlgoPainterERC721StubProxy(this.nftContractAddress.toLowerCase());
+      this.erc721Stub = new AlgoPainterERC721StubProxy(
+        this.nftContractAddress.toLowerCase()
+      );
 
       this.nftContractName = await this.erc721Stub.name();
       const nftContractSymbol = await this.erc721Stub.symbol();
-      this.nftContractName += ` (${nftContractSymbol})`
+      this.nftContractName += ` (${nftContractSymbol})`;
 
       const numOfNfts = await this.erc721Stub.balanceOf(
         this.account
@@ -206,26 +210,32 @@ export default class registerExternalNFT extends Vue {
             i
           );
 
-          let tokenURI = await this.erc721Stub.tokenURI(
-            tokenId
-          );
+          let tokenURI = await this.erc721Stub.tokenURI(tokenId);
 
-          tokenURI = multihash(tokenURI) ? `https://ipfs.io/ipfs/${tokenURI}` : tokenURI;
+          tokenURI = multihash(tokenURI)
+            ? `https://ipfs.io/ipfs/${tokenURI}`
+            : tokenURI;
 
           await fetch(tokenURI)
-            .then(result => result.json())
+            .then((result) => result.json())
             .then((output) => {
               this.nftDescriptorList.push({
                 id: tokenId,
                 name: undefined,
                 description: undefined,
-                image: undefined
-              })
+                image: undefined,
+              });
 
               this.nftDescriptorList[i].id = tokenId;
-              this.nftDescriptorList[i].name = output.name ? output.name : undefined;
-              this.nftDescriptorList[i].description = output.description ? output.description : undefined;
-              this.nftDescriptorList[i].image = output.imagePreview ? output.imagePreview : output.image;
+              this.nftDescriptorList[i].name = output.name
+                ? output.name
+                : undefined;
+              this.nftDescriptorList[i].description = output.description
+                ? output.description
+                : undefined;
+              this.nftDescriptorList[i].image = output.imagePreview
+                ? output.imagePreview
+                : output.image;
 
               const label: string = `${output.name as string} (${tokenId})`;
               const active: boolean = !!(output.name && output.image);
@@ -237,14 +247,19 @@ export default class registerExternalNFT extends Vue {
                 id: tokenId,
                 name: output.name,
                 description: output.description,
-                image: output.image
-              })
+                image: output.image,
+              });
 
-              active ? this.nftsActiveIdsList.push(tokenId) : this.nftsInactiveIdsList.push(tokenId);
-            }).catch(err => console.error(err));
+              active
+                ? this.nftsActiveIdsList.push(tokenId)
+                : this.nftsInactiveIdsList.push(tokenId);
+            })
+            .catch((err) => console.error(err));
         }
 
-        this.inactiveIdsMsg += this.$t('dashboard.registerExternal.inactiveIds1');
+        this.inactiveIdsMsg += this.$t(
+          'dashboard.registerExternal.inactiveIds1'
+        );
 
         this.nftsInactiveIdsList.forEach((id, i) => {
           if (i + 1 === 1) {
@@ -254,9 +269,11 @@ export default class registerExternalNFT extends Vue {
           } else {
             this.inactiveIdsMsg += `, ${id}`;
           }
-        })
+        });
 
-        this.inactiveIdsMsg += this.$t('dashboard.registerExternal.inactiveIds2');
+        this.inactiveIdsMsg += this.$t(
+          'dashboard.registerExternal.inactiveIds2'
+        );
       } else {
         this.warningMsg = this.$t('dashboard.registerExternal.noNFTs');
         this.isWarning = true;
@@ -271,13 +288,15 @@ export default class registerExternalNFT extends Vue {
 
   validateFields() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    console.log('validateFields')
+    console.log('validateFields');
   }
 
   async registerNFTs() {
     this.validateFields();
 
-    this.externalNftManager = new AlgoPainterExternalNftManagerProxy(this.networkInfo);
+    this.externalNftManager = new AlgoPainterExternalNftManagerProxy(
+      this.networkInfo
+    );
 
     const registerTokens = await this.externalNftManager.registerTokens(
       this.nftContractAddress,
@@ -292,16 +311,16 @@ export default class registerExternalNFT extends Vue {
 </script>
 
 <style scoped lang="scss">
-  .nft-card {
-    // border: 1px $primary solid;
-    border-radius: 5px;
-    padding: 16px;
-    margin-bottom: 16px;
-  }
+.nft-card {
+  // border: 1px $primary solid;
+  border-radius: 5px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
 
-  .label {
-    font-weight: 400;
-    margin: 0px;
-    color: rgba(0, 0, 0, 0.6);
-  }
+.label {
+  font-weight: 400;
+  margin: 0px;
+  color: rgba(0, 0, 0, 0.6);
+}
 </style>

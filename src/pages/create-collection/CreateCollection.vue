@@ -158,6 +158,7 @@ export default class CreateCollection extends Vue {
   userAccount!: string;
   artistCollectionStatus: ArtistCollectionStatus =
     ArtistCollectionStatus.ArtistCollectionAwaitingConfirmation;
+
   statusblock: string = '';
   step: number = 1;
   isStepTwoDisabled: boolean = false;
@@ -235,9 +236,7 @@ export default class CreateCollection extends Vue {
         type: 'negative',
         message: this.$t('dashboard.createCollection.hasNoProfile'),
       });
-      await this.$router.push('/edit-profile/' + 'registerCollection');
-    } else {
-      await this.$router.push('/create-collection');
+      await this.$router.push('/edit-profile');
     }
   }
 
@@ -308,7 +307,7 @@ export default class CreateCollection extends Vue {
         this.verifyFormFour = true;
 
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        setTimeout(async () => {
+        setTimeout(async() => {
           if (this.isFormFourVerified) {
             this.errMsg = '';
             this.artistCollectionStatus =
@@ -386,6 +385,7 @@ export default class CreateCollection extends Vue {
         'images/pintoipfs/FILE?resize=1',
         previewPayload
       );
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
       data.avatar = `https://ipfs.io/ipfs/${resAvatar.data.ipfsHash.toString()}`;
       const res = await api.post('images/pintoipfs/JSON', data);
       this.dataIPFSHash = res.data.ipfsHash;
@@ -433,6 +433,7 @@ export default class CreateCollection extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       } else if (
         e.message &&
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         e.message.indexOf('END_TIME_RANGE_INVALID') >= 0
       ) {
         this.errMsg = this.$t(
@@ -441,6 +442,7 @@ export default class CreateCollection extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       } else if (
         e.message &&
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         e.message.indexOf('COLLECTION_NAME_NOT_UNIQUE') >= 0
       ) {
         this.errMsg = this.$t(
@@ -454,6 +456,7 @@ export default class CreateCollection extends Vue {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       } else if (
         e.message &&
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         e.message.indexOf('MINIMUM_ALLOWANCE_REQUIRED') >= 0
       ) {
         return true;
@@ -505,10 +508,12 @@ export default class CreateCollection extends Vue {
   }
 
   get artistCollectionContractAddress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     return getArtistCollectionAddress(this.networkInfo.id);
   }
 
   get algopTokenContractAddress() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     return getAlgopTokenContractByNetworkId(this.networkInfo.id);
   }
 
@@ -520,36 +525,6 @@ export default class CreateCollection extends Vue {
       this.userAccount,
       this.artistCollectionContractAddress
     );
-
-    console.log(
-      'this.collectionData.collectionMetrics.walletAddress',
-      this.collectionData.collectionMetrics.walletAddress
-    );
-    console.log('this.times', this.times);
-    console.log(
-      'this.collectionData.aboutTheCollection.nameCollection',
-      this.collectionData.aboutTheCollection.nameCollection
-    );
-    console.log(
-      'this.collectionData.collectionMetrics.creatorPercentage',
-      this.collectionData.collectionMetrics.creatorPercentage
-    );
-    console.log('this.startPrice', this.startPrice);
-    console.log(
-      'this.collectionData.collectionMetrics.tokenPriceAddres',
-      this.collectionData.collectionMetrics.tokenPriceAddress
-    );
-    console.log(
-      'this.priceType(this.collectionData.collectionMetrics.priceType)',
-      this.priceType(this.collectionData.collectionMetrics.priceType)
-    );
-    console.log('this.priceblock', this.priceblock);
-    console.log(
-      'this.collectionData.collectionMetrics.nfts',
-      this.collectionData.collectionMetrics.nfts
-    );
-    console.log('this.userAccount', this.userAccount);
-    console.log('this.dataIPFSHash', this.dataIPFSHash);
 
     const isApproved =
       allowance < Number(this.registerPrice) ? await this.getAllowance() : true;

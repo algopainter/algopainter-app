@@ -207,7 +207,6 @@ export default class ProfileDropdownButton extends Vue {
     );
     if (result.isFailure) {
       this.userProfile = {};
-      console.log('User has not created a profile');
     } else if ((result.getValue() as IProfile)._id) {
       this.userProfile = result.getValue() as IProfile;
     } else {
@@ -224,7 +223,7 @@ export default class ProfileDropdownButton extends Vue {
   }
 
   async goToProfilePage() {
-    await this.$router.push('/edit-profile/' + 'editProfile');
+    await this.$router.push('/edit-profile/');
   }
 
   async goToEarningsReport() {
@@ -247,20 +246,7 @@ export default class ProfileDropdownButton extends Vue {
   }
 
   async registerCollection() {
-    const result = await this.userController.getUserProfile(
-      this.accountAddress?.toLowerCase() as string,
-    );
-    if (result.isFailure) {
-      this.$q.notify({
-        type: 'negative',
-        message: this.$t(
-          'dashboard.createCollection.hasNoProfile'
-        ),
-      });
-      await this.$router.push('/edit-profile/' + 'registerCollection');
-    } else {
-      await this.$router.push('/create-collection');
-    }
+    await this.$router.push('/create-collection');
   }
 
   async registerExternalNFT() {

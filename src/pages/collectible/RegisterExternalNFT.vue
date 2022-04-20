@@ -199,7 +199,7 @@ export default class registerExternalNFT extends Vue {
       this.nftContractName += ` (${nftContractSymbol})`;
 
       const numOfNfts = await this.erc721Stub.balanceOf(
-        this.account
+        this.account,
         // '0xaa526b5ccad7b4c44e0f664689cda4cad501f414'
       );
 

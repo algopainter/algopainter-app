@@ -252,7 +252,7 @@
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.creatorRoyalties')"
                     :model-value="collectionCreatorRoyaltiesRate"
-                    readonly
+                    :readonly="creatorRate != 0"
                     @update:modelValue="handleChange"
                   >
                     <template #append>

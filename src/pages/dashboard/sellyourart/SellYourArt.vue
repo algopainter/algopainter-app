@@ -246,8 +246,8 @@
                   <q-input
                     inputmode="number"
                     mask="#"
-                    :hint="$t('dashboard.sellYourArt.readOnlyField')"
-                    filled
+                    :hint="creatorRate != 0 ? $t('dashboard.sellYourArt.readOnlyField') : ''"
+                    :filled="creatorRate != 0"
                     reverse-fill-mask
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.creatorRoyalties')"

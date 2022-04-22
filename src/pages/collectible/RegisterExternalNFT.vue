@@ -124,6 +124,7 @@ import AlgoPainterERC721StubProxy from 'src/eth/ERC721StubProxy';
 import { isAddress, toChecksumAddress } from 'web3-utils';
 import { multihash } from 'is-ipfs';
 import CollectionController, { CreateCollectionByExternalContractRequest, ExternalNFTInfo } from 'src/controllers/collection/CollectionController';
+import axios from 'axios';
 
 @Options({
   components: {
@@ -199,7 +200,7 @@ export default class registerExternalNFT extends Vue {
       this.nftContractName += ` (${nftContractSymbol})`;
 
       const numOfNfts = await this.erc721Stub.balanceOf(
-        this.account
+        this.account,
         // '0xaa526b5ccad7b4c44e0f664689cda4cad501f414'
       );
 
@@ -214,13 +215,13 @@ export default class registerExternalNFT extends Vue {
           let tokenURI = await this.erc721Stub.tokenURI(tokenId);
 
           tokenURI = multihash(tokenURI)
-            ? `https://ipfs.io/ipfs/${tokenURI}`
+            ? `https://gateway.pinata.cloud/ipfs/${tokenURI}`
             : tokenURI;
 
           try {
-            const result = await fetch(tokenURI);
-            if (result.ok) {
-              const output = await result.json();
+            const result = await axios.get(tokenURI);
+            if (result.status === 200) {
+              const output = result.data;
               this.nftDescriptorList.push({
                 id: tokenId,
                 name: output.name ? output.name : undefined,

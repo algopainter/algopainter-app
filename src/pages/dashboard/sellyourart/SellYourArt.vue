@@ -244,15 +244,18 @@
                   name="royalties"
                 >
                   <q-input
+                    v-model="collectionCreatorRoyaltiesRate"
                     inputmode="number"
                     mask="#"
-                    :hint="$t('dashboard.sellYourArt.readOnlyField')"
-                    filled
+                    :hint="hasCreatorSet ? $t('dashboard.sellYourArt.readOnlyField') : ''"
+                    :filled="hasCreatorSet"
                     reverse-fill-mask
                     fill-mask="0"
                     :label="$t('dashboard.sellYourArt.creatorRoyalties')"
-                    :model-value="collectionCreatorRoyaltiesRate"
-                    readonly
+                    :readonly="hasCreatorSet"
+                    :rules="[
+                      (val) => hasCreatorSet || val > 0 || $t('dashboard.sellYourArt.setCreator'),
+                    ]"
                     @update:modelValue="handleChange"
                   >
                     <template #append>
@@ -447,6 +450,7 @@ export default class SellYourArt extends Vue {
   imagePirsRate!: number | null;
   collectionCreatorRoyaltiesRate: number | null = 0;
   creatorRate: number = 0;
+  hasCreatorSet!: boolean;
 
   async mounted() {
     await this.prepareComponent();
@@ -481,6 +485,9 @@ export default class SellYourArt extends Vue {
     const { id } = this.$route.params;
     this.image = await getImage(id as string);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    this.hasCreatorSet = await this.rewardsRates.isCreatorRateSet(this.image.collectionOwner, this.image.nft.index);
+
     this.creatorRate = ['Expressions', 'Gwei'].includes(this.image.collectionName)
       ? await this.rewardsRates.getCreatorRoyaltiesByTokenAddress(this.image.collectionOwner)
       : await this.rewardsRates.getCreatorRate(this.image.collectionOwner, this.image.nft.index.toString());
@@ -489,7 +496,8 @@ export default class SellYourArt extends Vue {
     this.hasPirs = await this.rewardsRates.hasPIRSRateSetPerImage(this.image.collectionOwner, this.image.nft.index);
 
     if (this.hasPirs) {
-      this.imagePirsRate = (this.image.pirs.investorRate || 0) / 100;
+      // this.imagePirsRate = (this.image.pirs.investorRate || 0) / 100;
+      this.imagePirsRate = await this.rewardsRates.getPIRSRatePerImage(this.image.collectionOwner, this.image.nft.index) / 100;
     }
 
     const auctionFeeRate = (await this.auctionSystem.auctionFeeRate() / 10000);
@@ -699,7 +707,7 @@ export default class SellYourArt extends Vue {
           moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
           this.selectedCoin.tokenAddress,
           bidBackRate,
-          this.creatorRate * 100,
+          !this.hasCreatorSet && this.collectionCreatorRoyaltiesRate ? this.collectionCreatorRoyaltiesRate * 100 : this.creatorRate,
           this.imagePirsRate ? this.imagePirsRate : this.PIRSRate * 100,
           this.userAccount
         )
@@ -734,7 +742,7 @@ export default class SellYourArt extends Vue {
           moment(`${endDate} ${endTime}`, 'MM/DD/YYYY hh:mm').unix(),
           this.selectedCoin.tokenAddress,
           bidBack,
-          this.creatorRate * 100,
+          !this.hasCreatorSet && this.collectionCreatorRoyaltiesRate ? this.collectionCreatorRoyaltiesRate * 100 : this.creatorRate,
           this.imagePirsRate ? this.imagePirsRate : this.PIRSRate * 100,
           this.userAccount
         );

@@ -393,6 +393,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "proxyHook",
+    "outputs": [
+      {
+        "internalType": "contract IAuctionRewardsRatesHook",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -462,43 +475,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "hashKey",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rate",
-        "type": "uint256"
-      }
-    ],
-    "name": "setRate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "hashKey",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getRate",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "toggleCanSetCreatorRate",
     "outputs": [],
@@ -540,6 +516,19 @@
       }
     ],
     "name": "setAuctionSystemAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_adr",
+        "type": "address"
+      }
+    ],
+    "name": "setHook",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -622,6 +611,30 @@
     "name": "setPIRSRate",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_adr",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_token",
+        "type": "uint256"
+      }
+    ],
+    "name": "isCreatorRateSet",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

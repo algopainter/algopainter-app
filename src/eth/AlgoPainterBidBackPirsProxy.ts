@@ -15,6 +15,10 @@ export default class AlgoPainterBidBackPirsProxy {
       getPIRSRate(
         auctionId: number
       ): ContractSendMethod;
+      isCreatorRateSet(
+        nftAddress: string,
+        token: number
+      ): ContractSendMethod;
       hasPIRSRateSetPerImage(
         tokenAddress: string,
         imageId: number
@@ -82,6 +86,18 @@ export default class AlgoPainterBidBackPirsProxy {
     ).call();
 
     return response as number;
+  }
+
+  async isCreatorRateSet(
+    tokenAddress: string,
+    imageId: number
+  ) {
+    const response: unknown = await this.smartContract.methods.isCreatorRateSet(
+      tokenAddress,
+      imageId
+    ).call();
+
+    return response as boolean;
   }
 
   async getPIRSRatePerImage(

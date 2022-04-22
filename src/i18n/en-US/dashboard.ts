@@ -254,6 +254,7 @@ export default {
     setAMinimumPrice: 'You must set a minimum bid to the auction.',
     setAnEndDate: 'You must set an end date to the auction.',
     setAnEndTime: 'You must set an end time to the auction.',
+    setCreator: 'You must set a creator royalty greater than 0',
     minimumBidBackRate: 'The bidBack rate must be at least 1%',
     maximumBidBackRate: 'The bidBack rate cannot be bigger than 30%',
     minimumPIRSRate: 'The PIRS rate must be at least 1%',

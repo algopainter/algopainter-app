@@ -35,15 +35,16 @@ export default class AlgoPainterAuctionSystemProxy {
   declare smartContract: {
     methods: {
       getAllowedTokens(): ContractSendMethod;
-      getBidFeeRate(): ContractSendMethod;
+      bidFeeRate(): ContractSendMethod;
       createAuction(
-        tokenType: TokenType,
         contractAddress: string,
         tokenId: number,
         minimumAmount: string,
         endTime: number,
         tokenPriceAddress: string,
         bidbackRate: number,
+        creatorRate: number,
+        pirsRate: number
       ): ContractSendMethod;
       bid(auctionId: number, amount: string): ContractSendMethod;
       cancelAuction(auctionId: number): ContractSendMethod;
@@ -53,7 +54,7 @@ export default class AlgoPainterAuctionSystemProxy {
         auctionId: number,
         amount: string
       ): ContractSendMethod;
-      getAuctionFeeRate(): ContractSendMethod;
+      auctionFeeRate(): ContractSendMethod;
     };
   };
 
@@ -66,68 +67,69 @@ export default class AlgoPainterAuctionSystemProxy {
     );
   }
 
-  async getAuctionFeeRate() {
-    const response: unknown = await this.smartContract.methods.getAuctionFeeRate().call();
+  async auctionFeeRate() {
+    const response: unknown = await this.smartContract.methods.auctionFeeRate().call();
 
     return response as number;
   }
 
   async getAllowedTokens(): Promise<string[]> {
-    console.log('getAllowedTokens');
     const response: unknown = await this.smartContract.methods
       .getAllowedTokens().call();
-
-    console.log('response', response);
 
     return response as string[];
   }
 
-  async getBidFeeRate(): Promise<number> {
+  async bidFeeRate(): Promise<number> {
     const response: unknown = await this.smartContract.methods
-      .getBidFeeRate().call();
+      .bidFeeRate().call();
 
     return response as number;
   }
 
   createAuction(
-    tokenType: number,
     contractAddress: string,
     tokenId: number,
     minimumAmount: string,
     endTime: number,
     tokenPriceAddress: string,
     bidbackRate: number,
+    creatorRate: number,
+    pirsRate: number,
     from: string,
   ) {
     return this.smartContract.methods.createAuction(
-      tokenType,
       contractAddress,
       tokenId,
       minimumAmount,
       endTime,
       tokenPriceAddress,
       bidbackRate,
+      creatorRate,
+      pirsRate
     ).send({ from });
   }
 
   async createAuctionCall(
-    tokenType: number,
     contractAddress: string,
     tokenId: number,
     minimumAmount: string,
     endTime: number,
     tokenPriceAddress: string,
     bidbackRate: number,
-    from: string,
+    creatorRate: number,
+    pirsRate: number,
+    from: string
   ) {
     const response: unknown = await this.smartContract.methods.createAuction(
-      tokenType,
       contractAddress,
       tokenId,
       minimumAmount,
       endTime,
       tokenPriceAddress,
       bidbackRate,
+      creatorRate,
+      pirsRate
     ).call({ from });
 
     return response as number;

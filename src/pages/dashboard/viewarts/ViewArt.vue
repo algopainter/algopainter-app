@@ -36,16 +36,19 @@
     </div>
     <div class="row">
       <div class="col-xs-12 col-sm-6 col-md-6">
-        <div class="row justify-center">
-          <q-img
-            v-if="backgroundChange === false"
+        <div
+          class="row justify-center"
+        >
+          <img
+            v-show="!isBackgroundUpdating && isImgLoaded"
+            ref="previewImg"
             class="img"
             :src="imageUrl"
           />
-          <q-img
-            v-else
-            class="img"
-            :src="imageUrl"
+          <q-spinner
+            v-if="!isImgLoaded"
+            size="50px"
+            color="primary"
           />
         </div>
         <div class="text-download">
@@ -179,6 +182,7 @@ import { IImageUser } from 'src/models/IImageUser';
 import { IProfile } from 'src/models/IProfile';
 import { blockchainToCurrency } from 'src/helpers/format/blockchainToCurrency';
 import { auctionCoins } from 'src/helpers/auctionCoins';
+import { PaintGwei } from 'src/services/painting.js';
 
 @Options({
   components: { AlgoButton, ShareArtIcons, LikeAnimation, ViewArtSkeleton },
@@ -195,12 +199,19 @@ export default class ViewArt extends Vue {
   loading: boolean = true;
   options: string = 'None';
   chooseBackground: string = '';
-  backgroundChange: boolean = false;
+  isBackgroundUpdating: boolean = false;
+  isImgLoaded: boolean = false;
   imageUrl: string = '';
   likeClicked: boolean = false;
+  gwei: any;
+
+  declare $refs: {
+    previewImg: any;
+  };
 
   mounted() {
     this.getDetailsData().catch(console.error);
+    this.gwei = new PaintGwei();
   }
 
   parsedProbability() {
@@ -292,41 +303,41 @@ export default class ViewArt extends Vue {
     return coin;
   }
 
-  changeBackground(value: string) {
-    this.backgroundChange = true;
-    const parameters: Record<string, unknown> = this.image.nft.parameters;
-    const arrayKeys = Object.keys(parameters);
-    const arrayValues: (string | number)[] = Object.values(parameters) as (string | number)[];
-    const arrayLength = arrayKeys.length;
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    let URL = `${process.env.VUE_APP_GWEI_ENDPOINT}?`;
-    let counter = 0;
-    arrayKeys.forEach(parameter => {
-      counter++;
-      if (parameter !== 'amount' && parameter !== 'description') {
-        if (parameter === 'place') {
-          parameter = 'wallType';
-          if (counter !== arrayLength) {
-            URL = URL.concat(`${parameter}=${value}&`);
-            return;
-          } else {
-            URL = URL.concat(`${parameter}=${value}`);
-            return;
-          }
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        let arrayValue: string | number = arrayValues[counter - 1];
-        if (typeof (arrayValue) === 'string') {
-          arrayValue = arrayValue.split(' ').join('%20');
-        }
-        if (counter !== arrayLength) {
-          URL = URL.concat(`${parameter}=${arrayValue}&`);
-        } else {
-          URL = URL.concat(`${parameter}=${arrayValue}`);
-        }
+  checkIfImgIsLoaded() {
+    const interval = setInterval(() => {
+      this.isImgLoaded = this.$refs.previewImg.complete;
+
+      if (this.isImgLoaded) {
+        clearInterval(interval);
       }
-    });
-    this.imageUrl = URL;
+    }, 1000);
+  }
+
+  async changeBackground(value: string) {
+    this.isBackgroundUpdating = true;
+    this.isImgLoaded = false;
+
+    const parameters: Record<string, unknown> = this.image.nft.parameters;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    await this.gwei.generate({
+      finalWidth: 2422,
+      finalHeight: 2422,
+      inspiration: parameters.inspiration,
+      text: parameters.text,
+      useRandom: parameters.useRandom,
+      probability: parameters.probability,
+      useRandomOpacity: false,
+      wallType: value.toString(),
+      overlay: parameters.overlay,
+      overlayOpacity: parameters.overlayOpacity
+    })
+      .then((img: string) => {
+        this.checkIfImgIsLoaded();
+        this.imageUrl = img;
+      })
+
+    this.isBackgroundUpdating = false;
   }
 
   collectionArtController: CollectionArtController = new CollectionArtController();
@@ -352,6 +363,7 @@ export default class ViewArt extends Vue {
       this.imageOwner = UserUtils.getUsersByRole(this.image.users as IImageUser[], 'owner')[0];
       this.loadWasLiked();
       this.imageUrl = this.image.nft.image;
+      this.checkIfImgIsLoaded();
       this.loading = false;
     } catch (e) {
       console.log('e', e);

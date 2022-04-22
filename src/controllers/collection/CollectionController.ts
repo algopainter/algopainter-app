@@ -3,6 +3,24 @@ import ICollection from 'src/models/ICollection';
 import { IImage } from 'src/models/IImage';
 import BaseController from '../BaseController';
 import Collections from 'src/data/Collections.json';
+import { nanoid } from 'nanoid';
+import { isError } from 'src/helpers/utils';
+
+export interface ExternalNFTInfo {
+  id: number;
+  name?: string;
+  description?: string;
+  image?: string;
+  descriptor?: string;
+  params?: string;
+}
+
+export interface CreateCollectionByExternalContractRequest {
+  address: string;
+  name: string;
+  account: string;
+  nfts: ExternalNFTInfo[]
+}
 
 export default class CollectionController extends BaseController {
   async getCollections() {
@@ -34,5 +52,34 @@ export default class CollectionController extends BaseController {
 
   getCollectionById(id: number) {
     return Collections.find(c => c.id === id);
+  }
+
+  async createCollectionByExternalContract(request: CreateCollectionByExternalContractRequest) : Promise<any> {
+    const signRequestData = {
+      ...request,
+      salt: nanoid()
+    };
+
+    const signatureOrError = await this.web3Helper.hashMessageAndAskForSignature(signRequestData, request.account);
+
+    if (isError(signatureOrError as Error)) {
+      throw signatureOrError;
+    }
+
+    const signRequest = {
+      data: signRequestData,
+      salt: signRequestData.salt,
+      signature: signatureOrError,
+      account: request.account
+    };
+
+    try {
+      const result = await this.post('collections', signRequest);
+
+      return result;
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return e;
+    }
   }
 }

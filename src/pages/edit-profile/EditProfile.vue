@@ -143,7 +143,7 @@
         class="row justify-center btnSave"
       >
         <algo-button
-          v-if="routeName === 'registerCollection'"
+          v-if="$route.redirectedFrom && $route.redirectedFrom.fullPath === '/create-collection'"
           class="q-py-md q-my-md btnsize"
           type="submit"
           color="primary"
@@ -262,10 +262,6 @@ export default class EditProfile extends Vue {
 
   emailValid() {
     this.isValid = this.validateEmail(this.formFields.email);
-  }
-
-  get routeName() {
-    return this.paramsRouterName = this.$route.params.name;
   }
 
   async loadData() {
@@ -401,7 +397,7 @@ export default class EditProfile extends Vue {
       }
     } finally {
       this.isLoading = false;
-      if (this.routeName === 'registerCollection') {
+      if (this.$route.redirectedFrom && this.$route.redirectedFrom.fullPath === '/create-collection') {
         await this.$router.push('/create-collection');
       }
     }

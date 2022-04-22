@@ -2,6 +2,7 @@
 import { RouteRecordRaw } from 'vue-router';
 import { i18n } from 'boot/i18n';
 import { myStore } from 'src/store';
+import UserController from 'src/controllers/user/UserController';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -124,18 +125,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'editProfile',
-        path: 'edit-profile/:name',
+        path: 'edit-profile',
         component: () => import('pages/edit-profile/EditProfile.vue'),
-        children: [
-          {
-            path: '',
-            component: () => import('pages/edit-profile/EditProfile.vue'),
-          },
-          {
-            path: 'registerCollection',
-            component: () => import('pages/edit-profile/EditProfile.vue'),
-          },
-        ],
         meta: {
           title: i18n.global.t('dashboard.editProfile.title'),
         },
@@ -153,6 +144,27 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/create-collection/CreateCollection.vue'),
         meta: {
           title: i18n.global.t('dashboard.createCollection.title'),
+        },
+        beforeEnter: async(to, from, next) => {
+          const account = myStore.state.user.account;
+          const userController: UserController = new UserController();
+
+          const result = await userController.getUserProfile(
+            account?.toLowerCase() as string
+          );
+
+          if (result.isFailure) {
+            next({ name: 'editProfile' });
+          }
+
+          next();
+        },
+      },
+      {
+        path: 'register-nft',
+        component: () => import('src/pages/collectible/RegisterExternalNFT.vue'),
+        meta: {
+          title: i18n.global.t('dashboard.registerExternal.title'),
         },
       },
       {
